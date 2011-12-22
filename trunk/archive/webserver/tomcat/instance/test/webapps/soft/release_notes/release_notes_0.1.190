@@ -1,0 +1,66 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.182
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Upgraded to CppAD 06-08-30
+
+RELATED BUG REPORTS:
+612
+
+BY: Andrew Ernst
+
+WHEN: 2006/08/31
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.188
+----------------------------------
+USER VISIBLE CHANGES
+
+None.
+
+OTHER CHANGES
+
+Added latest version CppAD.
+
+RELATED BUG REPORTS:  None.
+
+BY:  Mitch Watrous
+
+WHEN:  October 18, 2006
+
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.189
+----------------------------------
+USER VISIBLE CHANGES
+
+None.
+
+OTHER CHANGES
+
+Added latest version of optimizer.
+
+RELATED BUG REPORTS:  None.
+
+BY:  Mitch Watrous
+
+WHEN:  October 19, 2006
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.190
+----------------------------------
+USER VISIBLE CHANGES
+
+None.
+
+OTHER CHANGES
+
+Added template arguments to the SPK model classes and subclasses in order
+to allow them to be used in objective functions that calculate their
+derivatives using Automatic Differentiation (AD).
+
+RELATED BUG REPORTS:  None.
+
+BY:  Mitch Watrous
+
+WHEN:  October 19, 2006
+

@@ -1,0 +1,380 @@
+<html><head>
+<title>Computing Residuals for All of the Individuals in the Population</title>
+<meta name="description" id="description" content="Computing Residuals for All of the Individuals in the Population">
+<meta name="keywords" id="keywords" content=" popresiduals Residuals Population ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_popresiduals_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>population</option>
+<option>popResiduals</option>
+</select>
+</td>
+<td><a href="ppkaopt.htm" target="_top">Prev</a>
+</td><td><a href="popstatistics.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>population-&gt;</option>
+<option>estimateB</option>
+<option>expectedHessian</option>
+<option>ExpectedHessianFuncOb</option>
+<option>ExpectedHessianValarrayFuncOb</option>
+<option>firstOrderOpt</option>
+<option>fitPopulation</option>
+<option>EqIndModel</option>
+<option>lambda</option>
+<option>lambda_alp</option>
+<option>lambda_b</option>
+<option>lambdaFuncOb</option>
+<option>lambdaDiff</option>
+<option>lambda2diff</option>
+<option>lTilde</option>
+<option>NaiveFoModel</option>
+<option>namespace_population_analysis</option>
+<option>Objective</option>
+<option>ppkaOpt</option>
+<option>popResiduals</option>
+<option>popStatistics</option>
+<option>popStatistics_DerivExist</option>
+<option>popStatistics_DerivExist_AllElemActive</option>
+<option>twoStageMethod</option>
+<option>spk_non_par</option>
+</select>
+</td>
+<td>popResiduals</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Reference</option>
+<option>Arguments</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Computing Residuals for All of the Individuals in the Population</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype:</b> </td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>void&nbsp;popResiduals(&nbsp;SpkModel&lt;double&gt;&amp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enum&nbsp;Objective&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>objective</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;int&gt;&amp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>nMeasurementsAll</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>measurementsAll</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>popPar</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>indParAll</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>pPopPredOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>pPopResOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>pPopResWtdOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>pPopIndParResOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>pPopIndParResWtdOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>calcFoModelMinimizer</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;false&nbsp;)<br>
+</span></font></code></td></tr>
+</table>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Calculates approximations for the predicted values, residuals, and/or
+weighted residuals for all of the individuals in the population using
+an additional approximation for the covariance of an individual's data
+<code><span style='white-space: nowrap'><i>VTilde</i>_<i>i</i></span></code> as the weight.
+The derivations for these approximations can be found in Sections (6.2) 
+and (6.3) of Davidian and Giltinan (1998).
+Also, calculates individual parameter residuals and weighted individual 
+parameter residuals for all of the individuals in the population using 
+the covariance of the individual parameters <code><span style='white-space: nowrap'><i>D</i></span></code> as the weight.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The approximate predicted values <code><span style='white-space: nowrap'><i>pred</i>_<i>i</i></span></code>, residuals <code><span style='white-space: nowrap'><i>res</i>_<i>i</i></span></code>, 
+and weighted residuals <code><span style='white-space: nowrap'><i>resWtd</i>_<i>i</i></span></code> for the <i>i</i>-th 
+individual are calculated as follows:
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>pred</i>&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<i>f</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>&nbsp;)&nbsp;&nbsp;-&nbsp;&nbsp;<i>d</i>&nbsp;&nbsp;<i>f</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>&nbsp;)&nbsp;&nbsp;<i>bCheck</i>&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;<br>
+<br>
+</span></code><code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>res</i>&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<i>y</i>&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;<i>pred</i>&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i><br>
+<br>
+</span></code>and
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1/2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>resWtd</i>&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<i>VTilde</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;<i>res</i>&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i><br>
+<br>
+</span></code>where the term multiplying the residuals is the matrix square 
+root of the inverse of the approximate covariance.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The variable <code><span style='white-space: nowrap'><i>bCheck</i>_<i>i</i></span></code> is the minimizer of the Map Bayesian
+objective <code><span style='white-space: nowrap'><i>MapObj</i>(<i>b</i>)</span></code> using the first order (FO) model and is
+calculated as
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>bCheck</i>&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<i>d</i>&nbsp;&nbsp;<i>f</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>&nbsp;)&nbsp;&nbsp;&nbsp;<i>R</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>&nbsp;)&nbsp;&nbsp;&nbsp;&nbsp;<i>d</i>&nbsp;&nbsp;<i>f</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>&nbsp;)&nbsp;&nbsp;+&nbsp;&nbsp;<i>D</i>(<i>alp</i>)&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;<i>d</i>&nbsp;&nbsp;<i>f</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>&nbsp;)&nbsp;&nbsp;&nbsp;<i>R</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>&nbsp;)&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<i>y</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>f</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>&nbsp;)&nbsp;]&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i><br>
+<br>
+</span></code>If the flag <i>calcFoModelMinimizer</i> is set equal to false (the
+default behavior), then the value for <code><span style='white-space: nowrap'><i>bCheck</i>_<i>i</i></span></code> will not be
+calculated and instead
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>bCheck</i>&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i><br>
+</span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The approximation used for the covariance is
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>VTilde</i>&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<i>R</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>&nbsp;)&nbsp;&nbsp;+&nbsp;&nbsp;<i>d</i>&nbsp;&nbsp;<i>f</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>&nbsp;)&nbsp;&nbsp;<i>D</i>(<i>alp</i>)&nbsp;&nbsp;<i>d</i>&nbsp;&nbsp;<i>f</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>&nbsp;)&nbsp;&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i><br>
+<br>
+</span></code>For the modified First Order objective functions, all of the 
+individual parameters are set equal to zero in the approximation 
+for the covariance, i.e., <code><span style='white-space: nowrap'><i>b</i>_<i>i</i>&nbsp;=&nbsp;0</span></code>.
+For the modified Laplace and modified Expected Hessian objective
+functions, the individual parameters are set equal to the values
+in the input argument <i>indParAll</i>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The individual parameter residuals <code><span style='white-space: nowrap'><i>bRes</i>_<i>i</i></span></code> and the weighted
+individual parameter residuals <code><span style='white-space: nowrap'><i>bResWtd</i>_<i>i</i></span></code> for the <i>i</i>-th 
+individual are calculated as follows:
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>bRes</i>&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;-&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i><br>
+<br>
+</span></code>and
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1/2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>bResWtd</i>&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<i>D</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;(&nbsp;-&nbsp;<i>b</i>&nbsp;&nbsp;)&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i><br>
+<br>
+</span></code>(The above equations use
+<a href="glossary.htm#Population Notation" target="_top"><span style='white-space: nowrap'>population&nbsp;notation</span></a>
+.)
+
+<br>
+<br>
+<b><big><a name="Reference" id="Reference">Reference</a></big></b>
+<br>
+Davidian M. and Giltinan D. M. (1998) <i>Nonlinear Models for 
+Repeated Measurement Data</i>, Chapman &amp; Hall/CRC, Boca Raton, Florida.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This function expects <i>model</i> to be a function of
+all three parameters: <code><span style='white-space: nowrap'><i>alp</i></span></code>, <code><span style='white-space: nowrap'><i>b</i></span></code> and <code><span style='white-space: nowrap'><i>i</i></span></code>.
+Refer to <a href="glossary.htm#Model Functions Depend on i - alp - b" target="_top"><span style='white-space: nowrap'>Model&nbsp;Functions&nbsp;Depend&nbsp;on&nbsp;i&nbsp;-&nbsp;alp&nbsp;-&nbsp;b</span></a>
+ for details.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>objective</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This enumerated type variable specifies which parametric population objective 
+function will be minimized:  the modified Laplace, the modified 
+Expected Hessian, or the modified First Order.
+The permissible values for <i>objective</i> are defined in 
+the <a href="objective.htm" target="_top"><span style='white-space: nowrap'>Objective</span></a>
+ enumerated type definition.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nMeasurementsAll</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;int&gt;</font></code> <i>nMeasurementsAll</i> corresponds to 
+the array <code><span style='white-space: nowrap'><i>N</i></span></code>.  The <i>i</i>-th element of <code><span style='white-space: nowrap'><i>N</i></span></code>
+specifies the number of elements of <code><span style='white-space: nowrap'><i>y</i></span></code> that
+correspond to the <i>i</i>-th individual.
+Note that the size of <i>nMeasurementsAll</i> specifies the number of 
+individuals in the population, <code><span style='white-space: nowrap'><i>M</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>measurementsAll</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>measurementsAll</i> contains the vector
+<code><span style='white-space: nowrap'><i>y</i></span></code>, which specifies the data for all the individuals.
+The vector <code><span style='white-space: nowrap'><i>y</i></span></code> has
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>N</i>(1)&nbsp;+&nbsp;<i>N</i>(2)&nbsp;+&nbsp;...&nbsp;+&nbsp;<i>N</i>(<i>M</i>)<br>
+</span></code>elements where <code><span style='white-space: nowrap'><i>M</i></span></code> is the number of individuals.  
+The data vector corresponding to the first individual is
+<code><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>y</i>_1&nbsp;=&nbsp;[&nbsp;<i>y</i>(1)&nbsp;,&nbsp;<i>y</i>(2)&nbsp;,&nbsp;...&nbsp;,&nbsp;<i>y</i>(<i>N</i>(1))&nbsp;]<br>
+</span></code>Elements <code><span style='white-space: nowrap'><i>y</i>(<i>N</i>(1)&nbsp;+&nbsp;1)</span></code> through <code><span style='white-space: nowrap'><i>y</i>(<i>N</i>(1)&nbsp;+&nbsp;<i>N</i>(2))</span></code> 
+correspond to the second individual and so on.
+(Note that <code><span style='white-space: nowrap'><i>y</i>_1</span></code> refers to the first subvector of <code><span style='white-space: nowrap'><i>y</i></span></code> while
+<code><span style='white-space: nowrap'><i>y</i>(1)</span></code> refers to the first element of the valarray <code><span style='white-space: nowrap'><i>y</i></span></code>.)
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popPar</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>popPar</i> contains the vector 
+<code><span style='white-space: nowrap'><i>alp</i></span></code>, which specifies the values of the population parameters.  
+Note that the size of <i>popPar</i> specifies the number of 
+population parameters, <code><span style='white-space: nowrap'><i>nAlp</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParAll</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indParAll</i> contains the matrix 
+<code><span style='white-space: nowrap'><i>bAll</i></span></code> in column major order.  
+The <i>i</i>-th column of <code><span style='white-space: nowrap'><i>bAll</i></span></code> specifies the values of the 
+individual parameters for the <i>i</i>-th individual, <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code>.
+The column dimension of <code><span style='white-space: nowrap'><i>bAll</i></span></code> is equal to <code><span style='white-space: nowrap'><i>M</i></span></code>, 
+and its row dimension is equal to the number of individual 
+parameters, <code><span style='white-space: nowrap'><i>nB</i></span></code>.  
+Note that the size of <i>indParAll</i> divided by <code><span style='white-space: nowrap'><i>M</i></span></code> 
+specifies <code><span style='white-space: nowrap'><i>nB</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pPopPredOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>pPopPredOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>pPopPredOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the vector that contains all of the 
+individuals' data values, <i>measurementsAll</i>.  
+If <i>pPopPredOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pPopPredOut</i> will contain the vectors of 
+predicted values for all of the individuals <code><span style='white-space: nowrap'><i>pred</i>_<i>i</i></span></code> in 
+the same order as the data values.  
+Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pPopPredOut</i>. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pPopResOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>pPopResOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>pPopResOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the vector that contains all of the 
+individuals' data values, <i>measurementsAll</i>.  
+If <i>pPopResOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pPopResOut</i> will contain the vectors of residuals 
+for all of the individuals <code><span style='white-space: nowrap'><i>res</i>_<i>i</i></span></code> in the same order as the data values.  
+Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pPopResOut</i>. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pPopResWtdOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>pPopResWtdOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>pPopResWtdOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the vector that contains all of the 
+individuals' data values, <i>measurementsAll</i>.  
+If <i>pPopResWtdOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pPopResWtdOut</i> will contain the vectors of weighted
+residuals for all of the individuals <code><span style='white-space: nowrap'><i>resWtd</i>_<i>i</i></span></code> in the 
+same order as the data values.  
+Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pPopResWtdOut</i>. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pPopIndParResOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>pPopIndParResOut</i> is not <code><font color="blue">NULL</font></code>, then the <code><font color="blue">
+SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>
+pPopIndParResOut</i> must be declared in the function that calls this
+function, and its size must be equal to <code><span style='white-space: nowrap'><i>nB</i></span></code> times the number
+of individuals in the population <code><span style='white-space: nowrap'><i>M</i></span></code>.
+If <i>pPopIndParResOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pPopIndParResOut</i> will contain the vectors of 
+individual parameter residuals for all of the individuals <code><span style='white-space: nowrap'><i>bRes</i>_<i>i</i></span></code>.
+Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pPopIndParResOut</i>. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pPopIndParResWtdOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>pPopIndParResWtdOut</i> is not <code><font color="blue">NULL</font></code>, then the <code><font color="blue">
+SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>
+pPopIndParResWtdOut</i> must be declared in the function that calls this
+function, and its size must be equal to <code><span style='white-space: nowrap'><i>nB</i></span></code> times the number
+of individuals in the population <code><span style='white-space: nowrap'><i>M</i></span></code>.
+If <i>pPopIndParResWtdOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pPopIndParResWtdOut</i> will contain the vectors of 
+weighted individual parameter residuals for all of the individuals 
+<code><span style='white-space: nowrap'><i>bResWtd</i>_<i>i</i></span></code>.
+Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pPopIndParResWtdOut</i>. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>calcFoModelMinimizer</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>calcFoModelMinimizer</i> is equal to true, then the residuals
+will be calculated using <code><span style='white-space: nowrap'><i>bCheck</i>_<i>i</i></span></code>, which is the minimizer of
+the Map Bayesian objective <code><span style='white-space: nowrap'><i>MapObj</i>(<i>b</i>)</span></code> using the first order
+(FO) model.
+Otherwise, <code><span style='white-space: nowrap'><i>bCheck</i>_<i>i</i></span></code> will be set equal to the input value for <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code>.
+The default value for this argument is false.
+
+
+<hr>Input File: ../../spk/popResiduals.cpp
+
+</body>
+</html>

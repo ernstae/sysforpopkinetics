@@ -1,0 +1,261 @@
+<html><head>
+<title>Derivative of elsq With Block Diagonal Covariance</title>
+<meta name="description" id="description" content="Derivative of elsq With Block Diagonal Covariance">
+<meta name="keywords" id="keywords" content=" elsq elsq_xblockdiag "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="elsq_xblockdiag.htm" target="_top">section</a>, <a href="elsq_xblockdiag_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+The routine <code><font color="blue">elsq_xBlockDiag</font></code> computes the 1st derivative of 
+extended least squares function (elsq) with respect to <code><span style='white-space: nowrap'><i>x</i></span></code> 
+for the case of the covariance matrix being block diagonal.  
+If <code><span style='white-space: nowrap'><i>g</i>(<i>x</i>)</span></code> is the extended least squares function, then 
+<code><span style='white-space: nowrap'>(<i>dg</i>/<i>dx</i>)</span></code> is defined by
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;<i>T</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>g</i>_<i>x</i>(<i>x</i>)&nbsp;=&nbsp;---&nbsp;{&nbsp;<i>rvec</i>[<i>Q</i>(<i>x</i>)&nbsp;&nbsp;]&nbsp;}&nbsp;<i>Q</i>_<i>x</i>(<i>x</i>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;[<i>z</i>&nbsp;-&nbsp;<i>h</i>(<i>x</i>)]&nbsp;<i>Q</i>&nbsp;&nbsp;<i>h</i>_<i>x</i>(<i>x</i>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;---&nbsp;{&nbsp;[<i>z</i>-<i>h</i>(<i>x</i>)]&nbsp;<i>kron</i>&nbsp;[<i>z</i>-<i>h</i>(<i>x</i>)]&nbsp;}&nbsp;<i>Q</i>_<i>x</i>(<i>x</i>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;<br>
+</span></code><code><span style='white-space: nowrap'><i>x</i></span></code> and <code><span style='white-space: nowrap'><i>z</i></span></code> are column vectors,
+<code><span style='white-space: nowrap'><i>Q</i>(<i>x</i>)</span></code> is a block diagonal, positive definite matrix valued function,
+and <code><span style='white-space: nowrap'><i>h</i>(<i>x</i>)</span></code> is a column vector valued function.
+The routine <code><font color="blue">elsq_xBlockDiag</font></code> computes the
+<a href="glossary_frame1.htm#Derivative" target="frame1"><i><span style='white-space: nowrap'>derivative</span></i></a>
+ of <code><span style='white-space: nowrap'><i>g</i>(<i>x</i>)</span></code>; i.e.,
+<code><span style='white-space: nowrap'><i>g</i>_<i>x</i>(<i>x</i>)</span></code>.
+
+
+<br>
+<br>
+<b><big><a name="Reference" id="Reference">Reference</a></big></b>
+<br>
+See Lemma 12 of 
+<i>Approximating the maximum likelihood estimate 
+for models with random parameters</i>.
+
+<br>
+<br>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+Upon a successful completion, this function returns
+the <code><span style='white-space: nowrap'><i>g</i>_<i>x</i>(<i>x</i>)</span></code> value as a row vector, where
+<code><span style='white-space: nowrap'><i>i</i></span></code>-th element of the vector is the derivative of
+g(x) with respect to x[i].
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+<br>
+Given a <code><span style='white-space: nowrap'><i>n</i></span></code> dimensional column vector, <code><span style='white-space: nowrap'><i>x</i></span></code>, 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;1</span></code> double-precision matrix 
+containing the value of <code><span style='white-space: nowrap'><i>z</i>-<i>h</i>(<i>x</i>)</span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;1</span></code> double-precision matrix 
+containing the value of <code><span style='white-space: nowrap'><i>z</i>&nbsp;-&nbsp;<i>h</i>(<i>x</i>)</span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>Q</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>m</i></span></code> double-precision block diagonal matrix
+containing the value of <code><span style='white-space: nowrap'><i>Q</i>(<i>x</i>)</span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>Qinv</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>m</i></span></code> double-precision block diagonal
+matrix containing the matrix inverse of <i>Q</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>h_x</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> double-precision
+matrix containing the 
+<a href="glossary_frame1.htm#Derivative" target="frame1"><i><span style='white-space: nowrap'>derivative</span></i></a>
+ of <code><span style='white-space: nowrap'><i>h</i>(<i>x</i>)</span></code>;
+i.e., <code><span style='white-space: nowrap'><i>h</i>_<i>x</i>(<i>x</i>)</span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>Q_x</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>*<i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> double-precision
+matrix containing the 
+<a href="glossary_frame1.htm#Derivative" target="frame1"><i><span style='white-space: nowrap'>derivative</span></i></a>
+ of <code><span style='white-space: nowrap'><i>Q</i>(<i>x</i>)</span></code>; 
+i.e., <code><span style='white-space: nowrap'><i>Q</i>_<i>x</i>(<i>x</i>)</span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>N</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>nInd</i>&nbsp;<i>by</i>&nbsp;1</span></code> double-precision matrix 
+containing the block sizes of Q matrix.  nInd is the number of
+blocks (number of individuals).
+ 
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+Suppose that
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;2*<i>x</i>(1)&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<i>x</i>(3)&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;0&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;1&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>Q</i>(<i>x</i>)&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>x</i>(2)&nbsp;&nbsp;0.5&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<i>h</i>(<i>x</i>)&nbsp;=&nbsp;&nbsp;|&nbsp;<i>x</i>(3)&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<i>z</i>&nbsp;=&nbsp;|&nbsp;0&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<i>N</i>&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.5&nbsp;&nbsp;&nbsp;<i>x</i>(2)&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<i>x</i>(3)&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;0&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;2&nbsp;/<br>
+</span></code>It follows that
+<code><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>g</i>(<i>x</i>)&nbsp;=&nbsp;1/2*log[(2&nbsp;pi)^2*2*<i>x</i>(1)(<i>x</i>(2)^2-0.25)]+<i>x</i>(3)^2*[0.25/<i>x</i>(1)+1/(<i>x</i>(2)+0.5)]<br>
+</span></code>The gradient of <code><span style='white-space: nowrap'><i>g</i>(<i>x</i>)</span></code> is equal to
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;0.5*<i>x</i>(1)-0.25*<i>x</i>(3)^2/<i>x</i>(1)^2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<i>x</i>(2)/(<i>x</i>(2)^-0.25)-<i>x</i>(3)^2/(<i>x</i>(2)+0.5)^2&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;<i>x</i>(3)[0.5/<i>x</i>(1)+2/(<i>x</i>(2)+0.5)]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+</span></code>If all the components of <code><span style='white-space: nowrap'><i>x</i></span></code> are one, 
+the derivative of <code><span style='white-space: nowrap'><i>g</i>(<i>x</i>)</span></code> is equal to
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0.25&nbsp;,&nbsp;8/9&nbsp;,&nbsp;5.5/3&nbsp;]<br>
+</span></code>If you compile and link the following program:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#include&nbsp;&lt;iostream&gt;<br>
+#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+#include&nbsp;&quot;SpkModel.h&quot;<br>
+#include&nbsp;&quot;SpkValarray.h&quot;<br>
+#include&nbsp;&quot;elsq_xBlockDiag.h&quot;<br>
+<br>
+using&nbsp;namespace&nbsp;std;<br>
+<br>
+class&nbsp;UserModel&nbsp;:&nbsp;public&nbsp;SpkModel<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;_b;<br>
+public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;UserModel(){};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;~UserModel(){};<br>
+protected:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSetIndPar(const&nbsp;valarray&lt;double&gt;&amp;&nbsp;b)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_b&nbsp;=&nbsp;b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataMean(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;return&nbsp;{&nbsp;b(3),&nbsp;b(3),&nbsp;b(3)&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(&nbsp;3,&nbsp;0.0);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;_b[2];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[1]&nbsp;=&nbsp;_b[2];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[2]&nbsp;=&nbsp;_b[2];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataMean_indPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;return&nbsp;{&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;0&nbsp;,&nbsp;0&nbsp;,&nbsp;1&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;0&nbsp;,&nbsp;0&nbsp;,&nbsp;1&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;0&nbsp;,&nbsp;0&nbsp;,&nbsp;1&nbsp;]&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(&nbsp;9,&nbsp;0.0);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[6]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[7]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[8]&nbsp;=&nbsp;1.0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataVariance(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;return&nbsp;{&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;*&nbsp;b(1)&nbsp;,&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;&nbsp;b(2),&nbsp;&nbsp;&nbsp;0.5&nbsp;&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;&nbsp;0.5,&nbsp;&nbsp;&nbsp;&nbsp;b(2)&nbsp;]&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(&nbsp;9,&nbsp;0.0&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;2.0&nbsp;*&nbsp;_b[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[4]&nbsp;=&nbsp;_b[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[5]&nbsp;=&nbsp;0.5;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[7]&nbsp;=&nbsp;0.5;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[8]&nbsp;=&nbsp;_b[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataVariance_indPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;return&nbsp;{&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;2&nbsp;,&nbsp;0&nbsp;,&nbsp;0&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;0&nbsp;,&nbsp;0&nbsp;,&nbsp;0&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;0&nbsp;,&nbsp;0&nbsp;,&nbsp;0&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;0&nbsp;,&nbsp;0&nbsp;,&nbsp;0&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;0&nbsp;,&nbsp;1&nbsp;,&nbsp;0&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;0&nbsp;,&nbsp;0&nbsp;,&nbsp;0&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;0&nbsp;,&nbsp;0&nbsp;,&nbsp;0&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;0&nbsp;,&nbsp;0&nbsp;,&nbsp;0&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;0&nbsp;,&nbsp;1&nbsp;,&nbsp;0&nbsp;]&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(&nbsp;27,&nbsp;0.0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;2.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[13]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[17]&nbsp;=&nbsp;1.0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;<br>
+};<br>
+void&nbsp;main()<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;nB&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;nY&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;h,&nbsp;h_x,&nbsp;Q,&nbsp;Q_x,&nbsp;QInv;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;UserModel&nbsp;model;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;b(1.0,&nbsp;nB);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;y(0.0,&nbsp;nY);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model.setIndPar(b);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model.dataMean(h);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model.dataMean_indPar(h_x);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model.dataVariance(Q);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model.dataVarianceInv(QInv);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model.dataVariance_indPar(Q_x);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dvecR&nbsp;&nbsp;&nbsp;(&nbsp;y-h,&nbsp;&nbsp;1&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatQ&nbsp;&nbsp;&nbsp;(&nbsp;Q,&nbsp;&nbsp;&nbsp;&nbsp;nY&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatH_x&nbsp;(&nbsp;h_x,&nbsp;&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatQ_x&nbsp;(&nbsp;Q_x,&nbsp;&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatQInv(&nbsp;QInv,&nbsp;nY&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dvecN&nbsp;&nbsp;&nbsp;(&nbsp;2,&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dvecN.data()[&nbsp;0&nbsp;]&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dvecN.data()[&nbsp;1&nbsp;]&nbsp;=&nbsp;2;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Compute&nbsp;dg/dx<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatDerivExact&nbsp;=&nbsp;elsq_xBlockDiag(&nbsp;dvecR,&nbsp;dmatQInv,&nbsp;dmatH_x,&nbsp;dmatQ_x,&nbsp;dvecN&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;elsq_xBlockDiag&nbsp;=&nbsp;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dmatDerivExact.print();<br>
+}<br>
+<br>
+</span>
+</font></code>
+it displays the following:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+elsq_xBlockDiag&nbsp;=&nbsp;[&nbsp;0.25&nbsp;0.888889&nbsp;1.83333&nbsp;]<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/elsq_xBlockDiag.cpp
+
+</body>
+</html>

@@ -1,0 +1,132 @@
+<html><head>
+<title>Kronker Product Of Identity Matrix With B Multiplied by C (DoubleMatrix version)</title>
+<meta name="description" id="description" content="Kronker Product Of Identity Matrix With B Multiplied by C (DoubleMatrix version)">
+<meta name="keywords" id="keywords" content=" Ikronbtimesc (doublematrix version) kronker product fast and memory efficient computation of matrix saving space time "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="ikronbtimesc.htm" target="_top">section</a>, <a href="ikronbtimesc_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This is a modified version of <a href="akronbtimesc.htm" target="_top"><span style='white-space: nowrap'>AkronBtimesC(A,B,C)</span></a>
+ such that
+it takes an identity matrix in place of <i>A</i>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Often the kronker product of two matrices is matrix multiplied by a third matrix.
+In this case, when the first matrix is known to be an identity matrix,
+you can save space and time by forming the final product using the statement
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;dmatResult&nbsp;=&nbsp;IkronBtimesC(I,&nbsp;B,&nbsp;C)<br>
+</span>
+</font></code>
+instead of the statement
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;dmatResult&nbsp;=&nbsp;kron(I,B)&nbsp;*&nbsp;C<br>
+</span>
+</font></code>
+which would both calculate the same result.
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+IkronBtimesC&nbsp;=&nbsp;[&nbsp;a11*I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a12*I&nbsp;&nbsp;...&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a21*I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a22*I&nbsp;&nbsp;...&nbsp;]&nbsp;*&nbsp;C<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a11*I*c1&nbsp;+&nbsp;a12*I*c2&nbsp;&nbsp;...]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a21*I*c1&nbsp;+&nbsp;a22*I*c2&nbsp;...&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+</span>
+</font></code>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>Im</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>m</i></span></code>, where m and n are greater than or equal to zero.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>B</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>x</i>&nbsp;<i>by</i>&nbsp;<i>y</i></span></code> identity matrix.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>C</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>*<i>x</i>&nbsp;<i>by</i>&nbsp;<i>k</i></span></code> matrix.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>D</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>*<i>x</i></span></code> by <code><span style='white-space: nowrap'><i>n</i>*<i>y</i></span></code> matrix that will contain the resulting matrix value.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you write, link and run the following program,
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;IkronBtimesC.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;AkronBtimesC.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;IkronBtimesCTest::IkronBtimesCEx()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;m&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;n&nbsp;=&nbsp;m;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;x&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;y&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;k&nbsp;=&nbsp;4;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;seq[]&nbsp;=&nbsp;{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;I&nbsp;=&nbsp;identity(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;B(x,y);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;C(n*y,k);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::copy(seq,&nbsp;seq+x*y,&nbsp;B.data());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::copy(seq,&nbsp;seq+n*y*k,&nbsp;C.data());<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;IBC&nbsp;=&nbsp;IkronBtimesC(I,B,C);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;ABC&nbsp;=&nbsp;AkronBtimesC(I,B,C);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;ABC=&quot;&nbsp;&lt;&lt;&nbsp;ABC&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;IBC=&quot;&nbsp;&lt;&lt;&nbsp;IBC&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+</span>
+</font></code>
+the following matrices will be displayed.
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+ABC=2&nbsp;by&nbsp;4<br>
+[&nbsp;1.0000000000000000e+001&nbsp;2.8000000000000000e+001&nbsp;4.6000000000000000e+001&nbsp;6.4000000000000000e+001&nbsp;]<br>
+[&nbsp;1.3000000000000000e+001&nbsp;4.0000000000000000e+001&nbsp;6.7000000000000000e+001&nbsp;9.4000000000000000e+001&nbsp;]<br>
+<br>
+IBC=2&nbsp;by&nbsp;4<br>
+[&nbsp;1.0000000000000000e+001&nbsp;2.8000000000000000e+001&nbsp;4.6000000000000000e+001&nbsp;6.4000000000000000e+001&nbsp;]<br>
+[&nbsp;1.3000000000000000e+001&nbsp;4.0000000000000000e+001&nbsp;6.7000000000000000e+001&nbsp;9.4000000000000000e+001&nbsp;]<br>
+</span>
+</font></code>
+will be displayed.
+
+
+<hr>Input File: ../../spk/IkronBtimesC.cpp
+
+</body>
+</html>

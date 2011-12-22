@@ -1,0 +1,264 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Linking a Library</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Linking a Library">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Linking a Library">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC76"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_75.html#SEC75" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Linking an Executable" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_77.html#SEC77" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Inter-library Dependencies" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_79.html#SEC79" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Executing Uninstalled Binaries" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_68.html#SEC68" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Introducing GNU Libtool" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_79.html#SEC79" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Executing Uninstalled Binaries" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 10.4 Linking a Library </H2>
+<!--docid::SEC76::-->
+<P>
+
+Libraries often rely on code in other libraries.  Traditionally the way
+to deal with this is to <EM>know</EM> what the dependencies are and, when
+linking an executable, be careful to list all of the dependencies on the
+link line in the correct order.  If you have ever built an X Window
+application using a widget library, you will already be familiar with
+this notion.
+</P><P>
+
+Even though you only use the functions in the widget library directly, a
+typical link command would need to be:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ gcc -o Xtest -I/usr/X11R6/include Xtest.c -L/usr/X11R6/lib \
+-lXm -lXp -lXaw -lXmu -lX11 -lnsl -lsocket
+</FONT></pre></td></tr></table></P><P>
+
+With modern architectures, this problem has been solved by allowing
+libraries to be linked into other libraries, but this feature is not yet
+particularly portable.  If you are trying to write a portable project,
+it is not safe to rely on native support for inter-library dependencies,
+especially if you want to have dependencies between static and shared
+archives.  Some of the features discussed in this section were not fully
+implemented before Libtool 1.4, so you should make sure that you are
+using this version or newer if you need these features.
+</P><P>
+
+<BLOCKQUOTE>
+If you want to try the examples in this section to see what
+<CODE>libtool</CODE> does on your machine, you will first need to modify
+the source of <TT>`hello.c'</TT> to introduce a dependency on <TT>`trim.c'</TT>: 
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>#include &#60;stdio.h&#62;
+
+extern char *trim ();
+extern void free ();
+
+void
+hello (char *who)
+{
+  char *trimmed = trim (who);
+  printf ("Hello, %s!\n", trimmed);
+  free (trimmed);
+}
+
+
+</FONT></pre></td></tr></table></P><P>
+
+You might also want to modify the <TT>`main.c'</TT> file to exercise the new
+<SAMP>`trim'</SAMP> functionality to prove that the newly linked executable is
+working:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>void hello ();
+
+int
+main (int argc, char *argv[])
+{
+  hello ("\tWorld \r\n");
+  exit (0);
+}
+
+
+</FONT></pre></td></tr></table></BLOCKQUOTE>
+<P>
+
+Suppose I want to make two libraries, <TT>`libtrim'</TT> and
+<TT>`libhello'</TT>.  <TT>`libhello'</TT> uses the <SAMP>`trim'</SAMP> function in
+<TT>`libtrim'</TT> but the code in <TT>`main'</TT> uses only the <SAMP>`hello'</SAMP>
+function in <TT>`libhello'</TT>.  Traditionally, the two libraries are built
+like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ rm hello *.a *.la *.o *.lo
+$ gcc -c trim.c
+$ ls
+hello.c   main.c   trim.c   trim.o
+$ ar cru libtrim.a trim.o
+$ ranlib libtrim.a
+$ gcc -c hello.c
+$ ls
+hello.c   hello.o   libtrim.a   main.c   trim.c   trim.o
+$ ar cru libhello.a hello.o
+$ ranlib libhello.a
+$ ls
+hello.c   libhello.a   main.c   trim.o
+hello.o   libtrim.a    trim.c
+</FONT></pre></td></tr></table></P><P>
+
+Notice that there is no way to specify that <TT>`libhello.a'</TT> won't work
+unless it is also linked with <TT>`libtrim.a'</TT>.  Because of this I need
+to list both libraries when I link the application.  What's more, I need
+to list them in the correct order:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ gcc -o hello main.c libtrim.a libhello.a
+/usr/bin/ld: Unsatisfied symbols:
+   trim (code)
+collect2: ld returned 1 exit status
+$ gcc -o hello main.c libhello.a libtrim.a
+$ ls
+hello     hello.o      libtrim.a   trim.c
+hello.c   libhello.a   main.c      trim.o
+$ ./hello
+Hello, World!
+</FONT></pre></td></tr></table></P><P>
+
+<A NAME="Inter-library Dependencies"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

@@ -1,0 +1,46 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.88
+----------------------------------
+USER VISIBLE CHANGES
+SPK Compiler complains when the user labels more than one
+data item with the same name.
+
+The EVID data item is inserted when it does not appear
+in a data set.
+
+OTHER CHANGES
+MDV and EVID are inserted into the data set parse tree.
+
+
+RELATED BUG REPORTS: 300
+
+BY: Sachiko Honda
+
+WHEN: Auguest 5, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.89
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Added CompartmentInfo and CompModelInfo classes for SPK Compiler.
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: August 9, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.90
+----------------------------------
+USER VISIBLE CHANGES
+End-job email notice option was added to the system.
+
+OTHER CHANGES
+Stopping sensor was added to spkcmpd.pl and spkrund.pl when daemon stops.
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: August 15, 2005

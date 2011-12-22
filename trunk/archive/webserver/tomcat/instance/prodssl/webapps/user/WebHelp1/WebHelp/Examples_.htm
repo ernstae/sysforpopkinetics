@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <meta name="generator" content="Adobe RoboHelp 8" />
+<title>Examples:</title>
+<link rel="StyleSheet" href="default.css" type="text/css" />
+<script type="text/javascript" language="JavaScript">
+//<![CDATA[
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//]]>
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute;
+left:0px;
+top:0px;
+z-index:4;
+visibility:hidden; }
+-->
+</style>
+<script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whlang.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+
+</head>
+
+<body><script type="text/javascript" language="javascript1.2">//<![CDATA[
+<!--
+if (window.gbWhTopic)
+{
+	var strUrl = document.location.href;
+	var bc = 0;
+	var n = strUrl.toLowerCase().indexOf("bc-");
+	if(n != -1)
+	{
+		document.location.href = strUrl.substring(0, n);
+		bc = strUrl.substring(n+3);
+	}
+
+	if (window.addTocInfo)
+	{
+	addTocInfo("SPKStart\nExample:");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	
+	document.write("<p style=\"text-align:right\"> ");
+AddMasterBreadcrumbs("SPKStart.htm", "", ">", "Home", "Getting_Startted_with_SPK.htm");
+document.write("<a href=\"Getting_Startted_with_SPK.htm\">SPKStart<\/a> > Example:<\/p>");
+
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("SPKStart.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+
+//-->
+//]]></script>
+<h1>Example:</h1>
+<p>This example is from: Pinheiro, J. C. and Bates, D. M. (2000), Mixed-Effects 
+ Models in S and S-PLUS, Springer, New York. (Appendix A.26). The data 
+ are from longitudinal stress testing in railway rails. Each of 6 rails 
+ was tested 3 times by measuring the travel time of an ultrasonic wave 
+ along the length of the rail. The data are shown here </p>
+<p>1 &#160;55</p>
+<p>1 &#160;53</p>
+<p>1 &#160;54</p>
+<p>2 &#160;26</p>
+<p>2 &#160;37</p>
+<p>2 &#160;32</p>
+<p>3 &#160;78</p>
+<p>3 &#160;91</p>
+<p>3 &#160;85</p>
+<p>4 &#160;92</p>
+<p>4 100</p>
+<p>4 &#160;96</p>
+<p>5 &#160;49</p>
+<p>5 &#160;51</p>
+<p>5 &#160;50</p>
+<p>6 &#160;80</p>
+<p>6 &#160;85</p>
+<p>6 &#160;83</p>
+<p>with rail ID in the first column and travel time, in nanoseconds minus 
+ 36,100 nanoseconds, in the second column. The full dataset can also be 
+ found in the SPK dataset library. For the purposes of this tutorial, copy 
+ the data in a text file and save them in your local file system.</p>
+<p>&#160;</p>
+<p>The mixed effects model we wish to apply is</p>
+<p>&#160;</p>
+<p>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;<img src="CapturedImg35.gif" alt="CapturedImg35.gif" style="border: none;" width="113" height="24" border="0" /></p>
+<p>&#160;</p>
+<p>where <img src="CapturedImg37.gif" alt="CapturedImg37.gif" style="border: none;" width="20" height="22" border="0" />&#160;represents the data for 
+ observation <span style="font-style: italic;"><i>j</i></span> on rail <span style="font-style: italic;"><i>i</i></span>, 
+ <img src="CapturedImg38.gif" alt="CapturedImg38.gif" style="border: none;" width="15" height="22" border="0" />&#160;is the mean sampled travel time, <img src="CapturedImg39.gif" alt="CapturedImg39.gif" style="border: none;" width="89" height="22" border="0" />&#160;is 
+ the random variable representing mean deviation in travel time for the 
+ <span style="font-style: italic;"><i>i</i></span><img src="CapturedImg45.gif" alt="CapturedImg45.gif" style="border: none;" width="13" height="17" border="0" /> rail and 
+ <img src="CapturedImg40.gif" alt="CapturedImg40.gif" style="border: none;" width="86" height="22" border="0" />&#160;is the random variable representing deviation 
+ in the <span style="font-style: italic;"><i>j</i></span><img src="CapturedImg45.gif" alt="CapturedImg45.gif" style="border: none;" width="13" height="17" border="0" /> 
+ observation from the mean travel time on the <span style="font-style: italic;"><i>i</i></span><img src="CapturedImg45.gif" alt="CapturedImg45.gif" style="border: none;" width="13" height="17" border="0" /> rail.</p>
+<p>&#160;</p>
+<p>We wish to determine the best estimates of parameters <img src="CapturedImg38.gif" alt="CapturedImg38.gif" style="border: none;" width="15" height="22" border="0" />, 
+ <img src="CapturedImg41.gif" alt="CapturedImg41.gif" style="border: none;" width="16" height="19" border="0" />&#160;and <img src="CapturedImg42.gif" alt="CapturedImg42.gif" style="border: none;" width="13" height="17" border="0" />&#160;– 
+ represented as THETA, OMEGA and SIGMA in the MDA – given the available 
+ data. Parameters <img src="CapturedImg43.gif" alt="CapturedImg43.gif" style="border: none;" width="17" height="19" border="0" />&#160;and 
+ <img src="CapturedImg44.gif" alt="CapturedImg44.gif" style="border: none;" width="17" height="19" border="0" />&#160;are represented as ETA and EPS in the MDA.</p>
+<script type="text/javascript" language="javascript1.2">//<![CDATA[
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+
+
+highlightSearch();
+//-->
+//]]></script>
+</body>
+</html>

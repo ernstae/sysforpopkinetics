@@ -1,0 +1,77 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.125
+----------------------------------
+USER VISIBLE CHANGES
+The EVID column is inserted into the data set when it is missing.
+The linear interpolator can interpolate variables on the data records
+of which corresponding MDV is 1.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 189, 476, 479
+
+BY: Sachiko Honda
+
+WHEN: October 19, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.126
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Must install QN01Box before compiling.
+
+RELATED BUG REPORTS:
+The regression_test now fail becasue an extra column has been added
+to one of the arrays in result.xml (otherwise results are identical).
+
+BY:
+Brad Bell
+
+WHEN:
+05-10-21
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.127
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY:
+
+WHEN:
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.128
+----------------------------------
+USER VISIBLE CHANGES
+Data items labeled as DROP are removed from the data set.
+T is passed to the linear interpolator instead of TIME.
+
+OTHER CHANGES
+F0, F3 FO, S0, T, TSCALE are now declared as non-const references.
+
+RELATED BUG REPORTS: 294, 501, 488
+
+BY: Sachiko Honda
+
+WHEN: October 26, 2005
+
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.129
+----------------------------------
+USER VISIBLE CHANGES
+You can now have measurements at the same time as change conditions (for example, at time zero).
+
+OTHER CHANGES
+The routine OdeBreak will allow one to specify not only the time of a measurement but also if any changes at the same time come before or after the measurement.
+
+RELATED BUG REPORTS:
+466
+
+BY:
+Brad
+
+WHEN:
+05-10-27

@@ -1,0 +1,338 @@
+<html><head>
+<title>Transposing Row-based Blocks (Valarray Version)</title>
+<meta name="description" id="description" content="Transposing Row-based Blocks (Valarray Version)">
+<meta name="keywords" id="keywords" content=" transposerowblocksva transpose of row-based blocks (valarray version) ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_transposerowblocksva_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>general</option>
+<option>transposeRowBlocksVA</option>
+</select>
+</td>
+<td><a href="transposerowblocks.htm" target="_top">Prev</a>
+</td><td><a href="utrantimessymkronsymtimesu.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>general-&gt;</option>
+<option>ABA_x</option>
+<option>ABA_xVA</option>
+<option>addition</option>
+<option>AkronBtimesC</option>
+<option>AkronBtimesCRef</option>
+<option>AkronBtimesCVA</option>
+<option>AkronItimesC</option>
+<option>AkronItimesCVA</option>
+<option>allTrue</option>
+<option>allZero</option>
+<option>backDiv</option>
+<option>BlockAlloc</option>
+<option>blockDiagonalDerivative</option>
+<option>centdiff</option>
+<option>centdiffVA</option>
+<option>cholesky</option>
+<option>countTrues</option>
+<option>CovarianceClasses</option>
+<option>elsq</option>
+<option>elsqVA</option>
+<option>elsqFuncOb</option>
+<option>elsq_x</option>
+<option>elsq_xVA</option>
+<option>elsq_xDiag</option>
+<option>elsq_xBlockDiag</option>
+<option>DBL_EPS_EQUAL_MULT</option>
+<option>det</option>
+<option>detVA</option>
+<option>divByScalar</option>
+<option>DMclass</option>
+<option>elementwiseAnd</option>
+<option>elementwiseOr</option>
+<option>File</option>
+<option>FpErrorChecker</option>
+<option>ModelFunction</option>
+<option>ModelDerivative</option>
+<option>getCol</option>
+<option>getMulCols</option>
+<option>getMulRows</option>
+<option>getRow</option>
+<option>getSubblock</option>
+<option>identityNum</option>
+<option>identityVA</option>
+<option>IkronBtimesC</option>
+<option>IkronBtimesCVA</option>
+<option>inverse</option>
+<option>inverseVA</option>
+<option>inxToMax</option>
+<option>isDblEpsEqual</option>
+<option>isDmatEpsEqual</option>
+<option>isGreaterThanOrEqualTo</option>
+<option>isLessThanOrEqualTo</option>
+<option>isSymmetric</option>
+<option>matabs</option>
+<option>matmaxScalar</option>
+<option>matmaxMatrices</option>
+<option>matminScalar</option>
+<option>matminMatrices</option>
+<option>mulByScalar</option>
+<option>multiply</option>
+<option>norm</option>
+<option>Optimizer</option>
+<option>pi</option>
+<option>placeRows</option>
+<option>printInMatrix</option>
+<option>quasinewtonanybox</option>
+<option>replaceIth</option>
+<option>replaceJth</option>
+<option>replaceSubblockDoubleMatrix</option>
+<option>replaceSubblockValarray</option>
+<option>rvec</option>
+<option>rvecVA</option>
+<option>rvecInverse</option>
+<option>SpkError</option>
+<option>SpkException</option>
+<option>SpkValarray</option>
+<option>subtraction</option>
+<option>symmetrize</option>
+<option>symmetrizeVA</option>
+<option>System</option>
+<option>transpose</option>
+<option>transposeRef</option>
+<option>transposeVA</option>
+<option>transposeDerivative</option>
+<option>transposeDerivativeVA</option>
+<option>transposeRowBlocks</option>
+<option>transposeRowBlocksVA</option>
+<option>UTranTimesSymKronSymTimesU</option>
+<option>UTranTimesSymKronSymTimesU_x</option>
+<option>WarningsManager_constructor</option>
+<option>WarningsManager_addWarning</option>
+<option>WarningsManager_addWarningList</option>
+<option>WarningsManager_clearAllWarnings</option>
+<option>WarningsManager_anyWarnings</option>
+<option>WarningsManager_getWarningList</option>
+<option>WarningsManager_getAllWarnings</option>
+</select>
+</td>
+<td>transposeRowBlocksVA</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Arguments</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Transposing Row-based Blocks (Valarray Version)</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype:</b>   </td><td align='left'  valign='top'>
+  
+<code><font color="blue"><span style='white-space: nowrap'>const&nbsp;DoubleMatrix&nbsp;transposeRowBlocks(const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;int&nbsp;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;int&nbsp;</span></font></code><i><span style='white-space: nowrap'>m</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code> </td></tr><tr><td align='left'  valign='top'>
+
+<b>See Also</b> </td><td align='left'  valign='top'>
+ <a href="transposerowblocks.htm" target="_top"><span style='white-space: nowrap'>DoubleMatrix&nbsp;version</span></a>
+  </td></tr><tr><td align='left'  valign='top'>
+
+</td></tr>
+</table>
+<br>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Given a matrix, <i>A</i>, composed of <code><span style='white-space: nowrap'><i>k</i></span></code> number of 
+<code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> sub matrices, <code><span style='white-space: nowrap'><i>A</i>[<i>i</i>]</span></code>, such that:
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;<i>A</i>&nbsp;&nbsp;=&nbsp;|&nbsp;&nbsp;<i>A</i>[1]&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<i>A</i>[2]&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<i>A</i>[<i>k</i>]&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;|&nbsp;&nbsp;<i>A</i>[1](1,1),&nbsp;<i>A</i>[1](1,2),&nbsp;...&nbsp;<i>A</i>[1](1,<i>n</i>)&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<i>A</i>[1](2,1),&nbsp;<i>A</i>[1](2,2),&nbsp;...&nbsp;<i>A</i>[1](2,<i>n</i>)&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<i>A</i>[1](<i>m</i>,1),&nbsp;<i>A</i>[1](<i>m</i>,2),&nbsp;...&nbsp;<i>A</i>[1](<i>m</i>,<i>n</i>)&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<i>A</i>[2](1,1),&nbsp;<i>A</i>[2](1,2),&nbsp;...&nbsp;<i>A</i>[2](1,<i>n</i>)&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<i>A</i>[2](2,1),&nbsp;<i>A</i>[2](2,2),&nbsp;...&nbsp;<i>A</i>[2](2,<i>n</i>)&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<i>A</i>[2](<i>m</i>,1),&nbsp;<i>A</i>[2](<i>m</i>,2),&nbsp;...&nbsp;<i>A</i>[2](<i>m</i>,<i>n</i>)&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-----------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<i>A</i>[<i>k</i>](1,1),&nbsp;<i>A</i>[<i>k</i>](1,2),&nbsp;...&nbsp;<i>A</i>[<i>k</i>](1,<i>n</i>)&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<i>A</i>[<i>k</i>](2,1),&nbsp;<i>A</i>[<i>k</i>](2,2),&nbsp;...&nbsp;<i>A</i>[<i>k</i>](2,<i>n</i>)&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<i>A</i>[<i>k</i>](<i>m</i>,1),&nbsp;<i>A</i>[<i>k</i>](<i>m</i>,2),&nbsp;...&nbsp;<i>A</i>[<i>k</i>](<i>m</i>,<i>n</i>)&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+</span></code>the row-based transpose of <code><span style='white-space: nowrap'><i>A</i></span></code> is a <code><span style='white-space: nowrap'><i>k</i>&nbsp;*&nbsp;<i>n</i>&nbsp;<i>by</i>&nbsp;<i>m</i></span></code> matrix, <code><span style='white-space: nowrap'><i>B</i></span></code>,
+composed of transpose of <code><span style='white-space: nowrap'><i>A</i>[<i>i</i>]</span></code>
+in the following fashion:
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;<i>B</i>&nbsp;&nbsp;=&nbsp;|&nbsp;&nbsp;<i>A</i>[1]'&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<i>A</i>[2]'&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<i>A</i>[<i>k</i>]'&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;|&nbsp;<i>A</i>[1](1,1),&nbsp;<i>A</i>[1](2,1),&nbsp;...&nbsp;<i>A</i>[1](<i>m</i>,1)&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<i>A</i>[1](1,2),&nbsp;<i>A</i>[1](2,2),&nbsp;...&nbsp;<i>A</i>[1](<i>m</i>,2)&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<i>A</i>[1](1,<i>n</i>),&nbsp;<i>A</i>[1](2,<i>n</i>),&nbsp;...&nbsp;<i>A</i>[1](<i>m</i>,<i>n</i>)&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<i>A</i>[2](1,1),&nbsp;<i>A</i>[2](2,1),&nbsp;...&nbsp;<i>A</i>[2](<i>m</i>,1)&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<i>A</i>[2](1,2),&nbsp;<i>A</i>[2](2,2),&nbsp;...&nbsp;<i>A</i>[2](<i>m</i>,2)&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<i>A</i>[2](1,<i>n</i>),&nbsp;<i>A</i>[2](2,<i>n</i>),&nbsp;...&nbsp;<i>A</i>[2](<i>m</i>,<i>n</i>)&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<i>A</i>[<i>k</i>](1,1),&nbsp;<i>A</i>[<i>k</i>](2,1),&nbsp;...&nbsp;<i>A</i>[<i>k</i>](<i>m</i>,1)&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<i>A</i>[<i>k</i>](1,2),&nbsp;<i>A</i>[<i>k</i>](2,2),&nbsp;...&nbsp;<i>A</i>[<i>k</i>](<i>m</i>,2)&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<i>A</i>[<i>k</i>](1,<i>n</i>),&nbsp;<i>A</i>[<i>k</i>](2,<i>n</i>),&nbsp;...&nbsp;<i>A</i>[<i>k</i>](<i>m</i>,<i>n</i>)&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+</span></code>This valarray version of <code><font color="blue">transposeRowBlocks</font></code> orders <code><span style='white-space: nowrap'><i>B</i></span></code> in the column order
+and, thus, returns a <code><span style='white-space: nowrap'><i>k</i>&nbsp;*&nbsp;<i>n</i>&nbsp;*&nbsp;<i>m</i></span></code> size vector.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>When dimensions do not match, the program terminates.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is an array storing, in the column major order,
+the <code><span style='white-space: nowrap'><i>k</i>&nbsp;*&nbsp;<i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> matrix, <code><span style='white-space: nowrap'><i>A</i></span></code>, described above.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>k</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is the number of columns in the <code><span style='white-space: nowrap'><i>A</i></span></code> matrix.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>m</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is the number of rows in a <code><span style='white-space: nowrap'><i>A</i>[<i>i</i>]</span></code> submatrix.
+The value must be positive.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;transposeRowBlocks.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;SpkValarray.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;SPK_VA::valarray;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Given&nbsp;a&nbsp;4&nbsp;by&nbsp;3&nbsp;matrix,&nbsp;A:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;1.11e+002&nbsp;1.12e+002&nbsp;1.13e+002&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;1.21e+002&nbsp;1.22e+002&nbsp;1.23e+002&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;2.11e+002&nbsp;2.12e+002&nbsp;2.13e+002&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;2.21e+002&nbsp;2.22e+002&nbsp;2.23e+002&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;The&nbsp;corresponding&nbsp;valarray&nbsp;object,&nbsp;a,&nbsp;will&nbsp;contain&nbsp;the&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;in&nbsp;the&nbsp;following&nbsp;order:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;a&nbsp;=&nbsp;[&nbsp;111,&nbsp;121,&nbsp;211,&nbsp;221,&nbsp;112,&nbsp;122,&nbsp;212,&nbsp;222,&nbsp;113,&nbsp;123,&nbsp;213,&nbsp;223&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;a(&nbsp;4&nbsp;*&nbsp;3&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[0]&nbsp;=&nbsp;111;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[1]&nbsp;=&nbsp;121;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[2]&nbsp;=&nbsp;211;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[3]&nbsp;=&nbsp;221;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[4]&nbsp;=&nbsp;112;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[5]&nbsp;=&nbsp;122;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[6]&nbsp;=&nbsp;212;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[7]&nbsp;=&nbsp;222;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[8]&nbsp;=&nbsp;113;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[9]&nbsp;=&nbsp;123;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[10]=&nbsp;213;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[11]=&nbsp;223;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Assume&nbsp;the&nbsp;subblock&nbsp;contained&nbsp;in&nbsp;A&nbsp;has&nbsp;2&nbsp;rows&nbsp;in&nbsp;each.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;m&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Call&nbsp;the&nbsp;function&nbsp;and&nbsp;puts&nbsp;the&nbsp;result&nbsp;to&nbsp;C<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;c&nbsp;=&nbsp;transposeRowBlocks(a,&nbsp;3,&nbsp;m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;[&nbsp;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(&nbsp;int&nbsp;i=0;&nbsp;i&lt;&nbsp;c.size();&nbsp;i++&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;c[i]&nbsp;&lt;&lt;&nbsp;&quot;,&nbsp;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;&nbsp;]&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+displays the following matrix:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;111,&nbsp;112,&nbsp;113,&nbsp;211,&nbsp;212,&nbsp;213,&nbsp;121,&nbsp;122,&nbsp;123,&nbsp;221,&nbsp;222,&nbsp;223,&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/transposeRowBlocks.cpp
+
+</body>
+</html>

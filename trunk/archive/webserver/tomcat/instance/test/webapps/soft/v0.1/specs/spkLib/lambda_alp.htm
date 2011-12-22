@@ -1,0 +1,523 @@
+<html><head>
+<title>Derivative of the Individual Joint Negative Log-likelihood with Respect to alp</title>
+<meta name="description" id="description" content="Derivative of the Individual Joint Negative Log-likelihood with Respect to alp">
+<meta name="keywords" id="keywords" content=" lambda_alp lambda derivative of individual joint log-likelihood ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_lambda_alp_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>population</option>
+<option>lambda_alp</option>
+</select>
+</td>
+<td><a href="lambda.htm" target="_top">Prev</a>
+</td><td><a href="lambda_b.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>population-&gt;</option>
+<option>estimateB</option>
+<option>expectedHessian</option>
+<option>ExpectedHessianFuncOb</option>
+<option>ExpectedHessianValarrayFuncOb</option>
+<option>firstOrderOpt</option>
+<option>fitPopulation</option>
+<option>EqIndModel</option>
+<option>lambda</option>
+<option>lambda_alp</option>
+<option>lambda_b</option>
+<option>lambdaFuncOb</option>
+<option>lambdaDiff</option>
+<option>lambda2diff</option>
+<option>lTilde</option>
+<option>NaiveFoModel</option>
+<option>namespace_population_analysis</option>
+<option>Objective</option>
+<option>ppkaOpt</option>
+<option>popResiduals</option>
+<option>popStatistics</option>
+<option>popStatistics_DerivExist</option>
+<option>popStatistics_DerivExist_AllElemActive</option>
+<option>twoStageMethod</option>
+<option>spk_non_par</option>
+</select>
+</td>
+<td>lambda_alp</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Reference</option>
+<option>Return Value</option>
+<option>Arguments</option>
+<option>Example</option>
+<option>Coding Example</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Derivative of the Individual Joint Negative Log-likelihood with Respect to alp</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype:</b>   </td><td align='left'  valign='top'>
+  
+<code><font color="blue"><span style='white-space: nowrap'>const&nbsp;DoubleMatrix&nbsp;lambda_alp(&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SpkModel&lt;double&gt;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>alp</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;&nbsp;includeD<br>
+&nbsp;&nbsp;&nbsp;&nbsp;)</span></font></code>
+</td></tr>
+</table>
+See also: <a href="lambda.htm" target="_top"><span style='white-space: nowrap'>lambda</span></a>
+, <a href="lambda_b.htm" target="_top"><span style='white-space: nowrap'>lambda_b</span></a>
+
+<br>
+<br>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Evaluates the partial true derivative of the negative log-likelihood of <code><span style='white-space: nowrap'><i>y</i></span></code> and <code><span style='white-space: nowrap'><i>b</i></span></code> 
+with respect to the population parameter.  
+
+
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>To be specific,
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;-1<br>
+<i>Lambda</i>(<i>alp</i>,&nbsp;<i>b</i>)&nbsp;=&nbsp;-&nbsp;logdet[&nbsp;2&nbsp;pi&nbsp;<i>R</i>(<i>alp</i>,&nbsp;<i>b</i>)&nbsp;]&nbsp;+&nbsp;-&nbsp;[<i>y</i>&nbsp;-&nbsp;<i>f</i>(<i>alp</i>,&nbsp;<i>b</i>)]&nbsp;<i>R</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>)&nbsp;[<i>y</i>&nbsp;-&nbsp;<i>f</i>(<i>alp</i>,&nbsp;<i>b</i>)]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;-&nbsp;logdet[&nbsp;2&nbsp;pi&nbsp;<i>D</i>(<i>alp</i>)&nbsp;]&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;-&nbsp;<i>b</i>&nbsp;&nbsp;<i>D</i>&nbsp;(<i>alp</i>)&nbsp;&nbsp;<i>b</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2<br>
+</span></code>(The equation above uses
+<a href="glossary.htm#Individual Notation" target="_top"><span style='white-space: nowrap'>individual&nbsp;notation</span></a>
+.)
+
+
+<br>
+<br>
+<b><big><a name="Reference" id="Reference">Reference</a></big></b>
+
+<i><br>
+Approximating The Maximum Likelihood Estimate For Models With Random Parameter
+</i>
+
+
+
+
+<br>
+<br>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+The resulting value is returned as a <code><span style='white-space: nowrap'><i>n</i></span></code> dimensional row vector, 
+where <code><span style='white-space: nowrap'><i>n</i></span></code> is the size of <i>alp</i>.
+If a failure occurs during the evaluation, an SpkException object is
+thrown.  The state at which an exception is thrown is defined in
+<a href="glossary.htm#Exception Handling Policy" target="_top"><span style='white-space: nowrap'>Exception&nbsp;Handling&nbsp;Policy</span></a>
+.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+
+
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This function expects <i>model</i> to be 
+<a href="glossary.htm#Model Functions Depend on only b" target="_top"><span style='white-space: nowrap'>a&nbsp;function&nbsp;of&nbsp;b</span></a>
+
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i></span></code> dimensional column vector containing the data vector.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>alp</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><span style='white-space: nowrap'><i>n</i></span></code> dimensional column vector <i>alp</i>
+specifies a value for the fixed population parameter vector.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><span style='white-space: nowrap'><i>n</i></span></code> dimensional column vector <i>b</i>
+specifies a value for the random population parameter vector.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>includeD</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a boolean flag indicating as to whether the terms involving D (the variance of individuals parameters)
+are to be included in <code><span style='white-space: nowrap'><i>Lambda</i></span></code>.
+If false is given, the D terms will be completely eliminated from the calculation.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+Suppose that
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;<i>b</i>(1)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>R</i>(<i>alp</i>,&nbsp;<i>b</i>)&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>(1)&nbsp;/<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<i>alp</i>(1)&nbsp;&nbsp;0&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>D</i>(<i>alp</i>)&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;0&nbsp;&nbsp;<i>alp</i>(1)&nbsp;/<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<i>alp</i>(2)&nbsp;+&nbsp;<i>b</i>(2)&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>f</i>(<i>alp</i>,&nbsp;<i>b</i>)&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<i>alp</i>(2)&nbsp;+&nbsp;<i>b</i>(2)&nbsp;/<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;1&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>y</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;1&nbsp;/<br>
+</span></code>It follows that
+<code><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+<i>Lambda</i>(<i>alp</i>,&nbsp;<i>b</i>)&nbsp;=&nbsp;(1/2)&nbsp;log{[2&nbsp;pi&nbsp;<i>b</i>(1)]^2}&nbsp;&nbsp;&nbsp;+&nbsp;[1&nbsp;-&nbsp;<i>alp</i>(2)&nbsp;-&nbsp;<i>b</i>(2)]^2&nbsp;/&nbsp;<i>b</i>(1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;(1/2)&nbsp;log{[2&nbsp;pi&nbsp;<i>alp</i>(1)]^2}&nbsp;+&nbsp;(1/2)&nbsp;[<i>b</i>(1)^2&nbsp;+&nbsp;<i>b</i>(2)^2]&nbsp;/&nbsp;<i>alp</i>(1)<br>
+</span></code>The transpose of <code><span style='white-space: nowrap'><i>Lambda</i>_<i>alp</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> is equal to
+<code><span style='white-space: nowrap'><br>
+/&nbsp;1&nbsp;/&nbsp;<i>alp</i>(1)&nbsp;-&nbsp;(1/2)&nbsp;[<i>b</i>(1)^2&nbsp;+&nbsp;<i>b</i>(2)^2]&nbsp;/&nbsp;<i>alp</i>(1)^2&nbsp;&nbsp;\<br>
+|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;2&nbsp;[1&nbsp;-&nbsp;<i>alp</i>(2)&nbsp;-&nbsp;<i>b</i>(2)]&nbsp;/&nbsp;<i>b</i>(1)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+</span></code>If all the components of <code><span style='white-space: nowrap'><i>alp</i></span></code> and <code><span style='white-space: nowrap'><i>b</i></span></code> are one,
+<code><span style='white-space: nowrap'><br>
+<i>Lambda</i>(<i>alp</i>,&nbsp;<i>b</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;log(2&nbsp;pi)&nbsp;+&nbsp;log(2&nbsp;pi)&nbsp;+&nbsp;1&nbsp;&nbsp;+&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2&nbsp;log(2&nbsp;pi)&nbsp;+&nbsp;2<br>
+<br>
+<i>Lambda</i>_<i>alp</i>(<i>alp</i>,&nbsp;<i>b</i>)&nbsp;=&nbsp;[&nbsp;1&nbsp;-&nbsp;1&nbsp;,&nbsp;2&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[&nbsp;0&nbsp;,&nbsp;2&nbsp;]<br>
+<br>
+&nbsp;&nbsp;<br>
+</span></code><b><big><a name="Coding Example" id="Coding Example">Coding Example</a></big></b>
+<br>
+If you compile, link, and run the following program:
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;lambda.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;SpkModel.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;getY();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;getAlp();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;getB();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funD(&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funD_alp(const&nbsp;DoubleMatrix&nbsp;&amp;dmatD,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funF(&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp,&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;b&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funF_alp(const&nbsp;DoubleMatrix&nbsp;&amp;dvecF,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;b&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funF_b(&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecF,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;b&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funR(&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp,&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;b&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funR_alp(const&nbsp;DoubleMatrix&nbsp;&amp;dmatR,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;b&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funR_b(&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dmatR,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;b&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;UserModel&nbsp;:&nbsp;public&nbsp;SpkModel&lt;double&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;_a,&nbsp;_b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;_i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UserModel(){};&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~UserModel(){};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;protected:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSelectIndividual(int&nbsp;i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_i&nbsp;=&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSetPopPar(const&nbsp;valarray&lt;double&gt;&amp;&nbsp;a)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_a&nbsp;=&nbsp;DoubleMatrix(&nbsp;a,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSetIndPar(const&nbsp;valarray&lt;double&gt;&amp;&nbsp;b)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_b&nbsp;=&nbsp;DoubleMatrix(&nbsp;b,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataMean(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funF(_a,&nbsp;_b).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataMean_popPar(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doDataMean_popPar(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funF_alp(ret,&nbsp;_a,&nbsp;_b).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;!allZero(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataMean_indPar(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doDataMean_popPar(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funF_b(ret,&nbsp;_a,&nbsp;_b).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;!allZero(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataVariance(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funR(_a,&nbsp;_b).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataVariance_popPar(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doDataVariance(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funR_alp(ret,&nbsp;_a,&nbsp;_b).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;!allZero(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataVariance_indPar(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doDataVariance(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funR_b(ret,&nbsp;_a,&nbsp;_b).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;!allZero(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doIndParVariance(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funD(_a);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doIndParVariance_popPar(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doIndParVariance(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funD_alp(ret,&nbsp;_a).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;!allZero(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doIndParVarianceInv(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doIndParVariance(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;getDinv(ret).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doIndParVarianceInv_popPar(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doIndParVarianceInv(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funDinv_alp(ret,&nbsp;_a).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;!allZero(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initialize&nbsp;Model<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UserModel&nbsp;model;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;to&nbsp;request&nbsp;all&nbsp;outputs,&nbsp;allocate&nbsp;memory&nbsp;to&nbsp;all&nbsp;placeholders<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lambdaOut;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;lambda_alpOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lambda_bOut;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initialize&nbsp;y&nbsp;(individual's&nbsp;data),&nbsp;alpha&nbsp;(fixed&nbsp;parameter),&nbsp;and&nbsp;b&nbsp;(random&nbsp;parameter)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;getY(),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alp&nbsp;&nbsp;&nbsp;=&nbsp;getAlp(),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;getB();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;evaluate&nbsp;Lambda<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model.setPop(alp);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lambdaOut&nbsp;=&nbsp;lambda(&nbsp;model,&nbsp;y,&nbsp;alp,&nbsp;b,&nbsp;true&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Lambda&nbsp;-&nbsp;2&nbsp;log(2&nbsp;pi)&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;lambdaOut&nbsp;-&nbsp;2.0*log(2.0*PI)&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lambda_alpOut&nbsp;=&nbsp;lambda_alpOut(model,&nbsp;y,&nbsp;alp,&nbsp;b,&nbsp;true&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Lambda_alp&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lambda_alpOut.print();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Something&nbsp;sent&nbsp;wrong&nbsp;during&nbsp;the&nbsp;evaluation.&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;y&nbsp;=&nbsp;[1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;getY(){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;y(2,1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y.fill(1.0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;y;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;alpha&nbsp;=&nbsp;[1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;///<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;getAlp(){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;alp(2,1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alp.fill(1.0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;alp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;b&nbsp;=&nbsp;[1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[1]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;getB(){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;b(2,1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b.fill(1.0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;D&nbsp;=&nbsp;[alp(0)&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;alp(0)]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funD(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp&nbsp;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatD(2,2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*pD&nbsp;=&nbsp;dmatD.data(),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*palp&nbsp;=&nbsp;alp.data();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pD[0]&nbsp;=&nbsp;palp[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pD[1]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pD[2]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pD[3]&nbsp;=&nbsp;palp[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;dmatD;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;D_alp&nbsp;=&nbsp;[&nbsp;1&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funD_alp(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dmatD,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp&nbsp;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatD_alp(&nbsp;dmatD.nr()*dmatD.nc(),&nbsp;alp.nr()&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*pD_alp&nbsp;=&nbsp;dmatD_alp.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dmatD_alp.fill(0.0);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pD_alp[0]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pD_alp[3]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;dmatD_alp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f(alpha,&nbsp;b)&nbsp;=&nbsp;[&nbsp;alp(1)&nbsp;+&nbsp;b(1)&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;alp(1)&nbsp;+&nbsp;b(1)&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funF(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;b&nbsp;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatF(2,1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*palp&nbsp;=&nbsp;alp.data(),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*pb&nbsp;&nbsp;&nbsp;=&nbsp;b.data();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dmatF.fill(&nbsp;palp[1]&nbsp;+&nbsp;pb[1]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;dmatF;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f_alpha&nbsp;=&nbsp;[&nbsp;0&nbsp;&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funF_alp(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecF,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;b&nbsp;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatF_alp(dvecF.nr(),&nbsp;alp.nr());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*pf_alp&nbsp;=&nbsp;dmatF_alp.data();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pf_alp[0]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pf_alp[1]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pf_alp[2]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pf_alp[3]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;dmatF_alp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f_b&nbsp;=&nbsp;[&nbsp;0&nbsp;&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funF_b(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecF,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;b&nbsp;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatF_b(dvecF.nr(),&nbsp;b.nr());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*pf_b&nbsp;=&nbsp;dmatF_b.data();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pf_b[0]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pf_b[1]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pf_b[2]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pf_b[3]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;dmatF_b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;R(alpha,&nbsp;b)&nbsp;=&nbsp;[&nbsp;b(0)&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;b(0)&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funR(&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;b&nbsp;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatR(2,2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*pR&nbsp;=&nbsp;dmatR.data(),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*pb&nbsp;=&nbsp;b.data();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pR[0]&nbsp;=&nbsp;pb[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pR[1]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pR[2]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pR[3]&nbsp;=&nbsp;pb[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;dmatR;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;R_alp&nbsp;=&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funR_alp(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dmatR,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;b&nbsp;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatR_alp(dmatR.nr()*dmatR.nc(),&nbsp;alp.nr());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dmatR_alp.fill(0.0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;dmatR_alp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;R_b&nbsp;&nbsp;&nbsp;=&nbsp;[&nbsp;1&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funR_b(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dmatR,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;alp,&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;b&nbsp;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatR_b(dmatR.nr()*dmatR.nc(),&nbsp;b.nr());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*pR_b&nbsp;=&nbsp;dmatR_b.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dmatR_b.fill(0.0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pR_b[0]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pR_b[3]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;dmatR_b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+The following results will be displayed.
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;Lambda&nbsp;-&nbsp;2&nbsp;log(2&nbsp;pi)&nbsp;=&nbsp;2<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Lambda_alp&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[0,&nbsp;2]<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/lambda.cpp
+
+</body>
+</html>

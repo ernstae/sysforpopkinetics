@@ -1,0 +1,1710 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Spk Version 0.1 Milestones</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Spk Version 0.1 Milestones</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	This document describes a set of milestones which will
+	be reached by the Spk Software Team, on the way to 
+	releasing version 0.1 of the new Internet friendly Spk.
+	A description of each milestone is provided, along with
+	the name of the team member with primary responsibility
+	for achieving it, and the estimated date of completion.
+	As each milestone is reached, the actual date of 
+	completion will be added.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>November 17, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.01</TD
+><TD
+ALIGN="LEFT"
+>December 5, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>The "Model and Data" spec was split into two specs.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.02</TD
+><TD
+ALIGN="LEFT"
+>May 18, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Modified to reflect reassignment of tasks.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN22"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#milestone_table"
+>Milestone Table</A
+></DT
+><DT
+><A
+HREF="#AEN214"
+>Description of Milestones</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#open"
+>All Open Source</A
+></DT
+><DT
+><A
+HREF="#comp_out"
+>Aspk Compiler Output (C++)</A
+></DT
+><DT
+><A
+HREF="#comp_ind"
+>Aspk Compiler Output for Individual Analysis</A
+></DT
+><DT
+><A
+HREF="#comp_pop"
+>Aspk Compiler Output for Population Analysis</A
+></DT
+><DT
+><A
+HREF="#run"
+>Cspk Builds and Runs Jobs</A
+></DT
+><DT
+><A
+HREF="#report"
+>Cspk Generates Report</A
+></DT
+><DT
+><A
+HREF="#build_imp"
+>Cspk Object Build</A
+></DT
+><DT
+><A
+HREF="#api_spec"
+>Database API</A
+></DT
+><DT
+><A
+HREF="#java_binding"
+>Database API, Java Binding</A
+></DT
+><DT
+><A
+HREF="#perl_binding"
+>Database API, Perl Binding</A
+></DT
+><DT
+><A
+HREF="#er_model"
+>Database Entity-Relationship Model</A
+></DT
+><DT
+><A
+HREF="#sql_schema"
+>Database Schema</A
+></DT
+><DT
+><A
+HREF="#job_history"
+>Job History Model</A
+></DT
+><DT
+><A
+HREF="#submit"
+>MDA Submits Jobs</A
+></DT
+><DT
+><A
+HREF="#model_cap"
+>Model Capabilities Specification</A
+></DT
+><DT
+><A
+HREF="#net_security"
+>Network Security Implementation</A
+></DT
+><DT
+><A
+HREF="#net_spec"
+>Network Security Specification</A
+></DT
+><DT
+><A
+HREF="#optimizer"
+>Replacement of the NAG Optimizer</A
+></DT
+><DT
+><A
+HREF="#out_imp"
+>User Output Options Implemented</A
+></DT
+><DT
+><A
+HREF="#out_opt"
+>User Output Options Specification</A
+></DT
+><DT
+><A
+HREF="#web_spec"
+>Web Site Functional Specification</A
+></DT
+><DT
+><A
+HREF="#web_site"
+>Web Site Implementation</A
+></DT
+><DT
+><A
+HREF="#xml_data"
+>XML Representations of Data Set</A
+></DT
+><DT
+><A
+HREF="#xml_source"
+>XML Representations of Models and Control Parameters</A
+></DT
+><DT
+><A
+HREF="#results"
+>XML Representation of Spk Results and Other Reports</A
+></DT
+><DT
+><A
+HREF="#AEN341"
+>Cspk Pred Class</A
+></DT
+><DT
+><A
+HREF="#AEN344"
+>Cspk Covariance Class</A
+></DT
+><DT
+><A
+HREF="#AEN347"
+>MDA Presents Population Results</A
+></DT
+></DL
+></DD
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN22"
+></A
+>Introduction</H2
+><P
+>&#13;      Spk is being developed as an open source project. One of the
+      important benefits of this approach is that it makes available
+      to us a broad array of free tools and it enables us to 
+      incorporate much free software. The tools and free software
+      have accelerated our project substantially and will continue
+      to do so. Given our limited resources, it would be impossible
+      to accomplish this project in the time-frame required without
+      these free assets.
+    </P
+><P
+>&#13;      Having access to a wealth of free tools and software changes
+      the nature of the the development process.  It places a premium
+      on the ability to quickly evaluate, learn to use and to 
+      assimilate new products.  It also introduces a scheduling
+      uncertainty.  Because we are learning so much in the process
+      of development, it is difficult to know exactly how long
+      any given task will take.
+    </P
+><P
+>&#13;      We have a commitment to deliver a usable system by the end
+      of the second quarter of 2004.  We are convinced that we can
+      do this.  Instead of attempting to do finely textured task
+      scheduling, we have decided to focus on a set of milestones.
+    </P
+><P
+>&#13;      Milestones have been defined and divided up among the four
+      developers.  Many of the milestones require significant
+      collaboration between two or more team members but, 
+      nevertheless, a single developer has accepted primary 
+      responsibility for each milestone.  Each developer has 
+      provided a good-faith schedule for the milestones for which
+      he or she is responsible, fully acknowledging that these 
+      estimates may include significant error.
+    </P
+><P
+>&#13;      In spite of the variation in the individual estimates, we
+      believe that the cumulative effect will be to reach our goal
+      on schedule.  This document is meant both to show where
+      we are going and to demonstrate the progress that we have
+      made.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="milestone_table"
+></A
+>Milestone Table</H2
+><P
+>&#13;      <DIV
+CLASS="table"
+><A
+NAME="AEN32"
+></A
+><P
+><B
+>Table 1. Spk Version 0.1 Milestones</B
+></P
+><TABLE
+BORDER="1"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Milestone Description</TH
+><TH
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Responsible Developer</TH
+><TH
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>Estimated Date of Completion</TH
+><TH
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>Actual Date of Completion</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#job_history"
+>Job History Model</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Alan Westhagen</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>07/31/2003</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>07/31/2003</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#model_cap"
+>Model Capabilities Spec</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Mitch Watrous</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>10/22/2003</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>10/22/2003</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#xml_source"
+>XML Models and Parameters</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Sachiko Honda</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>11/04/2003</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>11/04/2003</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#er_model"
+>Database E-R Model</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Alan Westhagen</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>11/17/2003</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>11/17/2003</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#results"
+>XML Results</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Sachiko Honda</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>11/20/2003</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>12/05/2003</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#sql_schema"
+>Database Schema</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Alan Westhagen</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>11/21/2003</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>11/19/2003</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#xml_data"
+>XML Data</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Sachiko Honda</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>12/05/2003</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>12/05/2003</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#optimizer"
+>Optimizer Replacement</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Mitch Watrous</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>12/08/2003</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>01/12/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#comp_out"
+>Aspk Compiler Output (C++)</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Sachiko Honda</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>12/08/2003</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>12/17/2003</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#api_spec"
+>Database API</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Alan Westhagen</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>12/12/2003</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>12/02/2003</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#perl_binding"
+>Database API, Perl Binding</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Alan Westhagen</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>12/18/2003</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>12/24/2003</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#out_opt"
+>User Output Spec</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Jiaji Du</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>01/05/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>01/08/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#out_imp"
+>User Output</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Jiaji Du</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>02/02/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>02/02/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#java_binding"
+>Database API, Java Binding</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Alan Westhagen</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>02/09/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>02/09/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#build_imp"
+>Cspk Object Build</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Alan Westhagen</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>02/29/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>04/30/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#comp_ind"
+>Askp Compiler Output (Ind)</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Sachiko Honda</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>02/19/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>05/10/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#submit"
+>MDA Submits Jobs</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Jiaji Du</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>02/23/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/01/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#net_spec"
+>Network Security Spec</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Alan Westhagen</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/01/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>04/08/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#run"
+>Cspk Builds and Runs Jobs</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Alan Westhagen</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/29/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>05/17/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#web_spec"
+>Web Site Functional Spec</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Alan Westhagen</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/12/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>04/30/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#report"
+>Cspk Generates Report</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Alan Westhagen</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/29/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>05/30/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#net_security"
+>Network Security</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Alan Westhagen</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/26/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/14/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#open"
+>All Open Source</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Mitch Watrous</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/29/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/15/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#web_site"
+>Web Site</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Jiaji Du</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/29/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/28/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#AEN341"
+>Cspk Pred Class</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Mitch Watrous</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/29/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>05/05/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#AEN344"
+>Cspk Covariance Class</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Mitch Watrous</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/29/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>06/04/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#comp_pop"
+>Aspk Compiler Output (Pop)</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Sachiko Honda</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/29/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>06/04/2004</TD
+></TR
+><TR
+><TD
+WIDTH="42%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+><A
+HREF="#AEN347"
+>MDA Presents Results (Pop)</A
+></TD
+><TD
+WIDTH="25%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Jiaji Du</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>03/29/2004</TD
+><TD
+WIDTH="17%"
+ALIGN="CENTER"
+VALIGN="MIDDLE"
+>06/04/2004</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN214"
+></A
+>Description of Milestones</H2
+><P
+>&#13;      In this section, the individual milestones are described.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="open"
+></A
+>All Open Source</H3
+><P
+>&#13;	All of the proprietary code in the Spk library is replaced with
+	open source code.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="comp_out"
+></A
+>Aspk Compiler Output (C++)</H3
+><P
+>&#13;	The Aspk compiler transforms model specifications submitted 
+	by the MDA into C++ source code and places this code in
+	the run queue, for subsequent retrieval by the Cspk for
+	building and execution.
+      </P
+><P
+>&#13;	This document is now available for viewing
+	<A
+HREF="../../specs/sourceCpp/sourceCpp.html"
+TARGET="_top"
+>here</A
+>.
+	Return to <A
+HREF="#milestone_table"
+>table</A
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="comp_ind"
+></A
+>Aspk Compiler Output for Individual Analysis</H3
+><P
+>&#13;	The Aspk compiler takes jobs from the compiler queue of the database,
+	compiles them, and places in the database the archive of files
+	needed by computational servers to perform population analysis.
+	The compiler outputs the files required by computational servers
+	to perform individual analysis.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="comp_pop"
+></A
+>Aspk Compiler Output for Population Analysis</H3
+><P
+>&#13;	The Aspk compiler takes jobs from the compiler queue of the database,
+	compiles them, and places in the database the archive of files
+	needed by computational servers to perform population analysis.
+	The compiler outputs the files required by computational servers
+	to perform population analysis.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="run"
+></A
+>Cspk Builds and Runs Jobs</H3
+><P
+>&#13;	The Cspk removes source files from the run queue that were place 
+	there by the Aspk compiler.  It builds the source into executable
+	objects and then runs them.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="report"
+></A
+>Cspk Generates Report</H3
+><P
+>&#13;	Cspk generates the user's output report, and stores it in the
+	database for eventual retrieval by the MDA.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="build_imp"
+></A
+>Cspk Object Build</H3
+><P
+>&#13;	This milestone builds object code, ready for execution, from source
+	code received from the Aspk compiler.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="api_spec"
+></A
+>Database API</H3
+><P
+>&#13;	The application programming interface (API) defines a set of 
+	functions that can be used by software processes to interact
+	with the database.  This specification is language independent.
+      </P
+><P
+>&#13;	This document is now complete and can be viewed
+	<A
+HREF="../../specs/dbAPI/dbAPI.html"
+TARGET="_top"
+>here</A
+>.
+	Return to <A
+HREF="#milestone_table"
+>table</A
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="java_binding"
+></A
+>Database API, Java Binding</H3
+><P
+>&#13;	The Java binding is an implementation of the API for use by
+	processes programmed in the Java language.
+      </P
+><P
+>&#13;	This milestone is now complete. Documentation can be viewed 
+	<A
+HREF="../../specs/dbAPIjava/index.html"
+TARGET="_top"
+>here</A
+>.
+	Return to <A
+HREF="#milestone_table"
+>table</A
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="perl_binding"
+></A
+>Database API, Perl Binding</H3
+><P
+>&#13;	The Perl binding is an implementation of the API for use by
+	processes programmed in the Perl language.
+      </P
+><P
+>&#13;	This milestone document is now complete. Documentation can be viewed
+	<A
+HREF="../..//specs/dbAPIperl/Spkdb.html"
+TARGET="_top"
+>here</A
+>.
+	Return to <A
+HREF="#milestone_table"
+>table</A
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="er_model"
+></A
+>Database Entity-Relationship Model</H3
+><P
+>&#13;	Spk is implemented as a set of independent processes, which
+	communicate with each other by means of a relation database.
+	The entity-relationship model is the high-level design document
+	for this database.
+      </P
+><P
+>&#13;	This document is now available for viewing
+	<A
+HREF="../..//specs/erModel/erModel.html"
+TARGET="_top"
+>here</A
+>.
+	Return to <A
+HREF="#milestone_table"
+>table</A
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="sql_schema"
+></A
+>Database Schema</H3
+><P
+>&#13;	The schema is a sequence of statements in the Data Definition
+	Language (DDL) which is a subset of the Structured Query Language
+	(SQL).  The schema can be executed by the MySQL relational database
+	management system to create a working database that implements
+	the entity-relationship model.
+      </P
+><P
+>&#13;	This document is now available for viewing
+	<A
+HREF="../../specs/dbSchema/dbSchema.html"
+TARGET="_top"
+>here</A
+>.
+	Return to <A
+HREF="#milestone_table"
+>table</A
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="job_history"
+></A
+>Job History Model</H3
+><P
+>&#13;	From a usability standpoint, Spk is organized around the notion of
+	a <I
+CLASS="emphasis"
+>job</I
+>. In order to run a population kinetics
+	model against a set of data, the user employs the MDA to
+	submit model, data, and certain directives to Spk for processing.
+	Taken together,	the model, data and directives 
+	comprise a new job. On its route to completion,
+	the job passes through a sequence of states, which constitute
+	its history.  The Job History Model defines the set of job state
+	sequences that are possible.
+      </P
+><P
+>&#13;	This document is now complete and can be viewed
+	<A
+HREF="../..//specs/jobHistory/jobHistory.html"
+TARGET="_top"
+>here</A
+>.
+	Return to <A
+HREF="#milestone_table"
+>table</A
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="submit"
+></A
+>MDA Submits Jobs</H3
+><P
+>&#13;	The MDA submits jobs, by using the Java API to place XML versions
+	of a model and data into the Aspk compiler input queue.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="model_cap"
+></A
+>Model Capabilities Specification</H3
+><P
+>&#13;	A medium-term goal of the Spk project is to provide support for
+	population kinetic modeling that is fully equivalent to that 
+	provided by Nonmem.  Version 0.1 will support only of limited
+	subset of these capabilities, as detailed in this specification.
+      </P
+><P
+>&#13;	This document is now complete and can be viewed
+	<A
+HREF="../../specs/modelCap/html/modelCap.html"
+TARGET="_top"
+>here</A
+>.
+	Return to <A
+HREF="#milestone_table"
+>table</A
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="net_security"
+></A
+>Network Security Implementation</H3
+><P
+>&#13;	This milestone is the implementation of the Network Security
+	Specification.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="net_spec"
+></A
+>Network Security Specification</H3
+><P
+>&#13;	This specification lays out the requirements for network 
+	security and describes a practical solution which meets
+	the requirements.
+      </P
+><P
+>&#13;	This document is now complete and can be viewed
+	<A
+HREF="../..//specs/netSecure/netSecure.html"
+TARGET="_top"
+>here</A
+>.
+	Return to <A
+HREF="#milestone_table"
+>table</A
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="optimizer"
+></A
+>Replacement of the NAG Optimizer</H3
+><P
+>&#13;	The Spk function library contains a proprietary optimizer from an 
+	organization called NAG.  Since version 0.1 will be licensed as
+	open source, it is necessary to replace the NAG optimizer with
+	one developed by the RFPK Mathematics Team. This milestone consists
+	of integrating the new optimizer with the Spk library and testing
+	it on against the Spk test suites.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="out_imp"
+></A
+>User Output Options Implemented</H3
+><P
+>&#13;	User output options are implemented in the MDA.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="out_opt"
+></A
+>User Output Options Specification</H3
+><P
+>&#13;	The output that comes back to the MDA from the computational 
+	server is XML.  This specification describes what the 
+	MDA will do in terms of transforming this data into input for
+	other analysis tools as well as doing a simple presentation
+	of data on the user's screen.
+      </P
+><P
+>&#13;	This document is now complete and can be viewed
+	<A
+HREF="../../specs/userOutput/userOutput.html"
+TARGET="_top"
+>here</A
+>.
+	Return to <A
+HREF="#milestone_table"
+>table</A
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="web_spec"
+></A
+>Web Site Functional Specification</H3
+><P
+>&#13;	The functional specification describes the web site from the 
+	point of view of the services and usability.  It does not
+	specify visual design.
+      </P
+><P
+>&#13;	This document is now complete and can be viewed
+	<A
+HREF="../../specs/website/website.html"
+TARGET="_top"
+>here</A
+>.
+	Return to <A
+HREF="#milestone_table"
+>table</A
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="web_site"
+></A
+>Web Site Implementation</H3
+><P
+>&#13;	This milestone is the implementation of a web site which conforms
+	to the Web Site Functional Specification.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="xml_data"
+></A
+>XML Representations of Data Set</H3
+><P
+>&#13;	A data set is submitted as part of a job.  This data is structured
+	as XML and is stored in the <I
+CLASS="emphasis"
+>xml_data</I
+> field of
+	the <I
+CLASS="emphasis"
+>job</I
+> table of the database. 
+      </P
+><P
+>&#13;	This document is available for viewing
+	<A
+HREF="../../specs/dataML/dataML.html"
+TARGET="_top"
+>here</A
+>.
+	Return to <A
+HREF="#milestone_table"
+>table</A
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="xml_source"
+></A
+>XML Representations of Models and Control Parameters</H3
+><P
+>&#13;	A job contains specifications from which the ASpk Compiler creates
+	a C++ program.  The MDA submits these specifications in the form 
+	of an XML representation of a model and associated control 
+	parameters.  This XML file is stored in the 
+	<I
+CLASS="emphasis"
+>xml_source</I
+> field of the <I
+CLASS="emphasis"
+>job</I
+>
+	table of the database.
+      </P
+><P
+>&#13;	This document is available for viewing
+	<A
+HREF="../../specs/sourceML/sourceML.html"
+TARGET="_top"
+>here</A
+>.
+	Return to <A
+HREF="#milestone_table"
+>table</A
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="results"
+></A
+>XML Representation of Spk Results and Other Reports</H3
+><P
+>&#13;	When an Spk job runs to completion, whether successfully or
+	not, a report is formatted as XML and is stored in the 
+	<I
+CLASS="emphasis"
+>report</I
+> field of the <I
+CLASS="emphasis"
+>job</I
+>
+	table of the database.
+      </P
+><P
+>&#13;	This document is now available for viewing
+	<A
+HREF="../../specs/reportML/reportML.html"
+TARGET="_top"
+>here</A
+>.
+	Return to <A
+HREF="#milestone_table"
+>table</A
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN341"
+></A
+>Cspk Pred Class</H3
+><P
+>&#13;	C++ class which represents the part of the mixed-effects model
+	which remains the same, from model to model.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN344"
+></A
+>Cspk Covariance Class</H3
+><P
+>&#13;	Software to calculate and return the covariance.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN347"
+></A
+>MDA Presents Population Results</H3
+><P
+>&#13;	The MDA presents results to a user for a population model.
+      </P
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

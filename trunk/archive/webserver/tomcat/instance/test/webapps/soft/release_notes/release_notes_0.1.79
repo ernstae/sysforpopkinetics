@@ -1,0 +1,43 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.78
+----------------------------------
+USER VISIBLE CHANGES
+None
+
+OTHER CHANGES
+
+Changed interfaces:
+ 
+         O L D                |       N E W
+------------------------------+------------------
+SymbolTable::insertUserVar()  |   insertScalar()
+SymbolTable::insertNMVector() |   insertVector()
+SymbolTable::insertNMMatrix() |   insertMatrix()
+Symbol::createUserVar()       |   createScalar()
+Symbol::createNMVector()      |   createVector()
+Symbol::createNMMatrix()      |   createMatrix()
+ 
+Changed the implementations of the following SymbolTable methods to
+return NULL instead of a statically pre-defined Symbol::empty object:
+ 
+SymbolTable::find()
+SymbolTable::findi()
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: July 19, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.79
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Updated CppAD to the 05-07-2005 version.
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda (on behalf of Brad Bell)
+
+WHEN: July 25, 2005

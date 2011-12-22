@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.211
+----------------------------------
+USER VISIBLE CHANGES
+
+The status code in the MDA Job List window was corrected. 
+
+OTHER CHANGES
+
+A bug in midDriver.cpp was fixed.
+
+RELATED BUG REPORTS:  762
+
+BY:  Jiaji Du
+
+WHEN:  September 24, 2007

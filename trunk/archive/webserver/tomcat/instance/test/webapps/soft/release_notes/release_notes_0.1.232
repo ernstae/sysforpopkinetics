@@ -1,0 +1,54 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.228
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Enhanced robustness of the parallel computing system.
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: March 26, 2008
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.229
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Added maximum number of tasks for a job to spkrund.pl.
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: March 27, 2008
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.231
+----------------------------------
+USER VISIBLE CHANGES
+Added job returning codes.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: April 2, 2008
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.232
+----------------------------------
+USER VISIBLE CHANGES
+(none)
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+922 - fixed daemon to not die.
+
+BY:  ernst
+
+WHEN:  April 3, 2008
+

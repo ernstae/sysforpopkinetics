@@ -1,0 +1,102 @@
+<html><head>
+<title>Calculating the Mean Values of a Set of Data</title>
+<meta name="description" id="description" content="Calculating the Mean Values of a Set of Data">
+<meta name="keywords" id="keywords" content=" calculat testing model mean matrix "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="calcmean.htm" target="_top">section</a>, <a href="calcmean_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Generates the mean value of each row in a given matrix <i>V</i> and stores 
+this value in a  vector.
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The formula for the mean of a single row of a matrix is:
+
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;M<br>
+&nbsp;&nbsp;1&nbsp;&nbsp;---<br>
+&nbsp;&nbsp;-&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;V[i,j]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;M&nbsp;&nbsp;/__&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j=1<br>
+<br>
+&nbsp;&nbsp;where&nbsp;M&nbsp;is&nbsp;the&nbsp;number&nbsp;of&nbsp;columns&nbsp;in&nbsp;V&nbsp;and&nbsp;V[i,j]&nbsp;is&nbsp;the&nbsp;ith&nbsp;row&nbsp;<br>
+&nbsp;&nbsp;and&nbsp;jth&nbsp;column&nbsp;of&nbsp;V.<br>
+<br>
+</span></code><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+The i-th element of the resulting vector corresponds to the
+mean of i-th row of matrix <i>V</i>.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>V</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i>V</i> stores a Q by M matrix in column major order,
+where Q and M &gt; 0.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>Q</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i>Q</i> is the number of rows in the matrix <i>V</i>.
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program,
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;spk/SpkValarray.h&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;spk/calcMean.h&gt;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&nbsp;V(3&nbsp;*&nbsp;2),&nbsp;Mean(3);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Setting&nbsp;V&nbsp;to&nbsp;a&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;4&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;&nbsp;5&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;3&nbsp;&nbsp;6&nbsp;]<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;(int&nbsp;i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;V.size();&nbsp;i++&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pV[i]&nbsp;=&nbsp;i+1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mean&nbsp;=&nbsp;calcMean(V,&nbsp;3);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Mean&nbsp;of&nbsp;V:&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;Mean&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+</span>
+</font></code>
+The output: 
+<code><span style='white-space: nowrap'><br>
+<i>Mean</i>&nbsp;<i>of</i>&nbsp;<i>V</i>:&nbsp;{&nbsp;2.5,&nbsp;3.5,&nbsp;4.5&nbsp;}<br>
+</span></code>will be printed.
+
+
+<hr>Input File: ../../spk/calcMean.cpp
+
+</body>
+</html>

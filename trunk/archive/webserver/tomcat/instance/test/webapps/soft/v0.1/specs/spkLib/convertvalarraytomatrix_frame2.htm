@@ -1,0 +1,47 @@
+<html><head>
+<title>Function that Converts an Valarray Object to a Matrix</title>
+<meta name="description" id="description" content="Function that Converts an Valarray Object to a Matrix">
+<meta name="keywords" id="keywords" content=" matrix convert valarray Doublematrix "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="convertvalarraytomatrix.htm" target="_top">section</a>, <a href="convertvalarraytomatrix_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This member function returns a (size of array)/(nc) by nc matrix.  The element 
+values of the matrix are copied from the element values of the valarray object,
+array, in column-major order.  If the size of the valarray object is zero, the 
+function returns a zero size DoubleMatrix object. The product of #rows and #cols
+of the original DoubleMatrix matrix does not have to match the size of
+<i>array</i>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If there is no enough resource available in the heap, it throws <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+ 
+of which the last <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+ is set to <code><font color="blue">SPK_INSUFFICIENT_MEM_ERR</font></code>.
+
+<br>
+<br>
+<b><big><a name="UnitTest Plans" id="UnitTest Plans">UnitTest Plans</a></big></b>
+
+<table><tr><td align='left'  valign='top'>
+
+Check if a (size of array)/(nc) by nc matrix is successfully returned from this function.
+Check if a zero size matrix can be successfully returned from this function..
+</td></tr><tr><td align='left'  valign='top'>
+
+</td></tr>
+</table>
+
+<hr>Input File: ../../spk/DoubleMatrix.cpp
+
+</body>
+</html>

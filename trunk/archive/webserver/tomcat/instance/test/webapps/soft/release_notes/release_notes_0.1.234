@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.234
+----------------------------------
+USER VISIBLE CHANGES
+
+Added warning for error list overfull.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  928
+
+BY:  Mitch Watrous
+
+WHEN:  April 14, 2008

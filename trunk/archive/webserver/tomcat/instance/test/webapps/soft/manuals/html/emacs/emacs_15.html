@@ -1,0 +1,460 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Fixit</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Fixit">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Fixit">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC105"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_14.html#SEC104"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC106"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_14.html#SEC91"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_16.html#SEC110"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> L. Commands for Fixing Typos </H1>
+<!--docid::SEC105::-->
+<P>
+
+  In this chapter we describe the commands that are especially useful for
+the times when you catch a mistake in your text just after you have made
+it, or change your mind while composing text on the fly.
+</P><P>
+
+  The most fundamental command for correcting erroneous editing is the
+undo command, <KBD>C-x u</KBD> or <KBD>C-_</KBD>.  This command undoes a single
+command (usually), a part of a command (in the case of
+<CODE>query-replace</CODE>), or several consecutive self-inserting characters.
+Consecutive repetitions of <KBD>C-_</KBD> or <KBD>C-x u</KBD> undo earlier and
+earlier changes, back to the limit of the undo information available.
+See section <A HREF="emacs_7.html#SEC23">D.4 Undoing Changes</A>, for more information.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_15.html#SEC106">L.1 Killing Your Mistakes</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Commands to kill a batch of recently entered text.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_15.html#SEC107">L.2 Transposing Text</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Exchanging two characters, words, lines, lists...</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_15.html#SEC108">L.3 Case Conversion</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Correcting case of last word entered.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_15.html#SEC109">L.4 Checking and Correcting Spelling</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Apply spelling checker to a word, or a whole file.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Kill Errors"></A>
+<HR SIZE="6">
+<A NAME="SEC106"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC105"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC107"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC105"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC105"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_16.html#SEC110"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> L.1 Killing Your Mistakes </H2>
+<!--docid::SEC106::-->
+<P>
+
+<DL COMPACT>
+<DT><KBD><KBD>DEL</KBD></KBD>
+<DD>Delete last character (<CODE>delete-backward-char</CODE>).
+<DT><KBD>M-<KBD>DEL</KBD></KBD>
+<DD>Kill last word (<CODE>backward-kill-word</CODE>).
+<DT><KBD>C-x <KBD>DEL</KBD></KBD>
+<DD>Kill to beginning of sentence (<CODE>backward-kill-sentence</CODE>).
+</DL>
+<P>
+
+  The <KBD>DEL</KBD> character (<CODE>delete-backward-char</CODE>) is the most
+important correction command.  It deletes the character before point.
+When <KBD>DEL</KBD> follows a self-inserting character command, you can think
+of it as canceling that command.  However, avoid the mistake of thinking
+of <KBD>DEL</KBD> as a general way to cancel a command!
+</P><P>
+
+  When your mistake is longer than a couple of characters, it might be
+more convenient to use <KBD>M-<KBD>DEL</KBD></KBD> or <KBD>C-x <KBD>DEL</KBD></KBD>.
+<KBD>M-<KBD>DEL</KBD></KBD> kills back to the start of the last word, and <KBD>C-x
+<KBD>DEL</KBD></KBD> kills back to the start of the last sentence.  <KBD>C-x
+<KBD>DEL</KBD></KBD> is particularly useful when you change your mind about the
+phrasing of the text you are writing.  <KBD>M-<KBD>DEL</KBD></KBD> and <KBD>C-x
+<KBD>DEL</KBD></KBD> save the killed text for <KBD>C-y</KBD> and <KBD>M-y</KBD> to
+retrieve.  See section <A HREF="emacs_11.html#SEC63">H.8 Yanking</A>.</P><P>
+
+  <KBD>M-<KBD>DEL</KBD></KBD> is often useful even when you have typed only a few
+characters wrong, if you know you are confused in your typing and aren't
+sure exactly what you typed.  At such a time, you cannot correct with
+<KBD>DEL</KBD> except by looking at the screen to see what you did.  Often it
+requires less thought to kill the whole word and start again.
+</P><P>
+
+<A NAME="Transpose"></A>
+<HR SIZE="6">
+<A NAME="SEC107"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC106"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC108"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC108"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC105"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_16.html#SEC110"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> L.2 Transposing Text </H2>
+<!--docid::SEC107::-->
+<P>
+
+<DL COMPACT>
+<DT><KBD>C-t</KBD>
+<DD>Transpose two characters (<CODE>transpose-chars</CODE>).
+<DT><KBD>M-t</KBD>
+<DD>Transpose two words (<CODE>transpose-words</CODE>).
+<DT><KBD>C-M-t</KBD>
+<DD>Transpose two balanced expressions (<CODE>transpose-sexps</CODE>).
+<DT><KBD>C-x C-t</KBD>
+<DD>Transpose two lines (<CODE>transpose-lines</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX482"></A>
+<A NAME="IDX483"></A>
+  The common error of transposing two characters can be fixed, when they
+are adjacent, with the <KBD>C-t</KBD> command (<CODE>transpose-chars</CODE>).  Normally,
+<KBD>C-t</KBD> transposes the two characters on either side of point.  When
+given at the end of a line, rather than transposing the last character of
+the line with the newline, which would be useless, <KBD>C-t</KBD> transposes the
+last two characters on the line.  So, if you catch your transposition error
+right away, you can fix it with just a <KBD>C-t</KBD>.  If you don't catch it so
+fast, you must move the cursor back between the two transposed
+characters before you type <KBD>C-t</KBD>.  If you transposed a space with
+the last character of the word before it, the word motion commands are
+a good way of getting there.  Otherwise, a reverse search (<KBD>C-r</KBD>)
+is often the best way.  See section <A HREF="emacs_14.html#SEC91">K. Searching and Replacement</A>.
+</P><P>
+
+<A NAME="IDX484"></A>
+<A NAME="IDX485"></A>
+<A NAME="IDX486"></A>
+<A NAME="IDX487"></A>
+  <KBD>M-t</KBD> transposes the word before point with the word after point
+(<CODE>transpose-words</CODE>).  It moves point forward over a word,
+dragging the word preceding or containing point forward as well.  The
+punctuation characters between the words do not move.  For example,
+<SAMP>`FOO, BAR'</SAMP> transposes into <SAMP>`BAR, FOO'</SAMP> rather than
+<SAMP>`BAR FOO,'</SAMP>.
+</P><P>
+
+  <KBD>C-M-t</KBD> (<CODE>transpose-sexps</CODE>) is a similar command for
+transposing two expressions (see section <A HREF="emacs_24.html#SEC282">U.4.1 Expressions with Balanced Parentheses</A>), and <KBD>C-x C-t</KBD>
+(<CODE>transpose-lines</CODE>) exchanges lines.  They work like <KBD>M-t</KBD>
+except as regards what units of text they transpose.
+</P><P>
+
+  A numeric argument to a transpose command serves as a repeat count: it
+tells the transpose command to move the character (word, expression, line)
+before or containing point across several other characters (words,
+expressions, lines).  For example, <KBD>C-u 3 C-t</KBD> moves the character before
+point forward across three other characters.  It would change
+<SAMP>`f-!-oobar'</SAMP> into <SAMP>`oobf-!-ar'</SAMP>.  This is equivalent to
+repeating <KBD>C-t</KBD> three times.  <KBD>C-u - 4 M-t</KBD> moves the word
+before point backward across four words.  <KBD>C-u - C-M-t</KBD> would cancel
+the effect of plain <KBD>C-M-t</KBD>.</P><P>
+
+  A numeric argument of zero is assigned a special meaning (because
+otherwise a command with a repeat count of zero would do nothing): to
+transpose the character (word, expression, line) ending after point
+with the one ending after the mark.
+</P><P>
+
+<A NAME="Fixing Case"></A>
+<HR SIZE="6">
+<A NAME="SEC108"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC107"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC109"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC109"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC105"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_16.html#SEC110"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> L.3 Case Conversion </H2>
+<!--docid::SEC108::-->
+<P>
+
+<DL COMPACT>
+<DT><KBD>M-- M-l</KBD>
+<DD>Convert last word to lower case.  Note <KBD>Meta--</KBD> is Meta-minus.
+<DT><KBD>M-- M-u</KBD>
+<DD>Convert last word to all upper case.
+<DT><KBD>M-- M-c</KBD>
+<DD>Convert last word to lower case with capital initial.
+</DL>
+<P>
+
+<A NAME="IDX488"></A>
+<A NAME="IDX489"></A>
+<A NAME="IDX490"></A>
+  A very common error is to type words in the wrong case.  Because of this,
+the word case-conversion commands <KBD>M-l</KBD>, <KBD>M-u</KBD> and <KBD>M-c</KBD> have a
+special feature when used with a negative argument: they do not move the
+cursor.  As soon as you see you have mistyped the last word, you can simply
+case-convert it and go on typing.  See section <A HREF="emacs_23.html#SEC244">T.6 Case Conversion Commands</A>.</P><P>
+
+<A NAME="Spelling"></A>
+<HR SIZE="6">
+<A NAME="SEC109"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC108"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_16.html#SEC110"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC105"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC105"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_16.html#SEC110"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> L.4 Checking and Correcting Spelling </H2>
+<!--docid::SEC109::-->
+<P>
+
+  This section describes the commands to check the spelling of a single
+word or of a portion of a buffer.  These commands work with the spelling
+checker program Ispell, which is not part of Emacs.
+See section `Overview ispell' in <CITE>The Ispell Manual</CITE>.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-x flyspell-mode</KBD>
+<DD>Enable Flyspell mode, which highlights all misspelled words.
+<DT><KBD>M-$</KBD>
+<DD>Check and correct spelling of the word at point (<CODE>ispell-word</CODE>).
+<DT><KBD>M-<KBD>TAB</KBD></KBD>
+<DD>Complete the word before point based on the spelling dictionary
+(<CODE>ispell-complete-word</CODE>).
+<DT><KBD>M-x ispell</KBD>
+<DD>Spell-check the active region or the current buffer.
+<DT><KBD>M-x ispell-buffer</KBD>
+<DD>Check and correct spelling of each word in the buffer.
+<DT><KBD>M-x ispell-region</KBD>
+<DD>Check and correct spelling of each word in the region.
+<DT><KBD>M-x ispell-message</KBD>
+<DD>Check and correct spelling of each word in a draft mail message, 
+excluding cited material.
+<DT><KBD>M-x ispell-change-dictionary <KBD>RET</KBD> <VAR>dict</VAR> <KBD>RET</KBD></KBD>
+<DD>Restart the Ispell process, using <VAR>dict</VAR> as the dictionary.
+<DT><KBD>M-x ispell-kill-ispell</KBD>
+<DD>Kill the Ispell subprocess.
+</DL>
+<P>
+
+<A NAME="IDX491"></A>
+<A NAME="IDX492"></A>
+  Flyspell mode is a fully-automatic way to check spelling as you edit
+in Emacs.  It operates by checking words as you change or insert them.
+When it finds a word that it does not recognize, it highlights that
+word.  This does not interfere with your editing, but when you see the
+highlighted word, you can move to it and fix it.  Type <KBD>M-x
+flyspell-mode</KBD> to enable or disable this mode in the current buffer.
+</P><P>
+
+  When Flyspell mode highlights a word as misspelled, you can click on
+it with <KBD>Mouse-2</KBD> to display a menu of possible corrections and
+actions.  You can also correct the word by editing it manually in any
+way you like.
+</P><P>
+
+  The other Emacs spell-checking features check or look up words when
+you give an explicit command to do so.  Checking all or part of the
+buffer is useful when you have text that was written outside of this
+Emacs session and might contain any number of misspellings.
+</P><P>
+
+<A NAME="IDX493"></A>
+<A NAME="IDX494"></A>
+  To check the spelling of the word around or next to point, and
+optionally correct it as well, use the command <KBD>M-$</KBD>
+(<CODE>ispell-word</CODE>).  If the word is not correct, the command offers
+you various alternatives for what to do about it.
+</P><P>
+
+<A NAME="IDX495"></A>
+<A NAME="IDX496"></A>
+  To check the entire current buffer, use <KBD>M-x ispell-buffer</KBD>.  Use
+<KBD>M-x ispell-region</KBD> to check just the current region.  To check
+spelling in an email message you are writing, use <KBD>M-x
+ispell-message</KBD>; that command checks the whole buffer, except for
+material that is indented or appears to be cited from other messages.
+</P><P>
+
+<A NAME="IDX497"></A>
+<A NAME="IDX498"></A>
+  The <KBD>M-x ispell</KBD> command spell-checks the active region if the
+Transient Mark mode is on (see section <A HREF="emacs_11.html#SEC54">H.2 Transient Mark Mode</A>), otherwise it
+spell-checks the current buffer.
+</P><P>
+
+  Each time these commands encounter an incorrect word, they ask you
+what to do.  They display a list of alternatives, usually including
+several "near-misses"---words that are close to the word being
+checked.  Then you must type a single-character response.  Here are
+the valid responses:
+</P><P>
+
+<DL COMPACT>
+<DT><KBD><KBD>SPC</KBD></KBD>
+<DD>Skip this word--continue to consider it incorrect, but don't change it
+here.
+<P>
+
+<DT><KBD>r <VAR>new</VAR> <KBD>RET</KBD></KBD>
+<DD>Replace the word (just this time) with <VAR>new</VAR>.
+<P>
+
+<DT><KBD>R <VAR>new</VAR> <KBD>RET</KBD></KBD>
+<DD>Replace the word with <VAR>new</VAR>, and do a <CODE>query-replace</CODE> so you
+can replace it elsewhere in the buffer if you wish.
+<P>
+
+<DT><KBD><VAR>digit</VAR></KBD>
+<DD>Replace the word (just this time) with one of the displayed
+near-misses.  Each near-miss is listed with a digit; type that digit to
+select it.
+<P>
+
+<DT><KBD>a</KBD>
+<DD>Accept the incorrect word--treat it as correct, but only in this
+editing session.
+<P>
+
+<DT><KBD>A</KBD>
+<DD>Accept the incorrect word--treat it as correct, but only in this
+editing session and for this buffer.
+<P>
+
+<DT><KBD>i</KBD>
+<DD>Insert this word in your private dictionary file so that Ispell will
+consider it correct from now on, even in future sessions.
+<P>
+
+<DT><KBD>u</KBD>
+<DD>Insert the lower-case version of this word in your private dictionary
+file.
+<P>
+
+<DT><KBD>m</KBD>
+<DD>Like <KBD>i</KBD>, but you can also specify dictionary completion
+information.
+<P>
+
+<DT><KBD>l <VAR>word</VAR> <KBD>RET</KBD></KBD>
+<DD>Look in the dictionary for words that match <VAR>word</VAR>.  These words
+become the new list of "near-misses"; you can select one of them as
+the replacement by typing a digit.  You can use <SAMP>`*'</SAMP> in <VAR>word</VAR> as a
+wildcard.
+<P>
+
+<DT><KBD>C-g</KBD>
+<DD>Quit interactive spell checking.  You can restart it again afterward
+with <KBD>C-u M-$</KBD>.
+<P>
+
+<DT><KBD>X</KBD>
+<DD>Same as <KBD>C-g</KBD>.
+<P>
+
+<DT><KBD>x</KBD>
+<DD>Quit interactive spell checking and move point back to where it was
+when you started spell checking.
+<P>
+
+<DT><KBD>q</KBD>
+<DD>Quit interactive spell checking and kill the Ispell subprocess.
+<P>
+
+<DT><KBD>C-l</KBD>
+<DD>Refresh the screen.
+<P>
+
+<DT><KBD>C-z</KBD>
+<DD>This key has its normal command meaning (suspend Emacs or iconify this
+frame).
+</DL>
+<P>
+
+<A NAME="IDX499"></A>
+  The command <CODE>ispell-complete-word</CODE>, which is bound to the key
+<KBD>M-<KBD>TAB</KBD></KBD> in Text mode and related modes, shows a list of
+completions based on spelling correction.  Insert the beginning of a
+word, and then type <KBD>M-<KBD>TAB</KBD></KBD>; the command displays a completion
+list window.  To choose one of the completions listed, click
+<KBD>Mouse-2</KBD> on it, or move the cursor there in the completions window
+and type <KBD>RET</KBD>.  See section <A HREF="emacs_23.html#SEC245">T.7 Text Mode</A>.
+</P><P>
+
+<A NAME="IDX500"></A>
+<A NAME="IDX501"></A>
+  Once started, the Ispell subprocess continues to run (waiting for
+something to do), so that subsequent spell checking commands complete
+more quickly.  If you want to get rid of the Ispell process, use
+<KBD>M-x ispell-kill-ispell</KBD>.  This is not usually necessary, since the
+process uses no time except when you do spelling correction.
+</P><P>
+
+<A NAME="IDX502"></A>
+  Ispell uses two dictionaries: the standard dictionary and your private
+dictionary.  The variable <CODE>ispell-dictionary</CODE> specifies the file
+name of the standard dictionary to use.  A value of <CODE>nil</CODE> says to
+use the default dictionary.  The command <KBD>M-x
+ispell-change-dictionary</KBD> sets this variable and then restarts the
+Ispell subprocess, so that it will use a different dictionary.
+</P><P>
+
+<A NAME="Files"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_15.html#SEC105"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_16.html#SEC110"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

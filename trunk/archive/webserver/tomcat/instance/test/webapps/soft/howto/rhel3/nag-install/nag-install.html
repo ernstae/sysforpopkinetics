@@ -1,0 +1,720 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>NAG Library Installation</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>NAG Library Installation</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;      SPK Library is dependent on some of the basic linear algebra routines 
+      offered by the NAG C Library.  The NAG shared library must be installed on each machine
+      in order build and/or execute SPK applications.  This document focuses on
+      installation of components minimally required for building the SPK library
+      and its applications since the library is about to be replaced by 
+      and open-source equivalent(s) soon.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>June 18, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: alan</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.1</TD
+><TD
+ALIGN="LEFT"
+>June 18, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: alan</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added nag-install howto.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.2</TD
+><TD
+ALIGN="LEFT"
+>June 25, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: alan</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added ldconfig instructions to cvs-install document.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.3</TD
+><TD
+ALIGN="LEFT"
+>July 31, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added the license key file installation and varification procedures.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.4</TD
+><TD
+ALIGN="LEFT"
+>August 01, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added revision records.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.5</TD
+><TD
+ALIGN="LEFT"
+>Auguest 26, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Updated the license keys valid through Aug. 2004.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.6</TD
+><TD
+ALIGN="LEFT"
+>September 19, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Fixed html syntax errors in the example C++ code.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.7</TD
+><TD
+ALIGN="LEFT"
+>March 08, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Updated the instruction for a newer NAG library, Mark 7, installation.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.8</TD
+><TD
+ALIGN="LEFT"
+>March 29, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Fixed typos.  Added a note to set LD_LIBRARY_PATH.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN52"
+>Installation</A
+></DT
+><DT
+><A
+HREF="#AEN74"
+>Verification</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN52"
+></A
+>Installation</H2
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;        As an ordinary user, download the Nag C Mark 7 library from whitechuck to /tmp 
+on your machine:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /tmp
+scp whitechuck:/opt/download/cllux07ddl.tgz .
+          </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+><LI
+><P
+>&#13;From the /tmp directory, type the following to uncompress and unpack the tar ball:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;tar xvzf cllux07ddl.tgz
+          </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+><LI
+><P
+>&#13;To install the NAG libraries (ie. static and shared versions) and
+headers into proper locations, you must first become root.  Note that it has no "-".
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su
+          </PRE
+></TD
+></TR
+></TABLE
+>
+You should be in the directory, /tmp/cllux07ddl/.
+        </P
+></LI
+><LI
+><P
+>&#13;        Install the library and headers in /usr/local:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cp libnagc.a /usr/local/lib
+cp libnagc.so.7 /usr/local/lib
+cp include/* /usr/local/include
+cd /usr/local/lib
+ln -s libnagc.so.7 libnagc.so
+          </PRE
+></TD
+></TR
+></TABLE
+> 
+  If your linker failed to find a nag libarary, make sure /usr/local/lib is in the linker's search path.  Add /usr/local/lib in LD_LIBRARY_PATH environment variable.
+        </P
+></LI
+><LI
+><P
+>&#13;        Create or update <TT
+CLASS="filename"
+>/usr/local/flexlm/licenses/license.dat</TT
+> 
+        with the following license key entries:
+        </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;FEATURE NAG_CL NAG 9.900 01-aug-2004 0 BC5E444363B0CF819FC9 "ANY" DEMO
+FEATURE NAG_FD NAG 9.900 01-aug-2004 0 CCDE34737BB5C767BCC6 "ANY" DEMO
+FEATURE NAG_FL NAG 29.900 01-aug-2004 0 AC9E44335FBDCF5F94E2 "ANY" DEMO
+FEATURE NAG_FN NAG 9.900 01-aug-2004 0 BC3E3473619FD15D8CE0 "ANY" DEMO
+FEATURE IRIS_Explorer NAG 9.900 01-aug-2004 0 1CEEA44345A79C7B1394 "ANY" DEMO
+INCREMENT NAGWaref95 NAG 9.900 01-aug-2004 0 FCEE4483B7ADA5C0CA49 "ANY" DEMO
+FEATURE NAGWareFtools NAG 9.900 01-aug-2004 0 ECDEB423F87A659A99EB "ANY" DEMO
+ 
+     </PRE
+></TD
+></TR
+></TABLE
+></LI
+><LI
+><P
+>&#13;        Clean up
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /tmp
+rm cllux07ddl.tgz
+rm -rf cllux07ddl
+          </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+></OL
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN74"
+></A
+>Verification</H2
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;          Copy and past the following code into a new file and save the file in somewhere
+          as <TT
+CLASS="filename"
+>nag_test.cpp</TT
+>.
+        </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;#include &#60;iostream&#62;
+#include &#60;valarray&#62;
+#include &#60;cassert&#62;
+#include &#60;string&#62;
+
+extern "C"{
+# include "nag.h"
+# include "nag_types.h"
+# include "nag_names.h"
+# include "nagf06.h"
+}
+
+using namespace std;
+static void NagDgemm(
+    char transa,            // Is matrix A transpose (At) or non (An)?
+    char transb,            // Is matrix B transpose (Bt) or non (Bn)? 
+    int m,                  // (An) A-&#62;nr, (At) A-&#62;nc
+    int n,                  // (Bn) B-&#62;nc, (Bt) B-&#62;nr
+    int k,                  // (An) A-&#62;nc, (Bn) B-&#62;nr, (At) A-&#62;nr, (Bt) B-&#62;nc
+    double alpha,           // scalar
+    const double A[],       // column major matrix
+    const double B[],       // column major matrix
+    double beta,            // scaler
+    double C[]              // column major matrix
+);
+
+static const valarray&#60;double&#62; multiply( const valarray&#60;double&#62; &#38; A, int nColsA, 
+					const valarray&#60;double&#62; &#38; B, int nColsB );
+
+void printInMatrix( const valarray&#60;double&#62; &#38; A, int cols );
+
+int main()
+{
+  //     /        \
+  //     |  1  2  |
+  // A = |        |
+  //     |  3  4  |
+  //     \        /
+  //
+  valarray&#60;double&#62; A(4);
+  for( int i=0; i&#60;4; i++ )
+    A[i] = i+1;
+
+  //
+  //     /     \
+  //     |  2  |
+  // B = |     |
+  //     |  2  |
+  //     \     /
+  //
+  valarray&#60;double&#62; B(2.0, 2);
+
+  valarray&#60;double&#62; C = multiply( A, 2, B, 1 );
+  valarray&#60;double&#62; correctC( 2 );
+  correctC[0] = 6.0;
+  correctC[1] = 14.0;
+
+  cout &#60;&#60; "A = " &#60;&#60; endl;
+  printInMatrix( A, 2 );
+  cout &#60;&#60; endl;
+
+  cout &#60;&#60; "B = " &#60;&#60; endl;
+  printInMatrix( B, 1 );
+  cout &#60;&#60; endl;
+
+  cout &#60;&#60; "C = " &#60;&#60; endl;
+  printInMatrix( C, 1 );
+  cout &#60;&#60; endl;
+
+  if( C[0] == correctC[0] &#38;&#38; C[1] == correctC[1] )
+    cout &#60;&#60; "Test passed successfully!\n" &#60;&#60; endl;
+  else
+    cout &#60;&#60; "Test failed!\n" &#60;&#60; endl;
+  return 0;
+}
+
+void printInMatrix( const valarray&#60;double&#62;&#38; A, int cols )
+{
+  int rows = A.size() / cols;
+  assert( rows * cols * A.size() );
+
+  for( int i=0; i &#60; rows; i++ )
+    {
+      cout &#60;&#60; "[ ";
+      for( int j=0; j &#60; cols; j++ )
+	{
+	  cout &#60;&#60; A[j + i * cols] &#60;&#60; " ";
+	}
+      cout &#60;&#60; "]" &#60;&#60; endl;
+    }
+}
+const valarray&#60;double&#62; multiply( const valarray&#60;double&#62;&#38; A, int nColsA, 
+                                 const valarray&#60;double&#62;&#38; B, int nColsB )
+{
+  using namespace std;
+
+  if( A.size() == 0 || B.size() == 0 )
+          return valarray&#60;double&#62;(0);
+
+  int nRowsA = A.size() / nColsA;
+  assert( nRowsA * nColsA == A.size() );
+
+  int nRowsB = B.size() / nColsB;
+  assert( nRowsB * nColsB == B.size() );
+
+  assert( nColsA == nRowsB );
+
+  const double *pA = &#38;(A[0]);
+  const double *pB = &#38;(B[0]);
+
+  valarray&#60;double&#62; C( nRowsA * nColsB );
+  double *pC = &#38;(C[0]);
+  
+  /**************************************************************
+   *
+   * dgemm (f06yac) performs real matrix-matrix multiplication: 
+   *    C = (alpha * A B) + (beta * C)
+   *
+   **************************************************************/
+  NagDgemm('n', 'n', nRowsA, nColsB, nColsA, 1.0, pA, pB, 0.0, pC);
+  return C;
+};
+
+# include &#60;stdio.h&#62;
+# include &#60;stdlib.h&#62;
+
+
+static void NagDgemm(
+    char transa,            // Is matrix A transpose (At) or non (An)?
+    char transb,            // Is matrix B transpose (Bt) or non (Bn)? 
+    int m,                  // (An) A-&#62;nr, (At) A-&#62;nc
+    int n,                  // (Bn) B-&#62;nc, (Bt) B-&#62;nr
+    int k,                  // (An) A-&#62;nc, (Bn) B-&#62;nr, (At) A-&#62;nr, (Bt) B-&#62;nc
+    double alpha,           // scalar
+    const double A[],       // row major matrix
+    const double B[],       // row major matrix
+    double beta,            // scaler
+    double C[]              // row major matrix
+){
+    const char* errmsg = 
+    "\nNagDgemm received an invalid value in the %s argument (%c)...terminating program.\n";
+
+
+    MatrixTranspose transA;
+    MatrixTranspose transB;
+
+    if( transa == 'n' || transa == 'N' ){
+        transA = NoTranspose;
+    }
+    else if( transa == 't' || transa == 'T' ){
+        transA = Transpose;
+    }
+    else{
+        fprintf(stderr, errmsg, "1st", transa);
+        exit(-1);
+    }
+
+    // for matrix B
+    if( transb == 'n' || transb == 'N'){
+        transB = NoTranspose;
+    }
+    else if( transb == 't' || transb == 'T' ){
+        transB = Transpose;
+    }
+    else{
+        fprintf(stderr, errmsg, "2nd", transb);
+        exit(-1);
+    }
+    
+    f06yac(
+        transA, 
+        transB, 
+        (Integer) m, 
+        (Integer) n, 
+        (Integer) k, 
+        alpha, 
+        A, 
+        (Integer) k, 
+        B, 
+        (Integer) n, 
+        beta, 
+        C, 
+        (Integer) n
+    );
+}
+
+        </PRE
+></TD
+></TR
+></TABLE
+></LI
+><LI
+><P
+>&#13;        Compile <TT
+CLASS="filename"
+>nag_test.cpp</TT
+> and statically link to the NAG library
+        which requires two other libraries: <TT
+CLASS="filename"
+>pthreadlib</TT
+> and 
+        <TT
+CLASS="filename"
+>mlib</TT
+>:
+        </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;g++ nag_test.cpp -lnagc -lpthread -lm -o test
+        </PRE
+></TD
+></TR
+></TABLE
+><P
+>&#13;        The following warning messages will be displayed.  Please ignore.
+        </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;s09zzft.o(.text+0x479b): `sys_errlist' is deprecated; use `strerror' or `strerror_r' instead
+s09zzft.o(.text+0x4785): `sys_nerr' is deprecated; use `strerror' or `strerror_r' instead
+        </PRE
+></TD
+></TR
+></TABLE
+></LI
+><LI
+><P
+>&#13;        If the above compilation completed sucessfully, you should be able to run
+        the built executable <TT
+CLASS="filename"
+>test</TT
+>:
+        </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;./test
+        </PRE
+></TD
+></TR
+></TABLE
+><P
+>&#13;        and see the following output on screen.
+        </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;[Honda@pasta myTemp]$ ./test
+A =
+[ 1 2 ]
+[ 3 4 ]
+
+B =
+[ 2 ]
+[ 2 ]
+
+C =
+[ 6 ]
+[ 14 ]
+
+Test passed successfully!
+        </PRE
+></TD
+></TR
+></TABLE
+></LI
+></OL
+></DIV
+></DIV
+></BODY
+></HTML
+>

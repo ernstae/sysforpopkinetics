@@ -1,0 +1,1745 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Operating System Version Migration</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Operating System Version Migration</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	Instructions and advice for migrating from RedHat Linux
+	version 8.0 to RedHat Enterprise Linux Version 3 are given.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>January 4, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN12"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN18"
+>Preparation</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN21"
+>Get a Hard Copy of this Document</A
+></DT
+><DT
+><A
+HREF="#AEN25"
+>Verify the Backup of your Home Directory</A
+></DT
+><DT
+><A
+HREF="#AEN48"
+>Make a Copy of <TT
+CLASS="filename"
+>/etc</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN56"
+>Plan the Migration of Non-RPM Packages</A
+></DT
+><DT
+><A
+HREF="#AEN68"
+>Print Out Configuration Files and Reports</A
+></DT
+><DT
+><A
+HREF="#AEN72"
+>Commit your CVS Changes</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN75"
+>Install RHEL from Cdrom</A
+></DT
+><DT
+><A
+HREF="#AEN132"
+>Start Mozilla to Access this Document</A
+></DT
+><DT
+><A
+HREF="#AEN136"
+>Make Old Disk Accessible</A
+></DT
+><DT
+><A
+HREF="#AEN179"
+>Restore Your Home Directory</A
+></DT
+><DT
+><A
+HREF="#AEN189"
+>Restore Static IP</A
+></DT
+><DT
+><A
+HREF="#AEN195"
+>Register with the RedHat Network</A
+></DT
+><DT
+><A
+HREF="#AEN209"
+>Set Up Printers</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN218"
+>Configuring lj4200</A
+></DT
+><DT
+><A
+HREF="#AEN247"
+>Configuring lj5000</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN250"
+>Restore Password-Free SSH Connections</A
+></DT
+><DT
+><A
+HREF="#AEN269"
+>Update CVS</A
+></DT
+><DT
+><A
+HREF="#AEN274"
+>Restore Clock Synchronization</A
+></DT
+><DT
+><A
+HREF="#AEN280"
+>Restore the Backup Function</A
+></DT
+><DT
+><A
+HREF="#AEN301"
+>Reinstall Acrobat Reader</A
+></DT
+><DT
+><A
+HREF="#AEN306"
+>Install Dia</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN12"
+></A
+>Introduction</H2
+><P
+>&#13;      RedHat Enterprise Linux, Version 3 (RHEL3), is closely related to 
+      RedHat Linux 8.0 (RH8), but the differences are great enough
+      that a simple update is not possible.  In the future, when
+      we go from one version of RHEL to the next, an update function
+      that preserves data and applications while upgrading
+      the operating system will be available.  No such update function is 
+      offered for the migration from RH8 to RHEL3.  
+    </P
+><P
+>&#13;      Even when such an update function is available, it is dangerous
+      to use.  If the update process fails after having made
+      irreversible changes to a hard disk, the recovery process
+      is likely to be very difficult and only partially successful.
+    </P
+><P
+>&#13;      Our strategy to reduce risk and to simplify the migration 
+      process is to utilize two hard disks.  One disk
+      contains the current operating system and all of the
+      software and data that needs to be preserved. During the
+      migration it will be untouched.  After the migration, it
+      will be placed on-line in a read-only state, so that its
+      contents will be fully accessible.  The other disk 
+      contains nothing that requires preservation. Its contents
+      will be completely wiped out.  It is the disk on which
+      the new version will be installed.
+    </P
+><P
+>&#13;      There is always some risk that the first disk will not be
+      readable after the new system is installed. In such a case
+      we have to fall back onto the backups which were copied to
+      the whitechuck server. Part of the preparation described
+      in the next section is concerned with making sure that
+      these backups would be available if needed.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN18"
+></A
+>Preparation</H2
+><P
+>&#13;      It is imperative that we collect information about the
+      current system and store it in forms that will not
+      be over-written when the new version is installed.
+      Some of the data has already been provided by the automatic nightly
+      backups to whitechuck.  We must verify that these backups
+      are usable. Some additional data not
+      included in the nightly backups must be copied to
+      whitechuck.  Finally, the contents of some key configuration
+      files must be printed out.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN21"
+></A
+>Get a Hard Copy of this Document</H3
+><P
+>&#13;	If you have not already done so, print out a copy of this document
+	from its <TT
+CLASS="filename"
+>.pdf</TT
+> file.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN25"
+></A
+>Verify the Backup of your Home Directory</H3
+><P
+>&#13;	Each weekday night, your system should be copying your
+	home directory to <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>. You should verify that
+	this is working correctly.  Here is one way to do that:
+	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      In a terminal window, go to the directory on
+	      <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+> which contains your backup copies:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh whitechuck
+cd backup
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+><LI
+><P
+>&#13;	      If you run <B
+CLASS="command"
+>ls -l</B
+>, you should see a
+	      list of directory names, each starting with the date
+	      on which the backup was taken. Go 
+	      <B
+CLASS="command"
+>cd</B
+> to the most recent backup, and
+	      then take a directory listing:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd <I
+CLASS="emphasis"
+>most-recent-backup</I
+>
+ls -lR $USER &#62; /tmp/backup_listing
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Open a terminal window on your workstation, and
+	      make a similar directory listing there, retrieve the 
+	      listing made on <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>, and use <B
+CLASS="command"
+>diff</B
+>
+	      to compare the two:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd ..
+ls -lR $USER &#62; /tmp/current_listing
+cd /tmp
+scp whitechuck:/tmp/backup_listing .
+diff current_listing backup_listing
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+><LI
+><P
+>&#13;	      If the backup is recent, the output from the 
+	      <B
+CLASS="command"
+>diff</B
+> command should be short. Check 
+	      into any differences that come as a surprise.  At the
+	      end of this process, you must be confident that your
+	      backup is good.
+	    </P
+></LI
+></OL
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN48"
+></A
+>Make a Copy of <TT
+CLASS="filename"
+>/etc</TT
+></H3
+><P
+>&#13;	Most of the configuration files on your workstation reside in the
+	<TT
+CLASS="filename"
+>/etc</TT
+> directory.  If certain functions 
+	no longer work after the migration, it will be useful to be
+	able to consult previous versions of the configuration files.
+	From a terminal window, here is a convenient way to make
+	a copy:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su -
+cd /
+tar cvzf /tmp/etc.tgz etc
+chown $USER /tmp/etc.tgz
+exit
+scp /tmp/etc.tgz whitechuck:
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	Upon completing the command sequence listed above,
+	a new tar ball named <TT
+CLASS="filename"
+>etc.tgz</TT
+> should 
+	appear in your home directory on <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN56"
+></A
+>Plan the Migration of Non-RPM Packages</H3
+><P
+>&#13;	The overwhelming majority of software packages on your workstation
+	were installed by the Redhat Package Manager (RPM).  When
+	you install RHEL, later versions of these packages will be
+	installed automatically.  You may, however, have several 
+	packages that were not installed by RPM.  These are most
+	likely located in <TT
+CLASS="filename"
+>/usr/local</TT
+>, although
+	they may be elsewhere.  Only you know what these packages
+	are.
+      </P
+><P
+>&#13;	There are two basic ways to handle the migration of
+	your non-RPM packages:
+	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      Reinstall them from scratch.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Similar to the way that you placed a copy of 
+	      <TT
+CLASS="filename"
+>/etc</TT
+> on <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>
+	      place a copy of the tar ball for each package
+	      somewhere safe, so that you can copy it back 
+	      and expand it after the migration.  Note, however,
+	      that this might not work, because the package 
+	      might depend in some way on RedHat 8.0 that is 
+	      not compatible with RHEL.
+	    </P
+></LI
+></OL
+>
+	Just to be on the safe side, it might be best to make a 
+	copy of any non-RPM package that you are really depending
+	on, even though your intention is to reinstall from scratch.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN68"
+></A
+>Print Out Configuration Files and Reports</H3
+><P
+>&#13;	We need to list some key network configuration files
+	and reports describing the layout of the filesystem:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;pr /etc/resolv.conf | lpr
+pr /etc/hosts | lpr
+pr /etc/sysconfig/network | lpr
+pr /etc/sysconfig/network-scripts/ifcfg-eth0 | lpr
+pr /etc/fstab | lpr
+df | lpr
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN72"
+></A
+>Commit your CVS Changes</H3
+><P
+>&#13;	Be sure to commit any changes that you have made to 
+	your CVS work space.
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN75"
+></A
+>Install RHEL from Cdrom</H2
+><P
+>&#13;      There are five RHEL3 installation cdroms.  Of these, you will 
+      probably only need the first three.  Important steps in the
+      installation process are listed below.  Not all interactions
+      with the installation GUI are covered, because many items
+      are either obvious or you have simply to agree with something
+      that the software has already figured out.  When in doubt,
+      accept the value that the software suggests.
+    </P
+><P
+>&#13;      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    Automatic Partitioning.  Your machine contains two hard 
+	    drives. We <I
+CLASS="emphasis"
+>do not</I
+> want to remove
+	    anything on the drive that you are currently using
+	    for linux.  Instead, RHEL will be installed on the drive
+	    that currently contains Windows.  Be certain that you 
+	    select the Windows drive for RHEL installation.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Network Configuration. In the 
+	    <B
+CLASS="guimenu"
+>hostname</B
+>
+	    section of this screen, select the
+	    <B
+CLASS="guibutton"
+>manually</B
+> radio button,
+	    then type in your complete Internet host name.  It will
+	    be a name of the form
+	    <TT
+CLASS="filename"
+>name.rfpk.washington.edu</TT
+>.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Firewall. We definitely want the firewall to be enabled.
+	    Check only the <B
+CLASS="guimenuitem"
+>SSH</B
+> box
+	    in the list of services to allow through the firewall.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Time Zone.  Check the 
+	    <B
+CLASS="guimenuitem"
+>System Clock Uses UTC</B
+> box, and
+	    a Pacific Timezone city, such as 
+	    <B
+CLASS="guimenuitem"
+>America/Los_Angeles</B
+>.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Root Password. You can use the same root password that you
+	    are using now. 
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Package Installation Defaults. Check the 
+	    <B
+CLASS="guimenuitem"
+>Customize ...</B
+> box.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Package Group Selection.
+	  </P
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>In addition to the boxes already check-marked by default</I
+>
+	    select the following package groups:
+	    <P
+></P
+><UL
+><LI
+><P
+>&#13;		  Engineering and Scientific.
+		</P
+></LI
+><LI
+><P
+>&#13;		  Authoring and Publishing.
+		</P
+></LI
+><LI
+><P
+>&#13;		  Web Server.
+		</P
+></LI
+><LI
+><P
+>&#13;		  MySQL Database.
+		</P
+></LI
+><LI
+><P
+>&#13;		  KDE Software Development.
+		</P
+></LI
+><LI
+><P
+>&#13;		  Legacy Software Development.
+		</P
+></LI
+><LI
+><P
+>&#13;		  System Tools.
+		</P
+></LI
+></UL
+>
+	  </P
+></LI
+></OL
+>
+    </P
+><P
+>&#13;      If all goes well, you should reach the end of the installation
+      process.  Press the <B
+CLASS="guibutton"
+>Exit</B
+> button, and
+      the machine will boot up on RHEL3. 
+    </P
+><P
+>&#13;      Once you have booted, a post-configuration GUI starts 
+      automatically.  Here are some additional steps:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    Date and Time.  Check the
+	    <B
+CLASS="guimenuitem"
+>Enable Network Time Protocol</B
+>
+	    box and select either of the servers listed in the
+	    <B
+CLASS="guimenuitem"
+>Server</B
+> box.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    User account.  Enter the same username and password that
+	    you were using for your ordinary user login before the
+	    migration.  <I
+CLASS="emphasis"
+>You do not need to do
+	    a network login.</I
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    At this point, the installation is complete.  Reboot
+	    your system, to ensure that any updates will go
+	    into effect.
+	  </P
+></LI
+></OL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN132"
+></A
+>Start Mozilla to Access this Document</H2
+><P
+>&#13;      Start Mozilla.  A RedHat registration page will appear.  
+      Ignore it, and type the following URL into the field
+      at the top of the page:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;whitechuck.rfpk.washington.edu/soft/index.html
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      This should bring up the Software Team web page, from 
+      which you can bring up a copy of this document..  In the
+      steps that follow, having a copy on the screen will facilitate
+      entering commands into shell windows, because you can
+      cut and paste.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN136"
+></A
+>Make Old Disk Accessible</H2
+><P
+>&#13;      Your old disk, with your RH8 installation, should now be made 
+      accessible.  We mount the partitions of the old disk on
+      a directory called <TT
+CLASS="filename"
+>/old</TT
+> which we will
+      create on the new disk.
+    </P
+><P
+>&#13;      List all the disk partitions known to RHEL:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su -
+fdisk -l
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      You will get a list of the partitions of both your disks. 
+      Compare this with the output of the
+      <B
+CLASS="command"
+>df</B
+> that you printed before the 
+      migration.  This latter list shows what mount points
+      the partitions had before migration.
+    </P
+><P
+>&#13;      By comparing the two lists, determine whether the disk
+      device changed. This might have happened if you 
+      changed the physical connections of your hard drives
+      as might occur, for example, if you added a second
+      drive.  
+    </P
+><P
+>&#13;      As root,
+      create an empty directory 
+      on which the old partitions will be mounted:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;mkdir /old
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      Make a backup copy of <TT
+CLASS="filename"
+>/etc/fstab</TT
+>:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /etc
+cp fstab fstab.bak
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      With <B
+CLASS="command"
+>emacs</B
+>, edit <TT
+CLASS="filename"
+>/etc/fstab</TT
+>,
+      adding one line for each of the old partitions that you want
+      to mount.
+    </P
+><P
+>&#13;      For example, assume that a comparison of the old 
+      <B
+CLASS="command"
+>df</B
+> listing with the current output of
+      <B
+CLASS="command"
+>fdisk -l</B
+> shows that the contents of
+      the current <TT
+CLASS="filename"
+>/dev/hdb1</TT
+> was mounted previously
+      on <TT
+CLASS="filename"
+>/</TT
+>. In this case you would add the 
+      following line:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/dev/hdb1      /old           ext3    ro,suid,dev,exec,auto,nouser,async  1 2
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      With the above definition, paths relative to 
+      <TT
+CLASS="filename"
+>/</TT
+> on the old system will now be
+      relative to <TT
+CLASS="filename"
+>/old</TT
+> on the new one.
+      For example, the old <TT
+CLASS="filename"
+>/home</TT
+> is
+      now <TT
+CLASS="filename"
+>/old/home</TT
+>.
+    </P
+><P
+>&#13;      Further suppose that the contents of the current
+      <TT
+CLASS="filename"
+>/dev/hdb3</TT
+> used to be mounted on
+      <TT
+CLASS="filename"
+>/home</TT
+>.  We add the following line to
+      <TT
+CLASS="filename"
+>/etc/fstab</TT
+>:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/dev/hdb3      /old/home      ext3    ro,suid,dev,exec,auto,nouser,async  1 2
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      Suppose that the contents of the current
+      <TT
+CLASS="filename"
+>/dev/hdb5</TT
+> was mounted previously on
+      <TT
+CLASS="filename"
+>/usr</TT
+>.  We add this line:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/dev/hdb5      /old/usr       ext3    ro,suid,dev,exec,auto,nouser,async  1 2
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      Continue until all of the "Linux" file systems (not including the "Linux swap"
+      file system) shown on the <B
+CLASS="command"
+>fdisk -l</B
+> listing have been
+      accounted for with lines added to <TT
+CLASS="filename"
+>/etc/fstab</TT
+>.
+      You may need fewer than three lines.  You may need more.  It all
+      depends on how many ordinary linux filesystem partitions your old
+      system had.
+    </P
+><P
+>&#13;      Save <TT
+CLASS="filename"
+>/etc/fstab</TT
+>, then reboot your system.
+      When you now do <B
+CLASS="command"
+>df</B
+>, you should see that the
+      old partitions are mounted.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN179"
+></A
+>Restore Your Home Directory</H2
+><P
+>&#13;      After establishing access to your old home directory,
+      you are ready to restore most
+      of its contents.  To do this, we will use the
+      <B
+CLASS="command"
+>rsync</B
+> command, which gives us a convenient
+      means of copying a directory tree while excluding a few
+      things we do not want copied.  In particular, we do not
+      want to overwrite the gnome, rhn, nautilus and metacity
+      settings that have just been set up by the RHEL installation.
+    </P
+><P
+>&#13;      From a terminal window:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd
+H=/old/home/$USER
+export H
+su
+rsync -a --exclude '.g*' --exclude '.rhn*' --exclude '.nautilus*' --exclude '.metacity*' $H/* $H/.* .
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      To complete this process, go to the 
+      <B
+CLASS="guimenu"
+>Main</B
+> menu and select
+      <B
+CLASS="guimenuitem"
+>Log Out</B
+>.  
+    </P
+><P
+>&#13;      Finally, log in again.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN189"
+></A
+>Restore Static IP</H2
+><P
+>&#13;      After the migration, RHEL communicated with a DHCP server in
+      the UW network to get information to set up Internet access.
+      This works fine, but at this point your machine is not
+      accessible by name from the outside, because the IP that
+      DHCP assigns can change every time you restart your network
+      interface.  For the time being, at least, the Software Team
+      workstations are accessible by host name from the Internet,
+      because they have had static IP addresses assigned.  
+    </P
+><P
+>&#13;      Do the following to restore your static IP address
+      (note that <B
+CLASS="command"
+>su</B
+> is not followed by the
+      - option symbol):
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su 
+cd /etc/sysconfig/network-scripts
+cp ifcfg-eth0 ifcfg-eth0.bak
+cp /old/etc/sysconfig/network-scripts/ifcfg-eth0 .
+/etc/rc.d/init.d/network restart
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN195"
+></A
+>Register with the RedHat Network</H2
+><P
+>&#13;      Now that you have restored your static IP address, you
+      can register with RedHat Network. RFPK purchases a set
+      of annual subscriptions that entitle our RHEL machines
+      to receive automatic updates, via the
+      <B
+CLASS="command"
+>up2date</B
+> program.  In this section,
+      you register your machine with RedHat so that this
+      function is enabled.
+    </P
+><P
+>&#13;      Notice the small red-colored circle at the lower right-hand
+      corner of the screen, just to the left of the date and
+      time.  Double click this to start <B
+CLASS="command"
+>up2date</B
+>.
+    </P
+><P
+>&#13;      Follow the dialog.  At some point you will be asked to 
+      register with RedHat Network and presented with a 
+      window that allows you to either 
+      <B
+CLASS="guimenuitem"
+>Create a New Account</B
+> or
+      <B
+CLASS="guimenuitem"
+>Use Existing Account</B
+>.
+    </P
+><P
+>&#13;      Click the <B
+CLASS="guimenuitem"
+>Use Existing Account</B
+>
+      radio button and supply this information:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	Username:        alanwesthagen
+	Password:        (get this from the Software Team manager)
+	Email address:   afw@u.washington.edu
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      This should link you up to use one of the
+      RedHat Network Management Entitlements that RFPK has purchased.
+      The <B
+CLASS="command"
+>up2date</B
+> wizard will start
+      automatically.  Allow it to install any updates
+      to RHEL Version 3 that have been created since the
+      cdroms were made, including updates to the kernel.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN209"
+></A
+>Set Up Printers</H2
+><P
+>&#13;      There are two Hewlett Packard laser printers located in the lab:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    HP LaserJet 4200 dtn, located near the front door to the lab.
+	    This printer has its own interface to the network, and its
+	    own domain name, which is <I
+CLASS="emphasis"
+>arunta</I
+>.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    HP LaserJet 5000 dtn, locate near the back door to the lab.
+	    At present, this printer's network interface is broken.
+	    The firewall on whitechuck prevents us from accessing
+	    this  printer, at the present time.
+	  </P
+></LI
+></OL
+>
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN218"
+></A
+>Configuring lj4200</H3
+><P
+>&#13;	To configure access to the LaserJet 4200:
+	Bring up the <B
+CLASS="guimenuitem"
+>Printer Configuration</B
+> window:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  <B
+CLASS="guimenu"
+>Main</B
+> =&#62; <B
+CLASS="guimenu"
+>System Settings</B
+> =&#62; <B
+CLASS="guimenuitem"
+>Printing</B
+>
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	Press the <B
+CLASS="guibutton"
+>New</B
+> button to bring up the
+	<B
+CLASS="guimenuitem"
+>Add a new print queue</B
+> window.
+	Provide this "wizard" with the following answers:
+	<P
+></P
+><UL
+><LI
+><P
+>&#13;	      <TT
+CLASS="guilabel"
+><B
+>Name</B
+></TT
+>: lj4200
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <TT
+CLASS="guilabel"
+><B
+>Short description</B
+></TT
+>: HP LaserJet 4200 near front door
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <B
+CLASS="guimenu"
+>Select a queue type</B
+>: Networked JetDirect
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <TT
+CLASS="guilabel"
+><B
+>Printer</B
+></TT
+>: arunta
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <TT
+CLASS="guilabel"
+><B
+>Select the printer manufacturer and model</B
+></TT
+>: PostScript Printer
+	    </P
+></LI
+></UL
+>
+      </P
+><P
+>&#13;	Let the wizard <B
+CLASS="guibutton"
+>apply</B
+> this definition and 
+	print a test page.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN247"
+></A
+>Configuring lj5000</H3
+><P
+>&#13;	As explained above, the firewall on whitechuck inhibits
+	us from accessing this printer until the JetDirect
+	interface is repaired.
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN250"
+></A
+>Restore Password-Free SSH Connections</H2
+><P
+>&#13;      If you have previously followed the instructions in the
+      <I
+CLASS="emphasis"
+>SSH Configuration Howto</I
+> to enable
+      your workstation to create secure connections to remote
+      hosts without requiring a password except when your
+      desktop manager starts up, you will want to follow the
+      steps in this section.
+    </P
+><P
+>&#13;      Configure the Gnome desktop manager.
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;<B
+CLASS="guimenu"
+>Main</B
+> =&#62; <B
+CLASS="guimenu"
+>Preferences</B
+> =&#62; <B
+CLASS="guimenu"
+>More Preferences</B
+> =&#62; <B
+CLASS="guimenuitem"
+>Sessions</B
+> =&#62; left-click
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      This will open the <SPAN
+CLASS="interface"
+>Sessions</SPAN
+>
+      window.  Press the 
+      <B
+CLASS="guibutton"
+>Startup Programs</B
+> button
+      followed by
+      the <B
+CLASS="guibutton"
+>Add</B
+> button.  Then
+      set the following variables:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	Startup Command: /usr/bin/ssh-add
+	Priority: 70
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      Close the window by pressing the
+      <B
+CLASS="guibutton"
+>OK</B
+> button.
+    </P
+><P
+>&#13;      To complete this process, go to the 
+      <B
+CLASS="guimenu"
+>Main</B
+> menu and select
+      <B
+CLASS="guimenuitem"
+>Log Out</B
+>.  
+    </P
+><P
+>&#13;      Finally, log in again.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN269"
+></A
+>Update CVS</H2
+><P
+>&#13;      During the migration, other developers may have committed
+      changes to the cvs repository.  This would be a good time
+      to update your cvs work space.
+    </P
+><P
+>&#13;      Assume that R2 contains the path of the root of your workspace:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd $R2
+cvs update -dP
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN274"
+></A
+>Restore Clock Synchronization</H2
+><P
+>&#13;      If your workstation was previously configured to use the
+      network time protocol to automatically synchronize its
+      internal clock that of whitechuck,
+      you can easily restore this function by executing the
+      following commands from a shell window.
+    </P
+><P
+>&#13;      Note: <B
+CLASS="command"
+>su</B
+> is not followed by the 
+      - option symbol.
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su
+cd /etc
+mv ntp.conf ntp.conf.bak
+mv ntp/step-tickers ntp/step-tickers.bak
+cp /old/etc/ntp.conf .
+cp /old/etc/ntp/step-tickers ntp 
+/etc/rc.d/init.d/ntpd restart
+/sbin/chkconfig --level 2345 ntpd on
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN280"
+></A
+>Restore the Backup Function</H2
+><P
+>&#13;      Perform the following menu sequence:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;<B
+CLASS="guimenu"
+>Main</B
+> =&#62; <B
+CLASS="guimenu"
+>Preferences</B
+> =&#62; <B
+CLASS="guimenu"
+>More Preferences</B
+> =&#62; <B
+CLASS="guimenuitem"
+>Sessions</B
+> =&#62; left-click
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	This will open the <SPAN
+CLASS="interface"
+>Sessions</SPAN
+>
+	window.  Press the 
+	<B
+CLASS="guibutton"
+>Startup Programs</B
+> button
+	followed by
+	the <B
+CLASS="guibutton"
+>Add</B
+> button.  Then
+	set the following variables:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;Startup Command: /home/<I
+CLASS="emphasis"
+>username</I
+>/bin/shell/get-agent-data
+Priority: 75
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      where <I
+CLASS="emphasis"
+>username</I
+> is your username.
+      Close the window by pressing the
+      <B
+CLASS="guibutton"
+>OK</B
+> button.
+    </P
+><P
+>&#13;      As an ordinary user, from a terminal window, execute the following
+      command:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;crontab -e
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      and an <B
+CLASS="command"
+>emacs</B
+> window should appear, displaying
+      the <TT
+CLASS="filename"
+>crontab</TT
+> file, ready for editing
+      (the file might be empty at this point).
+    </P
+><P
+>&#13;      Add the following line:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;30 2 * * 2-6 ~/bin/shell/backup-home-full
+      </PRE
+></TD
+></TR
+></TABLE
+>
+Close the file, and your home directory will be backed up to
+whitechuck 2:30 AM, each morning that follows a work day.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN301"
+></A
+>Reinstall Acrobat Reader</H2
+><P
+>&#13;      If your prefer the Adobe Acrobat Reader to the default
+      reader provided with RHEL, you will need to reinstall 
+      <B
+CLASS="command"
+>acroread.</B
+>  This is easily accomplished by
+      following the steps in the
+      <A
+HREF="../acroread/acroread.html"
+TARGET="_top"
+>&#13;	Acrobat Reader Installation
+      </A
+> howto.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN306"
+></A
+>Install Dia</H2
+><P
+>&#13;      Dia, the Gnu Office diagramming tool, is not included in the
+      RHEL distribution.  It can be easily installed, following the
+      instructions in the 
+      <A
+HREF="../authoring/authoring.html"
+TARGET="_top"
+>&#13;	<I
+CLASS="emphasis"
+>Authoring RFPK Software Documents</I
+>
+      </A
+>
+      howto, in the <I
+CLASS="emphasis"
+>Installing Dia</I
+> sub-section.
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

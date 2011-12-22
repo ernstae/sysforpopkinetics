@@ -1,0 +1,45 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.238
+----------------------------------
+USER VISIBLE CHANGES
+None.
+
+OTHER CHANGES
+Recompile under Fedora 8 on CSPK
+
+RELATED BUG REPORTS:
+Potential issue with GSL 1.10 from FC8
+
+BY:
+Andrew
+
+WHEN:
+05/15/2008
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.240
+----------------------------------
+USER VISIBLE CHANGES
+Added real-time job status report for the monte carlo jobs.
+
+OTHER CHANGES
+Bug fixes.
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: May 20, 2008
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.241
+----------------------------------
+USER VISIBLE CHANGES
+Added user entering seed for likelihood evaluation in the Model Design Agent.
+
+OTHER CHANGES
+Added or modified code in spkcompiler and ml for user seeding likelihood evaluation.
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: June 26, 2008

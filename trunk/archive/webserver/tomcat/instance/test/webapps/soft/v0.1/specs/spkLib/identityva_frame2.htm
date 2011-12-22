@@ -1,0 +1,87 @@
+<html><head>
+<title>Identity Matrix (valarray version)</title>
+<meta name="description" id="description" content="Identity Matrix (valarray version)">
+<meta name="keywords" id="keywords" content=" identity matrix identify (valarray version) "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="identityva.htm" target="_top">section</a>, <a href="identityva_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+It creates an <code><span style='white-space: nowrap'><i>n</i></span></code> sided identity matrix and returns it
+as a column-major ordered vector through <i>I</i>.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is the size of the identity matrix.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>I</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>will contain <code><span style='white-space: nowrap'><i>n</i></span></code> sized identity matrix as a column-major ordered vector.
+It must have <code><span style='white-space: nowrap'><i>n</i>&nbsp;*&nbsp;<i>n</i></span></code> elements space allocated. 
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;SpkValarray.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;identity.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;SPK_VA::valarray;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;n&nbsp;=&nbsp;3;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;This&nbsp;will&nbsp;hold&nbsp;an&nbsp;n&nbsp;identity&nbsp;matrix&nbsp;as&nbsp;a&nbsp;column&nbsp;major&nbsp;ordered&nbsp;vector.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;I(&nbsp;n&nbsp;*&nbsp;n&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Modify&nbsp;I&nbsp;so&nbsp;that&nbsp;it&nbsp;will&nbsp;essentially&nbsp;contains&nbsp;a&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;1&nbsp;0&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;0&nbsp;1&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;0&nbsp;0&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;in&nbsp;the&nbsp;column&nbsp;major&nbsp;order.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;identity(&nbsp;n,&nbsp;I&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;[&nbsp;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(&nbsp;int&nbsp;i=0;&nbsp;i&lt;n&nbsp;*&nbsp;n;&nbsp;i++&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;I[i]&nbsp;&lt;&lt;&nbsp;&quot;,&nbsp;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;&nbsp;]&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+[&nbsp;1,&nbsp;0,&nbsp;0,&nbsp;0,&nbsp;1,&nbsp;0,&nbsp;0,&nbsp;0,&nbsp;1,&nbsp;]<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/identity.cpp
+
+</body>
+</html>

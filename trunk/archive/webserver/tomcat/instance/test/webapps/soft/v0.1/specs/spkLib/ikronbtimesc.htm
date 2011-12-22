@@ -1,0 +1,304 @@
+<html><head>
+<title>Kronker Product Of Identity Matrix With B Multiplied by C (DoubleMatrix version)</title>
+<meta name="description" id="description" content="Kronker Product Of Identity Matrix With B Multiplied by C (DoubleMatrix version)">
+<meta name="keywords" id="keywords" content=" Ikronbtimesc (doublematrix version) kronker product fast and memory efficient computation of matrix saving space time ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_ikronbtimesc_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>general</option>
+<option>IkronBtimesC</option>
+</select>
+</td>
+<td><a href="identityva.htm" target="_top">Prev</a>
+</td><td><a href="ikronbtimescva.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>general-&gt;</option>
+<option>ABA_x</option>
+<option>ABA_xVA</option>
+<option>addition</option>
+<option>AkronBtimesC</option>
+<option>AkronBtimesCRef</option>
+<option>AkronBtimesCVA</option>
+<option>AkronItimesC</option>
+<option>AkronItimesCVA</option>
+<option>allTrue</option>
+<option>allZero</option>
+<option>backDiv</option>
+<option>BlockAlloc</option>
+<option>blockDiagonalDerivative</option>
+<option>centdiff</option>
+<option>centdiffVA</option>
+<option>cholesky</option>
+<option>countTrues</option>
+<option>CovarianceClasses</option>
+<option>elsq</option>
+<option>elsqVA</option>
+<option>elsqFuncOb</option>
+<option>elsq_x</option>
+<option>elsq_xVA</option>
+<option>elsq_xDiag</option>
+<option>elsq_xBlockDiag</option>
+<option>DBL_EPS_EQUAL_MULT</option>
+<option>det</option>
+<option>detVA</option>
+<option>divByScalar</option>
+<option>DMclass</option>
+<option>elementwiseAnd</option>
+<option>elementwiseOr</option>
+<option>File</option>
+<option>FpErrorChecker</option>
+<option>ModelFunction</option>
+<option>ModelDerivative</option>
+<option>getCol</option>
+<option>getMulCols</option>
+<option>getMulRows</option>
+<option>getRow</option>
+<option>getSubblock</option>
+<option>identityNum</option>
+<option>identityVA</option>
+<option>IkronBtimesC</option>
+<option>IkronBtimesCVA</option>
+<option>inverse</option>
+<option>inverseVA</option>
+<option>inxToMax</option>
+<option>isDblEpsEqual</option>
+<option>isDmatEpsEqual</option>
+<option>isGreaterThanOrEqualTo</option>
+<option>isLessThanOrEqualTo</option>
+<option>isSymmetric</option>
+<option>matabs</option>
+<option>matmaxScalar</option>
+<option>matmaxMatrices</option>
+<option>matminScalar</option>
+<option>matminMatrices</option>
+<option>mulByScalar</option>
+<option>multiply</option>
+<option>norm</option>
+<option>Optimizer</option>
+<option>pi</option>
+<option>placeRows</option>
+<option>printInMatrix</option>
+<option>quasinewtonanybox</option>
+<option>replaceIth</option>
+<option>replaceJth</option>
+<option>replaceSubblockDoubleMatrix</option>
+<option>replaceSubblockValarray</option>
+<option>rvec</option>
+<option>rvecVA</option>
+<option>rvecInverse</option>
+<option>SpkError</option>
+<option>SpkException</option>
+<option>SpkValarray</option>
+<option>subtraction</option>
+<option>symmetrize</option>
+<option>symmetrizeVA</option>
+<option>System</option>
+<option>transpose</option>
+<option>transposeRef</option>
+<option>transposeVA</option>
+<option>transposeDerivative</option>
+<option>transposeDerivativeVA</option>
+<option>transposeRowBlocks</option>
+<option>transposeRowBlocksVA</option>
+<option>UTranTimesSymKronSymTimesU</option>
+<option>UTranTimesSymKronSymTimesU_x</option>
+<option>WarningsManager_constructor</option>
+<option>WarningsManager_addWarning</option>
+<option>WarningsManager_addWarningList</option>
+<option>WarningsManager_clearAllWarnings</option>
+<option>WarningsManager_anyWarnings</option>
+<option>WarningsManager_getWarningList</option>
+<option>WarningsManager_getAllWarnings</option>
+</select>
+</td>
+<td>IkronBtimesC</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Arguments</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Kronker Product Of Identity Matrix With B Multiplied by C (DoubleMatrix version)</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype:</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"><span style='white-space: nowrap'>const&nbsp;DoubleMatrix&nbsp;IkronBtimesC(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>Im</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>B</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>C</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>void&nbsp;IkronBtimesC(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>Im</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>B</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>C</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>D</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+
+</td></tr>
+</table>
+See also: <a href="akronbtimesc.htm" target="_top"><span style='white-space: nowrap'>AkronBtimesC()</span></a>
+, <a href="akronitimesc.htm" target="_top"><span style='white-space: nowrap'>AkronItimesC()</span></a>
+
+
+<br>
+<br>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This is a modified version of <a href="akronbtimesc.htm" target="_top"><span style='white-space: nowrap'>AkronBtimesC(A,B,C)</span></a>
+ such that
+it takes an identity matrix in place of <i>A</i>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Often the kronker product of two matrices is matrix multiplied by a third matrix.
+In this case, when the first matrix is known to be an identity matrix,
+you can save space and time by forming the final product using the statement
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;dmatResult&nbsp;=&nbsp;IkronBtimesC(I,&nbsp;B,&nbsp;C)<br>
+</span>
+</font></code>
+instead of the statement
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;dmatResult&nbsp;=&nbsp;kron(I,B)&nbsp;*&nbsp;C<br>
+</span>
+</font></code>
+which would both calculate the same result.
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+IkronBtimesC&nbsp;=&nbsp;[&nbsp;a11*I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a12*I&nbsp;&nbsp;...&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a21*I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a22*I&nbsp;&nbsp;...&nbsp;]&nbsp;*&nbsp;C<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a11*I*c1&nbsp;+&nbsp;a12*I*c2&nbsp;&nbsp;...]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a21*I*c1&nbsp;+&nbsp;a22*I*c2&nbsp;...&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+</span>
+</font></code>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>Im</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>m</i></span></code>, where m and n are greater than or equal to zero.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>B</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>x</i>&nbsp;<i>by</i>&nbsp;<i>y</i></span></code> identity matrix.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>C</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>*<i>x</i>&nbsp;<i>by</i>&nbsp;<i>k</i></span></code> matrix.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>D</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>*<i>x</i></span></code> by <code><span style='white-space: nowrap'><i>n</i>*<i>y</i></span></code> matrix that will contain the resulting matrix value.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you write, link and run the following program,
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;IkronBtimesC.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;AkronBtimesC.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;IkronBtimesCTest::IkronBtimesCEx()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;m&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;n&nbsp;=&nbsp;m;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;x&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;y&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;k&nbsp;=&nbsp;4;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;seq[]&nbsp;=&nbsp;{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;I&nbsp;=&nbsp;identity(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;B(x,y);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;C(n*y,k);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::copy(seq,&nbsp;seq+x*y,&nbsp;B.data());<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::copy(seq,&nbsp;seq+n*y*k,&nbsp;C.data());<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;IBC&nbsp;=&nbsp;IkronBtimesC(I,B,C);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;ABC&nbsp;=&nbsp;AkronBtimesC(I,B,C);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;ABC=&quot;&nbsp;&lt;&lt;&nbsp;ABC&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;IBC=&quot;&nbsp;&lt;&lt;&nbsp;IBC&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+</span>
+</font></code>
+the following matrices will be displayed.
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+ABC=2&nbsp;by&nbsp;4<br>
+[&nbsp;1.0000000000000000e+001&nbsp;2.8000000000000000e+001&nbsp;4.6000000000000000e+001&nbsp;6.4000000000000000e+001&nbsp;]<br>
+[&nbsp;1.3000000000000000e+001&nbsp;4.0000000000000000e+001&nbsp;6.7000000000000000e+001&nbsp;9.4000000000000000e+001&nbsp;]<br>
+<br>
+IBC=2&nbsp;by&nbsp;4<br>
+[&nbsp;1.0000000000000000e+001&nbsp;2.8000000000000000e+001&nbsp;4.6000000000000000e+001&nbsp;6.4000000000000000e+001&nbsp;]<br>
+[&nbsp;1.3000000000000000e+001&nbsp;4.0000000000000000e+001&nbsp;6.7000000000000000e+001&nbsp;9.4000000000000000e+001&nbsp;]<br>
+</span>
+</font></code>
+will be displayed.
+
+
+<hr>Input File: ../../spk/IkronBtimesC.cpp
+
+</body>
+</html>

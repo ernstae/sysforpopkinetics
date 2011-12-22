@@ -1,0 +1,2125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Cluster Administration</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Cluster Administration</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	Processes and files for administering the RFPK computational
+	cluster are presented.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>August 7, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN12"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN16"
+>Hardware</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN18"
+>Node Description</A
+></DT
+><DT
+><A
+HREF="#AEN36"
+>Node Interconnection</A
+></DT
+><DT
+><A
+HREF="#AEN44"
+>Network Connection</A
+></DT
+><DT
+><A
+HREF="#AEN48"
+>Keyboard, Video and Mouse</A
+></DT
+><DT
+><A
+HREF="#AEN51"
+>BIOS</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN77"
+>Software</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN79"
+>Linux Installation</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN81"
+>Initial Installation</A
+></DT
+><DT
+><A
+HREF="#AEN113"
+>Boot Configuration</A
+></DT
+><DT
+><A
+HREF="#AEN118"
+>Network Configuration</A
+></DT
+><DT
+><A
+HREF="#AEN171"
+>Firewall Security</A
+></DT
+><DT
+><A
+HREF="#AEN195"
+>Time Server Configuration</A
+></DT
+><DT
+><A
+HREF="#AEN222"
+>SSH Configuration</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN253"
+>Open Mosix Installation</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN255"
+>Install the Open Mosix RPMs on all Nodes</A
+></DT
+><DT
+><A
+HREF="#AEN264"
+>Update the Grub Configuration</A
+></DT
+><DT
+><A
+HREF="#AEN269"
+>Install OpenMosix View on Master</A
+></DT
+><DT
+><A
+HREF="#AEN276"
+>Install OpenMosix Stress Test on Master</A
+></DT
+><DT
+><A
+HREF="#AEN283"
+>Mapping the Nodes</A
+></DT
+><DT
+><A
+HREF="#AEN290"
+>Configuring oMFS</A
+></DT
+><DT
+><A
+HREF="#AEN307"
+>Configuring openMosixCollector</A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+><A
+HREF="#AEN317"
+>Operations</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN319"
+>Powering the Cluster Up</A
+></DT
+><DT
+><A
+HREF="#AEN336"
+>Utility Shell Scripts</A
+></DT
+><DT
+><A
+HREF="#AEN364"
+>Backup</A
+></DT
+></DL
+></DD
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN12"
+></A
+>Introduction</H2
+><P
+>&#13;      Among RFPK's resources is a computational cluster which was
+      purchased from Linux Labs at the end of the year 2001.  With
+      the OpenMosix enhancement to the Linux operating system, the
+      cluster behaves towards software very much as would a 
+      distributed memory multiprocessor system, except that 
+      interprocess communication is accomplished via Ethernet
+      rather than memory
+      and, therefore, is many orders of magnitude slower.  
+    </P
+><P
+>&#13;      The cluster consists of five individual computers, interconnected
+      by Ethernet.  The fact that each node is an individual machine
+      increases the burden of system administration.  This document
+      describes the configuration both of hardware and software so that
+      it can be restored in case it is destroyed or degraded.
+      It also provides some processes for operating the cluster.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN16"
+></A
+>Hardware</H2
+><DIV
+CLASS="sect2"
+><H3
+CLASS="sect2"
+><A
+NAME="AEN18"
+></A
+>Node Description</H3
+><P
+>&#13;	Each node of the cluster contains a Matsonic
+	MS7308E mainboard, with a single 1GHz Pentium III processor,
+	Ethernet, video, keyboard, mouse and IDE disk interfaces.
+      </P
+><P
+>&#13;	One of the nodes has a label on the front of its case that
+	identifies it as <SPAN
+CLASS="systemitem"
+>master</SPAN
+>.  This node differs from the others
+	in several ways:
+	<P
+></P
+><UL
+><LI
+><P
+>&#13;	      There is a combination drive, which contains both a floppy
+	      drive and a CDROM drive.  The other nodes have DVD drives
+	      capable of reading CDROMs, but no floppy.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      There are three PCI sockets, rather than the two which
+	      are found on the other boards.  In the socket not found
+	      on the other boards, there is a second Ethernet interface.  This
+	      interface is used to communicate with the other nodes,
+	      while the interface on the mainboard is used to communicate
+	      with the Internet.  
+	    </P
+><P
+>&#13;	      Because it can communicate with the Internet and because,
+	      with the OpenMosix software currently in use, no node is
+	      dominant over the others, <I
+CLASS="emphasis"
+>gateway</I
+>
+	      would be a better name than <I
+CLASS="emphasis"
+>master</I
+>.
+	      Nevertheless, we will continue to refer to this node 
+	      as <SPAN
+CLASS="systemitem"
+>master</SPAN
+>, in order to avoid confusion.
+	    </P
+></LI
+></UL
+>
+      </P
+><P
+>&#13;	The other nodes are named <SPAN
+CLASS="systemitem"
+>node0</SPAN
+>,...,<SPAN
+CLASS="systemitem"
+>node3</SPAN
+>.  They are all the
+	same, with the exception of <SPAN
+CLASS="systemitem"
+>node1</SPAN
+>, in which a defective
+	Ethernet interface on the mainboard has been replaced with an 
+	Ethernet card with a bracket customized so that it will
+	fit into one of the IDE sockets.  These 
+	nodes have DVD drives, capable of reading CDROMs.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN36"
+></A
+>Node Interconnection</H3
+><P
+>&#13;	The five nodes are interconnected through an
+	Ethernet hub, using category-5 Ethernet patch cables
+	rated for at least 200 Mhz.
+	The hub has exactly five cables connected to it,
+	one for each node. For ease of management,
+	connect <SPAN
+CLASS="systemitem"
+>master</SPAN
+> to socket-1, <SPAN
+CLASS="systemitem"
+>node0</SPAN
+> to socket-2,
+	etc.
+      </P
+><P
+>&#13;	The cable to <SPAN
+CLASS="systemitem"
+>master</SPAN
+> and the cable to <SPAN
+CLASS="systemitem"
+>node1</SPAN
+> are
+	connected to sockets on the back of their respective 
+	cases which are located to the far left when viewed from the front.
+	The other nodes are connected to sockets that are
+	two thirds of the way to the right,
+	as viewed from the front.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN44"
+></A
+>Network Connection</H3
+><P
+>&#13;	The cluster is connected to the network via <SPAN
+CLASS="systemitem"
+>master</SPAN
+>.
+	The cable to the network hub (not the hub described
+	in the previous section) connects to the mainboard
+	Ethernet interface, which is on the back of the case,
+	two thirds of the way to the right, as viewed from
+	the front.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN48"
+></A
+>Keyboard, Video and Mouse</H3
+><P
+>&#13;	On each node, the video connector is near the center of
+	the back of the case.  The keyboard and mouse connectors
+	are just to the right of the mainboard Ethernet socket,
+	as viewed from the front.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN51"
+></A
+>BIOS</H3
+><P
+>&#13;	The BIOS settings are the same for all nodes.  One of the
+	quirks of these systems is that it can be difficult
+	to get to the BIOS configuration screens. At the beginning
+	of the boot sequence, the BIOS will instruct you to
+	press <B
+CLASS="keycap"
+>DEL</B
+> if you want to enter BIOS
+	configuration.  Often you will be taken directly to the
+	Grub boot screen even though you have pressed <B
+CLASS="keycap"
+>DEL</B
+>.
+	If this happens, press 
+	<B
+CLASS="keycap"
+>CTRL-ALT-DEL</B
+> to reboot, then continue
+	to press <B
+CLASS="keycap"
+>DEL</B
+> several times a second.  This 
+	usually gets the attention of the BIOS.
+      </P
+><P
+>&#13;	Small configuration changes need to be made at each of the
+	following BIOS menu categories on all nodes:
+	<P
+></P
+><UL
+><LI
+><P
+>&#13;	      Standard CMOS Setup
+	    </P
+><P
+>&#13;	      Use the <I
+CLASS="emphasis"
+>Auto</I
+> discovery 
+	      capability to set the IDE devices correctly.
+	    </P
+><P
+>&#13;	      For <I
+CLASS="emphasis"
+>Floppy Drive A</I
+>,
+	      select the value: <I
+CLASS="emphasis"
+>Not Installed</I
+>.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Advanced Setup
+	    </P
+><P
+>&#13;	      For <I
+CLASS="emphasis"
+>1st Boot Device</I
+>,
+	      select the value: <I
+CLASS="emphasis"
+>CDROM</I
+>.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Power Management Setup
+	    </P
+><P
+>&#13;	      For <I
+CLASS="emphasis"
+>Power Management/APM</I
+>,
+	      select the value: <I
+CLASS="emphasis"
+>Disabled</I
+>.
+	    </P
+></LI
+></UL
+>
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN77"
+></A
+>Software</H2
+><DIV
+CLASS="sect2"
+><H3
+CLASS="sect2"
+><A
+NAME="AEN79"
+></A
+>Linux Installation</H3
+><DIV
+CLASS="sect3"
+><H4
+CLASS="sect3"
+><A
+NAME="AEN81"
+></A
+>Initial Installation</H4
+><P
+>&#13;	  Using CDROMs install on each node
+	  the same version of RedHat Linux that
+	  is currently installed on the Software Team workstations.
+	  Select the <I
+CLASS="emphasis"
+>workstation</I
+>
+	  configuration, rather than desk-top or server.
+	</P
+><P
+>&#13;	  You will need to connect a keyboard, video monitor and 
+	  mouse to each node in turn, as you install the software.
+	</P
+><P
+>&#13;	  The interactive installation wizard will ask you to
+	  specify several options:
+	  <P
+></P
+><UL
+><LI
+><P
+>&#13;		Time Zone
+	      </P
+><P
+>&#13;		Select the time zone of Los Angeles, USA
+	      </P
+><P
+>&#13;		Check the <I
+CLASS="emphasis"
+>System Time Uses UTC</I
+> box.
+	      </P
+></LI
+><LI
+><P
+>&#13;		Network Configuration
+	      </P
+><P
+>&#13;		Skip this for now.
+	      </P
+></LI
+><LI
+><P
+>&#13;		Package Selection
+	      </P
+><P
+>&#13;		Just take the standard set of packages.
+	      </P
+></LI
+><LI
+><P
+>&#13;		Security
+	      </P
+><P
+>&#13;		On <SPAN
+CLASS="systemitem"
+>master</SPAN
+>, select the highest level of security,
+		but customize the firewall to allow 
+		<B
+CLASS="command"
+>ssh</B
+>.
+	      </P
+><P
+>&#13;		On the other nodes, select <I
+CLASS="emphasis"
+>No Firewall</I
+>.
+	      </P
+></LI
+><LI
+><P
+>&#13;		Boot Options
+	      </P
+><P
+>&#13;		Boot the Grub boot loader from the boot segment
+		of the hda disk volume.
+	      </P
+></LI
+><LI
+><P
+>&#13;		Boot Diskette
+	      </P
+><P
+>&#13;		Write a boot diskette for <SPAN
+CLASS="systemitem"
+>master</SPAN
+>.  The other
+		nodes do not have diskette drives, so it is not
+		possible for them to write boot diskettes.
+	      </P
+></LI
+></UL
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN113"
+></A
+>Boot Configuration</H4
+><P
+>&#13;	  On each node, edit
+	  <TT
+CLASS="filename"
+>/etc/inittab</TT
+> so that the
+	  specification for initial run level after boot looks like
+	  this:
+	  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	    id:3:initdefault:
+	  </PRE
+></TD
+></TR
+></TABLE
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN118"
+></A
+>Network Configuration</H4
+><P
+>&#13;	  Everything in this section must be performed by the root
+	  user.
+	</P
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN121"
+></A
+><TT
+CLASS="filename"
+>/etc/hosts</TT
+></H5
+><P
+>&#13;	    On all nodes, the file looks like this (where <SPAN
+CLASS="systemitem"
+>riso.rfpk.washington.edu</SPAN
+> is
+	    the domain name and host name of <SPAN
+CLASS="systemitem"
+>master</SPAN
+>):
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      # Do not remove the following line, or various programs
+	      # that require network functionality will fail.
+	      127.0.0.1               localhost.localdomain localhost
+	      192.168.1.1             master riso.rfpk.washington.edu
+	      192.168.1.2             node0
+	      192.168.1.3             node1
+	      192.168.1.4             node2
+	      192.168.1.5             node3
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></DIV
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN128"
+></A
+>/etc/resolv.conf</H5
+><P
+>&#13;	    On <SPAN
+CLASS="systemitem"
+>master</SPAN
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      search rfpk.washington.edu u.washington.edu
+	      nameserver 128.95.19.1
+	      nameserver 128.95.120.1
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    On the other nodes:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      # The cluster nodes do not need to resolv domain names
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></DIV
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN135"
+></A
+>/etc/sysconfig/network</H5
+><P
+>&#13;	    On <SPAN
+CLASS="systemitem"
+>master</SPAN
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      NETWORKING=yes
+	      HOSTNAME=riso.rfpk.washington.edu
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    On the other nodes, set the HOSTNAME variable
+	    appropriately, and the GATEWAY variable to be
+	    the IP address of <SPAN
+CLASS="systemitem"
+>master</SPAN
+>.  For example, the
+	    file should look as follows on <SPAN
+CLASS="systemitem"
+>node0</SPAN
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      NETWORKING=yes
+	      HOSTNAME=node0
+	      GATEWAY=192.168.1.1
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></DIV
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN144"
+></A
+>/etc/sysconfig/network-scripts/ifcfg-eth0</H5
+><P
+>&#13;	    On <SPAN
+CLASS="systemitem"
+>master</SPAN
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      DEVICE=eth0
+	      BOOTPROTO=none
+	      ONBOOT=yes
+	      IPADDR=128.95.35.150
+	      NETMASK=255.255.255.0
+	      GATEWAY=128.95.35.100
+	      NETWORK=128.95.35.0
+	      BROADCAST=128.95.35.255
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    On <SPAN
+CLASS="systemitem"
+>node0</SPAN
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      DEVICE=eth0
+	      BOOTPROTO=static
+	      BROADCAST=192.168.1.255
+	      IPADDR=192.168.1.2
+	      NETMASK=255.255.255.0
+	      NETWORK=192.168.1.0
+	      ONBOOT=yes
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    On <SPAN
+CLASS="systemitem"
+>node1</SPAN
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      DEVICE=eth0
+	      BOOTPROTO=dhcp
+	      ONBOOT=no
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    On <SPAN
+CLASS="systemitem"
+>node2</SPAN
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      DEVICE=eth0
+	      BOOTPROTO=static
+	      BROADCAST=192.168.1.255
+	      IPADDR=192.168.1.4
+	      NETMASK=255.255.255.0
+	      NETWORK=192.168.1.0
+	      ONBOOT=yes
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    On <SPAN
+CLASS="systemitem"
+>node3</SPAN
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      DEVICE=eth0
+	      BOOTPROTO=static
+	      BROADCAST=192.168.1.255
+	      IPADDR=192.168.1.5
+	      NETMASK=255.255.255.0
+	      NETWORK=192.168.1.0
+	      ONBOOT=yes
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></DIV
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN161"
+></A
+>/etc/sysconfig/network-scripts/ifcfg-eth1</H5
+><P
+>&#13;	    On <SPAN
+CLASS="systemitem"
+>master</SPAN
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      DEVICE=eth1
+	      BOOTPROTO=static
+	      ONBOOT=yes
+	      IPADDR=192.168.1.1
+	      NETMASK=255.255.255.0
+	      NETWORK=192.168.1.0
+	      BROADCAST=192.168.1.255
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    On <SPAN
+CLASS="systemitem"
+>node1</SPAN
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      DEVICE=eth1
+	      BOOTPROTO=static
+	      ONBOOT=yes
+	      TYPE=Ethernet
+	      NETWORK=192.168.1.0
+	      BROADCAST=192.168.1.255
+	      IPADDR=192.168.1.3
+	      NETMASK=255.255.255.0
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    On the other nodes, this file does not exist.
+	  </P
+><P
+>&#13;	    After making the file changes, reboot all of the nodes
+	    so that the changes can take effect.
+	  </P
+></DIV
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN171"
+></A
+>Firewall Security</H4
+><P
+>&#13;	  The network security strategy for the cluster consists of
+	  having high security on the Internet interface to <SPAN
+CLASS="systemitem"
+>master</SPAN
+>
+	  coupled with no Internet visibility for the other nodes.  
+	  In RedHat Linux, the <B
+CLASS="command"
+>lokkit</B
+> tool is used
+	  to generate the necessary <I
+CLASS="emphasis"
+>iptables</I
+>
+	  filtering rules.  The following specifications should
+	  be provided to <B
+CLASS="command"
+>lokkit</B
+>:
+	  <P
+></P
+><UL
+><LI
+><P
+>Security Level: High</P
+></LI
+><LI
+><P
+>&#13;		Customize
+	      </P
+></LI
+><LI
+><P
+>&#13;		Trusted devices: eth1
+	      </P
+></LI
+><LI
+><P
+>&#13;		Allow incoming: SSH
+	      </P
+></LI
+></UL
+>
+	</P
+><P
+>&#13;	  In RedHat 8.0, unfortunately, 
+	  the <B
+CLASS="command"
+>lokkit</B
+> gui,
+	  normally started with the main menu sequence:
+	  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;<B
+CLASS="guimenu"
+>Main</B
+> =&#62; <B
+CLASS="guimenu"
+>System Settings</B
+> =&#62; <B
+CLASS="guimenuitem"
+>Security Level</B
+>
+	  </PRE
+></TD
+></TR
+></TABLE
+>
+	  does not present <B
+CLASS="command"
+>eth1</B
+> in the list of 
+	  trusted devices.  Use the terminal version, instead,
+	  by executing <B
+CLASS="command"
+>/usr/sbin/lokkit</B
+> as root.
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN195"
+></A
+>Time Server Configuration</H4
+><P
+>&#13;	  It is important that the system clocks of the nodes be closely
+	  synchronized, since the nodes are supposed to work together as a 
+	  single computer system.  The following implements the 
+	  recommendations of the RFPK 
+	  <I
+CLASS="emphasis"
+>Clock Synchronization</I
+> Howto.
+	</P
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN199"
+></A
+>/etc/ntp.conf</H5
+><P
+>&#13;	    On all nodes, edit the line at the beginning of the file
+	    that reads
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      restrict default ignore
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    to read
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      restrict default nomodify
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    After the line that reads
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      # server mytrustedtimeserverip
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    on <SPAN
+CLASS="systemitem"
+>master</SPAN
+> insert the lines
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      restrict whitechuck.rfpk.washington.edu nomodify notrap noquery
+	      restrict time.nist.gov nomodify notrap noquery
+	      restrict tick.uh.edu nomodify notrap noquery
+	      restrict tick.usno.navy.mil nomodify notrap noquery
+	      server whitechuck.rfpk.washington.edu
+	      server time.nist.gov
+	      server tick.uh.edu
+	      server tick.usno.navy.mil
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    and on the other nodes insert the lines:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      restrict 192.168.1.1 mask 255.255.255.255 nomodify notrap noquery
+	      server 192.168.1.1
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    All nodes should include the lines:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      server 127.127.1.0
+	      fudge   127.127.1.0 stratum 10 
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    after the comment titled "GENERAL CONFIGURATION".
+	  </P
+></DIV
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN211"
+></A
+>/etc/ntp/step-tickers</H5
+><P
+>&#13;	    On <SPAN
+CLASS="systemitem"
+>master</SPAN
+>, this file should read:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      whitechuck.rfpk.washington.edu
+	      time.nist.gov
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    On the other nodes, it should read:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      192.168.1.1
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></DIV
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN217"
+></A
+>Enable the Network Time Service</H5
+><P
+>&#13;	    On all nodes, 
+	    configure <B
+CLASS="command"
+>ntpd</B
+> to be started automatically
+	    whenever the system boots:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      /sbin/chkconfig --level 345 ntpd on
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></DIV
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN222"
+></A
+>SSH Configuration</H4
+><P
+>&#13;	  To simplify administration of multiple nodes, set up 
+	  <B
+CLASS="command"
+>ssh</B
+> so that the root user on <SPAN
+CLASS="systemitem"
+>master</SPAN
+>
+	  can access any of the nodes via 
+	  <B
+CLASS="command"
+>ssh</B
+> and <B
+CLASS="command"
+>scp</B
+>, without
+	  providing the root password.  
+	</P
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN229"
+></A
+>Generate and Install Public Keys</H5
+><P
+>&#13;	    Follow the RPFK <I
+CLASS="emphasis"
+>SSH Configuration</I
+> Howto
+	    to set up public key authentication for root on <SPAN
+CLASS="systemitem"
+>master</SPAN
+> just
+	    as you would for your ordinary login on your workstation, 
+	    except that root's public key should be installed on each
+	    of the other nodes rather than on <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>.  
+	  </P
+></DIV
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN235"
+></A
+>Setup Gnome and SSH</H5
+><P
+>&#13;	    As the root user, start Gnome on <SPAN
+CLASS="systemitem"
+>master</SPAN
+>.  Follow the 
+	    instuctions in the <I
+CLASS="emphasis"
+>SSH Configuration</I
+>
+	    Howto in the section titled <I
+CLASS="emphasis"
+>Configure Gnome</I
+>.
+	  </P
+></DIV
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN241"
+></A
+>Install Keychain</H5
+><P
+>&#13;	    Much of the time you will be administering the cluster not
+	    from the console on <SPAN
+CLASS="systemitem"
+>master</SPAN
+> but remotely via 
+	    <B
+CLASS="command"
+>ssh</B
+> from your own workstation.  An 
+	    additional package, known as <I
+CLASS="emphasis"
+>keychain</I
+>,
+	    makes this convenient.  It sets up authentication properly,
+	    even when you come in through a terminal, or a terminal
+	    emulation, such as <B
+CLASS="command"
+>ssh</B
+>.
+	  </P
+><P
+>&#13;	    Download the keychain rpm from 
+	    <A
+HREF="http://www.gentoo.org/proj/en/keychain.xml"
+TARGET="_top"
+>&#13;	      gentoo
+	    </A
+> and install it.  Then add the following lines to
+	    <TT
+CLASS="filename"
+>/root/.bash_profile</TT
+> on <SPAN
+CLASS="systemitem"
+>master</SPAN
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;keychain ~/.ssh/id_dsa
+. ~/.keychain/${HOSTNAME}-sh
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN253"
+></A
+>Open Mosix Installation</H3
+><DIV
+CLASS="sect3"
+><H4
+CLASS="sect3"
+><A
+NAME="AEN255"
+></A
+>Install the Open Mosix RPMs on all Nodes</H4
+><P
+>&#13;	  Download the latest stable openmosix-kernel rpm 
+	  and the latest openmosix-tools rpm from
+	  <A
+HREF="http://openmosix.sourceforge.net/"
+TARGET="_top"
+>SourceForge</A
+>
+	  and install them first on <SPAN
+CLASS="systemitem"
+>master</SPAN
+>. 
+	</P
+><P
+>&#13;	  Connect the keyboard, video monitor and mouse to <SPAN
+CLASS="systemitem"
+>master</SPAN
+>, and
+	  boot the machine.  When the Grub boot screen appears, 
+	  OpenMosix should be in the list of kernels, although it will
+	  not be the default kernel.  Select it, and continue the
+	  boot process. 
+	</P
+><P
+>&#13;	  If the newly installed OpenMosix kernel on <SPAN
+CLASS="systemitem"
+>master</SPAN
+> seems
+	  to be working alright, install both rpm files on all of the other
+	  nodes.
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN264"
+></A
+>Update the Grub Configuration</H4
+><P
+>&#13;	  The configuration of the grub boot loader must be changed
+	  to boot the new OpenMosix kernel by default.  On each
+	  node, in <TT
+CLASS="filename"
+>/etc/grub.conf</TT
+> you should
+	  see a list of kernels that are installed on the system.
+	  If the new kernel is the first in the list, 
+	  edit the first line after the initial comment to read
+	  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	    default=0
+	  </PRE
+></TD
+></TR
+></TABLE
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN269"
+></A
+>Install OpenMosix View on Master</H4
+><P
+>&#13;	  Down load the <TT
+CLASS="filename"
+>openmosixview</TT
+> rpm appropriate
+	  for your version of RedHat Linux from the OpenMosixView.com
+	  <A
+HREF="http://www.openmosixview.com/download.html"
+TARGET="_top"
+>&#13;	    download page
+	  </A
+>, and install it.
+	</P
+><P
+>&#13;	  You may need the <TT
+CLASS="filename"
+>glut</TT
+> rpm as well.
+	  You can get that from the RedHat rhn site.
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN276"
+></A
+>Install OpenMosix Stress Test on Master</H4
+><P
+>&#13;	  Download the
+	  <A
+HREF="http://www.openmosixview.com/omtest/"
+TARGET="_top"
+>&#13;	    omtest
+	  </A
+> rpm and install it. 
+	</P
+><P
+>&#13;	  You will probably also need a
+	  <TT
+CLASS="filename"
+>tk</TT
+> rpm and an
+	  <TT
+CLASS="filename"
+>expect</TT
+> rpm, both of which can be 
+	  obtained from the RedHat rhn site.
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN283"
+></A
+>Mapping the Nodes</H4
+><P
+>&#13;	  The auto-discovery process does not work properly on
+	  this cluster.  In his OpenMosix Howto, Kris Buytaert
+	  says that this sometimes happens with PCI Ethernet
+	  adapters and describes a work-around that involves
+	  placing the Ethernet interfaces in promiscuous mode.
+	  This is a bad idea from the point of view of security.
+	  On a small cluster such as RFPK's, it is better to use
+	  static mapping.
+	</P
+><P
+>&#13;	  On all nodes, 
+	  <TT
+CLASS="filename"
+>/etc/openmosix.map</TT
+> should be the
+	  same.  On <SPAN
+CLASS="systemitem"
+>master</SPAN
+>, append the following line to that
+	  file
+	  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	    1     192.168.1.1     5
+	  </PRE
+></TD
+></TR
+></TABLE
+>
+	  then copy the file to the other nodes.
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN290"
+></A
+>Configuring oMFS</H4
+><P
+>&#13;	  OpenMosix has its own distributed file system, called oMFS.
+	  This option is compiled into the rpm kernel.  The 
+	  Direct File System Access (DFSA) is also compiled in.
+	</P
+><P
+>&#13;	  In order to activate oMFS, make the following changes to
+	  <I
+CLASS="emphasis"
+>all nodes:</I
+>
+	  <P
+></P
+><UL
+><LI
+><P
+>&#13;		Create a directory on which to mount the file system:
+		<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		  mkdir /mfs
+		</PRE
+></TD
+></TR
+></TABLE
+>
+	      </P
+></LI
+><LI
+><P
+>&#13;		Add the following line to 
+		<TT
+CLASS="filename"
+>/etc/fstab</TT
+> on <SPAN
+CLASS="systemitem"
+>master</SPAN
+>
+		<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;mfs_mnt                 /mfs                    mfs     dfsa=1          0 0
+		</PRE
+></TD
+></TR
+></TABLE
+>
+	      </P
+></LI
+><LI
+><P
+>&#13;		Copy <TT
+CLASS="filename"
+>/etc/fstab</TT
+> to each of the
+		other nodes.
+	      </P
+></LI
+></UL
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN307"
+></A
+>Configuring openMosixCollector</H4
+><P
+>&#13;	  The <TT
+CLASS="filename"
+>openmosix-tools</TT
+> rpm installs a 
+	  real-time performance data collection daemon.  Its 
+	  service management script is 
+	  <TT
+CLASS="filename"
+>/etc/rc.d/init.d/openmosixcollector</TT
+>. Before
+	  it can be automatically stopped and started, the following lines
+	  must be added to the script, at the beginning:
+	  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;# chkconfig: 2345 96 4
+# description: openMosixCollector records real-time performance
+#              data for openMosix
+	  </PRE
+></TD
+></TR
+></TABLE
+>
+	</P
+><P
+>&#13;	  After editing the script, have <B
+CLASS="command"
+>chkconfig</B
+>
+	  complete the complex task of setting up links in the 
+	  subdirectories of <TT
+CLASS="filename"
+>/etc/rc.d</TT
+>:
+	  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /etc/rc.d/init.d
+chkconfig --add openmosixcollector
+	  </PRE
+></TD
+></TR
+></TABLE
+>
+	</P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN317"
+></A
+>Operations</H2
+><DIV
+CLASS="sect2"
+><H3
+CLASS="sect2"
+><A
+NAME="AEN319"
+></A
+>Powering the Cluster Up</H3
+><P
+>&#13;	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      Toggle the power switch on each of the nodes.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      After <SPAN
+CLASS="systemitem"
+>master</SPAN
+> comes up (this takes less than
+	      two minutes), as the root user open a terminal
+	      window.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Check that the clocks are all synchronized by entering
+	      the <B
+CLASS="command"
+>ntpcheck</B
+> command.  If the 
+	      clocks are not in sync, use the 
+	      <B
+CLASS="command"
+>resync</B
+> command to attempt to synchronize
+	      them.  If the cluster has been down for awhile, this
+	      may not work immediately.  You may have to wait 
+	      for several minutes after the reboot of <SPAN
+CLASS="systemitem"
+>master</SPAN
+> before
+	      <B
+CLASS="command"
+>resync</B
+> will work.  Alternate 
+	      the running of <B
+CLASS="command"
+>resync</B
+> and
+	      <B
+CLASS="command"
+>ntpcheck</B
+> until you are sure that
+	      the clocks are all in step with each other.
+	    </P
+></LI
+></OL
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN336"
+></A
+>Utility Shell Scripts</H3
+><P
+>&#13;	There are some useful shell scripts in the
+	<TT
+CLASS="filename"
+>/root/bin</TT
+> directory on <SPAN
+CLASS="systemitem"
+>master</SPAN
+>:
+	<P
+></P
+><UL
+><LI
+><P
+>&#13;	      <B
+CLASS="command"
+>datecheck:</B
+> runs the 
+	      <B
+CLASS="command"
+>date</B
+> command on each of the nodes
+	      and outputs the results.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <B
+CLASS="command"
+>ntpcheck</B
+>: runs the 
+	      <B
+CLASS="command"
+>ntpq -p</B
+> command on each of the nodes
+	      and outputs the results.  This provides feedback on the
+	      degree to which the clocks are synchronized.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <B
+CLASS="command"
+>powerdown</B
+>:
+	      powers the cluster down.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <B
+CLASS="command"
+>reboot</B
+>: reinitializes all the nodes
+	      in the cluster.  After the systems come back up (this
+	      takes about two minutes), run 
+	      <B
+CLASS="command"
+>ntpcheck</B
+> to determine whether or not
+	      the clocks are still in sync.  If not,
+	      alternate running <B
+CLASS="command"
+>resync</B
+> and
+	      <B
+CLASS="command"
+>ntpcheck</B
+> until you see that they
+	      are in step.  Sometimes it takes a couple of minutes
+	      after the reboot of <SPAN
+CLASS="systemitem"
+>master</SPAN
+> before synchronization
+	      succeeds.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <B
+CLASS="command"
+>resync</B
+>: restarts the network time
+	      protocol daemons on all the nodes except <SPAN
+CLASS="systemitem"
+>master</SPAN
+>, in order to 
+	      resynchronize the clocks.
+	    </P
+></LI
+></UL
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN364"
+></A
+>Backup</H3
+><P
+>&#13;	At present, only the <TT
+CLASS="filename"
+>/etc</TT
+> directory on each
+	node and the <TT
+CLASS="filename"
+>/root</TT
+> directory on <SPAN
+CLASS="systemitem"
+>master</SPAN
+>
+	are backed up.  Initiation of backup is manual, and should be
+	done every time changes are made to the configuration files and
+	administrative scripts in these directories.
+      </P
+><P
+>&#13;	The backup procedure is the following:
+	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      As root on <SPAN
+CLASS="systemitem"
+>master</SPAN
+>,
+	      run the <B
+CLASS="command"
+>backup</B
+> script that resides
+	      in <TT
+CLASS="filename"
+>/root/bin</TT
+>.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      In the <TT
+CLASS="filename"
+>/tmp</TT
+> directory, 
+	      the script will create a directory called
+	      <TT
+CLASS="filename"
+>yyyy-mm-dd-tttt.config</TT
+>, where
+	      <I
+CLASS="emphasis"
+>yyyy-mm-dd-tttt</I
+> represents the current
+	      date and time.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      The script will then use <B
+CLASS="command"
+>tar</B
+> to create
+	      an archive for the <TT
+CLASS="filename"
+>/etc</TT
+> directory
+	      of each node and <TT
+CLASS="filename"
+>/root</TT
+> on <SPAN
+CLASS="systemitem"
+>master</SPAN
+>.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Next, the script will create a compressed tar file of 
+	      the directory.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Finally, the script will use <B
+CLASS="command"
+>scp</B
+> to
+	      transfer the compressed archive to the
+	      <TT
+CLASS="filename"
+>/home/cluster/backup</TT
+> directory on
+	      whitechuck.  During this process, you will be asked
+	      for the password for cluster on whitechuck.
+	    </P
+></LI
+></OL
+>
+      </P
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

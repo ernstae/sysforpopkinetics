@@ -1,0 +1,360 @@
+<html><head>
+<title>Computing Statistics of Population Parameter Estimates</title>
+<meta name="description" id="description" content="Computing Statistics of Population Parameter Estimates">
+<meta name="keywords" id="keywords" content=" popstatistics covariance standard error correlation matrix population parameters Statistics Population "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="popstatistics.htm" target="_top">section</a>, <a href="popstatistics_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This function computes the covariance matrix, standard error vector, 
+correlation matrix, coefficient of variation vector, and confidence 
+interval vector for population parameter estimates.
+It allows parameter elements that are not active to be specified 
+and removed from the statistics computations.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>This function allows the covariance matrix of the population parameter 
+estimates to be calculated using one of the following formulations:
+<code><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>formulation</i>&nbsp;&quot;<i>RSR</i>&quot;:&nbsp;&nbsp;<i>cov</i>[&nbsp;<i>alp</i>&nbsp;]&nbsp;&nbsp;=&nbsp;&nbsp;<i>R</i>&nbsp;&nbsp;&nbsp;<i>S</i>&nbsp;&nbsp;<i>R</i>&nbsp;&nbsp;&nbsp;;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>formulation</i>&nbsp;&quot;<i>R</i>&quot;:&nbsp;&nbsp;&nbsp;&nbsp;<i>cov</i>[&nbsp;<i>alp</i>&nbsp;]&nbsp;&nbsp;=&nbsp;&nbsp;<i>R</i>&nbsp;&nbsp;&nbsp;;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>formulation</i>&nbsp;&quot;<i>S</i>&quot;:&nbsp;&nbsp;&nbsp;&nbsp;<i>cov</i>[&nbsp;<i>alp</i>&nbsp;]&nbsp;&nbsp;=&nbsp;&nbsp;<i>S</i>&nbsp;&nbsp;&nbsp;.<br>
+<br>
+</span></code>These formulations are discussed in Section (D.2.5) of the NONMEM 
+Users Guide Part II and in Sections (A.2.1) and (A.2.2) in 
+Carroll, Ruppert, and Stefanski (1998).
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The approximation made for the information matrix is
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>R</i>&nbsp;=&nbsp;(&nbsp;<i>LTilde</i>_<i>alp</i>_<i>alp</i>&nbsp;+&nbsp;<i>LTilde</i>_<i>alp</i>_<i>alp</i>&nbsp;&nbsp;)&nbsp;/&nbsp;2&nbsp;&nbsp;,<br>
+<br>
+</span></code>where <code><span style='white-space: nowrap'><i>LTilde</i>_<i>alp</i>_<i>alp</i></span></code> is an approximation for the second order 
+derivatives of the population objective function with respect to the 
+population parameter <code><span style='white-space: nowrap'><i>alp</i></span></code>.
+The matrix <code><span style='white-space: nowrap'><i>R</i></span></code> is defined in this way to insure that it is symmetric
+even for cases where the approximation <code><span style='white-space: nowrap'><i>LTilde</i>_<i>alp</i>_<i>alp</i></span></code> is not.
+Note that this <code><span style='white-space: nowrap'><i>R</i></span></code> is different than <code><span style='white-space: nowrap'><i>R</i>(<i>b</i>)</span></code>, 
+which is the model for the covariance of an individual's data 
+and is part of <a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The cross-product gradient matrix is defined as
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>S</i>&nbsp;=&nbsp;<i>Sum</i>{&nbsp;[(<i>LambdaTilde</i>_<i>i</i>&nbsp;)_<i>alp</i>]&nbsp;[(<i>LambdaTilde</i>_<i>i</i>)_<i>alp</i>]&nbsp;}&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+<br>
+</span></code>where <code><span style='white-space: nowrap'>(<i>LambdaTilde</i>_<i>i</i>)_<i>alp</i></span></code> is the derivative of the <i>i</i>-th
+individual's objective function with respect to the population
+parameter <code><span style='white-space: nowrap'><i>alp</i></span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The standard error vector is calculated by taking the square roots 
+of the diagonal elements of the covariance matrix.
+The correlation matrix is calculated by dividing each element of 
+the covariance matrix by the standard errors that correspond to its 
+row and column.
+The coefficients of variation are calculated as
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>CV</i>&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;|&nbsp;<i>alp</i>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;*&nbsp;100&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)<br>
+<br>
+</span></code>where CV is the coefficient of variation and SE is the standard error.  
+The 95% confidence intervals are calculated as
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;<i>alp</i>&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;<i>t</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;&nbsp;<i>alp</i>&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;<i>t</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)<br>
+<br>
+</span></code>where
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>t</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i><br>
+<br>
+</span></code>is the critical value for the <code><span style='white-space: nowrap'><i>t</i></span></code> distribution with 
+<code><span style='white-space: nowrap'><i>degFree</i>&nbsp;=&nbsp;<i>nY</i>&nbsp;-&nbsp;<i>nAlp</i></span></code> number of degrees of freedom for which the 
+area under the <code><span style='white-space: nowrap'><i>t</i></span></code> curve is <code><span style='white-space: nowrap'>1&nbsp;-&nbsp;0.025</span></code>
+and <code><span style='white-space: nowrap'><i>nAlp</i></span></code> is the number of population parameters.  
+
+<br>
+<br>
+<b><big><a name="Reference" id="Reference">Reference</a></big></b>
+<br>
+Beal, S. L. and Sheiner, L. B. (1988) <i>NONMEM Users Guide - Part II</i>,
+University of California, San Francisco.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Carroll, R. J., Ruppert, D., and Stefanski, L. A. (1998) 
+<i>Measurement Error in Nonlinear Models</i>, Chapman &amp; Hall/CRC,
+Boca Raton, Florida.
+
+<br>
+<br>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+Upon a successful completion, the function sets
+the given output value place holders to point to the result value.
+  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If an error is detected or failure occurs during the evaluation, a SpkException 
+object is thrown.  The state at which an exception is thrown is defined in
+<a href="glossary_frame1.htm#Exception Handling Policy" target="frame1"><i><span style='white-space: nowrap'>Exception&nbsp;Handling&nbsp;Policy</span></i></a>
+.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>popModel</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This function expects <i>model</i> to be a function of
+all three parameters: <code><span style='white-space: nowrap'><i>alp</i></span></code>, <code><span style='white-space: nowrap'><i>b</i></span></code> and <code><span style='white-space: nowrap'><i>i</i></span></code>.
+Refer <a href="glossary_frame1.htm#Model Functions Depend on i - alp - b" target="frame1"><i><span style='white-space: nowrap'>Model&nbsp;Functions&nbsp;Depend&nbsp;on&nbsp;i&nbsp;-&nbsp;alp&nbsp;-&nbsp;b</span></i></a>
+ for details.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>objective</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This enumerated type variable specifies which parametric population objective 
+function will be minimized:  the modified Laplace, the modified 
+Expected Hessian, or the modified First Order.
+The permissible values for <i>objective</i> are defined in 
+the <a href="objective.htm" target="_top"><span style='white-space: nowrap'>Objective</span></a>
+ enumerated type definition.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nMeasurementsAll</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;int&gt;</font></code> <i>nMeasurementsAll</i> corresponds to 
+the array <code><span style='white-space: nowrap'><i>N</i></span></code>.  The <i>i</i>-th element of <code><span style='white-space: nowrap'><i>N</i></span></code>
+specifies the number of elements of <code><span style='white-space: nowrap'><i>y</i></span></code> that
+correspond to the <i>i</i>-th individual.
+Note that the size of <i>nMeasurementsAll</i> specifies the number of 
+individuals in the population, <code><span style='white-space: nowrap'><i>M</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>measurementsAll</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>measurementsAll</i> contains the vector
+<code><span style='white-space: nowrap'><i>y</i></span></code>, which specifies the data for all the individuals.
+The vector <code><span style='white-space: nowrap'><i>y</i></span></code> has
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>N</i>(1)&nbsp;+&nbsp;<i>N</i>(2)&nbsp;+&nbsp;...&nbsp;+&nbsp;<i>N</i>(<i>M</i>)<br>
+</span></code>elements where <code><span style='white-space: nowrap'><i>M</i></span></code> is the number of individuals.  
+The data vector corresponding to the first individual is
+<code><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>y</i>_1&nbsp;=&nbsp;[&nbsp;<i>y</i>(1)&nbsp;,&nbsp;<i>y</i>(2)&nbsp;,&nbsp;...&nbsp;,&nbsp;<i>y</i>(<i>N</i>(1))&nbsp;]<br>
+</span></code>Elements <code><span style='white-space: nowrap'><i>y</i>(<i>N</i>(1)&nbsp;+&nbsp;1)</span></code> through <code><span style='white-space: nowrap'><i>y</i>(<i>N</i>(1)&nbsp;+&nbsp;<i>N</i>(2))</span></code> 
+correspond to the second individual and so on.
+(Note that <code><span style='white-space: nowrap'><i>y</i>_1</span></code> refers to the first subvector of <code><span style='white-space: nowrap'><i>y</i></span></code> while
+<code><span style='white-space: nowrap'><i>y</i>(1)</span></code> refers to the first element of the valarray <code><span style='white-space: nowrap'><i>y</i></span></code>.)
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popPar</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>popPar</i> contains the vector 
+<code><span style='white-space: nowrap'><i>alp</i></span></code>, which specifies the estimates of the population parameters.  
+The returned covariance matrix <i>popParCovOut</i> will be evaluated at 
+these values.  
+The <i>popPar</i> should be obtained by calling the SPK function 
+<a href="fitpopulation.htm" target="_top"><span style='white-space: nowrap'>fitPopulation</span></a>
+.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popParMask</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><code><font color="blue">popParMask</font></code> is a vector of boolean values of length equal to the parameter
+vector, <code><font color="blue">popPar</font></code>.  <code><font color="blue">popParMask[i]</font></code> tells as to whether <code><font color="blue">popPar[i]</font></code>
+is active or not.  If <code><span style='white-space: nowrap'><i>popParMask</i>[<i>i</i>]</span></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>, the i-th element of
+the parameter vector are treated as if it does not exist and further 
+statistics computations are performed based upon the assumption.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popObj_popPar_popPar</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>popObj_popPar_popPar</i> contains 
+the matrix <code><span style='white-space: nowrap'><i>LTilde</i>_<i>alp</i>_<i>alp</i></span></code>, in column major order, which specifies 
+an approximation for the second derivative of the population objective 
+function with respect to population parameter evaluated at <i>popPar</i>.  
+Note that the size of <i>popObj_popPar_popPar</i> should be equal to the 
+square of the length of the population parameter vector <code><span style='white-space: nowrap'><i>alp</i></span></code>.  
+The <i>popObj_popPar_popPar</i> should be obtained by calling the SPK function 
+<a href="fitpopulation.htm" target="_top"><span style='white-space: nowrap'>fitPopulation</span></a>
+. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParAll</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indParAll</i> contains the matrix 
+<code><span style='white-space: nowrap'><i>bAll</i></span></code> in column major order.  The size of <i>indParAll</i> is
+equal to the product of the length of the individual parameter vector 
+<code><span style='white-space: nowrap'><i>b</i></span></code> and the number of individuals in the population. 
+The <i>i</i>-th column of <code><span style='white-space: nowrap'><i>bAll</i></span></code>, <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code>, specifies the estimates
+of the individual parameters for the <i>i</i>-th individual.
+If <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code> is any column of <code><span style='white-space: nowrap'><i>bAll</i></span></code>,
+it is assumed that <code><span style='white-space: nowrap'><i>bLow</i>&nbsp;<u>&lt;</u>&nbsp;<i>b</i>_<i>i</i>&nbsp;<u>&lt;</u>&nbsp;<i>bUp</i></span></code>.
+Note that the column dimension of <code><span style='white-space: nowrap'><i>bAll</i></span></code> is equal to the number of 
+individuals in the population, <code><span style='white-space: nowrap'><i>M</i></span></code>.
+and the number of rows in <i>indParIn</i> is equal to the 
+length of the individual parameter vector <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code>.  
+The <i>indParAll</i> should be obtained by calling the SPK function 
+<a href="fitpopulation.htm" target="_top"><span style='white-space: nowrap'>fitPopulation</span></a>
+. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParLow</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indParLow</i> contains the vector
+<code><span style='white-space: nowrap'><i>bLow</i></span></code>, which specifies the lower limit for the individual parameters 
+for all the individuals.  The size of <i>indParLow</i> is equal to the 
+length of the individual parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParUp</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indParUp</i> contains the vector 
+<code><span style='white-space: nowrap'><i>bUp</i></span></code>, which specifies the upper limit for the individual parameters 
+for all the individuals.  The size of <i>indParUp</i> is equal to the 
+length of the individual parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParStep</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indParStep</i> contains the vector 
+<code><span style='white-space: nowrap'><i>bStep</i></span></code>, which specifies the step size used for approximating
+the derivatives with respect to the individual parameters.
+The size of <i>indParStep</i> is equal to the length of 
+the individual parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>formulation</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">int</font></code> <i>formulation</i> specifies which formulation of the 
+covariance of the population parameter estimates is selected.  See Description 
+section for details.  Only formulation &quot;R&quot; is available for FIRST_ORDER objective.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popParCovOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>popParCovOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>popParCovOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the square of the length of the population parameter vector 
+<code><span style='white-space: nowrap'><i>alp</i></span></code>.  If <i>popParCovOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>popParCovOut</i> will contain the covariance matrix
+of the population parameter estimates, in column major order, that is evaluated 
+at <code><span style='white-space: nowrap'><i>alp</i></span></code>.  Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by 
+<i>popParCovOut</i>.  
+
+The <code><span style='white-space: nowrap'>(<i>i</i>,<i>j</i>)</span></code>-the element of the covariance matrix will be 
+replaced by NaN if <code><font color="blue">popParMask[i]</font></code> or <code><font color="blue">popParMask[j]</font></code> 
+is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popParSEOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>popParSEOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>popParSEOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the population parameter vector 
+<code><span style='white-space: nowrap'><i>alp</i></span></code>.  If <i>popParSEOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>popParSEOut</i> will contain the standard error vector
+of the population parameter estimates, in column major order, that is evaluated 
+at <code><span style='white-space: nowrap'><i>alp</i></span></code>.  Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by 
+<i>popParSEOut</i>.  
+
+The <code><span style='white-space: nowrap'><i>i</i></span></code>-th element of the standard error vector will be replaced 
+by NaN if <code><font color="blue">popParMask[i]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popParCorOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>popParCorOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>popParCorOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the square of the length of the population parameter vector 
+<code><span style='white-space: nowrap'><i>alp</i></span></code>.  If <i>popParCorOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>popParCorOut</i> will contain the correlation matrix 
+of the population parameter estimates, in column major order, that is evaluated 
+at <code><span style='white-space: nowrap'><i>alp</i></span></code>.  Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by 
+<i>popParCorOut</i>. 
+
+The <code><span style='white-space: nowrap'>(<i>i</i>,<i>j</i>)</span></code>-the element of the correlation matrix will be 
+replaced by NaN if <code><font color="blue">popParMask[i]</font></code> or <code><font color="blue">popParMask[j]</font></code> 
+is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popParCVOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>popParCVOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>popParCVOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the population parameter vector 
+<code><span style='white-space: nowrap'><i>alp</i></span></code>.  If <i>popParCVOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>popParCVOut</i> will contain the standard error vector
+of the population parameter estimates, in column major order, that is evaluated 
+at <i>popPar</i>.  Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by 
+<i>popParCVOut</i>.  
+
+The <code><span style='white-space: nowrap'><i>i</i></span></code>-th element of the coefficient of variation vector will be 
+replaced by NaN if <code><font color="blue">popParMask[i]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popParCIOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>popParCIOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>popParCIOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the two times of the length of the population parameter vector 
+<code><span style='white-space: nowrap'><i>alp</i></span></code>.  If <i>popParCIOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed 
+to by <i>popParCIOut</i> will contain the 95% confidence interval values 
+of the population parameter estimates, in column major order, that is evaluated 
+at <i>popPar</i>.  There are two columns in the object.  The first column 
+contains the lower limit, and the second column contains the upper limit of 
+the confidence interval of the population parameter estimates.  Otherwise, 
+this function will not attempt to change the contents of the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>popParCIOut</i>.  
+Note that in the calculation of the confidence interval, if the degree of freedom 
+(total number of data - number of population parameters) is greater than 120, 
+it is treated as infinite.
+
+The <code><span style='white-space: nowrap'>(<i>i</i>,1)</span></code> and <code><span style='white-space: nowrap'>(<i>i</i>,2)</span></code> elements of the confidence interval matrix
+will be replaced by NaN if <code><font color="blue">popParMask[i]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+
+<hr>Input File: ../../spk/popStatistics.cpp
+
+</body>
+</html>

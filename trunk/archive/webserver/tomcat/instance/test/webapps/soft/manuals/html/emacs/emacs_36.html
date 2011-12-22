@@ -1,0 +1,386 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Mac OS</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Mac OS">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Mac OS">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC547"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC548"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> AG. Emacs and the Mac OS </H1>
+<!--docid::SEC547::-->
+<P>
+
+  Emacs built on the Mac OS supports many of its major features:
+multiple frames, colors, scroll bars, menu bars, use of the mouse,
+fontsets, international characters, input methods, coding systems, and
+synchronous subprocesses (<CODE>call-process</CODE>).  Much of this works in
+the same way as on other platforms and is therefore documented in the
+rest of this manual.  This section describes the peculiarities of using
+Emacs under the Mac OS.
+</P><P>
+
+  The following features of Emacs are not yet supported on the Mac:
+unexec (<CODE>dump-emacs</CODE>), asynchronous subprocesses
+(<CODE>start-process</CODE>), and networking (<CODE>open-network-stream</CODE>).
+As a result, packages such as Gnus, GUD, and Comint do not work.
+</P><P>
+
+  Since external programs to handle commands such as
+<CODE>print-buffer</CODE> and <CODE>diff</CODE> are not available on the Mac OS,
+they are not supported in the Mac OS version.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_36.html#SEC548">AG.1 Keyboard Input on the Mac</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Keyboard input on the Mac.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_36.html#SEC549">AG.2 International Character Set Support on the Mac</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">International character sets on the Mac.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_36.html#SEC550">AG.3 Environment Variables and Command Line Arguments.</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Setting environment variables for Emacs.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_36.html#SEC551">AG.4 Volumes and Directories on the Mac</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Volumes and directories on the Mac.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_36.html#SEC552">AG.5 Specifying Fonts on the Mac</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Specifying fonts on the Mac.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_36.html#SEC553">AG.6 Mac-Specific Lisp Functions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Mac-specific Lisp functions.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Mac Input"></A>
+<HR SIZE="6">
+<A NAME="SEC548"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC547"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC549"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC547"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC547"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AG.1 Keyboard Input on the Mac </H2>
+<!--docid::SEC548::-->
+<P>
+
+  On the Mac, Emacs can use either the <KBD>option</KBD> key or the
+<KBD>command</KBD> key as the <KBD>META</KBD> key.  If the value of the variable
+<CODE>mac-command-key-is-meta</CODE> is non-<CODE>nil</CODE> (its default value),
+Emacs uses the <KBD>command</KBD> key as the <KBD>META</KBD> key.  Otherwise it
+uses the <KBD>option</KBD> key as the <KBD>META</KBD> key.
+</P><P>
+
+  Most people should want to use the <KBD>command</KBD> key as the <KBD>META</KBD> key,
+so that dead-key processing with the <KBD>option</KBD> key will still work.  This is
+useful for entering non-ASCII Latin characters directly from the Mac
+keyboard, for example.
+</P><P>
+
+  Emacs recognizes the setting in the Keyboard control panel and
+supports international and alternative keyboard layouts (e.g., Dvorak).
+Selecting one of the layouts from the keyboard layout pull-down menu
+will affect how the keys typed on the keyboard are interpreted.
+</P><P>
+
+  The Mac OS intercepts and handles certain key combinations (e.g.,
+<KBD>command</KBD>-<KBD>SPC</KBD> for switching input languages).  These will not
+be passed to Emacs.
+</P><P>
+
+  The Mac keyboard ordinarily generates characters in the Mac Roman
+encoding.  To use it for entering ISO Latin-1 characters directly, set
+the value of the variable <CODE>mac-keyboard-text-encoding</CODE> to
+<CODE>kTextEncodingISOLatin1</CODE>.  Note that not all Mac Roman characters
+that can be entered at the keyboard can be converted to ISO Latin-1
+characters.
+</P><P>
+
+  To enter ISO Latin-2 characters directly from the Mac keyboard, set
+the value of <CODE>mac-keyboard-text-encoding</CODE> to
+<CODE>kTextEncodingISOLatin2</CODE>.  Then let Emacs know that the keyboard
+generates Latin-2 codes, by typing <KBD>C-x <KBD>RET</KBD> k iso-latin-2
+<KBD>RET</KBD></KBD>.  To make this setting permanent, put this in your
+<TT>`.emacs'</TT> init file:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(set-keyboard-coding-system 'iso-latin-2)
+</pre></td></tr></table></P><P>
+
+<A NAME="Mac International"></A>
+<HR SIZE="6">
+<A NAME="SEC549"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC548"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC550"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC550"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC547"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AG.2 International Character Set Support on the Mac </H2>
+<!--docid::SEC549::-->
+<P>
+
+  The Mac uses a non-standard encoding for the upper 128 single-byte
+characters.  It also deviates from the ISO 2022 standard by using
+character codes in the range 128-159.  The coding system
+<CODE>mac-roman</CODE> is used to represent this Mac encoding.  It is used
+for editing files stored in this native encoding, and for displaying
+file names in Dired mode.
+</P><P>
+
+  Any native (non-symbol) Mac font can be used to correctly display
+characters in the <CODE>mac-roman</CODE> coding system.
+</P><P>
+
+  The fontset <CODE>fontset-mac</CODE> is created automatically when Emacs
+is run on the Mac.  It displays characters in the <CODE>mac-roman</CODE>
+coding system using 12-point Monaco.
+</P><P>
+
+  To insert characters directly in the <CODE>mac-roman</CODE> coding system,
+type <KBD>C-x <KBD>RET</KBD> k mac-roman <KBD>RET</KBD></KBD>, customize the option
+<CODE>keyboard-coding-system</CODE>, or put this in your init file:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(set-keyboard-coding-system 'mac-roman)
+</pre></td></tr></table></P><P>
+
+This is useful for editing documents in native Mac encoding.
+</P><P>
+
+  You can use input methods provided either by LEIM (see section <A HREF="emacs_20.html#SEC217">Q.4 Input Methods</A>) or the Mac OS to enter international characters.
+</P><P>
+
+  To use the former, see the International Character Set Support section
+of the manual (see section <A HREF="emacs_20.html#SEC213">Q. International Character Set Support</A>).
+</P><P>
+
+  To use input methods provided by the Mac OS, set the keyboard coding
+system accordingly using the <KBD>C-x <KBD>RET</KBD> k</KBD> command
+(<CODE>set-keyboard-coding-system</CODE>).  For example, for Traditional
+Chinese, use <SAMP>`chinese-big5'</SAMP> as keyboard coding system; for
+Japanese, use <SAMP>`sjis'</SAMP>, etc.  Then select the desired input method in
+the keyboard layout pull-down menu.
+</P><P>
+
+  The Mac clipboard and the Emacs kill ring (see section <A HREF="emacs_11.html#SEC59">H.7 Deletion and Killing</A>) are
+connected as follows: the most recent kill is copied to the clipboard
+when Emacs is suspended and the contents of the clipboard is inserted
+into the kill ring when Emacs resumes.  The result is that you can yank
+a piece of text and paste it into another Mac application, or cut or copy
+one in another Mac application and yank it into a Emacs buffer.
+</P><P>
+
+  The encoding of text selections must be specified using the commands
+<KBD>C-x <KBD>RET</KBD> x</KBD> (<CODE>set-selection-coding-system</CODE>) or <KBD>C-x
+<KBD>RET</KBD> X</KBD> (<CODE>set-next-selection-coding-system</CODE>) (e.g., for
+Traditional Chinese, use <SAMP>`chinese-big5-mac'</SAMP> and for Japanese,
+<SAMP>`sjis-mac'</SAMP>).  See section <A HREF="emacs_20.html#SEC222">Q.9 Specifying a Coding System</A>, for more details.
+</P><P>
+
+<A NAME="Mac Environment Variables"></A>
+<HR SIZE="6">
+<A NAME="SEC550"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC549"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC551"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC551"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC547"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AG.3 Environment Variables and Command Line Arguments. </H2>
+<!--docid::SEC550::-->
+<P>
+
+  Environment variables and command line arguments for Emacs can be set
+by modifying the <SAMP>`STR#'</SAMP> resources 128 and 129, respectively.  A common
+environment variable that one may want to set is <SAMP>`HOME'</SAMP>.
+</P><P>
+
+  The way to set an environment variable is by adding a string of the
+form
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>ENV_VAR=VALUE
+</pre></td></tr></table></P><P>
+
+to resource <SAMP>`STR#'</SAMP> number 128 using <CODE>ResEdit</CODE>. To set up the
+program to use unibyte characters exclusively, for example, add the
+string
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>EMACS_UNIBYTE=1
+</pre></td></tr></table></P><P>
+
+<A NAME="Mac Directories"></A>
+<HR SIZE="6">
+<A NAME="SEC551"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC550"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC552"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC552"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC547"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AG.4 Volumes and Directories on the Mac </H2>
+<!--docid::SEC551::-->
+<P>
+
+  The directory structure in the Mac OS is seen by Emacs as 
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>/<VAR>volumename</VAR>/<VAR>filename</VAR>
+</pre></td></tr></table></P><P>
+
+So when Emacs requests a file name, doing file name completion on
+<TT>`/'</TT> will display all volumes on the system.  You can use <TT>`..'</TT>
+to go up a directory level.
+</P><P>
+
+  To access files and folders on the desktop, look in the folder
+<TT>`Desktop Folder'</TT> in your boot volume (this folder is usually
+invisible in the Mac <CODE>Finder</CODE>).
+</P><P>
+
+  Emacs creates the Mac folder <TT>`:Preferences:Emacs:'</TT> in the
+<TT>`System Folder'</TT> and uses it as the temporary directory.  Emacs
+maps the directory name <TT>`/tmp/'</TT> to that.  Therefore it
+is best to avoid naming a volume <TT>`tmp'</TT>.  If everything works
+correctly, the program should leave no files in it when it exits.  You
+should be able to set the environment variable <CODE>TMPDIR</CODE> to use
+another directory but this folder will still be created.
+</P><P>
+
+<A NAME="Mac Font Specs"></A>
+<HR SIZE="6">
+<A NAME="SEC552"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC551"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC553"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC553"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC547"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AG.5 Specifying Fonts on the Mac </H2>
+<!--docid::SEC552::-->
+<P>
+
+  It is rare that you need to specify a font name in Emacs; usually
+you specify face attributes instead.  But when you do need to specify
+a font name in Emacs on the Mac, use a standard X font name:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>-<VAR>maker</VAR>-<VAR>family</VAR>-<VAR>weight</VAR>-<VAR>slant</VAR>-<VAR>widthtype</VAR>-<VAR>style</VAR><small>...</small>
+<small>...</small>-<VAR>pixels</VAR>-<VAR>height</VAR>-<VAR>horiz</VAR>-<VAR>vert</VAR>-<VAR>spacing</VAR>-<VAR>width</VAR>-<VAR>charset</VAR>
+</FONT></pre></td></tr></table></P><P>
+
+See section <A HREF="emacs_34.html#SEC537">AE.7 Font Specification Options</A>.  Wildcards are supported as they are on X.
+</P><P>
+
+  Native Apple fonts in Mac Roman encoding has maker name <CODE>apple</CODE>
+and charset <CODE>mac-roman</CODE>.  For example 12-point Monaco can be
+specified by the name <SAMP>`-apple-monaco-*-12-*-mac-roman'</SAMP>.
+</P><P>
+
+  Native Apple Traditional Chinese, Simplified Chinese, Japanese, and
+Korean fonts have charsets <SAMP>`big5-0'</SAMP>, <SAMP>`gb2312.1980-0'</SAMP>,
+<SAMP>`jisx0208.1983-sjis'</SAMP>, and <SAMP>`ksc5601.1989-0'</SAMP>, respectively.
+</P><P>
+
+  Single-byte fonts converted from GNU fonts in BDF format, which are not
+in the Mac Roman encoding, have foundry, family, and character sets
+encoded in the names of their font suitcases.  E.g., the font suitcase
+<SAMP>`ETL-Fixed-ISO8859-1'</SAMP> contains fonts which can be referred to by
+the name <SAMP>`-ETL-fixed-*-iso8859-1'</SAMP>.
+</P><P>
+
+<A NAME="Mac Functions"></A>
+<HR SIZE="6">
+<A NAME="SEC553"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC552"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC547"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC547"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AG.6 Mac-Specific Lisp Functions </H2>
+<!--docid::SEC553::-->
+<P>
+
+<A NAME="IDX2933"></A>
+  The function <CODE>do-applescript</CODE> takes a string argument,
+executes it as an AppleScript command, and returns the result as a
+string.
+</P><P>
+
+<A NAME="IDX2934"></A>
+<A NAME="IDX2935"></A>
+  The function <CODE>mac-file-name-to-posix</CODE> takes a Mac file name and
+returns the GNU or Unix equivalent.  The function
+<CODE>posix-file-name-to-mac</CODE> performs the opposite conversion.  They
+are useful for constructing AppleScript commands to be passed to
+<CODE>do-applescript</CODE>.
+<A NAME="MS-DOS"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC547"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

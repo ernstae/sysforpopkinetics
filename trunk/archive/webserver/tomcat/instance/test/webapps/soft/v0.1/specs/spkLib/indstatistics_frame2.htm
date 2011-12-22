@@ -1,0 +1,365 @@
+<html><head>
+<title>Computing Statistics of Individual Parameter Estimates</title>
+<meta name="description" id="description" content="Computing Statistics of Individual Parameter Estimates">
+<meta name="keywords" id="keywords" content=" indstatistics coefficient of variation confidence interval covariance standard error correlation matrix individual parameters Statistics Individual "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="indstatistics.htm" target="_top">section</a>, <a href="indstatistics_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This function computes the covariance matrix, standard error vector,
+correlation matrix, coefficient of variation vector, and confidence
+interval vector for individual parameter estimates.
+It allows parameter elements that are not active to be specified
+and removed from the statistics computations.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>This function allows the covariance matrix of the individual parameter
+estimates to be calculated using one of the following formulations:
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>formulation</i>&nbsp;&quot;<i>RSR</i>&quot;:&nbsp;&nbsp;<i>cov</i>[&nbsp;<i>b</i>&nbsp;]&nbsp;&nbsp;=&nbsp;&nbsp;<i>R</i>&nbsp;&nbsp;&nbsp;<i>S</i>&nbsp;&nbsp;<i>R</i>&nbsp;&nbsp;&nbsp;;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>formulation</i>&nbsp;&quot;<i>HSH</i>&quot;:&nbsp;&nbsp;<i>cov</i>[&nbsp;<i>b</i>&nbsp;]&nbsp;&nbsp;=&nbsp;&nbsp;<i>H</i>&nbsp;&nbsp;&nbsp;<i>S</i>&nbsp;&nbsp;<i>H</i>&nbsp;&nbsp;&nbsp;;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>formulation</i>&nbsp;&quot;<i>R</i>&quot;:&nbsp;&nbsp;&nbsp;&nbsp;<i>cov</i>[&nbsp;<i>b</i>&nbsp;]&nbsp;&nbsp;=&nbsp;&nbsp;<i>R</i>&nbsp;&nbsp;&nbsp;;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>formulation</i>&nbsp;&quot;<i>H</i>&quot;:&nbsp;&nbsp;&nbsp;&nbsp;<i>cov</i>[&nbsp;<i>b</i>&nbsp;]&nbsp;&nbsp;=&nbsp;&nbsp;<i>H</i>&nbsp;&nbsp;&nbsp;;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>formulation</i>&nbsp;&quot;<i>S</i>&quot;:&nbsp;&nbsp;&nbsp;&nbsp;<i>cov</i>[&nbsp;<i>b</i>&nbsp;]&nbsp;&nbsp;=&nbsp;&nbsp;<i>S</i>&nbsp;&nbsp;&nbsp;.<br>
+<br>
+</span></code>These formulations are discussed in Section (D.2.5) of the NONMEM
+Users Guide Part II and in Sections (A.2.1) and (A.2.2) in
+Carroll, Ruppert, and Stefanski (1998).
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The first approximation that can be made for the information matrix is
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;|&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>R</i>&nbsp;&nbsp;=&nbsp;&nbsp;---&nbsp;|&nbsp;<i>d</i>&nbsp;&nbsp;<i>d</i>&nbsp;&nbsp;<i>MapObj</i>(<i>b</i>)&nbsp;&nbsp;+&nbsp;&nbsp;<i>d</i>&nbsp;&nbsp;<i>d</i>&nbsp;&nbsp;<i>MapObj</i>(<i>b</i>)&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;|&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<br>
+</span></code>which is a symmetrized version of the Hessian of the 
+<a href="mapobj.htm" target="_top"><span style='white-space: nowrap'>individual&nbsp;objective&nbsp;function</span></a>
+ <code><span style='white-space: nowrap'><i>MapObj</i>(<i>b</i>)</span></code>.
+The matrix <code><span style='white-space: nowrap'><i>R</i></span></code> is defined in this way to insure that it is symmetric
+even for cases where the Hessian approximation is not.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The second approximation that can be made for the information matrix is
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>H</i>&nbsp;&nbsp;=&nbsp;&nbsp;<i>E</i>&nbsp;&nbsp;&nbsp;|&nbsp;<i>d</i>&nbsp;&nbsp;<i>d</i>&nbsp;&nbsp;<i>MapObj</i>(<i>b</i>)&nbsp;|&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>y</i>&nbsp;&nbsp;|&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<i>D</i>&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;<i>d</i>&nbsp;&nbsp;<i>f</i>(<i>b</i>)&nbsp;&nbsp;<i>R</i>&nbsp;&nbsp;(<i>b</i>)&nbsp;<i>d</i>&nbsp;&nbsp;<i>f</i>(<i>b</i>)&nbsp;&nbsp;+&nbsp;&nbsp;-&nbsp;<i>d</i>&nbsp;&nbsp;<i>R</i>(<i>b</i>)&nbsp;&nbsp;<i>kron</i>[&nbsp;<i>R</i>&nbsp;&nbsp;(<i>b</i>),&nbsp;<i>R</i>&nbsp;&nbsp;(<i>b</i>)&nbsp;]&nbsp;<i>d</i>&nbsp;&nbsp;<i>R</i>(<i>b</i>)&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i><br>
+<br>
+</span></code>which is the expected value with respect to the data <code><span style='white-space: nowrap'><i>y</i></span></code> of the
+Hessian of the individual objective function.
+See Section (7.)  of Bell (2001) for its derivation.
+Note that the <code><span style='white-space: nowrap'><i>R</i>(<i>b</i>)</span></code> on the right hand side of this
+equation is the model for the covariance of an individual's data,
+which is part of <a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+ and
+is different than the information matrix <code><span style='white-space: nowrap'><i>R</i></span></code>.
+The term involving the covariance of the individual parameters
+<code><span style='white-space: nowrap'><i>D</i></span></code>, which is also part of <a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+,
+can be dropped from this calculation if the Map Bayesian objective
+function was not used to obtain the individual parameter estimates.
+See <a href="fitindividual.htm" target="_top"><span style='white-space: nowrap'>fitIndividual</span></a>
+ for details.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Currently, if either the covariance of the individual's data
+<code><span style='white-space: nowrap'><i>R</i>(<i>b</i>)</span></code> or the covariance of the individual parameters
+<code><span style='white-space: nowrap'><i>D</i></span></code> is not diagonal, then only the R formulation may be used.
+If both are diagonal, however, the other two formulations may be used
+and the cross-product gradient matrix is defined as
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>nY</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>nY</i>&nbsp;+&nbsp;<i>nB</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>S</i>&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;<i>s</i>&nbsp;&nbsp;&nbsp;<i>s</i>&nbsp;&nbsp;}&nbsp;&nbsp;+&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;<i>s</i>&nbsp;&nbsp;&nbsp;<i>s</i>&nbsp;&nbsp;}&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;---&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;<i>i</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;=&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;=&nbsp;<i>nY</i>&nbsp;+&nbsp;1<br>
+<br>
+</span></code>where <code><span style='white-space: nowrap'><i>nY</i></span></code> is the number of data values for the individual
+and <code><span style='white-space: nowrap'><i>nB</i></span></code> is the number of individual parameters.
+This is the empirical version of equation (A.2) from
+Carroll, Ruppert, and Stefanski (1998) where <code><span style='white-space: nowrap'><i>s</i>_<i>i</i></span></code> is the
+likelihood score.
+The second sum can be dropped from this calculation if the Map
+Bayesian objective function was not used to obtain the individual
+parameter estimates.
+For <code><span style='white-space: nowrap'><i>i</i></span></code> values less than or equal to <code><span style='white-space: nowrap'><i>nY</i></span></code>,
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>s</i>&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;---&nbsp;<i>d</i>&nbsp;&nbsp;|&nbsp;log[&nbsp;2&nbsp;pi&nbsp;<i>R</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>b</i>)&nbsp;]&nbsp;&nbsp;+&nbsp;&nbsp;[<i>y</i>&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<i>f</i>&nbsp;&nbsp;&nbsp;(<i>b</i>)]&nbsp;&nbsp;<i>R</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>b</i>)&nbsp;[<i>y</i>&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<i>f</i>&nbsp;&nbsp;&nbsp;(<i>b</i>)]&nbsp;|&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>,<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>,<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<br>
+<br>
+</span></code>If the Map Bayesian objective function was used to obtain the
+individual parameter estimates, then there is one additional
+likelihood score for each of the individual parameters.
+For <code><span style='white-space: nowrap'><i>i</i></span></code> values greater than <code><span style='white-space: nowrap'><i>nY</i></span></code>,
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>s</i>&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;---&nbsp;<i>d</i>&nbsp;&nbsp;|&nbsp;log[&nbsp;2&nbsp;pi&nbsp;<i>D</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]&nbsp;&nbsp;+&nbsp;&nbsp;<i>D</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>-<i>nY</i>,<i>i</i>-<i>nY</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>-<i>nY</i>,<i>i</i>-<i>nY</i>)&nbsp;&nbsp;&nbsp;(<i>i</i>-<i>nY</i>)&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-<br>
+<br>
+</span></code>The standard error vector is calculated by taking the square roots
+of the diagonal elements of the covariance matrix.
+The correlation matrix is calculated by dividing each element of
+the covariance matrix by the standard errors that correspond to its
+row and column.
+The coefficients of variation are calculated as
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>CV</i>&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;|&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;*&nbsp;100&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)<br>
+<br>
+</span></code>where CV is the coefficient of variation and SE is the standard error.
+The 95% confidence intervals are calculated as
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;<i>t</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;<i>t</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)<br>
+<br>
+</span></code>where
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>t</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i><br>
+<br>
+</span></code>is the critical value for the <code><span style='white-space: nowrap'><i>t</i></span></code> distribution with
+<code><span style='white-space: nowrap'><i>degFree</i>&nbsp;=&nbsp;<i>nY</i>&nbsp;-&nbsp;<i>nB</i></span></code> number of degrees of freedom for
+which the area under the <code><span style='white-space: nowrap'><i>t</i></span></code> curve is <code><span style='white-space: nowrap'>1&nbsp;-&nbsp;0.025</span></code>.
+
+<br>
+<br>
+<b><big><a name="Reference" id="Reference">Reference</a></big></b>
+<br>
+Beal, S. L. and Sheiner, L. B. (1988) <i>NONMEM Users Guide - Part II</i>,
+University of California, San Francisco.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Bell, B. M. (2001) Approximating the marginal likelihood estimate for
+models with random parameters, <i>Applied Mathematics and Computation</i>,
+<b>119</b>, 57-75.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Carroll, R. J., Ruppert, D., and Stefanski, L. A. (1998)
+<i>Measurement Error in Nonlinear Models</i>, Chapman &amp; Hall/CRC,
+Boca Raton, Florida.
+
+<br>
+<br>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+Upon a successful completion, the function sets
+the given output value place holders to point to the result values.
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If an error is detected or failure occurs during the evaluation, a SpkException
+object is thrown.  The state at which an exception is thrown is defined in
+<a href="glossary_frame1.htm#Exception Handling Policy" target="frame1"><i><span style='white-space: nowrap'>Exception&nbsp;Handling&nbsp;Policy</span></i></a>
+.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This function expects <i>model</i> to be a function of <code><span style='white-space: nowrap'><i>b</i></span></code>.
+Refer to <a href="glossary_frame1.htm#Model Functions Depend on only b" target="frame1"><i><span style='white-space: nowrap'>Model&nbsp;Functions&nbsp;Depend&nbsp;on&nbsp;only&nbsp;b</span></i></a>
+ for details.
+If the Map Bayesian objective function was used to obtain the
+individual parameter estimates, then the function
+<a href="spkmodel_indparvariance.htm" target="_top">Model for the Variance of Individual Parameter</a> must be defined for this model in
+order to calculate the covariance of the individual parameters
+<code><span style='white-space: nowrap'><i>D</i></span></code>.
+In this case, the argument <i>withD</i> should be set
+equal to <code><font color="blue">true</font></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>measurements</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>measurements</i> contains the array
+<code><span style='white-space: nowrap'><i>y</i></span></code>, which specifies the measured data.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indPar</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indPar</i> contains the vector
+<code><span style='white-space: nowrap'><i>b</i></span></code>, which specifies the estimates of the individual parameters.
+The returned values <i>indParCovOut</i>, <i>indParSEOut</i>,
+<i>indParCorOut</i>, <i>indParCVOut</i> and <i>indParCIOut</i>
+will be evaluated at these estimates.
+The <i>values of indPar</i> should be obtained by calling the SPK function
+<a href="fitindividual.htm" target="_top"><span style='white-space: nowrap'>fitIndividual</span></a>
+.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParMask</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><code><font color="blue">indParMask</font></code> is a vector of boolean values of length equal to the parameter
+vector, <code><font color="blue">indPar</font></code>.  <code><font color="blue">indParMask[i]</font></code> tells as to whether <code><font color="blue">indPar[i]</font></code>
+is active or not.  If <code><span style='white-space: nowrap'><i>indParMask</i>[<i>i</i>]</span></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>, the i-th element of
+the parameter vector are treated as if it does not exist and further
+statistics computations are performed based upon the assumption.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indObj_indPar_indPar</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indObj_indPar_indPar</i> contains 
+the matrix <code><span style='white-space: nowrap'><i>MapObj</i>_<i>b</i>_<i>b</i></span></code>, in column major order, which specifies 
+an approximation for the second derivative of the individual objective 
+function with respect to the individual parameter evaluated at <i>indPar</i>.  
+Note that the size of <i>indObj_indPar_indPar</i> should be equal to the 
+square of the length of the individual parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.  
+The <i>indObj_indPar_indPar</i> should be obtained by calling the SPK function 
+<a href="fitindividual.htm" target="_top"><span style='white-space: nowrap'>fitIndividual</span></a>
+. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParCovOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>indParCovOut</i> is not <code><font color="blue">NULL</font></code>, then the
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCovOut</i>
+must be declared in the function that calls this function, and its size must
+be equal to the square of the length of the individual parameter vector
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>indParCovOut</i> is not <code><font color="blue">NULL</font></code> and this function
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object
+pointed to by <i>indParCovOut</i> will contain the covariance matrix
+of the individual parameter estimates, in column major order, that is evaluated
+at <i>indPar</i>.  Otherwise, this function will not attempt to change the
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by
+<i>indParCovOut</i>.
+
+The <code><span style='white-space: nowrap'>(<i>i</i>,<i>j</i>)</span></code>-the element of the covariance matrix
+will be replaced by NaN if <code><font color="blue">indParMask[i]</font></code> or <code><font color="blue">indParMask[j]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParSEOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>indParSEOut</i> is not <code><font color="blue">NULL</font></code>, then the
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParSEOut</i>
+must be declared in the function that calls this function, and its size must
+be equal to the length of the individual parameter vector
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>indParSEOut</i> is not <code><font color="blue">NULL</font></code> and this function
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object
+pointed to by <i>indParSEOut</i> will contain the standard error vector
+of the individual parameter estimates, in column major order, that is evaluated
+at <i>indPar</i>.  Otherwise, this function will not attempt to change the
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by
+<i>indParSEOut</i>.
+
+The <code><span style='white-space: nowrap'><i>i</i></span></code>-th element of the standard error vector
+will be replaced by NaN if <code><font color="blue">indParMask[i]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParCorOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>indParCorOut</i> is not <code><font color="blue">NULL</font></code>, then the
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCorOut</i>
+must be declared in the function that calls this function, and its size must
+be equal to the square of the length of the individual parameter vector
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>indParCorOut</i> is not <code><font color="blue">NULL</font></code> and this function
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object
+pointed to by <i>indParCorOut</i> will contain the correlation matrix
+of the individual parameter estimates, in column major order, that is evaluated
+at <i>indPar</i>.  Otherwise, this function will not attempt to change the
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by
+<i>indParCorOut</i>.
+
+The <code><span style='white-space: nowrap'>(<i>i</i>,&nbsp;<i>j</i>)</span></code>-th element of the correlation matrix
+will be replaced by NaN if <code><font color="blue">indParMask[i]</font></code> or <code><font color="blue">indParMask[j]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParCVOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>indParCVOut</i> is not <code><font color="blue">NULL</font></code>, then the
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCVOut</i>
+must be declared in the function that calls this function, and its size must
+be equal to the length of the individual parameter vector
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>indParCVOut</i> is not <code><font color="blue">NULL</font></code> and this function
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object
+pointed to by <i>indParCVOut</i> will contain the standard error vector
+of the individual parameter estimates, in column major order, that is evaluated
+at <i>indPar</i>.  Otherwise, this function will not attempt to change the
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by
+<i>indParCVOut</i>.
+
+The <code><span style='white-space: nowrap'><i>i</i></span></code>-th element of the coefficient vector
+will be replaced by NaN if <code><font color="blue">indParMask[i]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParCIOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>indParCIOut</i> is not <code><font color="blue">NULL</font></code>, then the
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCIOut</i>
+must be declared in the function that calls this function, and its size must
+be equal to the two times of the length of the individual parameter vector
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>indParCIOut</i> is not <code><font color="blue">NULL</font></code> and this function
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed
+to by <i>indParCIOut</i> will contain the 95% confidence interval values
+of the individual parameter estimates, in column major order, that is evaluated
+at <i>indPar</i>.  There are two columns in the object.  The first column
+contains the lower limit, and the second column contains the upper limit of
+the confidence interval of the individual parameter estimates.  Otherwise,
+this function will not attempt to change the contents of the
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCIOut</i>.
+Note that in the calculation of the confidence interval, if the degree of freedom
+(number of data - number of parameters) is greater than 120 it is treated as infinite.
+
+The <code><span style='white-space: nowrap'>(<i>i</i>,1)</span></code> and <code><span style='white-space: nowrap'>(<i>i</i>,2)</span></code> elements of the confidence interval matrix
+will be replaced by NaN if <code><font color="blue">indParMask[i]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>withD</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If this flag is set equal to <code><font color="blue">false</font></code>, then the terms involving
+the covariance of the individual parameters <code><span style='white-space: nowrap'><i>D</i></span></code> are dropped
+from the calculations of the information matrix <code><span style='white-space: nowrap'><i>R</i></span></code> and the
+cross-product gradient matrix <code><span style='white-space: nowrap'><i>S</i></span></code>.
+This should only be done if the Map Bayesian objective
+function was not used to obtain the individual parameter estimates.
+See <a href="fitindividual.htm" target="_top"><span style='white-space: nowrap'>fitIndividual</span></a>
+ for details.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If this flag is set equal to <code><font color="blue">true</font></code>, then the function
+<a href="spkmodel_indparvariance.htm" target="_top">Model for the Variance of Individual Parameter</a> must be defined for the input argument
+<i>model</i> in order to calculate <code><span style='white-space: nowrap'><i>D</i></span></code>.
+
+
+<hr>Input File: ../../spk/indStatistics.cpp
+
+</body>
+</html>

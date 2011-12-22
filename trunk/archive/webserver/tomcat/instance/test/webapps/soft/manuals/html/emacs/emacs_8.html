@@ -1,0 +1,791 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Minibuffer</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Minibuffer">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Minibuffer">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC31"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC30"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC32"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_9.html#SEC41"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> E. The Minibuffer </H1>
+<!--docid::SEC31::-->
+<P>
+
+  The <EM>minibuffer</EM> is the facility used by Emacs commands to read
+arguments more complicated than a single number.  Minibuffer arguments
+can be file names, buffer names, Lisp function names, Emacs command
+names, Lisp expressions, and many other things, depending on the command
+reading the argument.  You can use the usual Emacs editing commands in
+the minibuffer to edit the argument text.
+</P><P>
+
+<A NAME="IDX120"></A>
+  When the minibuffer is in use, it appears in the echo area, and the
+terminal's cursor moves there.  The beginning of the minibuffer line
+displays a <EM>prompt</EM> which says what kind of input you should supply and
+how it will be used.  Often this prompt is derived from the name of the
+command that the argument is for.  The prompt normally ends with a colon.
+</P><P>
+
+<A NAME="IDX121"></A>
+  Sometimes a <EM>default argument</EM> appears in parentheses after the
+colon; it too is part of the prompt.  The default will be used as the
+argument value if you enter an empty argument (that is, just type
+<KBD>RET</KBD>).  For example, commands that read buffer names always show a
+default, which is the name of the buffer that will be used if you type
+just <KBD>RET</KBD>.
+</P><P>
+
+  The simplest way to enter a minibuffer argument is to type the text
+you want, terminated by <KBD>RET</KBD> which exits the minibuffer.  You can
+cancel the command that wants the argument, and get out of the
+minibuffer, by typing <KBD>C-g</KBD>.
+</P><P>
+
+  Since the minibuffer uses the screen space of the echo area, it can
+conflict with other ways Emacs customarily uses the echo area.  Here is how
+Emacs handles such conflicts:
+</P><P>
+
+<UL>
+<LI>
+If a command gets an error while you are in the minibuffer, this does
+not cancel the minibuffer.  However, the echo area is needed for the
+error message and therefore the minibuffer itself is hidden for a
+while.  It comes back after a few seconds, or as soon as you type
+anything.
+<P>
+
+<LI>
+If in the minibuffer you use a command whose purpose is to display a
+message in the echo area, such as <KBD>C-x =</KBD>, the message hides the
+minibuffer for a while.  The minibuffer contents come back after a few
+seconds, or as soon as you type anything.
+<P>
+
+<LI>
+Echoing of keystrokes does not take place while the minibuffer is in
+use.
+</UL>
+<P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_8.html#SEC32">E.1 Minibuffers for File Names</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Entering file names with the minibuffer.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_8.html#SEC33">E.2 Editing in the Minibuffer</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to edit in the minibuffer.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_8.html#SEC34">E.3 Completion</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">An abbreviation facility for minibuffer input.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_8.html#SEC39">E.4 Minibuffer History</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Reusing recent minibuffer arguments.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_8.html#SEC40">E.5 Repeating Minibuffer Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Re-executing commands that used the minibuffer.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Minibuffer File"></A>
+<HR SIZE="6">
+<A NAME="SEC32"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC33"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_9.html#SEC41"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> E.1 Minibuffers for File Names </H2>
+<!--docid::SEC32::-->
+<P>
+
+  Sometimes the minibuffer starts out with text in it.  For example, when
+you are supposed to give a file name, the minibuffer starts out containing
+the <EM>default directory</EM>, which ends with a slash.  This is to inform
+you which directory the file will be found in if you do not specify a
+directory.
+</P><P>
+
+  For example, the minibuffer might start out with these contents:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>Find File: /u2/emacs/src/
+</pre></td></tr></table></P><P>
+
+where <SAMP>`Find File: '</SAMP> is the prompt.  Typing <KBD>buffer.c</KBD>
+specifies the file <TT>`/u2/emacs/src/buffer.c'</TT>.  To find files in
+nearby directories, use <KBD>..</KBD>; thus, if you type
+<KBD>../lisp/simple.el</KBD>, you will get the file named
+<TT>`/u2/emacs/lisp/simple.el'</TT>.  Alternatively, you can kill with
+<KBD>M-<KBD>DEL</KBD></KBD> the directory names you don't want (see section <A HREF="emacs_23.html#SEC234">T.1 Words</A>).
+</P><P>
+
+  If you don't want any of the default, you can kill it with <KBD>C-a
+C-k</KBD>.  But you don't need to kill the default; you can simply ignore it.
+Insert an absolute file name, one starting with a slash or a tilde,
+after the default directory.  For example, to specify the file
+<TT>`/etc/termcap'</TT>, just insert that name, giving these minibuffer
+contents:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>Find File: /u2/emacs/src//etc/termcap
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX122"></A>
+<A NAME="IDX123"></A>
+<A NAME="IDX124"></A>
+GNU Emacs gives a special meaning to a double slash (which is not
+normally a useful thing to write): it means, "ignore everything before
+the second slash in the pair."  Thus, <SAMP>`/u2/emacs/src/'</SAMP> is ignored
+in the example above, and you get the file <TT>`/etc/termcap'</TT>.
+</P><P>
+
+  If you set <CODE>insert-default-directory</CODE> to <CODE>nil</CODE>, the default
+directory is not inserted in the minibuffer.  This way, the minibuffer
+starts out empty.  But the name you type, if relative, is still
+interpreted with respect to the same default directory.
+</P><P>
+
+<A NAME="Minibuffer Edit"></A>
+<HR SIZE="6">
+<A NAME="SEC33"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC32"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC34"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC34"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_9.html#SEC41"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> E.2 Editing in the Minibuffer </H2>
+<!--docid::SEC33::-->
+<P>
+
+  The minibuffer is an Emacs buffer (albeit a peculiar one), and the usual
+Emacs commands are available for editing the text of an argument you are
+entering.
+</P><P>
+
+  Since <KBD>RET</KBD> in the minibuffer is defined to exit the minibuffer,
+you can't use it to insert a newline in the minibuffer.  To do that,
+type <KBD>C-o</KBD> or <KBD>C-q C-j</KBD>.  (Recall that a newline is really the
+character control-J.)
+</P><P>
+
+  The minibuffer has its own window which always has space on the screen
+but acts as if it were not there when the minibuffer is not in use.  When
+the minibuffer is in use, its window is just like the others; you can
+switch to another window with <KBD>C-x o</KBD>, edit text in other windows and
+perhaps even visit more files, before returning to the minibuffer to submit
+the argument.  You can kill text in another window, return to the
+minibuffer window, and then yank the text to use it in the argument.
+See section <A HREF="emacs_18.html#SEC183">O. Multiple Windows</A>.
+</P><P>
+
+<A NAME="IDX125"></A>
+<A NAME="IDX126"></A>
+<A NAME="IDX127"></A>
+<A NAME="IDX128"></A>
+  There are some restrictions on the use of the minibuffer window,
+however.  You cannot switch buffers in it--the minibuffer and its
+window are permanently attached.  Also, you cannot split or kill the
+minibuffer window.  But you can make it taller in the normal fashion
+with <KBD>C-x ^</KBD>.
+</P><P>
+
+<A NAME="IDX129"></A>
+  The minibuffer window expands vertically as necessary to hold the
+text that you put in the minibuffer, if <CODE>resize-mini-windows</CODE> is
+non-<CODE>nil</CODE>.  If <CODE>resize-mini-windows</CODE> is <CODE>t</CODE>, the window
+is always resized to fit the size of the text it displays.  If
+<CODE>resize-mini-windows</CODE> is the symbol <CODE>grow-only</CODE>, the window
+grows when the size of displayed text increases, but shrinks (back to
+the normal size) only when the minibuffer becomes inactive.
+</P><P>
+
+<A NAME="IDX130"></A>
+  The variable <CODE>max-mini-window-height</CODE> controls the maximum
+height for resizing the minibuffer window: a floating-point number
+specifies a fraction of the frame's height; an integer specifies the
+maximum number of lines; <CODE>nil</CODE> means do not resize the minibuffer
+window automatically.  The default value is 0.25.
+</P><P>
+
+  If while in the minibuffer you issue a command that displays help text
+of any sort in another window, you can use the <KBD>C-M-v</KBD> command while
+in the minibuffer to scroll the help text.  This lasts until you exit
+the minibuffer.  This feature is especially useful when you display
+a buffer listing possible completions.  See section <A HREF="emacs_18.html#SEC186">O.3 Using Other Windows</A>.
+</P><P>
+
+<A NAME="IDX131"></A>
+  Emacs normally disallows most commands that use the minibuffer while
+the minibuffer is active.  This rule is to prevent recursive minibuffers
+from confusing novice users.  If you want to be able to use such
+commands in the minibuffer, set the variable
+<CODE>enable-recursive-minibuffers</CODE> to a non-<CODE>nil</CODE> value.
+</P><P>
+
+<A NAME="Completion"></A>
+<HR SIZE="6">
+<A NAME="SEC34"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC33"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC35"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC39"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC39"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> E.3 Completion </H2>
+<!--docid::SEC34::-->
+<P>
+
+  For certain kinds of arguments, you can use <EM>completion</EM> to enter
+the argument value.  Completion means that you type part of the
+argument, then Emacs visibly fills in the rest, or as much as
+can be determined from the part you have typed.
+</P><P>
+
+  When completion is available, certain keys---<KBD>TAB</KBD>, <KBD>RET</KBD>, and
+<KBD>SPC</KBD>---are rebound to complete the text present in the minibuffer
+into a longer string that it stands for, by matching it against a set of
+<EM>completion alternatives</EM> provided by the command reading the
+argument.  <KBD>?</KBD> is defined to display a list of possible completions
+of what you have inserted.
+</P><P>
+
+  For example, when <KBD>M-x</KBD> uses the minibuffer to read the name of a
+command, it provides a list of all available Emacs command names to
+complete against.  The completion keys match the text in the minibuffer
+against all the command names, find any additional name characters
+implied by the ones already present in the minibuffer, and add those
+characters to the ones you have given.  This is what makes it possible
+to type <KBD>M-x ins <KBD>SPC</KBD> b <KBD>RET</KBD></KBD> instead of <KBD>M-x
+insert-buffer <KBD>RET</KBD></KBD> (for example).
+</P><P>
+
+  Case is normally significant in completion, because it is significant
+in most of the names that you can complete (buffer names, file names and
+command names).  Thus, <SAMP>`fo'</SAMP> does not complete to <SAMP>`Foo'</SAMP>.
+Completion does ignore case distinctions for certain arguments in which
+case does not matter.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_8.html#SEC35">E.3.1 Completion Example</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_8.html#SEC36">E.3.2 Completion Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_8.html#SEC37">E.3.3 Strict Completion</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_8.html#SEC38">E.3.4 Completion Options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Completion Example"></A>
+<HR SIZE="6">
+<A NAME="SEC35"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC34"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC36"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC39"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC34"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC39"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> E.3.1 Completion Example </H3>
+<!--docid::SEC35::-->
+<P>
+
+<A NAME="IDX132"></A>
+<A NAME="IDX133"></A>
+  A concrete example may help here.  If you type <KBD>M-x au <KBD>TAB</KBD></KBD>,
+the <KBD>TAB</KBD> looks for alternatives (in this case, command names) that
+start with <SAMP>`au'</SAMP>.  There are several, including
+<CODE>auto-fill-mode</CODE> and <CODE>auto-save-mode</CODE>---but they are all the
+same as far as <CODE>auto-</CODE>, so the <SAMP>`au'</SAMP> in the minibuffer changes
+to <SAMP>`auto-'</SAMP>.</P><P>
+
+  If you type <KBD>TAB</KBD> again immediately, there are multiple
+possibilities for the very next character--it could be any of
+<SAMP>`cfilrs'</SAMP>---so no more characters are added; instead, <KBD>TAB</KBD>
+displays a list of all possible completions in another window.
+</P><P>
+
+  If you go on to type <KBD>f <KBD>TAB</KBD></KBD>, this <KBD>TAB</KBD> sees
+<SAMP>`auto-f'</SAMP>.  The only command name starting this way is
+<CODE>auto-fill-mode</CODE>, so completion fills in the rest of that.  You now
+have <SAMP>`auto-fill-mode'</SAMP> in the minibuffer after typing just <KBD>au
+<KBD>TAB</KBD> f <KBD>TAB</KBD></KBD>.  Note that <KBD>TAB</KBD> has this effect because in
+the minibuffer it is bound to the command <CODE>minibuffer-complete</CODE>
+when completion is available.
+</P><P>
+
+<A NAME="Completion Commands"></A>
+<HR SIZE="6">
+<A NAME="SEC36"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC35"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC37"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC37"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC34"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC39"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> E.3.2 Completion Commands </H3>
+<!--docid::SEC36::-->
+<P>
+
+  Here is a list of the completion commands defined in the minibuffer
+when completion is available.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD><KBD>TAB</KBD></KBD>
+<DD>Complete the text in the minibuffer as much as possible
+(<CODE>minibuffer-complete</CODE>).
+<DT><KBD><KBD>SPC</KBD></KBD>
+<DD>Complete the minibuffer text, but don't go beyond one word
+(<CODE>minibuffer-complete-word</CODE>).
+<DT><KBD><KBD>RET</KBD></KBD>
+<DD>Submit the text in the minibuffer as the argument, possibly completing
+first as described below (<CODE>minibuffer-complete-and-exit</CODE>).
+<DT><KBD>?</KBD>
+<DD>Display a list of all possible completions of the text in the minibuffer
+(<CODE>minibuffer-list-completions</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX134"></A>
+<A NAME="IDX135"></A>
+  <KBD>SPC</KBD> completes much like <KBD>TAB</KBD>, but never goes beyond the
+next hyphen or space.  If you have <SAMP>`auto-f'</SAMP> in the minibuffer and
+type <KBD>SPC</KBD>, it finds that the completion is <SAMP>`auto-fill-mode'</SAMP>,
+but it stops completing after <SAMP>`fill-'</SAMP>.  This gives
+<SAMP>`auto-fill-'</SAMP>.  Another <KBD>SPC</KBD> at this point completes all the
+way to <SAMP>`auto-fill-mode'</SAMP>.  The command that implements this
+behavior is called <CODE>minibuffer-complete-word</CODE>.
+</P><P>
+
+  Here are some commands you can use to choose a completion from a
+window that displays a list of completions:
+</P><P>
+
+<DL COMPACT>
+<A NAME="IDX136"></A>
+<DT><KBD>Mouse-2</KBD>
+<DD>Clicking mouse button 2 on a completion in the list of possible
+completions chooses that completion (<CODE>mouse-choose-completion</CODE>).
+You normally use this command while point is in the minibuffer, but you
+must click in the list of completions, not in the minibuffer itself.
+<P>
+
+<A NAME="IDX137"></A>
+<DT><KBD><KBD>PRIOR</KBD></KBD>
+<DD><DT><KBD>M-v</KBD>
+<DD>Typing <KBD>PRIOR</KBD> or <KBD>PAGE-UP</KBD>, or <KBD>M-v</KBD>, while in the
+minibuffer, selects the window showing the completion list buffer
+(<CODE>switch-to-completions</CODE>).  This paves the way for using the
+commands below.  (Selecting that window in the usual ways has the same
+effect, but this way is more convenient.)
+<P>
+
+<A NAME="IDX138"></A>
+<DT><KBD><KBD>RET</KBD></KBD>
+<DD>Typing <KBD>RET</KBD> <EM>in the completion list buffer</EM> chooses the
+completion that point is in or next to (<CODE>choose-completion</CODE>).  To
+use this command, you must first switch windows to the window that shows
+the list of completions.
+<P>
+
+<A NAME="IDX139"></A>
+<DT><KBD><KBD>RIGHT</KBD></KBD>
+<DD>Typing the right-arrow key <KBD>RIGHT</KBD> <EM>in the completion list
+buffer</EM> moves point to the following completion (<CODE>next-completion</CODE>).
+<P>
+
+<A NAME="IDX140"></A>
+<DT><KBD><KBD>LEFT</KBD></KBD>
+<DD>Typing the left-arrow key <KBD>LEFT</KBD> <EM>in the completion list
+buffer</EM> moves point toward the beginning of the buffer, to the previous
+completion (<CODE>previous-completion</CODE>).
+</DL>
+<P>
+
+<A NAME="Strict Completion"></A>
+<HR SIZE="6">
+<A NAME="SEC37"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC36"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC38"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC38"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC34"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC39"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> E.3.3 Strict Completion </H3>
+<!--docid::SEC37::-->
+<P>
+
+  There are three different ways that <KBD>RET</KBD> can work in completing
+minibuffers, depending on how the argument will be used.
+</P><P>
+
+<UL>
+<LI>
+<EM>Strict</EM> completion is used when it is meaningless to give any
+argument except one of the known alternatives.  For example, when
+<KBD>C-x k</KBD> reads the name of a buffer to kill, it is meaningless to
+give anything but the name of an existing buffer.  In strict
+completion, <KBD>RET</KBD> refuses to exit if the text in the minibuffer
+does not complete to an exact match.
+<P>
+
+<LI>
+<EM>Cautious</EM> completion is similar to strict completion, except that
+<KBD>RET</KBD> exits only if the text was an exact match already, not
+needing completion.  If the text is not an exact match, <KBD>RET</KBD> does
+not exit, but it does complete the text.  If it completes to an exact
+match, a second <KBD>RET</KBD> will exit.
+<P>
+
+Cautious completion is used for reading file names for files that must
+already exist.
+</P><P>
+
+<LI>
+<EM>Permissive</EM> completion is used when any string whatever is
+meaningful, and the list of completion alternatives is just a guide.
+For example, when <KBD>C-x C-f</KBD> reads the name of a file to visit, any
+file name is allowed, in case you want to create a file.  In
+permissive completion, <KBD>RET</KBD> takes the text in the minibuffer
+exactly as given, without completing it.
+</UL>
+<P>
+
+  The completion commands display a list of all possible completions in
+a window whenever there is more than one possibility for the very next
+character.  Also, typing <KBD>?</KBD> explicitly requests such a list.  If
+the list of completions is long, you can scroll it with <KBD>C-M-v</KBD>
+(see section <A HREF="emacs_18.html#SEC186">O.3 Using Other Windows</A>).
+</P><P>
+
+<A NAME="Completion Options"></A>
+<HR SIZE="6">
+<A NAME="SEC38"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC37"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC39"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC39"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC34"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC39"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> E.3.4 Completion Options </H3>
+<!--docid::SEC38::-->
+<P>
+
+<A NAME="IDX141"></A>
+<A NAME="IDX142"></A>
+  When completion is done on file names, certain file names are usually
+ignored.  The variable <CODE>completion-ignored-extensions</CODE> contains a
+list of strings; a file whose name ends in any of those strings is
+ignored as a possible completion.  The standard value of this variable
+has several elements including <CODE>".o"</CODE>, <CODE>".elc"</CODE>, <CODE>".dvi"</CODE>
+and <CODE>"~"</CODE>.  The effect is that, for example, <SAMP>`foo'</SAMP> can
+complete to <SAMP>`foo.c'</SAMP> even though <SAMP>`foo.o'</SAMP> exists as well.
+However, if <EM>all</EM> the possible completions end in "ignored"
+strings, then they are not ignored.  Ignored extensions do not apply to
+lists of completions--those always mention all possible completions.
+</P><P>
+
+<A NAME="IDX143"></A>
+  Normally, a completion command that cannot determine even one
+additional character automatically displays a list of all possible
+completions.  If the variable <CODE>completion-auto-help</CODE> is set to
+<CODE>nil</CODE>, this automatic display is disabled, so you must type
+<KBD>?</KBD> to display the list of completions.
+</P><P>
+
+<A NAME="IDX144"></A>
+<A NAME="IDX145"></A>
+<A NAME="IDX146"></A>
+  Partial Completion mode implements a more powerful kind of
+completion that can complete multiple words in parallel.  For example,
+it can complete the command name abbreviation <CODE>p-b</CODE> into
+<CODE>print-buffer</CODE>, because no other command starts with two words
+whose initials are <SAMP>`p'</SAMP> and <SAMP>`b'</SAMP>.
+</P><P>
+
+  Partial completion of directories in file names uses <SAMP>`*'</SAMP> to
+indicate the places for completion; thus, <TT>`/u*/b*/f*'</TT> might
+complete to <TT>`/usr/bin/foo'</TT>.
+</P><P>
+
+  To enable this mode, use the command <KBD>M-x
+partial-completion-mode</KBD>, or customize the option
+<CODE>partial-completion-mode</CODE>.  This binds the partial completion
+commands to <KBD>TAB</KBD>, <KBD>SPC</KBD>, <KBD>RET</KBD>, and <KBD>?</KBD>.  The usual
+completion commands are available on <KBD>M-<KBD>TAB</KBD></KBD>,
+<KBD>M-<KBD>SPC</KBD></KBD>, <KBD>M-<KBD>RET</KBD></KBD> and <KBD>M-?</KBD>.
+</P><P>
+
+<A NAME="IDX147"></A>
+<A NAME="IDX148"></A>
+  Another feature of Partial Completion mode is to extend
+<CODE>find-file</CODE> so that the <SAMP>`&#60;<VAR>include</VAR>&#62;'</SAMP> stands for the
+file named <VAR>include</VAR> in some directory in the path
+<CODE>PC-include-file-path</CODE>.  If you set <CODE>PC-disable-includes</CODE> to
+non-<CODE>nil</CODE>, this feature is disabled.
+</P><P>
+
+<A NAME="IDX149"></A>
+<A NAME="IDX150"></A>
+  Icomplete mode presents a constantly-updated display that tells you
+what completions are available for the text you've entered so far.  The
+command to enable or disable this minor mode is <KBD>M-x
+icomplete-mode</KBD>.
+</P><P>
+
+<A NAME="Minibuffer History"></A>
+<HR SIZE="6">
+<A NAME="SEC39"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC38"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC40"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC40"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_9.html#SEC41"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> E.4 Minibuffer History </H2>
+<!--docid::SEC39::-->
+<P>
+
+  Every argument that you enter with the minibuffer is saved on a
+<EM>minibuffer history list</EM> so that you can use it again later in
+another argument.  Special commands load the text of an earlier argument
+in the minibuffer.  They discard the old minibuffer contents, so you can
+think of them as moving through the history of previous arguments.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD><KBD>UP</KBD></KBD>
+<DD><DT><KBD>M-p</KBD>
+<DD>Move to the next earlier argument string saved in the minibuffer history
+(<CODE>previous-history-element</CODE>).
+<DT><KBD><KBD>DOWN</KBD></KBD>
+<DD><DT><KBD>M-n</KBD>
+<DD>Move to the next later argument string saved in the minibuffer history
+(<CODE>next-history-element</CODE>).
+<DT><KBD>M-r <VAR>regexp</VAR> <KBD>RET</KBD></KBD>
+<DD>Move to an earlier saved argument in the minibuffer history that has a
+match for <VAR>regexp</VAR> (<CODE>previous-matching-history-element</CODE>).
+<DT><KBD>M-s <VAR>regexp</VAR> <KBD>RET</KBD></KBD>
+<DD>Move to a later saved argument in the minibuffer history that has a
+match for <VAR>regexp</VAR> (<CODE>next-matching-history-element</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX151"></A>
+<A NAME="IDX152"></A>
+<A NAME="IDX153"></A>
+<A NAME="IDX154"></A>
+  The simplest way to reuse the saved arguments in the history list is
+to move through the history list one element at a time.  While in the
+minibuffer, use <KBD>M-p</KBD> or up-arrow (<CODE>previous-history-element</CODE>)
+to "move to" the next earlier minibuffer input, and use <KBD>M-n</KBD> or
+down-arrow (<CODE>next-history-element</CODE>) to "move to" the next later
+input.
+</P><P>
+
+  The previous input that you fetch from the history entirely replaces
+the contents of the minibuffer.  To use it as the argument, exit the
+minibuffer as usual with <KBD>RET</KBD>.  You can also edit the text before
+you reuse it; this does not change the history element that you
+"moved" to, but your new argument does go at the end of the history
+list in its own right.
+</P><P>
+
+  For many minibuffer arguments there is a "default" value.  In some
+cases, the minibuffer history commands know the default value.  Then you
+can insert the default value into the minibuffer as text by using
+<KBD>M-n</KBD> to move "into the future" in the history.  Eventually we
+hope to make this feature available whenever the minibuffer has a
+default value.
+</P><P>
+
+<A NAME="IDX155"></A>
+<A NAME="IDX156"></A>
+<A NAME="IDX157"></A>
+<A NAME="IDX158"></A>
+  There are also commands to search forward or backward through the
+history; they search for history elements that match a regular
+expression that you specify with the minibuffer.  <KBD>M-r</KBD>
+(<CODE>previous-matching-history-element</CODE>) searches older elements in
+the history, while <KBD>M-s</KBD> (<CODE>next-matching-history-element</CODE>)
+searches newer elements.  By special dispensation, these commands can
+use the minibuffer to read their arguments even though you are already
+in the minibuffer when you issue them.  As with incremental searching,
+an upper-case letter in the regular expression makes the search
+case-sensitive (see section <A HREF="emacs_14.html#SEC98">K.6 Searching and Case</A>).
+</P><P>
+
+  All uses of the minibuffer record your input on a history list, but
+there are separate history lists for different kinds of arguments.  For
+example, there is a list for file names, used by all the commands that
+read file names.  (As a special feature, this history list records
+the absolute file name, no more and no less, even if that is not how
+you entered the file name.)
+</P><P>
+
+  There are several other very specific history lists, including one for
+command names read by <KBD>M-x</KBD>, one for buffer names, one for arguments
+of commands like <CODE>query-replace</CODE>, and one for compilation commands
+read by <CODE>compile</CODE>.  Finally, there is one "miscellaneous" history
+list that most minibuffer arguments use.
+</P><P>
+
+<A NAME="IDX159"></A>
+  The variable <CODE>history-length</CODE> specifies the maximum length of a
+minibuffer history list; once a list gets that long, the oldest element
+is deleted each time an element is added.  If the value of
+<CODE>history-length</CODE> is <CODE>t</CODE>, though, there is no maximum length
+and elements are never deleted.
+</P><P>
+
+<A NAME="Repetition"></A>
+<HR SIZE="6">
+<A NAME="SEC40"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC39"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_9.html#SEC41"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_9.html#SEC41"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> E.5 Repeating Minibuffer Commands </H2>
+<!--docid::SEC40::-->
+<P>
+
+  Every command that uses the minibuffer at least once is recorded on a
+special history list, together with the values of its arguments, so that
+you can repeat the entire command.  In particular, every use of
+<KBD>M-x</KBD> is recorded there, since <KBD>M-x</KBD> uses the minibuffer to read
+the command name.
+</P><P>
+
+<A NAME="IDX160"></A>
+<DL COMPACT>
+<DT><KBD>C-x <KBD>ESC</KBD> <KBD>ESC</KBD></KBD>
+<DD>Re-execute a recent minibuffer command (<CODE>repeat-complex-command</CODE>).
+<DT><KBD>M-x list-command-history</KBD>
+<DD>Display the entire command history, showing all the commands
+<KBD>C-x <KBD>ESC</KBD> <KBD>ESC</KBD></KBD> can repeat, most recent first.
+</DL>
+<P>
+
+<A NAME="IDX161"></A>
+<A NAME="IDX162"></A>
+  <KBD>C-x <KBD>ESC</KBD> <KBD>ESC</KBD></KBD> is used to re-execute a recent
+minibuffer-using command.  With no argument, it repeats the last such
+command.  A numeric argument specifies which command to repeat; one
+means the last one, and larger numbers specify earlier ones.
+</P><P>
+
+  <KBD>C-x <KBD>ESC</KBD> <KBD>ESC</KBD></KBD> works by turning the previous command
+into a Lisp expression and then entering a minibuffer initialized with
+the text for that expression.  If you type just <KBD>RET</KBD>, the command
+is repeated as before.  You can also change the command by editing the
+Lisp expression.  Whatever expression you finally submit is what will be
+executed.  The repeated command is added to the front of the command
+history unless it is identical to the most recently executed command
+already there.
+</P><P>
+
+  Even if you don't understand Lisp syntax, it will probably be obvious
+which command is displayed for repetition.  If you do not change the
+text, it will repeat exactly as before.
+</P><P>
+
+  Once inside the minibuffer for <KBD>C-x <KBD>ESC</KBD> <KBD>ESC</KBD></KBD>, you can
+use the minibuffer history commands (<KBD>M-p</KBD>, <KBD>M-n</KBD>, <KBD>M-r</KBD>,
+<KBD>M-s</KBD>; see section <A HREF="emacs_8.html#SEC39">E.4 Minibuffer History</A>) to move through the history list
+of saved entire commands.  After finding the desired previous command,
+you can edit its expression as usual and then resubmit it by typing
+<KBD>RET</KBD> as usual.
+</P><P>
+
+<A NAME="IDX163"></A>
+  The list of previous minibuffer-using commands is stored as a Lisp
+list in the variable <CODE>command-history</CODE>.  Each element is a Lisp
+expression which describes one command and its arguments.  Lisp programs
+can re-execute a command by calling <CODE>eval</CODE> with the
+<CODE>command-history</CODE> element.
+<A NAME="M-x"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_9.html#SEC41"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

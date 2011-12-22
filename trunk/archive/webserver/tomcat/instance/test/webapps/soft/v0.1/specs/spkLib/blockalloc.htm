@@ -1,0 +1,392 @@
+<html><head>
+<title>A Fast Block Memory Allocator</title>
+<meta name="description" id="description" content="A Fast Block Memory Allocator">
+<meta name="keywords" id="keywords" content=" fast block memory allocate Blockalloc ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_blockalloc_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>general</option>
+<option>BlockAlloc</option>
+</select>
+</td>
+<td><a href="backdiv.htm" target="_top">Prev</a>
+</td><td><a href="blockdiagonalderivative.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>general-&gt;</option>
+<option>ABA_x</option>
+<option>ABA_xVA</option>
+<option>addition</option>
+<option>AkronBtimesC</option>
+<option>AkronBtimesCRef</option>
+<option>AkronBtimesCVA</option>
+<option>AkronItimesC</option>
+<option>AkronItimesCVA</option>
+<option>allTrue</option>
+<option>allZero</option>
+<option>backDiv</option>
+<option>BlockAlloc</option>
+<option>blockDiagonalDerivative</option>
+<option>centdiff</option>
+<option>centdiffVA</option>
+<option>cholesky</option>
+<option>countTrues</option>
+<option>CovarianceClasses</option>
+<option>elsq</option>
+<option>elsqVA</option>
+<option>elsqFuncOb</option>
+<option>elsq_x</option>
+<option>elsq_xVA</option>
+<option>elsq_xDiag</option>
+<option>elsq_xBlockDiag</option>
+<option>DBL_EPS_EQUAL_MULT</option>
+<option>det</option>
+<option>detVA</option>
+<option>divByScalar</option>
+<option>DMclass</option>
+<option>elementwiseAnd</option>
+<option>elementwiseOr</option>
+<option>File</option>
+<option>FpErrorChecker</option>
+<option>ModelFunction</option>
+<option>ModelDerivative</option>
+<option>getCol</option>
+<option>getMulCols</option>
+<option>getMulRows</option>
+<option>getRow</option>
+<option>getSubblock</option>
+<option>identityNum</option>
+<option>identityVA</option>
+<option>IkronBtimesC</option>
+<option>IkronBtimesCVA</option>
+<option>inverse</option>
+<option>inverseVA</option>
+<option>inxToMax</option>
+<option>isDblEpsEqual</option>
+<option>isDmatEpsEqual</option>
+<option>isGreaterThanOrEqualTo</option>
+<option>isLessThanOrEqualTo</option>
+<option>isSymmetric</option>
+<option>matabs</option>
+<option>matmaxScalar</option>
+<option>matmaxMatrices</option>
+<option>matminScalar</option>
+<option>matminMatrices</option>
+<option>mulByScalar</option>
+<option>multiply</option>
+<option>norm</option>
+<option>Optimizer</option>
+<option>pi</option>
+<option>placeRows</option>
+<option>printInMatrix</option>
+<option>quasinewtonanybox</option>
+<option>replaceIth</option>
+<option>replaceJth</option>
+<option>replaceSubblockDoubleMatrix</option>
+<option>replaceSubblockValarray</option>
+<option>rvec</option>
+<option>rvecVA</option>
+<option>rvecInverse</option>
+<option>SpkError</option>
+<option>SpkException</option>
+<option>SpkValarray</option>
+<option>subtraction</option>
+<option>symmetrize</option>
+<option>symmetrizeVA</option>
+<option>System</option>
+<option>transpose</option>
+<option>transposeRef</option>
+<option>transposeVA</option>
+<option>transposeDerivative</option>
+<option>transposeDerivativeVA</option>
+<option>transposeRowBlocks</option>
+<option>transposeRowBlocksVA</option>
+<option>UTranTimesSymKronSymTimesU</option>
+<option>UTranTimesSymKronSymTimesU_x</option>
+<option>WarningsManager_constructor</option>
+<option>WarningsManager_addWarning</option>
+<option>WarningsManager_addWarningList</option>
+<option>WarningsManager_clearAllWarnings</option>
+<option>WarningsManager_anyWarnings</option>
+<option>WarningsManager_getWarningList</option>
+<option>WarningsManager_getAllWarnings</option>
+</select>
+</td>
+<td>BlockAlloc</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Types in Syntax</option>
+<option>Debugging</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>A Fast Block Memory Allocator</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Syntax</b>
+     </td><td align='left'  valign='top'>
+ <code><font color="blue"></font></code><i><span style='white-space: nowrap'>ptr</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;BlockAlloc(</span></font></code><i><span style='white-space: nowrap'>size</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code> </td></tr><tr><td align='left'  valign='top'>
+
+     </td><td align='left'  valign='top'>
+ <code><font color="blue"><span style='white-space: nowrap'>BlockCapacity(</span></font></code><i><span style='white-space: nowrap'>ptr</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>       </td></tr><tr><td align='left'  valign='top'>
+
+     </td><td align='left'  valign='top'>
+ <code><font color="blue"><span style='white-space: nowrap'>BlockFree(</span></font></code><i><span style='white-space: nowrap'>ptr</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>           </td></tr><tr><td align='left'  valign='top'>
+
+     </td><td align='left'  valign='top'>
+ <code><font color="blue"><span style='white-space: nowrap'>BlockReturn()</span></font></code>              </td></tr><tr><td align='left'  valign='top'>
+
+
+     </td></tr>
+</table>
+<br>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+The routines 
+     <code><font color="blue">BlockAlloc</font></code>,
+     <code><font color="blue">BlockCapacity</font></code>,
+     <code><font color="blue">BlockFree</font></code>, and
+     <code><font color="blue">BlockReturn</font></code>
+     are intended for
+     fast block allocation and freeing of memory.
+     They are written in ANSI C but can be compiled as C++ routines.
+     In order to improve speed of allocation,
+     these routines are not thread safe and usually provide 
+     more memory than is requested.
+     <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>ptr</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;=&nbsp;BlockAlloc(</span></font></code><i><span style='white-space: nowrap'>size</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code>
+     sets <i>ptr</i> to a block of memory
+     that is at least <i>size</i> units long relative to the 
+     <code><font color="blue">sizeof</font></code> function.
+     If this request cannot be satisfied,
+     the value <code><font color="blue">NULL</font></code> is returned.
+     (If the block capacity information is ignored,
+     the routine <code><font color="blue">BlockAlloc</font></code> can be used exactly the same
+     as the ANSI C standard library routine called <code><font color="blue">malloc</font></code>.)
+     <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BlockCapacity(</span></font></code><i><span style='white-space: nowrap'>ptr</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code>
+     returns the number of memory units starting at <i>ptr</i>
+     that are actually available for use 
+     (relative the <code><font color="blue">sizeof</font></code> function).
+     If the amount of memory required for use
+     increases to some value greater than <i>size</i>
+     but less than <code><font color="blue"><span style='white-space: nowrap'>BlockCapacity(</span></font></code><i><span style='white-space: nowrap'>ptr</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>,
+     the memory starting at <i>ptr</i> can be used with out
+     any further allocation.
+     <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BlockFree(</span></font></code><i><span style='white-space: nowrap'>ptr</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code>
+     informs <code><font color="blue">BlockAlloc</font></code> that the memory corresponding
+     to <i>ptr</i> will no longer be referenced and should be returned to the 
+     pool of memory available to <code><font color="blue">BlockAlloc</font></code>.
+     The return value of <code><font color="blue">BlockFree</font></code> is an integer equal to the number of
+     <code><font color="blue">BlockAlloc</font></code> return values that have not yet been freed.
+     The argument <i>ptr</i> must either be equal to 
+     <code><font color="blue">NULL</font></code> or a value previously 
+     returned by <code><font color="blue">BlockAlloc</font></code>. 
+     In order to conserve memory, it is important that <code><font color="blue">BlockFree</font></code>
+     be called when a value returned by <code><font color="blue">BlockAlloc</font></code>
+     is no longer needed.
+     (If the return value of <code><font color="blue">BlockFree</font></code> is ignored,
+     this routine can be used exactly the same
+     as the ANSI C standard library routine called <code><font color="blue">free</font></code>.)
+     <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BlockReturn()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code>
+     The memory return state is either true (one) or false (zero).
+     The initial memory return state is false.
+     The state changes after each call to <code><font color="blue">BlockReturn</font></code> and
+     the return value of <code><font color="blue">BlockReturn</font></code> is equal to the 
+     state after the call. 
+     If it is true, all memory that has been freed by <code><font color="blue">BlockFree</font></code>,
+     or that is subsequently freed by <code><font color="blue">BlockFree</font></code>,
+     is returned to the system.
+     Memory allocation with <code><font color="blue">BlockAlloc</font></code> is slower in this state.
+     If the return value of <code><font color="blue">BlockReturn</font></code> is false,
+     all memory that is subsequently freed by <code><font color="blue">BlockFree</font></code>
+     is not returned to the system.
+     Memory allocation with <code><font color="blue">BlockAlloc</font></code> is faster in this state.
+     If the return value of <code><font color="blue">BlockFree(NULL)</font></code> is zero, 
+     and the return value of <code><font color="blue">BlockReturn</font></code> is true,
+     all memory freed by <code><font color="blue">BlockFree</font></code> has been returned to the system. 
+     If you are using a utility that is checking for memory leaks, 
+     you should make sure this is the case when exiting your program.
+
+
+     <br>
+<br>
+<b><big><a name="Types in Syntax" id="Types in Syntax">Types in Syntax</a></big></b>
+
+     <table><tr><td align='left'  valign='top'>
+
+     <code><font color="blue"></font></code><i><span style='white-space: nowrap'>size</span></i>                 </td><td align='left'  valign='top'>
+ <code><font color="blue"><span style='white-space: nowrap'>int</span></font></code>           </td></tr><tr><td align='left'  valign='top'>
+
+     <code><font color="blue"></font></code><i><span style='white-space: nowrap'>ptr</span></i>                  </td><td align='left'  valign='top'>
+ <code><font color="blue"><span style='white-space: nowrap'>void&nbsp;*</span></font></code>        </td></tr><tr><td align='left'  valign='top'>
+
+     <code><font color="blue"><span style='white-space: nowrap'>BlockAlloc(</span></font></code><i><span style='white-space: nowrap'>size</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>    </td><td align='left'  valign='top'>
+ <code><font color="blue"><span style='white-space: nowrap'>void&nbsp;*</span></font></code>        </td></tr><tr><td align='left'  valign='top'>
+
+     <code><font color="blue"><span style='white-space: nowrap'>BlockCapacity(</span></font></code><i><span style='white-space: nowrap'>ptr</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>  </td><td align='left'  valign='top'>
+ <code><font color="blue"><span style='white-space: nowrap'>int</span></font></code>           </td></tr><tr><td align='left'  valign='top'>
+
+     <code><font color="blue"><span style='white-space: nowrap'>BlockFree(</span></font></code><i><span style='white-space: nowrap'>ptr</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>      </td><td align='left'  valign='top'>
+ <code><font color="blue"><span style='white-space: nowrap'>int</span></font></code>           </td></tr><tr><td align='left'  valign='top'>
+
+     <code><font color="blue"><span style='white-space: nowrap'>BlockReturn()</span></font></code>         </td><td align='left'  valign='top'>
+ <code><font color="blue"><span style='white-space: nowrap'>int</span></font></code> 
+     </td></tr>
+</table>
+<br>
+<b><big><a name="Debugging" id="Debugging">Debugging</a></big></b>
+<br>
+The syntax <code><font color="blue">BlockFree(NULL)</font></code>
+     can be used to check for memory leaks
+     (it should return zero after all the allocated memory has been freed).
+     <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></code>
+     The memory directly before and after 
+     each allocated block is checked to see that it has not been modified.
+     If a modification is detected,
+     an error message is printed and the program will terminate with
+     an <code><font color="blue">assert</font></code>.
+     Other errors, both internal and external to <code><font color="blue">BlockAlloc</font></code>
+     are checked for.
+     If the preprocessor macro <code><font color="blue">NDEBUG</font></code> is defined
+     when <code><font color="blue">BlockAlloc.cpp</font></code> is compiled,
+     none of this error checking is done and the memory allocator will be faster.
+     (The preprocessor <code><font color="blue">NDEBUG</font></code> macro inhibits the action inside 
+     ANSI C asserts.)
+
+
+     <br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+The program below prints <code><font color="blue">Ok</font></code> if the test succeeds and
+     <code><font color="blue">Error</font></code> if the test fails:
+
+     <code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;include&nbsp;&lt;stdio.h&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;include&nbsp;&quot;BlockAlloc.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;bool&nbsp;BlockAlloc_Ok()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;integers&nbsp;required<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;size&nbsp;=&nbsp;2;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;blocks&nbsp;initially&nbsp;in&nbsp;use<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;initial&nbsp;=&nbsp;BlockFree(NULL);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;memory&nbsp;block&nbsp;with&nbsp;space&nbsp;for&nbsp;the&nbsp;integers<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;*i&nbsp;=&nbsp;(int&nbsp;*)&nbsp;BlockAlloc(size&nbsp;*&nbsp;sizeof(int));<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;the&nbsp;increase&nbsp;in&nbsp;number&nbsp;of&nbsp;block&nbsp;in&nbsp;use<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;BlockFree(NULL)&nbsp;!=&nbsp;initial&nbsp;+&nbsp;1&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;write&nbsp;something&nbsp;in&nbsp;that&nbsp;memory<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;capacity&nbsp;=&nbsp;BlockCapacity(i)&nbsp;/&nbsp;sizeof(int);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;capacity&nbsp;&lt;&nbsp;size&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;j;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;capacity;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i[j]&nbsp;=&nbsp;j;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;that&nbsp;the&nbsp;memory&nbsp;usage&nbsp;is&nbsp;ok<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;capacity;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;i[j]&nbsp;!=&nbsp;j&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;free&nbsp;the&nbsp;memory&nbsp;block&nbsp;because&nbsp;it&nbsp;will&nbsp;not&nbsp;be&nbsp;referenced&nbsp;again<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;in&nbsp;addition,&nbsp;check&nbsp;that&nbsp;the&nbsp;in&nbsp;use&nbsp;counter&nbsp;is&nbsp;correct<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;BlockFree(i)&nbsp;!=&nbsp;initial&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;test&nbsp;ok<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;initial&nbsp;number&nbsp;of&nbsp;blocks&nbsp;in&nbsp;use<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;=&nbsp;BlockFree(NULL)&nbsp;==&nbsp;0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;run&nbsp;the&nbsp;test<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;ok&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;=&nbsp;BlockAlloc_Ok();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;for&nbsp;a&nbsp;memory&nbsp;leak<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;ok&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;=&nbsp;BlockFree(NULL)&nbsp;==&nbsp;0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;return&nbsp;memory&nbsp;to&nbsp;the&nbsp;operating&nbsp;system<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;BlockReturn();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;report&nbsp;result<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;ok&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printf(&quot;Ok\n&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;printf(&quot;Error\n&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/BlockAlloc.cpp
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+base referer
+rect $classCov.html#a13 150,8 246,32
+rect $classCov.html#a2 153,56 244,80
+rect $isEqual_8h.html#a0 296,56 362,80

@@ -1,0 +1,488 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html40/loose.dtd">
+<HTML>
+<!-- Created on April, 18 2002 by texi2html 1.66 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<HEAD>
+<TITLE>CVS--Concurrent Versions System v1.11.2: Keyword substitution</TITLE>
+
+<META NAME="description" CONTENT="CVS--Concurrent Versions System v1.11.2: Keyword substitution">
+<META NAME="keywords" CONTENT="CVS--Concurrent Versions System v1.11.2: Keyword substitution">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.66">
+
+</HEAD>
+
+<BODY LANG="en" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC98"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC97"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC99"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> 12. Keyword substitution </H1>
+<!--docid::SEC98::-->
+<P>
+
+As long as you edit source files inside a working
+directory you can always find out the state of
+your files via `<SAMP>cvs status</SAMP>' and `<SAMP>cvs log</SAMP>'.
+But as soon as you export the files from your
+development environment it becomes harder to identify
+which revisions they are.
+</P>
+<P>
+
+CVS can use a mechanism known as <EM>keyword
+substitution</EM> (or <EM>keyword expansion</EM>) to help
+identifying the files.  Embedded strings of the form
+<CODE>$<VAR>keyword</VAR>$</CODE> and
+<CODE>$<VAR>keyword</VAR>:<small>...</small>$</CODE> in a file are replaced
+with strings of the form
+<CODE>$<VAR>keyword</VAR>:<VAR>value</VAR>$</CODE> whenever you obtain
+a new revision of the file.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_12.html#SEC99">12.1 Keyword List</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Keywords</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_12.html#SEC100">12.2 Using keywords</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_12.html#SEC101">12.3 Avoiding substitution</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_12.html#SEC102">12.4 Substitution modes</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_12.html#SEC103">12.5 Problems with the $Log$ keyword.</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="Keyword list"></A>
+<HR SIZE="6">
+<A NAME="SEC99"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC98"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC100"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC98"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC98"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 12.1 Keyword List </H2>
+<!--docid::SEC99::-->
+<P>
+
+This is a list of the keywords:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<A NAME="IDX207"></A>
+<DT><CODE>$Author$</CODE>
+<DD>The login name of the user who checked in the revision.
+<P>
+
+<A NAME="IDX208"></A>
+</P>
+<DT><CODE>$Date$</CODE>
+<DD>The date and time (UTC) the revision was checked in.
+<P>
+
+<A NAME="IDX209"></A>
+</P>
+<DT><CODE>$Header$</CODE>
+<DD>A standard header containing the full pathname of the
+RCS file, the revision number, the date (UTC), the
+author, the state, and the locker (if locked).  Files
+will normally never be locked when you use CVS.
+<P>
+
+<A NAME="IDX210"></A>
+</P>
+<DT><CODE>$Id$</CODE>
+<DD>Same as <CODE>$Header$</CODE>, except that the RCS
+filename is without a path.
+<P>
+
+<A NAME="IDX211"></A>
+</P>
+<DT><CODE>$Name$</CODE>
+<DD>Tag name used to check out this file.  The keyword is
+expanded only if one checks out with an explicit tag
+name.  For example, when running the command <CODE>cvs
+co -r first</CODE>, the keyword expands to `<SAMP>Name: first</SAMP>'.
+<P>
+
+<A NAME="IDX212"></A>
+</P>
+<DT><CODE>$Locker$</CODE>
+<DD>The login name of the user who locked the revision
+(empty if not locked, which is the normal case unless
+<CODE>cvs admin -l</CODE> is in use).
+<P>
+
+<A NAME="IDX213"></A>
+</P>
+<DT><CODE>$Log$</CODE>
+<DD>The log message supplied during commit, preceded by a
+header containing the RCS filename, the revision
+number, the author, and the date (UTC).  Existing log
+messages are <EM>not</EM> replaced.  Instead, the new log
+message is inserted after <CODE>$Log:<small>...</small>$</CODE>.
+Each new line is prefixed with the same string which
+precedes the <CODE>$Log</CODE> keyword.  For example, if the
+file contains:
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  /* Here is what people have been up to:
+   *
+   * $Log: frob.c,v $
+   * Revision 1.1  1997/01/03 14:23:51  joe
+   * Add the superfrobnicate option
+   *
+   */
+</pre></td></tr></table><P>
+
+then additional lines which are added when expanding
+the <CODE>$Log</CODE> keyword will be preceded by `<SAMP>   * </SAMP>'.
+Unlike previous versions of CVS and RCS, the
+<EM>comment leader</EM> from the RCS file is not used.
+The <CODE>$Log</CODE> keyword is useful for
+accumulating a complete change log in a source file,
+but for several reasons it can be problematic.
+See section <A HREF="cvs_12.html#SEC103">12.5 Problems with the $Log$ keyword.</A>.
+</P>
+<P>
+
+<A NAME="IDX214"></A>
+</P>
+<DT><CODE>$RCSfile$</CODE>
+<DD>The name of the RCS file without a path.
+<P>
+
+<A NAME="IDX215"></A>
+</P>
+<DT><CODE>$Revision$</CODE>
+<DD>The revision number assigned to the revision.
+<P>
+
+<A NAME="IDX216"></A>
+</P>
+<DT><CODE>$Source$</CODE>
+<DD>The full pathname of the RCS file.
+<P>
+
+<A NAME="IDX217"></A>
+</P>
+<DT><CODE>$State$</CODE>
+<DD>The state assigned to the revision.  States can be
+assigned with <CODE>cvs admin -s</CODE>---see <A HREF="cvs_16.html#SEC120">A.6.1 admin options</A>.
+<P>
+
+</DL>
+<P>
+
+<A NAME="Using keywords"></A>
+<HR SIZE="6">
+<A NAME="SEC100"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC99"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC101"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC98"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC98"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 12.2 Using keywords </H2>
+<!--docid::SEC100::-->
+<P>
+
+To include a keyword string you simply include the
+relevant text string, such as <CODE>$Id$</CODE>, inside the
+file, and commit the file.  CVS will automatically
+expand the string as part of the commit operation.
+</P>
+<P>
+
+It is common to embed the <CODE>$</CODE>Id$ string in
+the source files so that it gets passed through to
+generated files.  For example, if you are managing
+computer program source code, you might include a
+variable which is initialized to contain that string.
+Or some C compilers may provide a <CODE>#pragma ident</CODE>
+directive.  Or a document management system might
+provide a way to pass a string through to generated
+files.
+</P>
+<P>
+
+<A NAME="IDX218"></A>
+The <CODE>ident</CODE> command (which is part of the RCS
+package) can be used to extract keywords and their
+values from a file.  This can be handy for text files,
+but it is even more useful for extracting keywords from
+binary files.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ ident samp.c
+samp.c:
+     $Id: samp.c,v 1.5 1993/10/19 14:57:32 ceder Exp $
+$ gcc samp.c
+$ ident a.out
+a.out:
+     $Id: samp.c,v 1.5 1993/10/19 14:57:32 ceder Exp $
+</pre></td></tr></table><P>
+
+<A NAME="IDX219"></A>
+SCCS is another popular revision control system.
+It has a command, <CODE>what</CODE>, which is very similar to
+<CODE>ident</CODE> and used for the same purpose.  Many sites
+without RCS have SCCS.  Since <CODE>what</CODE>
+looks for the character sequence <CODE>@(#)</CODE> it is
+easy to include keywords that are detected by either
+command.  Simply prefix the keyword with the
+magic SCCS phrase, like this:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>static char *id=&quot;@(#) $Id: ab.c,v 1.5 1993/10/19 14:57:32 ceder Exp $&quot;;
+</pre></td></tr></table><P>
+
+<A NAME="Avoiding substitution"></A>
+<HR SIZE="6">
+<A NAME="SEC101"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC100"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC102"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC98"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC98"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 12.3 Avoiding substitution </H2>
+<!--docid::SEC101::-->
+<P>
+
+Keyword substitution has its disadvantages.  Sometimes
+you might want the literal text string
+`<SAMP>$</SAMP>'Author$ to appear inside a file without
+CVS interpreting it as a keyword and expanding it
+into something like `<SAMP>$</SAMP>'Author: ceder $.
+</P>
+<P>
+
+There is unfortunately no way to selectively turn off
+keyword substitution.  You can use `<SAMP>-ko</SAMP>'
+(see section <A HREF="cvs_12.html#SEC102">12.4 Substitution modes</A>) to turn off keyword
+substitution entirely.
+</P>
+<P>
+
+In many cases you can avoid using keywords in
+the source, even though they appear in the final
+product.  For example, the source for this manual
+contains `<SAMP>$@asis{}Author$</SAMP>' whenever the text
+`<SAMP>$</SAMP>'Author$ should appear.  In <CODE>nroff</CODE>
+and <CODE>troff</CODE> you can embed the null-character
+<CODE>\&amp;</CODE> inside the keyword for a similar effect.
+</P>
+<P>
+
+<A NAME="Substitution modes"></A>
+<HR SIZE="6">
+<A NAME="SEC102"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC101"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC103"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC98"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC98"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 12.4 Substitution modes </H2>
+<!--docid::SEC102::-->
+<P>
+
+Each file has a stored default substitution mode, and
+each working directory copy of a file also has a
+substitution mode.  The former is set by the `<SAMP>-k</SAMP>'
+option to <CODE>cvs add</CODE> and <CODE>cvs admin</CODE>; the
+latter is set by the `<SAMP>-k</SAMP>' or `<SAMP>-A</SAMP>' options to <CODE>cvs
+checkout</CODE> or <CODE>cvs update</CODE>.  <CODE>cvs diff</CODE> also
+has a `<SAMP>-k</SAMP>' option.  For some examples,
+see <A HREF="cvs_9.html#SEC80">9. Handling binary files</A>, and <A HREF="cvs_5.html#SEC64">5.10 Merging and keywords</A>.
+</P>
+<P>
+
+The modes available are:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT>`<SAMP>-kkv</SAMP>'
+<DD>Generate keyword strings using the default form, e.g.
+<CODE>$</CODE>Revision: 5.7 $ for the <CODE>Revision</CODE>
+keyword.
+<P>
+
+</P>
+<DT>`<SAMP>-kkvl</SAMP>'
+<DD>Like `<SAMP>-kkv</SAMP>', except that a locker's name is always
+inserted if the given revision is currently locked.
+The locker's name is only relevant if <CODE>cvs admin
+-l</CODE> is in use.
+<P>
+
+</P>
+<DT>`<SAMP>-kk</SAMP>'
+<DD>Generate only keyword names in keyword strings; omit
+their values.  For example, for the <CODE>Revision</CODE>
+keyword, generate the string <CODE>$</CODE>Revision$
+instead of <CODE>$</CODE>Revision: 5.7 $.  This option
+is useful to ignore differences due to keyword
+substitution when comparing different revisions of a
+file (see section <A HREF="cvs_5.html#SEC64">5.10 Merging and keywords</A>).
+<P>
+
+</P>
+<DT>`<SAMP>-ko</SAMP>'
+<DD>Generate the old keyword string, present in the working
+file just before it was checked in.  For example, for
+the <CODE>Revision</CODE> keyword, generate the string
+<CODE>$</CODE>Revision: 1.1 $ instead of
+<CODE>$</CODE>Revision: 5.7 $ if that is how the
+string appeared when the file was checked in.
+<P>
+
+</P>
+<DT>`<SAMP>-kb</SAMP>'
+<DD>Like `<SAMP>-ko</SAMP>', but also inhibit conversion of line
+endings between the canonical form in which they are
+stored in the repository (linefeed only), and the form
+appropriate to the operating system in use on the
+client.  For systems, like unix, which use linefeed
+only to terminate lines, this is the same as
+`<SAMP>-ko</SAMP>'.  For more information on binary files, see
+<A HREF="cvs_9.html#SEC80">9. Handling binary files</A>.
+<P>
+
+</P>
+<DT>`<SAMP>-kv</SAMP>'
+<DD>Generate only keyword values for keyword strings.  For
+example, for the <CODE>Revision</CODE> keyword, generate the string
+<CODE>5.7</CODE> instead of <CODE>$</CODE>Revision: 5.7 $.
+This can help generate files in programming languages
+where it is hard to strip keyword delimiters like
+<CODE>$</CODE>Revision: $ from a string.  However,
+further keyword substitution cannot be performed once
+the keyword names are removed, so this option should be
+used with care.
+<P>
+
+One often would like to use `<SAMP>-kv</SAMP>' with <CODE>cvs
+export</CODE>---see section <A HREF="cvs_16.html#SEC134">A.10 export--Export sources from CVS, similar to checkout</A>.  But be aware that doesn't
+handle an export containing binary files correctly.
+</P>
+<P>
+
+</DL>
+<P>
+
+<A NAME="Log keyword"></A>
+<HR SIZE="6">
+<A NAME="SEC103"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC102"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC98"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC98"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 12.5 Problems with the $Log$ keyword. </H2>
+<!--docid::SEC103::-->
+<P>
+
+The <CODE>$</CODE>Log$ keyword is somewhat
+controversial.  As long as you are working on your
+development system the information is easily accessible
+even if you do not use the <CODE>$</CODE>Log$
+keyword--just do a <CODE>cvs log</CODE>.  Once you export
+the file the history information might be useless
+anyhow.
+</P>
+<P>
+
+A more serious concern is that CVS is not good at
+handling <CODE>$</CODE>Log$ entries when a branch is
+merged onto the main trunk.  Conflicts often result
+from the merging operation.
+</P>
+<P>
+
+People also tend to &quot;fix&quot; the log entries in the file
+(correcting spelling mistakes and maybe even factual
+errors).  If that is done the information from
+<CODE>cvs log</CODE> will not be consistent with the
+information inside the file.  This may or may not be a
+problem in real life.
+</P>
+<P>
+
+It has been suggested that the <CODE>$</CODE>Log$
+keyword should be inserted <EM>last</EM> in the file, and
+not in the files header, if it is to be used at all.
+That way the long list of change messages will not
+interfere with everyday source file browsing.
+</P>
+<P>
+
+<A NAME="Tracking sources"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC98"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>
+<FONT SIZE="-1">
+This document was generated
+by <I>Derek Robert Price</I> on <I>April, 18 2002</I>
+using <A HREF="http://texi2html.cvshome.org"><I>texi2html</I></A>
+</FONT>
+
+</BODY>
+</HTML>

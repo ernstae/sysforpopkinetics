@@ -1,0 +1,61 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.119
+----------------------------------
+USER VISIBLE CHANGES
+The final estimate of Omega will be reported in a wrong order
+(again).  The change that fixed the order had a serious
+bug causing memory over-run, so it had to be rolled back.
+
+OTHER CHANGES
+All "sprintf" in the SPK Compiler source code are replaced by
+a saver alternative, "snprintf".
+
+RELATED BUG REPORTS: 272
+
+BY: Sachiko Honda
+
+WHEN: October 12, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.120
+----------------------------------
+USER VISIBLE CHANGES
+
+Installed latest version of CppAD which supports the + operator.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  481
+
+BY:  Mitch Watrous
+
+WHEN:  October 13, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.121
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+The run daemon sleeps 10 seconds before it starts picking up jobs
+from the database.
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: October 13, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.122
+----------------------------------
+USER VISIBLE CHANGES
+The order of Omega elements when it is reported back to the user
+is corrected.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 272
+
+BY: Sachiko Honda
+
+WHEN: October 14, 2005

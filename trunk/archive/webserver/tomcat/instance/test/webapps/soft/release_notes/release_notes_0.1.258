@@ -1,0 +1,37 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.257
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY:
+
+WHEN:
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.258
+----------------------------------
+USER VISIBLE CHANGES
+Moved inserting DADT, P, A to symbol table from before to after parsing.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 1013
+
+BY: Jiaji Du
+
+WHEN: May 13, 2009
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.258
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY:
+
+WHEN:

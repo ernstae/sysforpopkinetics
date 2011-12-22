@@ -1,0 +1,47 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.144
+----------------------------------
+USER VISIBLE CHANGES
+The job driver is compiled with full code-optimization.
+
+OTHER CHANGES
+Makefile.SPK that is used to build a job driver sets
+compiler flags that turn on full code optimization 
+and define NDEBUG macro which turns off all assert()
+statements everywhere including CppAD.
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: December 1, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.145
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+SPK and PRED libraries are now build static (as oppposed to shared)
+so that debugging would be easier.
+
+Autotool control files are modified so that the developers
+can build libraries with profiling instruments.
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: December 8, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.146
+----------------------------------
+USER VISIBLE CHANGES
+When any daemon is down, "SPK Unavailable" is displayed in Job Status field of MDA Job List window.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 415
+
+BY: Jiaji Du
+
+WHEN: December 9, 2005

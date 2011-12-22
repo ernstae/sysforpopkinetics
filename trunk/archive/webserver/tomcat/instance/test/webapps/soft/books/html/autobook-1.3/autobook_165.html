@@ -1,0 +1,351 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Introducing libltdl</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Introducing libltdl">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Introducing libltdl">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC165"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_164.html#SEC164" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Using GNU libltdl" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_166.html#SEC166" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Using libltdl" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_164.html#SEC164" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Using GNU libltdl" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_164.html#SEC164" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Using GNU libltdl" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_178.html#SEC178" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Advanced GNU Automake Usage" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 18.1 Introducing libltdl </H2>
+<!--docid::SEC165::-->
+<P>
+
+Probably the best known and supported Unix run time linking API is
+the <SAMP>`dlopen'</SAMP> interface, used by Solaris and GNU/Linux amongst
+others, and discussed earlier in <A HREF="autobook_158.html#SEC158">17. Dynamic Loading</A>.  libltdl
+is based on the <SAMP>`dlopen'</SAMP> API, with a few small differences and
+several enhancements.
+</P><P>
+
+The following libltdl API functions are declared in
+<TT>`ltdl.h'</TT>:
+</P><P>
+
+<A NAME="IDX27"></A>
+<DL>
+<DT><U>Function:</U> lt_dlhandle <B>lt_dlopen</B> <I>(const char *<VAR>filename</VAR>)</I>
+<DD>This function brings the code from a named module into the address space
+of the running program that calls it, and returns a handle which is used
+by the other API functions.  If <VAR>filename</VAR> is not an absolute
+path, libltdl  will search for it in directories named in the
+<SAMP>`LTDL_LIBRARY_PATH'</SAMP> environment variable, and then in the standard
+library directories before giving up. It is safe to call this
+function many times, libltdl will keep track of the number of calls
+made, but will require the same number of calls to <SAMP>`lt_dlclose'</SAMP>
+to actually unload the module.
+</DL>
+</P><P>
+
+<A NAME="IDX28"></A>
+<DL>
+<DT><U>Function:</U> lt_ptr_t <B>lt_dlsym</B> <I>(lt_dlhandle <VAR>handle</VAR>, const char *<VAR>name</VAR>)</I>
+<DD>Returns the address of the named symbol in the module which returned
+<VAR>handle</VAR> when it was <CODE>lt_dlopen</CODE>ed.  You must cast the returned
+address to a known type before using it.
+</DL>
+</P><P>
+
+<A NAME="IDX29"></A>
+<DL>
+<DT><U>Function:</U> int <B>lt_dlclose</B> <I>(lt_dlhandle <VAR>handle</VAR>)</I>
+<DD>When you are finished with a particular module, it can be removed from
+memory using this function.
+</DL>
+</P><P>
+
+<A NAME="IDX30"></A>
+<DL>
+<DT><U>Function:</U> const char * <B>lt_dlerror</B> <I>(void)</I>
+<DD>If any of the libltdl  API calls fail, this function returns
+a string which describes the last error that occured.
+</DL>
+</P><P>
+
+In order to use these functions, you must <CODE>#include &#60;ltdl.h&#62;</CODE> for
+the function prototypes, and link with <SAMP>`-lltdl'</SAMP> to provide the
+API implementation.  Assuming you link your application with
+<CODE>libtool</CODE>, and that you call the necessary macros from your
+<TT>`configure.in'</TT> (see section <A HREF="autobook_166.html#SEC166">18.2 Using libltdl</A>), then any host specific
+dependent libraries (for example, <TT>`libdl'</TT> on GNU/Linux) will
+automatically be added to the final link line by <CODE>libtool</CODE>.
+</P><P>
+
+You don't limit yourself to using only Libtool compiled modules when you
+use libltdl.  By writing the module loader carefully, it will be able to
+load native modules too--although you will not be able to preload
+non-Libtool modules (see section <A HREF="autobook_173.html#SEC173">18.4 dlpreopen Loading</A>.  The loader in
+<A HREF="autobook_169.html#SEC169">Module Loader</A> is written in this way.  It
+is useful to be able to load modules flexibly like this, because you
+don't tie your users into using Libtool for any modules they write. 
+</P><P>
+
+Compare the descriptions of the functions above with the API
+descibed in <A HREF="autobook_160.html#SEC160">17.2 Module Access Functions</A>.  You will notice that they
+are very similar.
+</P><P>
+
+<A NAME="IDX31"></A>
+<BLOCKQUOTE>
+Back-linking is the process of resolving any remaining symbols by
+referencing back into the application that loads the library at runtime
+-- a mechanism implemented on almost all modern Unices.
+<P>
+
+For instance, your main application may provide some utility function,
+<SAMP>`my_function'</SAMP>, which you want a module to have access to.  There are
+two ways to do that:
+</P><P>
+
+<UL>
+<LI>
+You could use Libtool to link your application, using the
+<SAMP>`-export-dynamic'</SAMP> option to ensure that the global application
+symbols are available to modules.  When libltdl loads a module into an
+application compiled like this, it will <EM>back-link</EM> symbols from the
+application to resolve any otherwise undefined symbols in a module.
+When the module is <SAMP>`ltdlopen'</SAMP>ed, libltdl will arrange for
+calls to <SAMP>`my_function'</SAMP> in the module, to execute the
+<SAMP>`my_function'</SAMP> implementation in the application.
+<P>
+
+If you have need of this functionality, relying on back-linking is the
+simplest way to achieve it.  Unfortunately, this simplicity is at the
+expense of portability:  some platforms have no support for
+back-linking at all, and others will not allow a module to be created
+with unresolved symbols.  Never-the-less, libltdl allows you to do this
+if you want to.
+</P><P>
+
+<LI>
+You could split the code that implements the symbols you need to share
+with modules into a separate library.  This library would then be used
+to resolve the symbols you wish to share, by linking it into modules and
+application alike.  The definition of <SAMP>`my_function'</SAMP> would be
+compiled separately into a library, <TT>`libmy_function.la'</TT>.
+References to <SAMP>`my_function'</SAMP> from the application would be resolved
+by linking it with <TT>`libmy_function.la'</TT>, and the library would be
+installed so that modules which need to call <SAMP>`my_function'</SAMP> would be
+able to resolve the symbol by linking with <SAMP>`-lmy_function'</SAMP>.
+<P>
+
+This method requires support for neither back-linking nor unresolved
+link time symbols from the host platform.  The disadvantage is that when
+you realise you need this functionality, it may be quite complicated to
+extract the shared functionality from the application to be compiled in
+a stand alone library.
+</UL>
+</BLOCKQUOTE>
+<P>
+
+On those platforms which support <EM>back-linking</EM>, libltdl can
+be configured to resolve external symbol references in a dynamic module
+with any global symbols already present in the main application.
+This has two implications for the libltdl API:
+</P><P>
+
+<UL>
+<LI>
+There is no need to pass <SAMP>`RTLD_GLOBAL'</SAMP> (or equivalent) to
+<CODE>lt_dlopen</CODE> as might be necessary with the native module loading
+API.
+<P>
+
+<LI>
+You should be aware that your application will not work on some
+platforms--most notably, Windows and AIX---if you rely on
+a back-linking.
+</UL>
+<P>
+
+Similarly, there is no need to specify whether the module should be
+integrated into the application core before <CODE>lt_dlopen</CODE> returns, or
+else when the symbols it provides are first referenced.  libltdl
+will use <EM>lazy loading</EM> if it is supported, since this is a slight
+performance enhancement, or else fall back to loading everything
+immediately.  Between this feature and the support of back-linking,
+there is no need to pass flags into <CODE>lt_dlopen</CODE> as there is with
+most native <CODE>dlopen</CODE> APIs.
+</P><P>
+
+There are a couple of other important API functions which you will
+need when using libltdl:
+</P><P>
+
+<A NAME="IDX32"></A>
+<DL>
+<DT><U>Function:</U> int <B>lt_dlinit</B> <I>(void)</I>
+<DD>You must call this function to initialise libltdl before calling
+any of the other libltdl API functions.  It is safe to call this
+function many times, libltdl will keep track of the number of calls
+made, but will require the same number of calls to <SAMP>`lt_dlexit'</SAMP>
+to actually recycle the library resources.  If you don't call
+<SAMP>`lt_dlinit'</SAMP> before any other API call, the other calls,
+including <SAMP>`lt_dlerror'</SAMP>, will return their respective failure codes
+(<SAMP>`NULL'</SAMP> or <SAMP>`1'</SAMP>, as appropriate).
+</DL>
+</P><P>
+
+<A NAME="IDX33"></A>
+<DL>
+<DT><U>Function:</U> int <B>lt_dlexit</B> <I>(void)</I>
+<DD>When you are done with libltdl and all dynamic modules have been
+unloaded you can call this function to finalise the library, and recycle
+its resources.  If you forget to unload any modules, the call to
+<SAMP>`lt_dlexit'</SAMP> will <SAMP>`lt_dlclose'</SAMP> them for you.
+</DL>
+</P><P>
+
+Another useful departure that the libltdl API makes from a
+vanilla <CODE>dlopen</CODE> implementation is that it also will work correctly
+with old K&#38;R C compilers, by virtue of not relying on <SAMP>`void *'</SAMP>
+pointers.  libltdl uses <CODE>lt_dlhandle</CODE>s to pass references to
+loaded modules, and this also improves ANSI C compiler's type
+checking compared to the untyped addresses typically used by native
+<CODE>dlopen</CODE> APIs.
+</P><P>
+
+<A NAME="Using libltdl"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

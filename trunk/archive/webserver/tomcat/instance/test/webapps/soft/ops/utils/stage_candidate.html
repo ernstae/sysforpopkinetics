@@ -1,0 +1,214 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>stage_candidate.pl -- stage an SPK for subsequent deployment</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synposis">SYNPOSIS</a></li>
+	<li><a href="#abstract">ABSTRACT</a></li>
+	<li><a href="#running">RUNNING</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
+
+		<li><a href="#directory_structure">DIRECTORY STRUCTURE</a></li>
+		<ul>
+
+			<li><a href="#candidate_reference_file">CANDIDATE REFERENCE FILE</a></li>
+			<li><a href="#candidate_reference_tree">CANDIDATE REFERENCE TREE</a></li>
+		</ul>
+
+	</ul>
+
+	<li><a href="#files">FILES</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<pre>
+    stage_candidate.pl -- stage an SPK for subsequent deployment</pre>
+<p>
+</p>
+<hr />
+<h1><a name="synposis">SYNPOSIS</a></h1>
+<pre>
+    stage_candidate.pl</pre>
+<p>
+</p>
+<hr />
+<h1><a name="abstract">ABSTRACT</a></h1>
+<pre>
+    The stage_candidate.pl operations utility is part of the process of
+    moving an SPK system from test into production. It captures software
+    that has passed system test, and stores it for subsequent deployment.</pre>
+<p>
+</p>
+<hr />
+<h1><a name="running">RUNNING</a></h1>
+<pre>
+    To run this program, you must satisfy these conditions:
+    -  Have a terminal window or ssh window on whitechuck
+    -  Run as root in the root environment. One way to achieve this is
+       to log in as an ordinary user, then upgrade with 
+            su -
+        Note that the &quot;-&quot; sign is necessary. Without it, you will be root
+        but you will be running in the ordinary user's environment.</pre>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<pre>
+    In the RFPK installation of SPK, two identical platforms are maintained:
+    one for system test and the other for production. The migration of new
+    versions into production is the following:
+    1.  All of the software needed to run the server side of SPK is assembled
+        on the system test platform.
+    2.  The system is tested, using test sets with known results.
+    3.  If problems are detected, they are fixed, and steps 1 and 2 
+        repeated.  This occurs as many times as necessary, until system
+        test results are satisfactory.
+    4.  stage_candidate.pl is run, making a complete copy of the tested
+        system, in a form that can be deployed by a companion utility
+        called deploy_candidate.pl
+    5.  A system is not necessarily deployed immediately, unless it contains
+        fixes to bugs with serious impact on users.  Instead, deployments
+        are scheduled on a regular basis.  Therefore, it is normal for
+        several candidates to be assembled and tested, before deployment
+        of the most recent one takes place. stage_candidate can stage a number 
+        of candidates (the default is four).
+    6.  The companion utility, deploy_candidate.pl, copies the candidate
+        onto the production platform.</pre>
+<p>
+</p>
+<h2><a name="directory_structure">DIRECTORY STRUCTURE</a></h2>
+<pre>
+    stage_candidate.pl stores candidates in a directory, which we will refer
+    to as the candidate directory.  Each candidate is represented by a
+    candidate reference file and a candidate data tree.</pre>
+<p>
+</p>
+<h3><a name="candidate_reference_file">CANDIDATE REFERENCE FILE</a></h3>
+<pre>
+    A candidate reference file (CRF) is a file that contains the directory
+    name of a candidate data tree, followed by a newline.  The CRF for the
+    newest candidate is named &quot;candidate&quot;, the next most recent candidate
+    is called &quot;candidate.1&quot;, the one before that &quot;candidate.2&quot;, etc.</pre>
+<p>
+</p>
+<h3><a name="candidate_reference_tree">CANDIDATE REFERENCE TREE</a></h3>
+<pre>
+    Each candidate reference tree (CRT) has a name that identifies it as
+    being a version of spk. The format of the names is: spk-version</pre>
+<pre>
+    The structure of each CRT is the following:</pre>
+<pre>
+    aspkserver
+        usr
+            local
+                bin
+                    spkprod
+                        (files)
+                include
+                    spkprod
+                        (files)
+                lib
+                    spkprod
+                        (files)
+    cspkserver
+        usr
+            local
+                bin
+                    spkprod
+                        (files)
+                include
+                    spkprod
+                        (files)
+                lib
+                    spkprod
+                        (files)
+                src
+                    spkprod
+                        (files)
+    webserver
+        usr
+            local
+                tomcat
+                    prodssl
+                        webapps
+                            user.war</pre>
+<p>
+</p>
+<hr />
+<h1><a name="files">FILES</a></h1>
+<pre>
+    /usr/local/spk/ops/candidate/rotate.conf
+ 
+        In order to rotate the candidate names (candidate -&gt; candidate.1-&gt;
+        candidate.2 -&gt; ...), stage_candidate calls the logrotate unix
+        utility for assistance.  The file rotate.conf is required by 
+        logrotate.  Here is an example of such a file:</pre>
+<pre>
+        &quot;candidate&quot; {
+            rotate 3
+            weekly
+        }</pre>
+<pre>
+        The value of the &quot;rotate&quot; directive tells the maximum depth of the
+        sequence of names.  In this case, there will be a &quot;candidate.3&quot;
+        but no &quot;candidate.4&quot;.  The &quot;weekly&quot; directive has no effect in
+        this application, but is required by logrotate.
+        
+    /usr/local/spk/ops/candidate/rotate.status</pre>
+<pre>
+        This file is written by logrotate and simply tells the name of
+        the latest file in the rotation (which is alwyas &quot;candidate&quot;) and
+        the date on which the most recent rotation occurred.  This file
+        is not of any use in this application, but is simply a side-effect
+        of the use of logrotate.</pre>
+<pre>
+    /usr/local/spk/ops/candidate/spk-version</pre>
+<pre>
+        The actual candidate reference trees (CRTs) are directories
+        with path names that conform to the above format.</pre>
+<pre>
+    /usr/local/spk/ops/candidate/notes-version</pre>
+<pre>
+        A file to be edited by the developer of the candidate so that it 
+        contains release notes describing the changes.  At deployment,
+        all the release notes files created since the last deployment are
+        concatenated to form the release notes for the deployed version.</pre>
+<pre>
+    /usr/local/spk/ops/candidate/candidate
+     
+        Contains the file name of the most recently staged CRT</pre>
+<pre>
+    /usr/local/spk/ops/candidate/candidate.1</pre>
+<pre>
+        Contains the file name of the CRT which is the most recent save 1.</pre>
+<pre>
+     ...</pre>
+<pre>
+    /usr/local/spk/ops/candidate/candidate.n</pre>
+<pre>
+       Contains the file name of the CRT which is the most recent save n.</pre>
+<pre>
+    /usr/local/spk/ops/candidate/version</pre>
+<pre>
+       Contains the version number of the must recently staged candidate.</pre>
+
+</body>
+
+</html>

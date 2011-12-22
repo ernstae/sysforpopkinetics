@@ -1,0 +1,30 @@
+<html><body><pre>
+&lt;%@ taglib prefix="my" uri="http://jakarta.apache.org/tomcat/jsp2-example-taglib"%>
+&lt;html>
+  &lt;head>
+    &lt;title>JSP 2.0 Examples - Dynamic Attributes&lt;/title>
+  &lt;/head>
+  &lt;body>
+    &lt;h1>JSP 2.0 Examples - Dynamic Attributes&lt;/h1>
+    &lt;hr>
+    &lt;p>This JSP page invokes a custom tag that accepts a dynamic set 
+    of attributes.  The tag echoes the name and value of all attributes
+    passed to it.&lt;/p>
+    &lt;hr>
+    &lt;h2>Invocation 1 (six attributes)&lt;/h2>
+    &lt;ul>
+      &lt;my:echoAttributes x="1" y="2" z="3" r="red" g="green" b="blue"/>
+    &lt;/ul>
+    &lt;h2>Invocation 2 (zero attributes)&lt;/h2>
+    &lt;ul>
+      &lt;my:echoAttributes/>
+    &lt;/ul>
+    &lt;h2>Invocation 3 (three attributes)&lt;/h2>
+    &lt;ul>
+      &lt;my:echoAttributes dogName="Scruffy" 
+	   		 catName="Fluffy" 
+			 blowfishName="Puffy"/>
+    &lt;/ul>
+  &lt;/body>
+&lt;/html>
+</pre></body></html>

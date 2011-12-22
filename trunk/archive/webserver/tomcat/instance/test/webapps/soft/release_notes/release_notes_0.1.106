@@ -1,0 +1,28 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.105
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+The statement handles in the Perl database API were closed.
+The sensors in the compiler daemon and the run-time daemon were removed.
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: September 28, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.106
+----------------------------------
+USER VISIBLE CHANGES
+A Bugzilla report is submitted when it is supposed to be
+regardless of the end status of previous job run.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 428
+
+BY: Sachiko Honda
+
+WHEN: September 29, 2005

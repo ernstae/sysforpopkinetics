@@ -1,0 +1,23 @@
+<html><body><p><a href=dtd-overview.html>Overview</a> <a href=dtd-tree.html>Tree</a> <a href=dtd-index.html>Index</a> <a href=dtd-notations.html>Notations</a> <a href=dtd-entities.html>Entities</a> </p><h1>Element &lt;presentation_data&gt;</h1><p>The values that </p><p>
+appear on the left hand side of the equations in the model definition
+and the following extra items, both evaluated at each sampling point:
+
+   <ul>
+      <li>Observation record identifier (ID)</li>
+      <li>Prediction (PRED)</li>
+      <li>Residual (RES) (= DV - RRED)</li>
+      <li>Weighted residual (WRES) if population analysis were requested.</li>
+      </li>
+      <li>Simulated data (ie. dependent variable) if data simulation were requested (SIMDV).</ul>
+   </ul>
+
+with THETA set to:
+
+   <ul>
+      <li>initial values if no parameter estimation is requested.</li>
+      <li>final values if parameter estimation is requested.</li>
+   </ul>
+
+The data set is considered as a table/matrix here and the first row in the
+table would contain the labels that describe the nature of the values that follow (column-wise).
+</p><h2>Attributes</h2><dl><dt>columns REQUIRED </dt><dd><p>The number of colums in the table, >=0. </p></dd><dt>rows REQUIRED </dt><dd><p>The number of rows in the table, >=0. </p></dd></dl><h2>Content</h2><p>(<a href=elt-data_labels.html>data_labels</a> | <a href=elt-row.html>row</a>*)</p><h2>Parents</h2><p><a href=elt-spkreportML.html>spkreportML</a> </p></body></html>

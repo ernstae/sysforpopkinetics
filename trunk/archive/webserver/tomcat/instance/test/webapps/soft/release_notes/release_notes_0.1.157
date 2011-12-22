@@ -1,0 +1,52 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.155
+----------------------------------
+USER VISIBLE CHANGES
+
+None.
+
+OTHER CHANGES
+
+Compile optimizer with optimization.
+
+Version qn01box-06-01-04.tar.gz
+
+RELATED BUG REPORTS:
+
+BY:  Brad Bell
+
+WHEN:  January 5, 2006.
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.156
+----------------------------------
+USER VISIBLE CHANGES
+
+None.
+
+OTHER CHANGES
+
+Enabled fixed cov elements.
+Pop/Ind predModel constructors overloaded to take fixed and block cov info.
+
+RELATED BUG REPORTS: n/a
+
+BY: David Salinger
+
+WHEN: January 9, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.157
+----------------------------------
+USER VISIBLE CHANGES
+
+Added Standard Two-Stage Method to SPK.
+
+OTHER CHANGES
+
+Removed the covariance type structure from the individual and
+population Pred models.
+
+RELATED BUG REPORTS:  None
+
+BY:  Mitch Watrous
+
+WHEN:  February 2, 2006

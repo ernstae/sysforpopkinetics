@@ -1,0 +1,569 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>MathML for Gecko-Based Browsers and Linux</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>MathML for Gecko-Based Browsers and Linux</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	The acquisition and installation of fonts sufficient to enable 
+	browsers based on the Gecko Display Engine to handle MathML
+	is described.  Mozilla and Firefox are Gecko-based.
+      </P
+><P
+>&#13;	The information in this document is targeted primarily toward
+	the RFPK Software Team and associates and is specific to the
+	computer systems and network installed in the RFPK Laboratory
+	of the Department of Bioengineering of the University of Washington.  RFPK is the Resource for
+	Population Kinetics.  Its work is supported, in part, by grant
+	P41 EB-001975 of the National Institutes of Health (NIH) of
+	the U.S.  Department of Health and Human Services.
+      </P
+><P
+>&#13;	<A
+HREF="#AEN83"
+>Copyright</A
+> (c) 2005, by the University of Washington.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.1</TD
+><TD
+ALIGN="LEFT"
+>June 13, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>troubleshooting: incorrect rendering</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>February 9, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN20"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN23"
+>Troubleshooting</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN25"
+>Math Symbols: Incorrect Rendering</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN28"
+>Download the Fonts and Copy to <TT
+CLASS="filename"
+>/tmp</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN40"
+>Install the Truetype Fonts</A
+></DT
+><DT
+><A
+HREF="#AEN60"
+>Make Fonts Available to Browser</A
+></DT
+><DT
+><A
+HREF="#AEN65"
+>Install the Type 1 Symbol Font</A
+></DT
+><DT
+><A
+HREF="#AEN76"
+>Restart X-Windows</A
+></DT
+><DT
+><A
+HREF="#AEN79"
+>Try It Out</A
+></DT
+><DT
+><A
+HREF="#AEN83"
+>Copyright Notice</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN20"
+></A
+>Introduction</H2
+><P
+>&#13;      As installed on linux systems, the Firefox and Mozilla  browsers 
+      do a poor job of displaying MathML.  The reason for this is that
+      certain fonts are missing.  RedHat and other distributors of
+      linux do not include these fonts in their installation packages
+      because the fonts are proprietary or otherwise restricted.
+      Satisfactory fonts can, however, be downloaded separately from
+      organizations that have the right to distribute them.  This
+      document describes a procedure for downloading and installing
+      these fonts.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN23"
+></A
+>Troubleshooting</H2
+><DIV
+CLASS="sect2"
+><H3
+CLASS="sect2"
+><A
+NAME="AEN25"
+></A
+>Math Symbols: Incorrect Rendering</H3
+><P
+>&#13;      If some symble is all the sudden displayed incorrectly in 
+      browsers although
+      it was rendered properly in the past, it may be due to
+      some recent Linux update.  In that case, repeat 
+      "Install the Type 1 Symbol Font" and reload the page containing
+      the problematic symbol(s).
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN28"
+></A
+>Download the Fonts and Copy to <TT
+CLASS="filename"
+>/tmp</TT
+></H2
+><P
+>&#13;      Download the required fonts by clicking on these URLs:
+    </P
+><P
+>&#13;      <A
+HREF="http://mozilla.org/projects/mathml/fonts/bakoma/texcm-ttf.zip"
+TARGET="_top"
+>&#13;	TeX Truetype fonts
+      </A
+>
+    </P
+><P
+>&#13;      <A
+HREF="http://support.wolfram.com/mathematica/systems/windows/general/MathFonts_TrueType_42.exe"
+TARGET="_top"
+>&#13;	Mathematica Truetype fonts
+      </A
+>
+    </P
+><P
+>&#13;      <A
+HREF="http://silas.psfc.mit.edu/tth/symfontconfig.tar.gz"
+TARGET="_top"
+>&#13;	Symbol Type 1 font
+      </A
+>
+    </P
+><P
+>&#13;      Copy the three downloaded archives from wherever your browser
+      put them (the default is your home directory) to the
+      <TT
+CLASS="filename"
+>/tmp</TT
+> directory.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN40"
+></A
+>Install the Truetype Fonts</H2
+><P
+>&#13;      We will be installing two sets of TrueType fonts. One set
+      was developed for TeX, and the other for Mathematica.
+    </P
+><P
+>&#13;      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    Open a terminal window, then become root by executing this 
+	    command:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su -
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Make a directory for the fonts:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;mkdir /usr/X11R6/lib/X11/fonts/MathML
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Expand the downloaded font archives:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /tmp
+unzip texcm-ttf.zip
+unzip MathFonts_TrueType_42.exe
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Copy the font files to the MathML directory:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cp Math*.ttf   /usr/X11R6/lib/X11/fonts/MathML
+cp texcm-ttf/* /usr/X11R6/lib/X11/fonts/MathML
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Inform X-Windows about the fonts:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /usr/X11R6/lib/X11/fonts/MathML
+ttmkfdir &#62; fonts.scale
+mkfontdir
+chkfontpath -a /usr/X11R6/lib/X11/fonts/MathML
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+></OL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN60"
+></A
+>Make Fonts Available to Browser</H2
+><P
+>&#13;      At this point the fonts are known to the X-Windows system.  This should
+      be good enough for Firefox and Mozilla.  For some reason it is not.
+      A simple work-around, however, is to copy the fonts to the 
+      <TT
+CLASS="filename"
+>~.fonts</TT
+> subdirectory of your home directory:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;exit        # become an ordinary user
+cd ~
+mkdir -p .fonts
+cp /usr/X11R6/lib/X11/fonts/MathML/*.ttf .fonts
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN65"
+></A
+>Install the Type 1 Symbol Font</H2
+><P
+>&#13;      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    Open a terminal window, then become root by executing this 
+	    command:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su -
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Expand the downloaded archive:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /tmp
+tar xvzf symfontconfig.tar.gz
+cd symfontconfig
+./install.sh
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    The script will ask you several questions.  Answer
+	    <I
+CLASS="emphasis"
+>y</I
+> each time.
+	  </P
+></LI
+></OL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN76"
+></A
+>Restart X-Windows</H2
+><P
+>&#13;      Restart X-Windows by restarting your desktop.  This is usually
+      accomplished by logging out of the desktop, then logging back
+      in.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN79"
+></A
+>Try It Out</H2
+><P
+>&#13;      You can evaluate your browser's newly acquired facility with
+      MathML by accessing the  
+      <A
+HREF="http://www.w3.org/Math/testsuite/testsuite/Presentation/GeneralLayout/msqrt-mroot/mrootSfonts3.xml"
+TARGET="_top"
+>&#13;	W3C MathML TestSuite
+      </A
+>.
+      When you first click this link, a pop-up window titled
+      "Missing MathML Fonts" may appear. The pop-up contains a 
+      link to a page at Mozilla.org. If you follow the link, 
+      you will find a recommendation that linux users need to add
+      exactly the same fonts that you have just installed. 
+      You can ignore this warning.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN83"
+></A
+>Copyright Notice</H2
+><P
+>&#13;      Copyright (c) 2005,  by the University of Washington.
+      This material may be distributed only subject to the terms and conditions 
+      set forth in the Open Publication License, V1.0 or later
+      (the latest version is presently available
+      <A
+HREF="http://www.opencontent.org/openpub/"
+TARGET="_top"
+>here</A
+>.
+    </P
+><P
+>&#13;    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

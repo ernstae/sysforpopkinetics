@@ -1,0 +1,24 @@
+<html><body><p><a href=dtd-overview.html>Overview</a> <a href=dtd-tree.html>Tree</a> <a href=dtd-index.html>Index</a> <a href=dtd-notations.html>Notations</a> <a href=dtd-entities.html>Entities</a> </p><h1>Element &lt;ind_stat_result&gt;</h1><p>Statistical analysis results on the final</p><p>
+ estimate for the individual parameter.  
+The NONMEM random effect parameter, ETA, is mapped to the SPK individual parameter, one-to-one.
+
+For the symmetric matrices (ex. the covariance and the correlation matrices), 
+the <a href=elt-value.html>value</a>s are arranged so that the lower triangle of the 
+symmetric matrix is read in the row-major order.
+For example, given the following (full) covariance matrix:
+<pre>
+   /           \
+   |  <font color="red">1</font>  2  3  |
+   |  <font color="red">2</font>  <font color="red">4</font>  5  |
+   |  <font color="red">3</font>  <font color="red">5</font>  <font color="red">6</font>  |
+   \           /
+</pre>
+the following is returned:
+<pre>
+   &lt;<a href=elt-ind_covariance_out.html>ind_covariance_out</a> dimension="3" struct="block"&gt;
+      &lt;<a href=elt-value.html>value</a>&gt;1&lt;/<a href=elt-value.html>value</a>&gt;
+      &lt;<a href=elt-value.html>value</a>&gt;2&lt;/<a href=elt-value.html>value</a>&gt;&lt;<a href=elt-value.html>value</a>&gt;4&lt;/<a href=elt-value.html>value</a>&gt;
+      &lt;<a href=elt-value.html>value</a>&gt;3&lt;/<a href=elt-value.html>value</a>&gt;&lt;<a href=elt-value.html>value</a>&gt;5&lt;/<a href=elt-value.html>value</a>&gt;&lt;<a href=elt-value.html>value</a>&gt;6&lt;/<a href=elt-value.html>value</a>&gt;
+   &lt;/<a href=elt-ind_covariance_out.html>ind_covariance_out</a>&gt;
+<//pre>
+</p><h2>Attributes</h2><dl><dt>elapsedtime REQUIRED </dt><dd><p>The number of seconds it took to complete computing the requested statistics values.</p></dd></dl><h2>Content</h2><p>(<a href=elt-ind_stderror_out.html>ind_stderror_out</a>? | <a href=elt-ind_covariance_out.html>ind_covariance_out</a>? | <a href=elt-ind_inverse_covariance_out.html>ind_inverse_covariance_out</a>? | <a href=elt-ind_correlation_out.html>ind_correlation_out</a>? | <a href=elt-ind_coefficient_out.html>ind_coefficient_out</a>? | <a href=elt-ind_confidence_out.html>ind_confidence_out</a>?)</p><h2>Parents</h2><p><a href=elt-ind_analysis_result.html>ind_analysis_result</a> </p></body></html>

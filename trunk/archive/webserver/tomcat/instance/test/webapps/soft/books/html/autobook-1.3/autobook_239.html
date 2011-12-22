@@ -1,0 +1,207 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: 24.2 Overview of the Two Approaches</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: 24.2 Overview of the Two Approaches">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: 24.2 Overview of the Two Approaches">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC239"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_238.html#SEC238" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: 24.1 Why autconfiscate" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_240.html#SEC240" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: 24.3 Example: Quick And Dirty" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_240.html#SEC240" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: 24.3 Example: Quick And Dirty" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_237.html#SEC237" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Migrating Existing Packages" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_242.html#SEC242" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Integration with Cygnus Cygwin" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 24.2 Overview of the Two Approaches </H2>
+<!--docid::SEC239::-->
+<P>
+
+The two fundamental approaches to autoconfiscation, which we call
+`quick and dirty', and `the full pull'.  In practice each project is
+a mix of the two.
+</P><P>
+
+There are no hard-and-fast rules when autoconficating an existing
+package, particularly when you are planning to track future releases of
+the original source.  However, since Autoconf is so flexible, it is
+usually possible to find some reasonable way to implement whatever is
+required.  Automake isn't as flexible, and with `strangely'
+constructed packages you're sometimes required to make a difficult
+choice: restructure the package, or avoid automake.
+</P><P>
+
+<OL>
+<LI>
+Quick And Dirty.
+<P>
+
+In the quick and dirty approach, the goal is to get the framework up and
+running with the least effort.  This is the approach we took when we
+autoconficated both zip and the Boehm garbage collector.  Our reasons
+were simple: we knew we would be tracking the original packages closely,
+so we wanted to minimize the amount of work involved in importing the
+next release and subsequently merging in our changes.  Also, both
+packages were written to be portable (but in very different ways), so
+major modifications to the source were not required.
+</P><P>
+
+<LI>
+The Full Pull.
+<P>
+
+Sometimes you'd rather completely convert a package to GNU Autotools.  For
+instance, you might have just assumed maintenance of a package.  Or, you
+might read this book and decide that your company's internal projects
+should use a state-of-the-art configuration system.
+</P><P>
+
+The full pull is more work than the quick-and-dirty approach, but in the
+end it yields a more easily understood, and more idiomatic package.
+This in turn has maintenance benefits due to the relative absence of
+quirks, traps, and special cases -- oddities which creep into quick and
+dirty ports due to the need, in that case, to structure the build system
+around the package instead of having the ability to restructure the
+package to fit the build system.
+</P><P>
+
+</OL>
+<P>
+
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

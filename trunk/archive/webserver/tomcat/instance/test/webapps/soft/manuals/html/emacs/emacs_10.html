@@ -1,0 +1,798 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Help</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Help">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Help">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC42"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_9.html#SEC41"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC43"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_9.html#SEC41"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_11.html#SEC52"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> G. Help </H1>
+<!--docid::SEC42::-->
+<P>
+
+  Emacs provides extensive help features accessible through a single
+character, <KBD>C-h</KBD>.  <KBD>C-h</KBD> is a prefix key that is used for
+commands that display documentation.  The characters that you can type after
+<KBD>C-h</KBD> are called <EM>help options</EM>.  One help option is <KBD>C-h</KBD>;
+that is how you ask for help about using <KBD>C-h</KBD>.  To cancel, type
+<KBD>C-g</KBD>.  The function key <KBD>F1</KBD> is equivalent to <KBD>C-h</KBD>.
+</P><P>
+
+<A NAME="IDX167"></A>
+<A NAME="IDX168"></A>
+  <KBD>C-h C-h</KBD> (<CODE>help-for-help</CODE>) displays a list of the possible
+help options, each with a brief description.  Before you type a help
+option, you can use <KBD>SPC</KBD> or <KBD>DEL</KBD> to scroll through the list.
+</P><P>
+
+  <KBD>C-h</KBD> or <KBD>F1</KBD> means "help" in various other contexts as
+well.  For example, in the middle of <CODE>query-replace</CODE>, it describes
+the options available for how to operate on the current match.  After a
+prefix key, it displays a list of the alternatives that can follow the
+prefix key.  (A few prefix keys don't support <KBD>C-h</KBD>, because they
+define other meanings for it, but they all support <KBD>F1</KBD>.)
+</P><P>
+
+  Most help buffers use a special major mode, Help mode, which lets you
+scroll conveniently with <KBD>SPC</KBD> and <KBD>DEL</KBD>.  It also offers
+hyperlinks to further help regarding cross-referenced names, Info nodes,
+customization buffers and the like.  See section <A HREF="emacs_10.html#SEC49">G.7 Help Mode Commands</A>.
+</P><P>
+
+<A NAME="IDX169"></A>
+<A NAME="IDX170"></A>
+  If you are looking for a certain feature, but don't know where
+exactly it is documented, and aren't sure of the name of a
+related command or option, we recommend trying these methods.  Usually
+it is best to start with an apropos command, then try searching the
+manual index, then finally look in the FAQ and the package keywords.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-h a <VAR>topic</VAR> <KBD>RET</KBD></KBD>
+<DD>This searches for commands whose names match <VAR>topic</VAR>, which should
+be a regular expression (see section <A HREF="emacs_14.html#SEC97">K.5 Syntax of Regular Expressions</A>).  Browse the buffer that this
+command displays to find what you are looking for.  See section <A HREF="emacs_10.html#SEC46">G.4 Apropos</A>.
+<P>
+
+<DT><KBD>M-x apropos <KBD>RET</KBD> <VAR>topic</VAR> <KBD>RET</KBD></KBD>
+<DD>This works like <KBD>C-h a</KBD>, but it also searches for user options and
+other variables, in case the feature you are looking for is controlled
+by an option, not a command.  See section <A HREF="emacs_10.html#SEC46">G.4 Apropos</A>.
+<P>
+
+<DT><KBD>M-x apropos-documentation <KBD>RET</KBD> <VAR>topic</VAR> <KBD>RET</KBD></KBD>
+<DD>This searches the <EM>documentation strings</EM> (the built-in short
+descriptions) of all variables and functions (not their names) for a
+match for <VAR>topic</VAR>, a regular expression.  See section <A HREF="emacs_10.html#SEC46">G.4 Apropos</A>.
+<P>
+
+<DT><KBD>C-h i d m emacs <KBD>RET</KBD> i <VAR>topic</VAR> <KBD>RET</KBD></KBD>
+<DD>This looks up <VAR>topic</VAR> in the indices of the Emacs on-line manual.
+If there are several matches, Emacs displays the first one.  You can then
+press <KBD>,</KBD> to move to other matches, until you find what you are
+looking for.
+<P>
+
+<DT><KBD>C-h i d m emacs <KBD>RET</KBD> s <VAR>topic</VAR> <KBD>RET</KBD></KBD>
+<DD>Similar, but searches for <VAR>topic</VAR> (which can be a regular
+expression) in the <EM>text</EM> of the manual rather than in its
+indices.
+<P>
+
+<DT><KBD>C-h F</KBD>
+<DD>This brings up the Emacs FAQ, where you can use the usual search
+commands (see section <A HREF="emacs_14.html#SEC91">K. Searching and Replacement</A>) to find the information.
+<P>
+
+<DT><KBD>C-h p</KBD>
+<DD>Finally, you can try looking up a suitable package using keywords
+pertinent to the feature you need.  See section <A HREF="emacs_10.html#SEC47">G.5 Keyword Search for Lisp Libraries</A>.
+</DL>
+<P>
+
+  To find the documentation of a key sequence or a menu item, type
+<KBD>C-h C-k</KBD> and then type that key sequence or select the menu
+item.  This looks up the description of the command invoked by the key
+or the menu in the appropriate manual (not necessarily the Emacs
+manual).  Likewise, use <KBD>C-h C-f</KBD> for reading documentation of a
+command.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_10.html#SEC43">G.1 Help Summary</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Brief list of all Help commands.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_10.html#SEC44">G.2 Documentation for a Key</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Asking what a key does in Emacs.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_10.html#SEC45">G.3 Help by Command or Variable Name</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Asking about a command, variable or function name.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_10.html#SEC46">G.4 Apropos</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Asking what pertains to a given topic.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_10.html#SEC47">G.5 Keyword Search for Lisp Libraries</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Finding Lisp libraries by keywords (topics).</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_10.html#SEC48">G.6 Help for International Language Support</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Help relating to international language support.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_10.html#SEC49">G.7 Help Mode Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Special features of Help mode and Help buffers.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_10.html#SEC50">G.8 Other Help Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Other help commands.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_10.html#SEC51">G.9 Help on Active Text and Tooltips</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Help on active text and tooltips (`balloon help')</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Help Summary"></A>
+<HR SIZE="6">
+<A NAME="SEC43"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC44"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_11.html#SEC52"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> G.1 Help Summary </H2>
+<!--docid::SEC43::-->
+<P>
+
+  Here is a summary of the defined help commands.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-h a <VAR>regexp</VAR> <KBD>RET</KBD></KBD>
+<DD>Display a list of commands whose names match <VAR>regexp</VAR>
+(<CODE>apropos-command</CODE>).
+<DT><KBD>C-h b</KBD>
+<DD>Display a table of all key bindings in effect now, in this order: minor
+mode bindings, major mode bindings, and global bindings
+(<CODE>describe-bindings</CODE>).
+<DT><KBD>C-h c <VAR>key</VAR></KBD>
+<DD>Show the name of the command that <VAR>key</VAR> runs
+(<CODE>describe-key-briefly</CODE>).  Here <KBD>c</KBD> stands for "character."
+For more extensive information on <VAR>key</VAR>, use <KBD>C-h k</KBD>.
+<DT><KBD>C-h f <VAR>function</VAR> <KBD>RET</KBD></KBD>
+<DD>Display documentation on the Lisp function named <VAR>function</VAR>
+(<CODE>describe-function</CODE>).  Since commands are Lisp functions,
+a command name may be used.
+<DT><KBD>C-h h</KBD>
+<DD>Display the <TT>`HELLO'</TT> file, which shows examples of various character
+sets.
+<DT><KBD>C-h i</KBD>
+<DD>Run Info, the program for browsing documentation files (<CODE>info</CODE>).
+The complete Emacs manual is available on-line in Info.
+<DT><KBD>C-h k <VAR>key</VAR></KBD>
+<DD>Display the name and documentation of the command that <VAR>key</VAR> runs
+(<CODE>describe-key</CODE>).
+<DT><KBD>C-h l</KBD>
+<DD>Display a description of the last 100 characters you typed
+(<CODE>view-lossage</CODE>).
+<DT><KBD>C-h m</KBD>
+<DD>Display documentation of the current major mode (<CODE>describe-mode</CODE>).
+<DT><KBD>C-h n</KBD>
+<DD>Display documentation of Emacs changes, most recent first
+(<CODE>view-emacs-news</CODE>).
+<DT><KBD>C-h P</KBD>
+<DD>Display info on known problems with Emacs and possible workarounds
+(<CODE>view-emacs-problems</CODE>).
+<DT><KBD>C-h p</KBD>
+<DD>Find packages by topic keyword (<CODE>finder-by-keyword</CODE>).
+<DT><KBD>C-h s</KBD>
+<DD>Display the current contents of the syntax table, plus an explanation of
+what they mean (<CODE>describe-syntax</CODE>).  See section <A HREF="emacs_33.html#SEC504">AD.6 The Syntax Table</A>.
+<DT><KBD>C-h t</KBD>
+<DD>Enter the Emacs interactive tutorial (<CODE>help-with-tutorial</CODE>).
+<DT><KBD>C-h v <VAR>var</VAR> <KBD>RET</KBD></KBD>
+<DD>Display the documentation of the Lisp variable <VAR>var</VAR>
+(<CODE>describe-variable</CODE>).
+<DT><KBD>C-h w <VAR>command</VAR> <KBD>RET</KBD></KBD>
+<DD>Show which keys run the command named <VAR>command</VAR> (<CODE>where-is</CODE>).
+<DT><KBD>C-h C <VAR>coding</VAR> <KBD>RET</KBD></KBD>
+<DD>Describe coding system <VAR>coding</VAR>
+(<CODE>describe-coding-system</CODE>).
+<DT><KBD>C-h C <KBD>RET</KBD></KBD>
+<DD>Describe the coding systems currently in use.
+<DT><KBD>C-h I <VAR>method</VAR> <KBD>RET</KBD></KBD>
+<DD>Describe an input method (<CODE>describe-input-method</CODE>).
+<DT><KBD>C-h L <VAR>language-env</VAR> <KBD>RET</KBD></KBD>
+<DD>Display information on the character sets, coding systems, and input
+methods used for language environment <VAR>language-env</VAR>
+(<CODE>describe-language-environment</CODE>).
+<DT><KBD>C-h C-c</KBD>
+<DD>Display the copying conditions for GNU Emacs.
+<DT><KBD>C-h C-d</KBD>
+<DD>Display information about getting new versions of GNU Emacs.
+<DT><KBD>C-h C-f <VAR>function</VAR> <KBD>RET</KBD></KBD>
+<DD>Enter Info and go to the node documenting the Emacs function <VAR>function</VAR>
+(<CODE>Info-goto-emacs-command-node</CODE>).
+<DT><KBD>C-h C-k <VAR>key</VAR></KBD>
+<DD>Enter Info and go to the node where the key sequence <VAR>key</VAR> is
+documented (<CODE>Info-goto-emacs-key-command-node</CODE>).
+<DT><KBD>C-h C-p</KBD>
+<DD>Display information about the GNU Project.
+<DT><KBD>C-h <KBD>TAB</KBD> <VAR>symbol</VAR> <KBD>RET</KBD></KBD>
+<DD>Display the Info documentation on symbol <VAR>symbol</VAR> according to the
+programming language you are editing (<CODE>info-lookup-symbol</CODE>).
+</DL>
+<P>
+
+<A NAME="Key Help"></A>
+<HR SIZE="6">
+<A NAME="SEC44"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC43"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC45"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC45"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_11.html#SEC52"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> G.2 Documentation for a Key </H2>
+<!--docid::SEC44::-->
+<P>
+
+<A NAME="IDX171"></A>
+<A NAME="IDX172"></A>
+  The most basic <KBD>C-h</KBD> options are <KBD>C-h c</KBD>
+(<CODE>describe-key-briefly</CODE>) and <KBD>C-h k</KBD> (<CODE>describe-key</CODE>).
+<KBD>C-h c <VAR>key</VAR></KBD> displays in the echo area the name of the command
+that <VAR>key</VAR> is bound to.  For example, <KBD>C-h c C-f</KBD> displays
+<SAMP>`forward-char'</SAMP>.  Since command names are chosen to describe what
+the commands do, this is a good way to get a very brief description of
+what <VAR>key</VAR> does.
+</P><P>
+
+<A NAME="IDX173"></A>
+<A NAME="IDX174"></A>
+  <KBD>C-h k <VAR>key</VAR></KBD> is similar but gives more information: it
+displays the documentation string of the command as well as its name.
+This is too big for the echo area, so a window is used for the display.
+</P><P>
+
+  <KBD>C-h c</KBD> and <KBD>C-h k</KBD> work for any sort of key sequences,
+including function keys and mouse events.
+</P><P>
+
+<A NAME="Name Help"></A>
+<HR SIZE="6">
+<A NAME="SEC45"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC44"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC46"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC46"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_11.html#SEC52"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> G.3 Help by Command or Variable Name </H2>
+<!--docid::SEC45::-->
+<P>
+
+<A NAME="IDX175"></A>
+<A NAME="IDX176"></A>
+  <KBD>C-h f</KBD> (<CODE>describe-function</CODE>) reads the name of a Lisp function
+using the minibuffer, then displays that function's documentation string
+in a window.  Since commands are Lisp functions, you can use this to get
+the documentation of a command that you know by name.  For example,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>C-h f auto-fill-mode <KBD>RET</KBD>
+</pre></td></tr></table></P><P>
+
+displays the documentation of <CODE>auto-fill-mode</CODE>.  This is the only
+way to get the documentation of a command that is not bound to any key
+(one which you would normally run using <KBD>M-x</KBD>).
+</P><P>
+
+  <KBD>C-h f</KBD> is also useful for Lisp functions that you are planning to
+use in a Lisp program.  For example, if you have just written the
+expression <CODE>(make-vector len)</CODE> and want to check that you are using
+<CODE>make-vector</CODE> properly, type <KBD>C-h f make-vector <KBD>RET</KBD></KBD>.
+Because <KBD>C-h f</KBD> allows all function names, not just command names,
+you may find that some of your favorite abbreviations that work in
+<KBD>M-x</KBD> don't work in <KBD>C-h f</KBD>.  An abbreviation may be unique
+among command names yet fail to be unique when other function names are
+allowed.
+</P><P>
+
+  The default function name for <KBD>C-h f</KBD> to describe, if you type
+just <KBD>RET</KBD>, is the name of the function called by the innermost Lisp
+expression in the buffer around point, <EM>provided</EM> that is a valid,
+defined Lisp function name.  For example, if point is located following
+the text <SAMP>`(make-vector (car x)'</SAMP>, the innermost list containing
+point is the one that starts with <SAMP>`(make-vector'</SAMP>, so the default is
+to describe the function <CODE>make-vector</CODE>.
+</P><P>
+
+  <KBD>C-h f</KBD> is often useful just to verify that you have the right
+spelling for the function name.  If <KBD>C-h f</KBD> mentions a name from the
+buffer as the default, that name must be defined as a Lisp function.  If
+that is all you want to know, just type <KBD>C-g</KBD> to cancel the <KBD>C-h
+f</KBD> command, then go on editing.
+</P><P>
+
+<A NAME="IDX177"></A>
+<A NAME="IDX178"></A>
+  <KBD>C-h w <VAR>command</VAR> <KBD>RET</KBD></KBD> tells you what keys are bound to
+<VAR>command</VAR>.  It displays a list of the keys in the echo area.  If it
+says the command is not on any key, you must use <KBD>M-x</KBD> to run it.
+<KBD>C-h w</KBD> runs the command <CODE>where-is</CODE>.
+</P><P>
+
+  <KBD>C-h v</KBD> (<CODE>describe-variable</CODE>) is like <KBD>C-h f</KBD> but describes
+Lisp variables instead of Lisp functions.  Its default is the Lisp symbol
+around or before point, but only if that is the name of a known Lisp
+variable.  See section <A HREF="emacs_33.html#SEC477">AD.2 Variables</A>.</P><P>
+
+  Help buffers describing variables or functions defined in Lisp
+normally have hyperlinks to the Lisp definition, if you have the Lisp
+source files installed.  If you know Lisp, this provides the ultimate
+documentation.  If you don't know Lisp, you should learn it.  If you
+are treating Emacs as an object file, then you are just <EM>using</EM>
+Emacs.  For real intimacy with Emacs, you must read the source code.
+</P><P>
+
+<A NAME="Apropos"></A>
+<HR SIZE="6">
+<A NAME="SEC46"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC45"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC47"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC47"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_11.html#SEC52"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> G.4 Apropos </H2>
+<!--docid::SEC46::-->
+<P>
+
+<A NAME="IDX179"></A>
+<A NAME="IDX180"></A>
+<A NAME="IDX181"></A>
+  A more sophisticated sort of question to ask is, "What are the
+commands for working with files?"  To ask this question, type <KBD>C-h
+a file <KBD>RET</KBD></KBD>, which displays a list of all command names that
+contain <SAMP>`file'</SAMP>, including <CODE>copy-file</CODE>, <CODE>find-file</CODE>, and
+so on.  With each command name appears a brief description of how to use
+the command, and what keys you can currently invoke it with.  For
+example, it would say that you can invoke <CODE>find-file</CODE> by typing
+<KBD>C-x C-f</KBD>.  The <KBD>a</KBD> in <KBD>C-h a</KBD> stands for "Apropos";
+<KBD>C-h a</KBD> runs the command <CODE>apropos-command</CODE>.  This command
+normally checks only commands (interactive functions); if you specify a
+prefix argument, it checks noninteractive functions as well.
+</P><P>
+
+  Because <KBD>C-h a</KBD> looks only for functions whose names contain the
+string you specify, you must use ingenuity in choosing the
+string.  If you are looking for commands for killing backwards and
+<KBD>C-h a kill-backwards <KBD>RET</KBD></KBD> doesn't reveal any, don't give up.
+Try just <KBD>kill</KBD>, or just <KBD>backwards</KBD>, or just <KBD>back</KBD>.  Be
+persistent.  Also note that you can use a regular expression as the
+argument, for more flexibility (see section <A HREF="emacs_14.html#SEC97">K.5 Syntax of Regular Expressions</A>).
+</P><P>
+
+  Here is a set of arguments to give to <KBD>C-h a</KBD> that covers many
+classes of Emacs commands, since there are strong conventions for naming
+the standard Emacs commands.  By giving you a feel for the naming
+conventions, this set should also serve to aid you in developing a
+technique for picking <CODE>apropos</CODE> strings.
+</P><P>
+
+<BLOCKQUOTE>
+char, line, word, sentence, paragraph, region, page, sexp, list, defun,
+rect, buffer, frame, window, face, file, dir, register, mode, beginning, end,
+forward, backward, next, previous, up, down, search, goto, kill, delete,
+mark, insert, yank, fill, indent, case, change, set, what, list, find,
+view, describe, default.
+</BLOCKQUOTE>
+<P>
+
+<A NAME="IDX182"></A>
+  To list all user variables that match a regexp, use the command
+<KBD>M-x apropos-variable</KBD>. This command shows only user variables and
+customization options by default; if you specify a prefix argument, it
+checks all variables.
+</P><P>
+
+<A NAME="IDX183"></A>
+  To list all Lisp symbols that contain a match for a regexp, not just
+the ones that are defined as commands, use the command <KBD>M-x apropos</KBD>
+instead of <KBD>C-h a</KBD>.  This command does not check key bindings by
+default; specify a numeric argument if you want it to check them.
+</P><P>
+
+<A NAME="IDX184"></A>
+  The <CODE>apropos-documentation</CODE> command is like <CODE>apropos</CODE> except
+that it searches documentation strings as well as symbol names for
+matches for the specified regular expression.
+</P><P>
+
+<A NAME="IDX185"></A>
+  The <CODE>apropos-value</CODE> command is like <CODE>apropos</CODE> except that it
+searches symbols' values for matches for the specified regular
+expression.  This command does not check function definitions or
+property lists by default; specify a numeric argument if you want it to
+check them.
+</P><P>
+
+<A NAME="IDX186"></A>
+  If the variable <CODE>apropos-do-all</CODE> is non-<CODE>nil</CODE>, the commands
+above all behave as if they had been given a prefix argument.
+</P><P>
+
+  If you want more information about a function definition, variable or
+symbol property listed in the Apropos buffer, you can click on it with
+<KBD>Mouse-2</KBD> or move there and type <KBD>RET</KBD>.
+</P><P>
+
+<A NAME="Library Keywords"></A>
+<HR SIZE="6">
+<A NAME="SEC47"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC46"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC48"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC48"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_11.html#SEC52"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> G.5 Keyword Search for Lisp Libraries </H2>
+<!--docid::SEC47::-->
+<P>
+
+<A NAME="IDX187"></A>
+<A NAME="IDX188"></A>
+The <KBD>C-h p</KBD> command lets you search the standard Emacs Lisp
+libraries by topic keywords.  Here is a partial list of keywords you can
+use:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=display><pre style="font-family: serif">abbrev --- abbreviation handling, typing shortcuts, macros.
+bib --- support for the bibliography processor <CODE>bib</CODE>.
+c --- C and C++ language support.
+calendar --- calendar and time management support.
+comm --- communications, networking, remote access to files.
+data --- support for editing files of data.
+docs --- support for Emacs documentation.
+emulations --- emulations of other editors.
+extensions --- Emacs Lisp language extensions.
+faces --- support for using faces (fonts and colors; see section <A HREF="emacs_13.html#SEC78">J.1 Using Multiple Typefaces</A>).
+frames --- support for Emacs frames and window systems.
+games --- games, jokes and amusements.
+hardware --- support for interfacing with exotic hardware.
+help --- support for on-line help systems.
+hypermedia --- support for links within text, or other media types.
+i18n --- internationalization and alternate character-set support.
+internal --- code for Emacs internals, build process, defaults.
+languages --- specialized modes for editing programming languages.
+lisp --- support for using Lisp (including Emacs Lisp).
+local --- libraries local to your site.
+maint --- maintenance aids for the Emacs development group.
+mail --- modes for electronic-mail handling.
+matching --- searching and matching.
+news --- support for netnews reading and posting.
+non-text --- support for editing files that are not ordinary text.
+oop --- support for object-oriented programming.
+outlines --- hierarchical outlining.
+processes --- process, subshell, compilation, and job control support.
+terminals --- support for terminal types.
+tex --- support for the TeX formatter.
+tools --- programming tools.
+unix --- front-ends/assistants for, or emulators of, system features.
+vms --- support code for VMS.
+wp --- word processing.
+</pre></td></tr></table></P><P>
+
+<A NAME="Language Help"></A>
+<HR SIZE="6">
+<A NAME="SEC48"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC47"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC49"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC49"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_11.html#SEC52"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> G.6 Help for International Language Support </H2>
+<!--docid::SEC48::-->
+<P>
+
+  You can use the command <KBD>C-h L</KBD>
+(<CODE>describe-language-environment</CODE>) to find out information about
+the support for a specific language environment.  See section <A HREF="emacs_20.html#SEC216">Q.3 Language Environments</A>.  This tells you which languages this language
+environment is useful for, and lists the character sets, coding
+systems, and input methods that go with it.  It also shows some sample
+text to illustrate scripts.
+</P><P>
+
+  The command <KBD>C-h h</KBD> (<CODE>view-hello-file</CODE>) displays the file
+<TT>`etc/HELLO'</TT>, which shows how to say "hello" in many languages.
+</P><P>
+
+  The command <KBD>C-h I</KBD> (<CODE>describe-input-method</CODE>) describes
+information about input methods--either a specified input method, or by
+default the input method in use.  See section <A HREF="emacs_20.html#SEC217">Q.4 Input Methods</A>.
+</P><P>
+
+  The command <KBD>C-h C</KBD> (<CODE>describe-coding-system</CODE>) describes
+information about coding systems--either a specified coding system, or
+the ones currently in use.  See section <A HREF="emacs_20.html#SEC220">Q.7 Coding Systems</A>.
+</P><P>
+
+<A NAME="Help Mode"></A>
+<HR SIZE="6">
+<A NAME="SEC49"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC48"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC50"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC50"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_11.html#SEC52"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> G.7 Help Mode Commands </H2>
+<!--docid::SEC49::-->
+<P>
+
+  Help buffers provide the same commands as View mode (see section <A HREF="emacs_16.html#SEC165">M.10 Miscellaneous File Operations</A>), plus a few special commands of their own.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD><KBD>SPC</KBD></KBD>
+<DD>Scroll forward.
+<DT><KBD><KBD>DEL</KBD></KBD>
+<DD><DT><KBD><KBD>BS</KBD></KBD>
+<DD>Scroll backward.  On some keyboards, this key is known as <KBD>BS</KBD> or
+<KBD>backspace</KBD>.
+<DT><KBD><KBD>RET</KBD></KBD>
+<DD>Follow a cross reference at point.
+<DT><KBD><KBD>TAB</KBD></KBD>
+<DD>Move point forward to the next cross reference.
+<DT><KBD>S-<KBD>TAB</KBD></KBD>
+<DD>Move point back to the previous cross reference.
+<DT><KBD>Mouse-2</KBD>
+<DD>Follow a cross reference that you click on.
+</DL>
+<P>
+
+  When a command name (see section <A HREF="emacs_9.html#SEC41">Running Commands by Name</A>) or
+variable name (see section <A HREF="emacs_33.html#SEC477">AD.2 Variables</A>) appears in the documentation, it
+normally appears inside paired single-quotes.  You can click on the name
+with <KBD>Mouse-2</KBD>, or move point there and type <KBD>RET</KBD>, to view the
+documentation of that command or variable.  Use <KBD>C-c C-b</KBD> to retrace
+your steps.
+</P><P>
+
+<A NAME="IDX189"></A>
+<A NAME="IDX190"></A>
+<A NAME="IDX191"></A>
+<A NAME="IDX192"></A>
+  There are convenient commands for moving point to cross references in
+the help text.  <KBD>TAB</KBD> (<CODE>help-next-ref</CODE>) moves point down to the
+next cross reference.  Use <KBD>S-<KBD>TAB</KBD></KBD> to move point up to the
+previous cross reference (<CODE>help-previous-ref</CODE>).
+</P><P>
+
+<A NAME="Misc Help"></A>
+<HR SIZE="6">
+<A NAME="SEC50"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC49"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC51"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC51"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_11.html#SEC52"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> G.8 Other Help Commands </H2>
+<!--docid::SEC50::-->
+<P>
+
+<A NAME="IDX193"></A>
+<A NAME="IDX194"></A>
+<A NAME="IDX195"></A>
+<A NAME="IDX196"></A>
+<A NAME="IDX197"></A>
+  <KBD>C-h i</KBD> (<CODE>info</CODE>) runs the Info program, which is used for
+browsing through structured documentation files.  The entire Emacs manual
+is available within Info.  Eventually all the documentation of the GNU
+system will be available.  Type <KBD>h</KBD> after entering Info to run
+a tutorial on using Info.
+</P><P>
+
+  If you specify a numeric argument, <KBD>C-h i</KBD> prompts for the name of
+a documentation file.  This way, you can browse a file which doesn't
+have an entry in the top-level Info menu.  It is also handy when you
+need to get to the documentation quickly, and you know the exact name of
+the file.
+</P><P>
+
+<A NAME="IDX198"></A>
+<A NAME="IDX199"></A>
+<A NAME="IDX200"></A>
+<A NAME="IDX201"></A>
+  There are two special help commands for accessing Emacs documentation
+through Info.  <KBD>C-h C-f <VAR>function</VAR> <KBD>RET</KBD></KBD> enters Info and
+goes straight to the documentation of the Emacs function
+<VAR>function</VAR>.  <KBD>C-h C-k <VAR>key</VAR></KBD> enters Info and goes straight
+to the documentation of the key <VAR>key</VAR>.  These two keys run the
+commands <CODE>Info-goto-emacs-command-node</CODE> and
+<CODE>Info-goto-emacs-key-command-node</CODE>.  You can use <KBD>C-h C-k</KBD> to
+find the documentation of a menu item: just select that menu item when
+<KBD>C-h C-k</KBD> prompts for a key.
+</P><P>
+
+  <KBD>C-h C-f</KBD> and <KBD>C-h C-k</KBD> know about commands and keys
+described in manuals other than the Emacs manual.  Thus, they make it
+easier to find the documentation of commands and keys when you are not
+sure which manual describes them, like when using some specialized
+mode.
+</P><P>
+
+  When editing a program, if you have an Info version of the manual for
+the programming language, you can use the command <KBD>C-h C-i</KBD> to refer
+to the manual documentation for a symbol (keyword, function or
+variable).  The details of how this command works depend on the major
+mode.
+</P><P>
+
+<A NAME="IDX202"></A>
+<A NAME="IDX203"></A>
+  If something surprising happens, and you are not sure what commands you
+typed, use <KBD>C-h l</KBD> (<CODE>view-lossage</CODE>).  <KBD>C-h l</KBD> displays the last
+100 command characters you typed in.  If you see commands that you don't
+know, you can use <KBD>C-h c</KBD> to find out what they do.
+</P><P>
+
+<A NAME="IDX204"></A>
+<A NAME="IDX205"></A>
+  Emacs has numerous major modes, each of which redefines a few keys and
+makes a few other changes in how editing works.  <KBD>C-h m</KBD>
+(<CODE>describe-mode</CODE>) displays documentation on the current major mode,
+which normally describes all the commands that are changed in this
+mode.
+</P><P>
+
+<A NAME="IDX206"></A>
+<A NAME="IDX207"></A>
+  <KBD>C-h b</KBD> (<CODE>describe-bindings</CODE>) and <KBD>C-h s</KBD>
+(<CODE>describe-syntax</CODE>) present other information about the current
+Emacs mode.  <KBD>C-h b</KBD> displays a list of all the key bindings now in
+effect, showing the local bindings defined by the current minor modes first,
+then the local bindings defined by the current major mode, and finally
+the global bindings (see section <A HREF="emacs_33.html#SEC491">AD.4 Customizing Key Bindings</A>).  <KBD>C-h s</KBD> displays the
+contents of the syntax table, with explanations of each character's
+syntax (see section <A HREF="emacs_33.html#SEC504">AD.6 The Syntax Table</A>).
+</P><P>
+
+  You can get a similar list for a particular prefix key by typing
+<KBD>C-h</KBD> after the prefix key.  (There are a few prefix keys for which
+this does not work--those that provide their own bindings for
+<KBD>C-h</KBD>.  One of these is <KBD>ESC</KBD>, because <KBD><KBD>ESC</KBD> C-h</KBD> is
+actually <KBD>C-M-h</KBD>, which marks a defun.)
+</P><P>
+
+<A NAME="IDX208"></A>
+<A NAME="IDX209"></A>
+<A NAME="IDX210"></A>
+<A NAME="IDX211"></A>
+<A NAME="IDX212"></A>
+<A NAME="IDX213"></A>
+<A NAME="IDX214"></A>
+<A NAME="IDX215"></A>
+<A NAME="IDX216"></A>
+<A NAME="IDX217"></A>
+<A NAME="IDX218"></A>
+<A NAME="IDX219"></A>
+<A NAME="IDX220"></A>
+<A NAME="IDX221"></A>
+  The other <KBD>C-h</KBD> options display various files containing useful
+information.  <KBD>C-h C-w</KBD> displays the full details on the complete
+absence of warranty for GNU Emacs.  <KBD>C-h n</KBD> (<CODE>view-emacs-news</CODE>)
+displays the file <TT>`emacs/etc/NEWS'</TT>, which contains documentation on
+Emacs changes arranged chronologically.  <KBD>C-h F</KBD>
+(<CODE>view-emacs-FAQ</CODE>) displays the Emacs frequently-answered-questions
+list.  <KBD>C-h t</KBD> (<CODE>help-with-tutorial</CODE>) displays the
+learn-by-doing Emacs tutorial.  <KBD>C-h C-c</KBD> (<CODE>describe-copying</CODE>)
+displays the file <TT>`emacs/etc/COPYING'</TT>, which tells you the
+conditions you must obey in distributing copies of Emacs.  <KBD>C-h C-d</KBD>
+(<CODE>describe-distribution</CODE>) displays the file
+<TT>`emacs/etc/DISTRIB'</TT>, which tells you how you can order a copy of
+the latest version of Emacs.  <KBD>C-h C-p</KBD> (<CODE>describe-project</CODE>)
+displays general information about the GNU Project.  <KBD>C-h P</KBD>
+(<CODE>view-emacs-problems</CODE>) displays the file
+<TT>`emacs/etc/PROBLEMS'</TT>, which lists known problems with Emacs in
+various situations with solutions or workarounds in many cases.
+</P><P>
+
+<A NAME="Help Echo"></A>
+<HR SIZE="6">
+<A NAME="SEC51"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC50"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_11.html#SEC52"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_11.html#SEC52"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> G.9 Help on Active Text and Tooltips </H2>
+<!--docid::SEC51::-->
+<P>
+
+<A NAME="IDX222"></A>
+<A NAME="IDX223"></A>
+  When a region of text is "active," so that you can select it with
+the mouse or a key like <KBD>RET</KBD>, it often has associated help text.
+Areas of the mode line are examples.  This help will normally be
+shown in the echo area when you move point into the active text.  In
+a window system you can display the help text as a "tooltip"
+(sometimes known as "balloon help").  See section <A HREF="emacs_19.html#SEC209">P.18 Tooltips (or "Balloon Help")</A>.
+<A NAME="Mark"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_11.html#SEC52"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

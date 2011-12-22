@@ -1,0 +1,582 @@
+<html><head>
+<title>Computing Statistics of Individual Parameter Estimates when All Elements are Active (Deprecated)</title>
+<meta name="description" id="description" content="Computing Statistics of Individual Parameter Estimates when All Elements are Active (Deprecated)">
+<meta name="keywords" id="keywords" content=" indstatistics coefficient of variation confidence interval covariance standard error correlation matrix individual parameters Statistics Individual All ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_indstatistics_allelemactive_deprecated_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>individual</option>
+<option>indStatistics_AllElemActive_Deprecated</option>
+</select>
+</td>
+<td><a href="indstatistics_deprecated.htm" target="_top">Prev</a>
+</td><td><a href="population.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>individual-&gt;</option>
+<option>fitIndividual</option>
+<option>mapObj</option>
+<option>mapObjFuncOb</option>
+<option>mapObj_bFuncOb</option>
+<option>mapObjDiff</option>
+<option>mapOpt</option>
+<option>mapTilde</option>
+<option>indResiduals</option>
+<option>indStatistics</option>
+<option>indStatistics_Deprecated</option>
+<option>indStatistics_AllElemActive_Deprecated</option>
+</select>
+</td>
+<td>indStatistics_AllElemActive_Deprecated</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Reference</option>
+<option>Return Value</option>
+<option>Arguments</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+
+
+
+
+<center><b><big><big>Computing Statistics of Individual Parameter Estimates when All Elements are Active (Deprecated)</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype:</b> </td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>void&nbsp;indStatistics(&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>indPar</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>dataMean_indPar</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>dataVariance_indPar</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>dataVarianceInv</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>indParCovOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>indParSEOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>indParCorOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>indParCVOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>indParCIOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)<br>
+</span></font></code></td></tr>
+</table>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><b>Note:  this function is deprecated.</b>
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>This function computes the covariance matrix, standard error vector,
+correlation matrix, coefficient of variation vector, and confidence
+interval vector for individual parameter estimates.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>This function uses the following formulation to calculate the
+covariance matrix of the individual parameter estimates:
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>formulation</i>&nbsp;&quot;<i>R</i>&quot;:&nbsp;&nbsp;&nbsp;&nbsp;<i>cov</i>[&nbsp;<i>b</i>&nbsp;]&nbsp;&nbsp;=&nbsp;&nbsp;<i>R</i>&nbsp;&nbsp;&nbsp;&nbsp;.<br>
+<br>
+</span></code>This formulation is discussed in Section (D.2.5) of the NONMEM
+Users Guide Part II and in Sections (A.2.1) and (A.2.2) in
+Carroll, Ruppert, and Stefanski (1998).
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The approximation made for the information matrix is
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>R</i>&nbsp;&nbsp;=&nbsp;&nbsp;<i>H</i>(<i>b</i>)&nbsp;&nbsp;,<br>
+<br>
+</span></code>where the expected value for the Hessian of the individual
+objective function is defined in Section (7.) of Bell (2001) as
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>H</i>(<i>b</i>)&nbsp;&nbsp;=&nbsp;&nbsp;<i>d</i>&nbsp;&nbsp;<i>f</i>(<i>b</i>)&nbsp;&nbsp;<i>R</i>&nbsp;&nbsp;(<i>b</i>)&nbsp;<i>d</i>&nbsp;&nbsp;<i>f</i>(<i>b</i>)&nbsp;&nbsp;+&nbsp;&nbsp;-&nbsp;<i>d</i>&nbsp;&nbsp;<i>R</i>(<i>b</i>)&nbsp;&nbsp;<i>kron</i>[&nbsp;<i>R</i>&nbsp;&nbsp;(<i>b</i>),&nbsp;<i>R</i>&nbsp;&nbsp;(<i>b</i>)&nbsp;]&nbsp;<i>d</i>&nbsp;&nbsp;<i>R</i>(<i>b</i>)&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i><br>
+<br>
+</span></code>Note that the <code><span style='white-space: nowrap'><i>R</i>(<i>b</i>)</span></code> on the right hand side of this
+equation is the model for the covariance of an individual's data,
+which is part of <a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+ and
+is different than the information matrix <code><span style='white-space: nowrap'><i>R</i></span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The standard error vector is calculated by taking the square roots
+of the diagonal elements of the covariance matrix.
+The correlation matrix is calculated by dividing each element of
+the covariance matrix by the standard errors that correspond to its
+row and column.
+The coefficients of variation are calculated as
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>CV</i>&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;|&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;*&nbsp;100&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)<br>
+<br>
+</span></code>where CV is the coefficient of variation and SE is the standard error.
+The 95% confidence intervals are calculated as
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;<i>t</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;<i>t</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)<br>
+<br>
+</span></code>where
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>t</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i><br>
+<br>
+</span></code>is the critical value for the <code><span style='white-space: nowrap'><i>t</i></span></code> distribution with
+<code><span style='white-space: nowrap'><i>degFree</i>&nbsp;=&nbsp;<i>nY</i>&nbsp;-&nbsp;<i>nB</i></span></code> number of degrees of freedom for
+which the area under the <code><span style='white-space: nowrap'><i>t</i></span></code> curve is <code><span style='white-space: nowrap'>1&nbsp;-&nbsp;0.025</span></code>.
+
+<br>
+<br>
+<b><big><a name="Reference" id="Reference">Reference</a></big></b>
+<br>
+Beal, S. L. and Sheiner, L. B. (1988) <i>NONMEM Users Guide - Part II</i>,
+University of California, San Francisco.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Bell, B. M. (2001) Approximating the marginal likelihood estimate for
+models with random parameters, <i>Applied Mathematics and Computation</i>,
+<b>119</b>, 57-75.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Carroll, R. J., Ruppert, D., and Stefanski, L. A. (1998)
+<i>Measurement Error in Nonlinear Models</i>, Chapman &amp; Hall/CRC,
+Boca Raton, Florida.
+
+<br>
+<br>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+Upon a successful completion, the function sets
+the given output value place holders to point to the result values.
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If an error is detected or failure occurs during the evaluation, a SpkException
+object is thrown.  The state at which an exception is thrown is defined in
+<a href="glossary.htm#Exception Handling Policy" target="_top"><span style='white-space: nowrap'>Exception&nbsp;Handling&nbsp;Policy</span></a>
+.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indPar</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indPar</i> contains the vector
+<code><span style='white-space: nowrap'><i>b</i></span></code>, which specifies the estimates of the individual parameters.
+The returned values <i>indParCovOut</i>, <i>indParSEOut</i>,
+<i>indParCorOut</i>, <i>indParCVOut</i> and <i>indParCIOut</i>
+will be evaluated at these estimates.
+The <i>values of indPar</i> should be obtained by calling the SPK function
+<a href="fitindividual.htm" target="_top"><span style='white-space: nowrap'>fitIndividual</span></a>
+.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dataMean_indPar</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>dataMean_indPar</i> is the mean
+of data evaluated at <i>indPar</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dataVariance_indPar</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>dataVariance_indPar</i> is
+the value of the derivative of the variance of data with respect to the
+individual parameter, evaluated at <i>indPar</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dataVarianceInv</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>dataVarianceInv</i> is
+the value of the inverse of the variance of data evaluated at <i>indPar</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParCovOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>indParCovOut</i> is not <code><font color="blue">NULL</font></code>, then the
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCovOut</i>
+must be declared in the function that calls this function, and its size must
+be equal to the square of the length of the individual parameter vector
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>indParCovOut</i> is not <code><font color="blue">NULL</font></code> and this function
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object
+pointed to by <i>indParCovOut</i> will contain the covariance matrix
+of the individual parameter estimates, in column major order, that is evaluated
+at <i>indPar</i>.  Otherwise, this function will not attempt to change the
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by
+<i>indParCovOut</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParSEOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>indParSEOut</i> is not <code><font color="blue">NULL</font></code>, then the
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParSEOut</i>
+must be declared in the function that calls this function, and its size must
+be equal to the length of the individual parameter vector
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>indParSEOut</i> is not <code><font color="blue">NULL</font></code> and this function
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object
+pointed to by <i>indParSEOut</i> will contain the standard error vector
+of the individual parameter estimates, in column major order, that is evaluated
+at <i>indPar</i>.  Otherwise, this function will not attempt to change the
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by
+<i>indParSEOut</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParCorOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>indParCorOut</i> is not <code><font color="blue">NULL</font></code>, then the
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCorOut</i>
+must be declared in the function that calls this function, and its size must
+be equal to the square of the length of the individual parameter vector
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>indParCorOut</i> is not <code><font color="blue">NULL</font></code> and this function
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object
+pointed to by <i>indParCorOut</i> will contain the correlation matrix
+of the individual parameter estimates, in column major order, that is evaluated
+at <i>indPar</i>.  Otherwise, this function will not attempt to change the
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by
+<i>indParCorOut</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParCVOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>indParCVOut</i> is not <code><font color="blue">NULL</font></code>, then the
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCVOut</i>
+must be declared in the function that calls this function, and its size must
+be equal to the length of the individual parameter vector
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>indParCVOut</i> is not <code><font color="blue">NULL</font></code> and this function
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object
+pointed to by <i>indParCVOut</i> will contain the standard error vector
+of the individual parameter estimates, in column major order, that is evaluated
+at <i>indPar</i>.  Otherwise, this function will not attempt to change the
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by
+<i>indParCVOut</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParCIOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>indParCIOut</i> is not <code><font color="blue">NULL</font></code>, then the
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCIOut</i>
+must be declared in the function that calls this function, and its size must
+be equal to the two times of the length of the individual parameter vector
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>indParCIOut</i> is not <code><font color="blue">NULL</font></code> and this function
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed
+to by <i>indParCIOut</i> will contain the 95% confidence interval values
+of the individual parameter estimates, in column major order, that is evaluated
+at <i>indPar</i>.  There are two columns in the object.  The first column
+contains the lower limit, and the second column contains the upper limit of
+the confidence interval of the individual parameter estimates.  Otherwise,
+this function will not attempt to change the contents of the
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCIOut</i>.
+Note that in the calculation of the confidence interval, if the degree of freedom
+(number of data - number of parameters) is greater than 120 it is treated as infinite.
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+The following demonstrates running indStatistics() in the single processing mode.
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#include&nbsp;&lt;iostream&gt;<br>
+#include&nbsp;&lt;cmath&gt;<br>
+#include&nbsp;&quot;SpkModel.h&quot;<br>
+#include&nbsp;&quot;indStatistics.h&quot;<br>
+#include&nbsp;&quot;printInMatrix.h&quot;<br>
+#include&nbsp;&quot;fitIndividual.h&quot;<br>
+#include&nbsp;&quot;SpkValarray.h&quot;<br>
+<br>
+using&nbsp;namespace&nbsp;std;<br>
+<br>
+/*------------------------------------------------------------------------<br>
+&nbsp;*&nbsp;Class&nbsp;Definition<br>
+&nbsp;*------------------------------------------------------------------------*/<br>
+/*<br>
+class&nbsp;UserModelIndStatisticsExampleTest&nbsp;:&nbsp;public&nbsp;SpkModel&lt;double&gt;<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;_b;<br>
+public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;UserModelIndStatisticsExampleTest(){};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;~UserModelIndStatisticsExampleTest(){};<br>
+private:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSetIndPar(const&nbsp;valarray&lt;double&gt;&amp;&nbsp;bval)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_b&nbsp;=&nbsp;bval;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataMean(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;b(2)&nbsp;\<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f(b)&nbsp;=&nbsp;|&nbsp;b(2)&nbsp;|<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;b(2)&nbsp;/<br>
+//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(&nbsp;3,&nbsp;_b[1]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataMean_indPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;0&nbsp;&nbsp;&nbsp;1&nbsp;\<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_b(b)&nbsp;=&nbsp;|&nbsp;0&nbsp;&nbsp;&nbsp;1&nbsp;|<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;0&nbsp;&nbsp;&nbsp;1&nbsp;/<br>
+//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(&nbsp;6,&nbsp;0.0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[3]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[4]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[5]&nbsp;=&nbsp;1.0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataVariance(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;exp[b(1)]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R(b)&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exp[b(1)]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exp[b(1)]&nbsp;/<br>
+//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(&nbsp;9,&nbsp;0.0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;exp(&nbsp;_b[0]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[4]&nbsp;=&nbsp;exp(&nbsp;_b[0]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[8]&nbsp;=&nbsp;exp(&nbsp;_b[0]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataVariance_indPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;exp[b(1)]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;\<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_b(b)&nbsp;=&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;exp[b(1)]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;exp[b(1)]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;/<br>
+//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(&nbsp;18,&nbsp;0.0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;exp(&nbsp;_b[0]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[4]&nbsp;=&nbsp;exp(&nbsp;_b[0]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[8]&nbsp;=&nbsp;exp(&nbsp;_b[0]&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doIndParVariance(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;1.0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;\<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D(b)&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.5&nbsp;/<br>
+//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(&nbsp;4&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[1]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[2]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[3]&nbsp;=&nbsp;0.5;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+};<br>
+<br>
+int&nbsp;main()<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Preliminaries.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;user-provided&nbsp;model.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;UserModelIndStatisticsExampleTest&nbsp;model;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;data&nbsp;vector,&nbsp;y.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;nY&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;Y(nY&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Y[&nbsp;0&nbsp;]&nbsp;=&nbsp;1.8;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Y[&nbsp;1&nbsp;]&nbsp;=&nbsp;2.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Y[&nbsp;2&nbsp;]&nbsp;=&nbsp;2.2;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;objective&nbsp;function&nbsp;parameter,&nbsp;b.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;nB&nbsp;=&nbsp;2;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;indParLow&nbsp;(&nbsp;-4.0,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;indParUp&nbsp;&nbsp;(&nbsp;&nbsp;4.0,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;indParIn&nbsp;&nbsp;(&nbsp;&nbsp;2.0,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;indParOut&nbsp;(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;indParStep(&nbsp;.001,&nbsp;nB&nbsp;);<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;objective&nbsp;function,&nbsp;MapObj(b).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;MapObjOut;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;MapObj_bOut&nbsp;&nbsp;(&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;MapObj_b_bOut(&nbsp;nB&nbsp;*&nbsp;nB&nbsp;);<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Remaining&nbsp;inputs&nbsp;to&nbsp;fitIndividual.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Optimizer&nbsp;indOptimizer(&nbsp;1.e-3,&nbsp;40,&nbsp;0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;withD&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;false;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Optimize&nbsp;MapObj(b).<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;try<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fitIndividual(&nbsp;model,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indOptimizer,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indParLow,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indParUp,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indParIn,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indParStep,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;indParOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;MapObjOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;MapObj_bOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;MapObj_b_bOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;withD&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;catch(...)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cerr&nbsp;&lt;&lt;&nbsp;&quot;fitIndividual&nbsp;failed&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;dataMean_indPar(&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;dataVariance_indPar(&nbsp;nY&nbsp;*&nbsp;nY&nbsp;*&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;dataVarianceInv(&nbsp;nY&nbsp;*&nbsp;nY&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model.dataMean_indPar(&nbsp;dataMean_indPar&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model.dataVariance_indPar(&nbsp;dataVariance_indPar&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;model.dataVarianceInv(&nbsp;dataVarianceInv&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Compute&nbsp;statistics&nbsp;of&nbsp;individual&nbsp;parameter&nbsp;estimates.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;indParCovOut(&nbsp;nB&nbsp;*&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;indParSEOut&nbsp;(&nbsp;nB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;indParCorOut(&nbsp;nB&nbsp;*&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;indParCVOut&nbsp;(&nbsp;nB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;indParCIOut&nbsp;(&nbsp;nB&nbsp;*&nbsp;&nbsp;2&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;try<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indStatistics(&nbsp;indParOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataMean_indPar,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataVariance_indPar,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dataVarianceInv,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;indParCovOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;indParSEOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;indParCorOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;indParCVOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;indParCIOut&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;catch(...)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cerr&nbsp;&lt;&lt;&nbsp;&quot;indStatistics&nbsp;failed&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;indParOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;printInMatrix(&nbsp;indParOut,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;indParCovOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;printInMatrix(&nbsp;indParCovOut,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;indParSEOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;printInMatrix(&nbsp;indParSEOut,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;indParCVOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;printInMatrix(&nbsp;indParCVOut,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;indParCorOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;printInMatrix(&nbsp;indParCorOut,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;indParCIOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;printInMatrix(&nbsp;indParCIOut,&nbsp;2&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+}<br>
+</span>
+</font></code>
+The program will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+indParOut&nbsp;=<br>
+[&nbsp;-3.62422&nbsp;]<br>
+[&nbsp;2&nbsp;]<br>
+indParCovOut&nbsp;=<br>
+[&nbsp;0.666667&nbsp;0&nbsp;]<br>
+[&nbsp;0&nbsp;0.00889&nbsp;]<br>
+indParSEOut&nbsp;=<br>
+[&nbsp;0.816497&nbsp;]<br>
+[&nbsp;0.0942868&nbsp;]<br>
+indParCVOut&nbsp;=<br>
+[&nbsp;-22.5289&nbsp;]<br>
+[&nbsp;4.71434&nbsp;]<br>
+indParCorOut&nbsp;=<br>
+[&nbsp;1&nbsp;0&nbsp;]<br>
+[&nbsp;0&nbsp;1&nbsp;]<br>
+indParCIOut&nbsp;=<br>
+[&nbsp;-13.9986&nbsp;6.75019&nbsp;]<br>
+[&nbsp;0.801992&nbsp;3.19801&nbsp;]<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/indStatistics.cpp
+
+</body>
+</html>

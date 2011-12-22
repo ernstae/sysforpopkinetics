@@ -1,0 +1,401 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html40/loose.dtd">
+<HTML>
+<!-- Created on April, 18 2002 by texi2html 1.66 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<HEAD>
+<TITLE>CVS--Concurrent Versions System v1.11.2: Tracking sources</TITLE>
+
+<META NAME="description" CONTENT="CVS--Concurrent Versions System v1.11.2: Tracking sources">
+<META NAME="keywords" CONTENT="CVS--Concurrent Versions System v1.11.2: Tracking sources">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.66">
+
+</HEAD>
+
+<BODY LANG="en" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC104"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC103"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC105"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_12.html#SEC98"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_14.html#SEC111"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> 13. Tracking third-party sources </H1>
+<!--docid::SEC104::-->
+<P>
+
+If you modify a program to better fit your site, you
+probably want to include your modifications when the next
+release of the program arrives.  CVS can help you with
+this task.
+</P>
+<P>
+
+<A NAME="IDX220"></A>
+<A NAME="IDX221"></A>
+<A NAME="IDX222"></A>
+In the terminology used in CVS, the supplier of the
+program is called a <EM>vendor</EM>.  The unmodified
+distribution from the vendor is checked in on its own
+branch, the <EM>vendor branch</EM>.  CVS reserves branch
+1.1.1 for this use.
+</P>
+<P>
+
+When you modify the source and commit it, your revision
+will end up on the main trunk.  When a new release is
+made by the vendor, you commit it on the vendor branch
+and copy the modifications onto the main trunk.
+</P>
+<P>
+
+Use the <CODE>import</CODE> command to create and update
+the vendor branch.  When you import a new file,
+the vendor branch is made the `head' revision, so
+anyone that checks out a copy of the file gets that
+revision.  When a local modification is committed it is
+placed on the main trunk, and made the `head'
+revision.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_13.html#SEC105">13.1 Importing for the first time</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_13.html#SEC106">13.2 Updating with the import command</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_13.html#SEC107">13.3 Reverting to the latest vendor release</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_13.html#SEC108">13.4 How to handle binary files with cvs import</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Binary files require special handling</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_13.html#SEC109">13.5 How to handle keyword substitution with cvs import</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Keyword substitution might be undesirable</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_13.html#SEC110">13.6 Multiple vendor branches</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">What if you get sources from several places?</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="First import"></A>
+<HR SIZE="6">
+<A NAME="SEC105"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC106"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_14.html#SEC111"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 13.1 Importing for the first time </H2>
+<!--docid::SEC105::-->
+<P>
+
+Use the <CODE>import</CODE> command to check in the sources
+for the first time.  When you use the <CODE>import</CODE>
+command to track third-party sources, the <EM>vendor
+tag</EM> and <EM>release tags</EM> are useful.  The
+<EM>vendor tag</EM> is a symbolic name for the branch
+(which is always 1.1.1, unless you use the `<SAMP>-b
+<VAR>branch</VAR></SAMP>' flag--see <A HREF="cvs_13.html#SEC110">13.6 Multiple vendor branches</A>.).  The
+<EM>release tags</EM> are symbolic names for a particular
+release, such as `<SAMP>FSF_0_04</SAMP>'.
+</P>
+<P>
+
+Note that <CODE>import</CODE> does <EM>not</EM> change the
+directory in which you invoke it.  In particular, it
+does not set up that directory as a CVS working
+directory; if you want to work with the sources import
+them first and then check them out into a different
+directory (see section <A HREF="cvs_1.html#SEC5">1.3.1 Getting the source</A>).
+</P>
+<P>
+
+<A NAME="IDX223"></A>
+Suppose you have the sources to a program called
+<CODE>wdiff</CODE> in a directory `<TT>wdiff-0.04</TT>',
+and are going to make private modifications that you
+want to be able to use even when new releases are made
+in the future.  You start by importing the source to
+your repository:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cd wdiff-0.04
+$ cvs import -m &quot;Import of FSF v. 0.04&quot; fsf/wdiff FSF_DIST WDIFF_0_04
+</pre></td></tr></table><P>
+
+The vendor tag is named `<SAMP>FSF_DIST</SAMP>' in the above
+example, and the only release tag assigned is
+`<SAMP>WDIFF_0_04</SAMP>'.
+</P>
+<P>
+
+<A NAME="Update imports"></A>
+<HR SIZE="6">
+<A NAME="SEC106"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC105"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC107"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_14.html#SEC111"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 13.2 Updating with the import command </H2>
+<!--docid::SEC106::-->
+<P>
+
+When a new release of the source arrives, you import it into the
+repository with the same <CODE>import</CODE> command that you used to set up
+the repository in the first place.  The only difference is that you
+specify a different release tag this time:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ tar xfz wdiff-0.05.tar.gz
+$ cd wdiff-0.05
+$ cvs import -m &quot;Import of FSF v. 0.05&quot; fsf/wdiff FSF_DIST WDIFF_0_05
+</pre></td></tr></table><P>
+
+For files that have not been modified locally, the newly created
+revision becomes the head revision.  If you have made local
+changes, <CODE>import</CODE> will warn you that you must merge the changes
+into the main trunk, and tell you to use `<SAMP>checkout -j</SAMP>' to do so:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs checkout -jFSF_DIST:yesterday -jFSF_DIST wdiff
+</pre></td></tr></table><P>
+
+The above command will check out the latest revision of
+`<SAMP>wdiff</SAMP>', merging the changes made on the vendor branch `<SAMP>FSF_DIST</SAMP>'
+since yesterday into the working copy.  If any conflicts arise during
+the merge they should be resolved in the normal way (see section <A HREF="cvs_10.html#SEC86">10.3 Conflicts example</A>).  Then, the modified files may be committed.
+</P>
+<P>
+
+However, it is much better to use the two release tags rather than using
+a date on the branch as suggested above:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs checkout -jWDIFF_0_04 -jWDIFF_0_05 wdiff
+</pre></td></tr></table><P>
+
+The reason this is better is that
+using a date, as suggested above, assumes that you do
+not import more than one release of a product per day.
+More importantly, using the release tags allows CVS to detect files
+that were removed between the two vendor releases and mark them for
+removal.  Since <CODE>import</CODE> has no way to detect removed files, you
+should do a merge like this even if <CODE>import</CODE> doesn't tell you to.
+</P>
+<P>
+
+<A NAME="Reverting local changes"></A>
+<HR SIZE="6">
+<A NAME="SEC107"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC106"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC108"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_14.html#SEC111"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 13.3 Reverting to the latest vendor release </H2>
+<!--docid::SEC107::-->
+<P>
+
+You can also revert local changes completely and return
+to the latest vendor release by changing the `head'
+revision back to the vendor branch on all files.  For
+example, if you have a checked-out copy of the sources
+in `<TT>~/work.d/wdiff</TT>', and you want to revert to the
+vendor's version for all the files in that directory,
+you would type:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cd ~/work.d/wdiff
+$ cvs admin -bWDIFF .
+</pre></td></tr></table><P>
+
+You must specify the `<SAMP>-bWDIFF</SAMP>' without any space
+after the `<SAMP>-b</SAMP>'.  See section <A HREF="cvs_16.html#SEC120">A.6.1 admin options</A>.
+</P>
+<P>
+
+<A NAME="Binary files in imports"></A>
+<HR SIZE="6">
+<A NAME="SEC108"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC107"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC109"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_14.html#SEC111"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 13.4 How to handle binary files with cvs import </H2>
+<!--docid::SEC108::-->
+<P>
+
+Use the `<SAMP>-k</SAMP>' wrapper option to tell import which
+files are binary.  See section <A HREF="cvs_18.html#SEC164">C.2 The cvswrappers file</A>.
+</P>
+<P>
+
+<A NAME="Keywords in imports"></A>
+<HR SIZE="6">
+<A NAME="SEC109"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC108"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC110"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_14.html#SEC111"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 13.5 How to handle keyword substitution with cvs import </H2>
+<!--docid::SEC109::-->
+<P>
+
+The sources which you are importing may contain
+keywords (see section <A HREF="cvs_12.html#SEC98">12. Keyword substitution</A>).  For example,
+the vendor may use CVS or some other system
+which uses similar keyword expansion syntax.  If you
+just import the files in the default fashion, then
+the keyword expansions supplied by the vendor will
+be replaced by keyword expansions supplied by your
+own copy of CVS.  It may be more convenient to
+maintain the expansions supplied by the vendor, so
+that this information can supply information about
+the sources that you imported from the vendor.
+</P>
+<P>
+
+To maintain the keyword expansions supplied by the
+vendor, supply the `<SAMP>-ko</SAMP>' option to <CODE>cvs
+import</CODE> the first time you import the file.
+This will turn off keyword expansion
+for that file entirely, so if you want to be more
+selective you'll have to think about what you want
+and use the `<SAMP>-k</SAMP>' option to <CODE>cvs update</CODE> or
+<CODE>cvs admin</CODE> as appropriate.
+</P>
+<P>
+
+<A NAME="Multiple vendor branches"></A>
+<HR SIZE="6">
+<A NAME="SEC110"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC109"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_14.html#SEC111"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_14.html#SEC111"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 13.6 Multiple vendor branches </H2>
+<!--docid::SEC110::-->
+<P>
+
+All the examples so far assume that there is only one
+vendor from which you are getting sources.  In some
+situations you might get sources from a variety of
+places.  For example, suppose that you are dealing with
+a project where many different people and teams are
+modifying the software.  There are a variety of ways to
+handle this, but in some cases you have a bunch of
+source trees lying around and what you want to do more
+than anything else is just to all put them in CVS so
+that you at least have them in one place.
+</P>
+<P>
+
+For handling situations in which there may be more than
+one vendor, you may specify the `<SAMP>-b</SAMP>' option to
+<CODE>cvs import</CODE>.  It takes as an argument the vendor
+branch to import to.  The default is `<SAMP>-b 1.1.1</SAMP>'.
+</P>
+<P>
+
+For example, suppose that there are two teams, the red
+team and the blue team, that are sending you sources.
+You want to import the red team's efforts to branch
+1.1.1 and use the vendor tag RED.  You want to import
+the blue team's efforts to branch 1.1.3 and use the
+vendor tag BLUE.  So the commands you might use are:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs import dir RED RED_1-0
+$ cvs import -b 1.1.3 dir BLUE BLUE_1-5
+</pre></td></tr></table><P>
+
+Note that if your vendor tag does not match your
+`<SAMP>-b</SAMP>' option, CVS will not detect this case!  For
+example,
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs import -b 1.1.3 dir RED RED_1-0
+</pre></td></tr></table><P>
+
+Be careful; this kind of mismatch is sure to sow
+confusion or worse.  I can't think of a useful purpose
+for the ability to specify a mismatch here, but if you
+discover such a use, don't.  CVS is likely to make this
+an error in some future release.
+</P>
+<P>
+
+<A NAME="Builds"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_13.html#SEC104"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_14.html#SEC111"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>
+<FONT SIZE="-1">
+This document was generated
+by <I>Derek Robert Price</I> on <I>April, 18 2002</I>
+using <A HREF="http://texi2html.cvshome.org"><I>texi2html</I></A>
+</FONT>
+
+</BODY>
+</HTML>

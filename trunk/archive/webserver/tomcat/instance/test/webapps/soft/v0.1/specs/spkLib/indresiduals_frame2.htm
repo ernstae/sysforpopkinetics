@@ -1,0 +1,180 @@
+<html><head>
+<title>Computing Residuals for an Individual</title>
+<meta name="description" id="description" content="Computing Residuals for an Individual">
+<meta name="keywords" id="keywords" content=" indresiduals Residuals Individual "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="indresiduals.htm" target="_top">section</a>, <a href="indresiduals_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Calculates predicted values, residuals and/or weighted residuals for an 
+individual using the covariance of the individual's data <code><span style='white-space: nowrap'><i>R</i>(<i>b</i>)</span></code> as 
+the weight.
+Also, calculates individual parameter residuals and weighted individual 
+parameter residuals for an individual using the covariance of the 
+individual parameters <code><span style='white-space: nowrap'><i>D</i></span></code> as the weight.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The predicted values <code><span style='white-space: nowrap'><i>pred</i></span></code>, residuals <code><span style='white-space: nowrap'><i>res</i></span></code>, and weighted 
+residuals <code><span style='white-space: nowrap'><i>resWtd</i></span></code> for the individual are calculated as follows:
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>pred</i>&nbsp;&nbsp;=&nbsp;&nbsp;<i>f</i>(<i>b</i>)&nbsp;&nbsp;,<br>
+<br>
+</span></code><code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>res</i>&nbsp;&nbsp;=&nbsp;&nbsp;<i>y</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>pred</i>&nbsp;&nbsp;,<br>
+<br>
+</span></code>and
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1/2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>resWtd</i>&nbsp;&nbsp;=&nbsp;&nbsp;<i>R</i>(<i>b</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;&nbsp;<i>res</i>&nbsp;&nbsp;&nbsp;,<br>
+<br>
+</span></code>where the term multiplying the residuals is the matrix square 
+root of the inverse of the covariance.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The individual parameter residuals <code><span style='white-space: nowrap'><i>bRes</i></span></code> and the weighted
+individual parameter residuals <code><span style='white-space: nowrap'><i>bResWtd</i></span></code> for the individual 
+are calculated as follows: 
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>bRes</i>&nbsp;&nbsp;=&nbsp;&nbsp;-&nbsp;<i>b</i>&nbsp;&nbsp;,<br>
+<br>
+</span></code>and
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1/2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>bResWtd</i>&nbsp;&nbsp;=&nbsp;&nbsp;<i>D</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;(&nbsp;-&nbsp;<i>b</i>&nbsp;)&nbsp;&nbsp;.<br>
+<br>
+</span></code>(The equations above use
+<a href="glossary_frame1.htm#Individual Notation" target="frame1"><i><span style='white-space: nowrap'>individual&nbsp;notation</span></i></a>
+.)
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This function expects <i>model</i> to be a function of <code><span style='white-space: nowrap'><i>b</i></span></code>.
+Refer to <a href="glossary_frame1.htm#Model Functions Depend on only b" target="frame1"><i><span style='white-space: nowrap'>Model&nbsp;Functions&nbsp;Depend&nbsp;on&nbsp;only&nbsp;b</span></i></a>
+
+for details.
+If weighted individual parameter residuals are going to be calculated,
+then the function <a href="spkmodel_indparvariance.htm" target="_top">Model for the Variance of Individual Parameter</a> must be defined 
+for this model in order to calculate the covariance of the 
+individual parameters <code><span style='white-space: nowrap'><i>D</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>measurements</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>measurements</i> contains 
+the vector <code><span style='white-space: nowrap'><i>y</i></span></code>, which specifies the data for the individual.
+Note that the size of <i>measurements</i> specifies the number of 
+data values, <code><span style='white-space: nowrap'><i>nY</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indPar</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indPar</i> contains the vector 
+<code><span style='white-space: nowrap'><i>b</i></span></code>, which specifies the values of the individual parameters.  
+Note that the size of <i>indPar</i> specifies the number of 
+individual parameters, <code><span style='white-space: nowrap'><i>nB</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pIndPredOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>pIndPredOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>pIndPredOut</i> 
+must be declared in the function that calls this function, and its size 
+must be equal to <code><span style='white-space: nowrap'><i>nY</i></span></code>.  
+If <i>pIndPredOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pIndPredOut</i> will contain the vector of predicted
+values for this individual's data <code><span style='white-space: nowrap'><i>pred</i></span></code> in the same order as the 
+data values.  
+Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pIndPredOut</i>. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pIndResOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>pIndResOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>pIndResOut</i> 
+must be declared in the function that calls this function, and its size 
+must be equal to <code><span style='white-space: nowrap'><i>nY</i></span></code>.  
+If <i>pIndResOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pIndResOut</i> will contain the vector of residuals 
+for this individual <code><span style='white-space: nowrap'><i>res</i></span></code> in the same order as the data values.  
+Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pIndResOut</i>. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pIndResWtdOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>pIndResWtdOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>pIndResWtdOut</i> 
+must be declared in the function that calls this function, and its size 
+must be equal to <code><span style='white-space: nowrap'><i>nY</i></span></code>.  
+If <i>pIndResWtdOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pIndResWtdOut</i> will contain the vector of weighted
+residuals for this individual <code><span style='white-space: nowrap'><i>resWtd</i></span></code> in the same order as the 
+data values.  
+Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pIndResWtdOut</i>. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pIndParResOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>pIndParResOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>pIndParResOut</i> 
+must be declared in the function that calls this function, and its size 
+must be equal to <code><span style='white-space: nowrap'><i>nB</i></span></code>.  
+If <i>pIndParResOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pIndParResOut</i> will contain the vector of 
+individual parameter residuals for this individual <code><span style='white-space: nowrap'><i>bRes</i></span></code>.
+Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pIndParResOut</i>. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pIndParResWtdOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>pIndParResWtdOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>pIndParResWtdOut</i> 
+must be declared in the function that calls this function, and its size 
+must be equal to <code><span style='white-space: nowrap'><i>nB</i></span></code>.  
+If <i>pIndParResWtdOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pIndParResWtdOut</i> will contain the vector of weighted
+individual parameter residuals for this individual <code><span style='white-space: nowrap'><i>bResWtd</i></span></code>.
+Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pIndParResWtdOut</i>. 
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>These weighted individual parameter residuals may only be calculated 
+if the function <a href="spkmodel_indparvariance.htm" target="_top">Model for the Variance of Individual Parameter</a> is defined for the 
+input argument <i>model</i>.
+
+
+<hr>Input File: ../../spk/indResiduals.cpp
+
+</body>
+</html>

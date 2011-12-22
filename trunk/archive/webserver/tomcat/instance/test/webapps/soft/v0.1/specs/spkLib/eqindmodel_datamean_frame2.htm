@@ -1,0 +1,56 @@
+<html><head>
+<title>Model for the Data Mean</title>
+<meta name="description" id="description" content="Model for the Data Mean">
+<meta name="keywords" id="keywords" content=" Eqindmodel dodatamean Equivalent individual model mean of data "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="eqindmodel_datamean.htm" target="_top">section</a>, <a href="eqindmodel_datamean_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This function evaluates the mean of all individual's data at
+a currently set population parameters of the original 
+<a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+ class object
+and at zero value of individual parameters of the original 
+<a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+ class object.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+f<br>
+</span></font></code>shall, upon a successful completion of evaluation,
+contain a resulting vector of size <code><span style='white-space: nowrap'><i>nY</i></span></code>, where <code><span style='white-space: nowrap'><i>nY</i></span></code> is the
+number of all individual's data, in the following form.  
+
+  
+
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;<i>f</i>1(<i>alp</i>,&nbsp;0)&nbsp;&nbsp;\<br>
+<i>f</i>(<i>alp</i>)&nbsp;=&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;<i>fn</i>(<i>alp</i>,&nbsp;0)&nbsp;&nbsp;/<br>
+<br>
+</span></code>where f1,...,fn are the data means of individual 1,...,n of the original 
+<a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+ class object, respectively. 
+alp is the population parameter vector of the original
+<a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+ class object and n is the number of 
+individuals of the original <a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+ class object.
+
+
+<hr>Input File: ../../spk/EqIndModel.cpp
+
+</body>
+</html>

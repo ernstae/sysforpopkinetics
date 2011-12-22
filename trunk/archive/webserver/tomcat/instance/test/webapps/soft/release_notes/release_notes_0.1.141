@@ -1,0 +1,28 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.140
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Replaced occurrences of sprintf() with snprintf() in the SPK library
+to avoid potential memory overrun.
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: November 14, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.141
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Job-queue server, cmpiler daemon and run-time daemon have been revised 
+for improved efficiency and document.
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: November 21, 2005

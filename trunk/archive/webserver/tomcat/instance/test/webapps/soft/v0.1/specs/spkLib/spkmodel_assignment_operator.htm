@@ -1,0 +1,127 @@
+<html><head>
+<title>Assignment Operator</title>
+<meta name="description" id="description" content="Assignment Operator">
+<meta name="keywords" id="keywords" content=" User-provided Model Assignment Operator ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_spkmodel_assignment_operator_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>SpkModel</option>
+<option>SpkModel_assignment_operator</option>
+</select>
+</td>
+<td><a href="spkmodel_copy_constructor.htm" target="_top">Prev</a>
+</td><td><a href="spkmodel_default_destructor.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>SpkModel-&gt;</option>
+<option>SpkModel_default_constructor</option>
+<option>SpkModel_copy_constructor</option>
+<option>SpkModel_assignment_operator</option>
+<option>SpkModel_default_destructor</option>
+<option>SpkModel_selectIndividual</option>
+<option>SpkModel_setPopPar</option>
+<option>SpkModel_setIndPar</option>
+<option>SpkModel_dataMean</option>
+<option>SpkModel_dataMean_indPar</option>
+<option>SpkModel_dataMean_popPar</option>
+<option>SpkModel_dataVariance</option>
+<option>SpkModel_dataVariance_indPar</option>
+<option>SpkModel_dataVariance_popPar</option>
+<option>SpkModel_dataVarianceInv</option>
+<option>SPkModel_dataVarianceInv_indPar</option>
+<option>SpkModel_dataVarianceInv_popPar</option>
+<option>SpkModel_indParVariance</option>
+<option>SpkModel_indParVariance_popPar</option>
+<option>SpkModel_indParVarianceInv</option>
+<option>SpkModel_indParVarianceInv_popPar</option>
+<option>SpkModel_dataCovariance</option>
+<option>SpkModel_indParCovariance</option>
+<option>SpkModel_invalidateIndParCovarianceCache</option>
+</select>
+</td>
+<td>SpkModel_assignment_operator</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Arguments</option>
+</select>
+</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>Assignment Operator</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype:</b>   </td><td align='left'  valign='top'>
+  
+<code><font color="blue"><span style='white-space: nowrap'>protected:&nbsp;template&lt;class&nbsp;Scalar&gt;&nbsp;SpkModel&lt;Scalar&gt;::SpkModel&amp;&nbsp;operator=(&nbsp;const&nbsp;SpkModel&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>right</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)</span></font></code>
+</td></tr>
+</table>
+<br>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+The assignment operator.  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Since SpkModel is an abstract class, the direct use of this operator
+is only allowed for its subclasses.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The assignment operator is provide to make the SpkModel class
+more standard even though SPK itself does not currently require
+its model classes to be assignable.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+right<br>
+</span></font></code>The SpkModel to be copied.
+
+
+<hr>Input File: ../../spk/SpkModel.cpp
+
+</body>
+</html>

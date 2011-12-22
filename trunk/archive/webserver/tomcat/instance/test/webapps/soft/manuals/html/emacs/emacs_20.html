@@ -1,0 +1,1719 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: International</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: International">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: International">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC213"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC212"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC214"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> Q. International Character Set Support </H1>
+<!--docid::SEC213::-->
+<P>
+
+<A NAME="IDX935"></A>
+<A NAME="IDX936"></A>
+<A NAME="IDX937"></A>
+<A NAME="IDX938"></A>
+<A NAME="IDX939"></A>
+<A NAME="IDX940"></A>
+<A NAME="IDX941"></A>
+<A NAME="IDX942"></A>
+<A NAME="IDX943"></A>
+<A NAME="IDX944"></A>
+<A NAME="IDX945"></A>
+<A NAME="IDX946"></A>
+<A NAME="IDX947"></A>
+<A NAME="IDX948"></A>
+<A NAME="IDX949"></A>
+<A NAME="IDX950"></A>
+<A NAME="IDX951"></A>
+<A NAME="IDX952"></A>
+<A NAME="IDX953"></A>
+<A NAME="IDX954"></A>
+<A NAME="IDX955"></A>
+<A NAME="IDX956"></A>
+<A NAME="IDX957"></A>
+<A NAME="IDX958"></A>
+<A NAME="IDX959"></A>
+<A NAME="IDX960"></A>
+  Emacs supports a wide variety of international character sets,
+including European variants of the Latin alphabet, as well as Chinese,
+Cyrillic, Devanagari (Hindi and Marathi), Ethiopic, Greek, Hebrew, IPA,
+Japanese, Korean, Lao, Thai, Tibetan, and Vietnamese scripts.  These features
+have been merged from the modified version of Emacs known as MULE (for
+"MULti-lingual Enhancement to GNU Emacs")
+</P><P>
+
+  Emacs also supports various encodings of these characters used by
+other internationalized software, such as word processors and mailers.
+</P><P>
+
+  Emacs allows editing text with international characters by supporting
+all the related activities:
+</P><P>
+
+<UL>
+<LI>
+You can visit files with non-ASCII characters, save non-ASCII text, and
+pass non-ASCII text between Emacs and programs it invokes (such as
+compilers, spell-checkers, and mailers).  Setting your language
+environment (see section <A HREF="emacs_20.html#SEC216">Q.3 Language Environments</A>) takes care of setting up the
+coding systems and other options for a specific language or culture.
+Alternatively, you can specify how Emacs should encode or decode text
+for each command; see <A HREF="emacs_20.html#SEC222">Q.9 Specifying a Coding System</A>.
+<P>
+
+<LI>
+You can display non-ASCII characters encoded by the various scripts.
+This works by using appropriate fonts on X and similar graphics
+displays (see section <A HREF="emacs_20.html#SEC224">Q.11 Defining fontsets</A>), and by sending special codes to
+text-only displays (see section <A HREF="emacs_20.html#SEC222">Q.9 Specifying a Coding System</A>).  If some characters are
+displayed incorrectly, refer to <A HREF="emacs_20.html#SEC225">Q.12 Undisplayable Characters</A>, which
+describes possible problems and explains how to solve them.
+<P>
+
+<LI>
+You can insert non-ASCII characters or search for them.  To do that,
+you can specify an input method (see section <A HREF="emacs_20.html#SEC218">Q.5 Selecting an Input Method</A>) suitable
+for your language, or use the default input method set up when you set
+your language environment.  (Emacs input methods are part of the Leim
+package, which must be installed for you to be able to use them.)  If
+your keyboard can produce non-ASCII characters, you can select an
+appropriate keyboard coding system (see section <A HREF="emacs_20.html#SEC222">Q.9 Specifying a Coding System</A>), and Emacs
+will accept those characters.  Latin-1 characters can also be input by
+using the <KBD>C-x 8</KBD> prefix, see <A HREF="emacs_20.html#SEC226">C-x 8</A>.  On X Window systems, your locale should be set to an
+appropriate value to make sure Emacs interprets keyboard input
+correctly, see <A HREF="emacs_20.html#SEC216">locales</A>.
+</UL>
+<P>
+
+  The rest of this chapter describes these issues in detail.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_20.html#SEC214">Q.1 Introduction to International Character Sets</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Basic concepts of multibyte characters.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_20.html#SEC215">Q.2 Enabling Multibyte Characters</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Controlling whether to use multibyte characters.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_20.html#SEC216">Q.3 Language Environments</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Setting things up for the language you use.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_20.html#SEC217">Q.4 Input Methods</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Entering text characters not on your keyboard.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_20.html#SEC218">Q.5 Selecting an Input Method</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Specifying your choice of input methods.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_20.html#SEC219">Q.6 Unibyte and Multibyte Non-ASCII characters</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How single-byte characters convert to multibyte.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_20.html#SEC220">Q.7 Coding Systems</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Character set conversion when you read and
+                              write files, and so on.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_20.html#SEC221">Q.8 Recognizing Coding Systems</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How Emacs figures out which conversion to use.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_20.html#SEC222">Q.9 Specifying a Coding System</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Various ways to choose which conversion to use.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_20.html#SEC223">Q.10 Fontsets</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Fontsets are collections of fonts
+                              that cover the whole spectrum of characters.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_20.html#SEC224">Q.11 Defining fontsets</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Defining a new fontset.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_20.html#SEC225">Q.12 Undisplayable Characters</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">When characters don't display.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_20.html#SEC226">Q.13 Single-byte Character Set Support</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">You can pick one European character set
+                            to use without multibyte characters.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="International Chars"></A>
+<HR SIZE="6">
+<A NAME="SEC214"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC215"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Q.1 Introduction to International Character Sets </H2>
+<!--docid::SEC214::-->
+<P>
+
+  The users of international character sets and scripts have established
+many more-or-less standard coding systems for storing files.  Emacs
+internally uses a single multibyte character encoding, so that it can
+intermix characters from all these scripts in a single buffer or string.
+This encoding represents each non-ASCII character as a sequence of bytes
+in the range 0200 through 0377.  Emacs translates between the multibyte
+character encoding and various other coding systems when reading and
+writing files, when exchanging data with subprocesses, and (in some
+cases) in the <KBD>C-q</KBD> command (see section <A HREF="emacs_20.html#SEC219">Q.6 Unibyte and Multibyte Non-ASCII characters</A>).
+</P><P>
+
+<A NAME="IDX961"></A>
+<A NAME="IDX962"></A>
+<A NAME="IDX963"></A>
+<A NAME="IDX964"></A>
+  The command <KBD>C-h h</KBD> (<CODE>view-hello-file</CODE>) displays the file
+<TT>`etc/HELLO'</TT>, which shows how to say "hello" in many languages.
+This illustrates various scripts.  If some characters can't be
+displayed on your terminal, they appear as <SAMP>`?'</SAMP> or as hollow boxes
+(see section <A HREF="emacs_20.html#SEC225">Q.12 Undisplayable Characters</A>).
+</P><P>
+
+  Keyboards, even in the countries where these character sets are used,
+generally don't have keys for all the characters in them.  So Emacs
+supports various <EM>input methods</EM>, typically one for each script or
+language, to make it convenient to type them.
+</P><P>
+
+<A NAME="IDX965"></A>
+  The prefix key <KBD>C-x <KBD>RET</KBD></KBD> is used for commands that pertain
+to multibyte characters, coding systems, and input methods.
+</P><P>
+
+<A NAME="Enabling Multibyte"></A>
+<HR SIZE="6">
+<A NAME="SEC215"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC214"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC216"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC216"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Q.2 Enabling Multibyte Characters </H2>
+<!--docid::SEC215::-->
+<P>
+
+<A NAME="IDX966"></A>
+  You can enable or disable multibyte character support, either for
+Emacs as a whole, or for a single buffer.  When multibyte characters are
+disabled in a buffer, then each byte in that buffer represents a
+character, even codes 0200 through 0377.  The old features for
+supporting the European character sets, ISO Latin-1 and ISO Latin-2,
+work as they did in Emacs 19 and also work for the other ISO 8859
+character sets.
+</P><P>
+
+  However, there is no need to turn off multibyte character support to
+use ISO Latin; the Emacs multibyte character set includes all the
+characters in these character sets, and Emacs can translate
+automatically to and from the ISO codes.
+</P><P>
+
+  By default, Emacs starts in multibyte mode, because that allows you to
+use all the supported languages and scripts without limitations.
+</P><P>
+
+  To edit a particular file in unibyte representation, visit it using
+<CODE>find-file-literally</CODE>.  See section <A HREF="emacs_16.html#SEC112">M.2 Visiting Files</A>.  To convert a buffer in
+multibyte representation into a single-byte representation of the same
+characters, the easiest way is to save the contents in a file, kill the
+buffer, and find the file again with <CODE>find-file-literally</CODE>.  You
+can also use <KBD>C-x <KBD>RET</KBD> c</KBD>
+(<CODE>universal-coding-system-argument</CODE>) and specify <SAMP>`raw-text'</SAMP> as
+the coding system with which to find or save a file.  See section <A HREF="emacs_20.html#SEC222">Q.9 Specifying a Coding System</A>.  Finding a file as <SAMP>`raw-text'</SAMP> doesn't disable format
+conversion, uncompression and auto mode selection as
+<CODE>find-file-literally</CODE> does.
+</P><P>
+
+<A NAME="IDX967"></A>
+<A NAME="IDX968"></A>
+  To turn off multibyte character support by default, start Emacs with
+the <SAMP>`--unibyte'</SAMP> option (see section <A HREF="emacs_34.html#SEC530">AE.2 Initial Options</A>), or set the
+environment variable <CODE>EMACS_UNIBYTE</CODE>.  You can also customize
+<CODE>enable-multibyte-characters</CODE> or, equivalently, directly set the
+variable <CODE>default-enable-multibyte-characters</CODE> to <CODE>nil</CODE> in
+your init file to have basically the same effect as <SAMP>`--unibyte'</SAMP>.
+</P><P>
+
+<A NAME="IDX969"></A>
+  To convert a unibyte session to a multibyte session, set
+<CODE>default-enable-multibyte-characters</CODE> to <CODE>t</CODE>.  Buffers which
+were created in the unibyte session before you turn on multibyte support
+will stay unibyte.  You can turn on multibyte support in a specific
+buffer by invoking the command <CODE>toggle-enable-multibyte-characters</CODE>
+in that buffer.
+</P><P>
+
+<A NAME="IDX970"></A>
+<A NAME="IDX971"></A>
+<A NAME="IDX972"></A>
+<A NAME="IDX973"></A>
+<A NAME="IDX974"></A>
+  With <SAMP>`--unibyte'</SAMP>, multibyte strings are not created during
+initialization from the values of environment variables,
+<TT>`/etc/passwd'</TT> entries etc. that contain non-ASCII 8-bit
+characters.
+</P><P>
+
+  Emacs normally loads Lisp files as multibyte, regardless of whether
+you used <SAMP>`--unibyte'</SAMP>.  This includes the Emacs initialization
+file, <TT>`.emacs'</TT>, and the initialization files of Emacs packages
+such as Gnus.  However, you can specify unibyte loading for a
+particular Lisp file, by putting <SAMP>`-*-unibyte: t;-*-'</SAMP> in a
+comment on the first line.  Then that file is always loaded as unibyte
+text, even if you did not start Emacs with <SAMP>`--unibyte'</SAMP>.  The
+motivation for these conventions is that it is more reliable to always
+load any particular Lisp file in the same way.  However, you can load
+a Lisp file as unibyte, on any one occasion, by typing <KBD>C-x
+<KBD>RET</KBD> c raw-text <KBD>RET</KBD></KBD> immediately before loading it.
+</P><P>
+
+  The mode line indicates whether multibyte character support is enabled
+in the current buffer.  If it is, there are two or more characters (most
+often two dashes) before the colon near the beginning of the mode line.
+When multibyte characters are not enabled, just one dash precedes the
+colon.
+</P><P>
+
+<A NAME="Language Environments"></A>
+<HR SIZE="6">
+<A NAME="SEC216"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC215"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC217"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC217"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Q.3 Language Environments </H2>
+<!--docid::SEC216::-->
+<P>
+
+  All supported character sets are supported in Emacs buffers whenever
+multibyte characters are enabled; there is no need to select a
+particular language in order to display its characters in an Emacs
+buffer.  However, it is important to select a <EM>language environment</EM>
+in order to set various defaults.  The language environment really
+represents a choice of preferred script (more or less) rather than a
+choice of language.
+</P><P>
+
+  The language environment controls which coding systems to recognize
+when reading text (see section <A HREF="emacs_20.html#SEC221">Q.8 Recognizing Coding Systems</A>).  This applies to files,
+incoming mail, netnews, and any other text you read into Emacs.  It may
+also specify the default coding system to use when you create a file.
+Each language environment also specifies a default input method.
+</P><P>
+
+<A NAME="IDX975"></A>
+<A NAME="IDX976"></A>
+  To select a language environment, customize the option
+<CODE>current-language-environment</CODE> or use the command <KBD>M-x
+set-language-environment</KBD>.  It makes no difference which buffer is
+current when you use this command, because the effects apply globally to
+the Emacs session.  The supported language environments include:
+</P><P>
+
+<A NAME="IDX977"></A>
+<BLOCKQUOTE>
+Chinese-BIG5, Chinese-CNS, Chinese-GB, Cyrillic-ALT, Cyrillic-ISO,
+Cyrillic-KOI8, Czech, Devanagari, Dutch, English, Ethiopic, German,
+Greek, Hebrew, IPA, Japanese, Korean, Lao, Latin-1, Latin-2, Latin-3,
+Latin-4, Latin-5, Latin-8 (Celtic), Latin-9 (updated Latin-1, with the
+Euro sign), Polish, Romanian, Slovak, Slovenian, Spanish, Thai,
+Tibetan, Turkish, and Vietnamese.
+</BLOCKQUOTE>
+<P>
+
+<A NAME="IDX978"></A>
+<A NAME="IDX979"></A>
+  To display the script(s) used by your language environment on a
+graphical display, you need to have a suitable font.  If some of the
+characters appear as empty boxes, you should install the GNU Intlfonts
+package, which includes fonts for all supported scripts.<A NAME="DOCF4" HREF="emacs_fot.html#FOOT4">(4)</A>
+See section <A HREF="emacs_20.html#SEC223">Q.10 Fontsets</A>, for more details about setting up your fonts.
+</P><P>
+
+<A NAME="IDX980"></A>
+<A NAME="IDX981"></A>
+<A NAME="IDX982"></A>
+<A NAME="IDX983"></A>
+  Some operating systems let you specify the character-set locale you
+are using by setting the locale environment variables <CODE>LC_ALL</CODE>,
+<CODE>LC_CTYPE</CODE>, or <CODE>LANG</CODE>.<A NAME="DOCF5" HREF="emacs_fot.html#FOOT5">(5)</A>  During startup, Emacs looks up your character-set locale's
+name in the system locale alias table, matches its canonical name
+against entries in the value of the variables
+<CODE>locale-charset-language-names</CODE> and <CODE>locale-language-names</CODE>,
+and selects the corresponding language environment if a match is found.
+(The former variable overrides the latter.)  It also adjusts the display
+table and terminal coding system, the locale coding system, the
+preferred coding system as needed for the locale, and--last but not
+least--the way Emacs decodes non-ASCII characters sent by your keyboard.
+</P><P>
+
+  If you modify the <CODE>LC_ALL</CODE>, <CODE>LC_CTYPE</CODE>, or <CODE>LANG</CODE>
+environment variables while running Emacs, you may want to invoke the
+<CODE>set-locale-environment</CODE> function afterwards to readjust the
+language environment from the new locale.
+</P><P>
+
+<A NAME="IDX984"></A>
+  The <CODE>set-locale-environment</CODE> function normally uses the preferred
+coding system established by the language environment to decode system
+messages.  But if your locale matches an entry in the variable
+<CODE>locale-preferred-coding-systems</CODE>, Emacs uses the corresponding
+coding system instead.  For example, if the locale <SAMP>`ja_JP.PCK'</SAMP>
+matches <CODE>japanese-shift-jis</CODE> in
+<CODE>locale-preferred-coding-systems</CODE>, Emacs uses that encoding even
+though it might normally use <CODE>japanese-iso-8bit</CODE>.
+</P><P>
+
+  You can override the language environment chosen at startup with
+explicit use of the command <CODE>set-language-environment</CODE>, or with
+customization of <CODE>current-language-environment</CODE> in your init
+file.
+</P><P>
+
+<A NAME="IDX985"></A>
+<A NAME="IDX986"></A>
+  To display information about the effects of a certain language
+environment <VAR>lang-env</VAR>, use the command <KBD>C-h L <VAR>lang-env</VAR>
+<KBD>RET</KBD></KBD> (<CODE>describe-language-environment</CODE>).  This tells you which
+languages this language environment is useful for, and lists the
+character sets, coding systems, and input methods that go with it.  It
+also shows some sample text to illustrate scripts used in this language
+environment.  By default, this command describes the chosen language
+environment.
+</P><P>
+
+<A NAME="IDX987"></A>
+  You can customize any language environment with the normal hook
+<CODE>set-language-environment-hook</CODE>.  The command
+<CODE>set-language-environment</CODE> runs that hook after setting up the new
+language environment.  The hook functions can test for a specific
+language environment by checking the variable
+<CODE>current-language-environment</CODE>.  This hook is where you should
+put non-default settings for specific language environment, such as
+coding systems for keyboard input and terminal output, the default
+input method, etc.
+</P><P>
+
+<A NAME="IDX988"></A>
+  Before it starts to set up the new language environment,
+<CODE>set-language-environment</CODE> first runs the hook
+<CODE>exit-language-environment-hook</CODE>.  This hook is useful for undoing
+customizations that were made with <CODE>set-language-environment-hook</CODE>.
+For instance, if you set up a special key binding in a specific language
+environment using <CODE>set-language-environment-hook</CODE>, you should set
+up <CODE>exit-language-environment-hook</CODE> to restore the normal binding
+for that key.
+</P><P>
+
+<A NAME="Input Methods"></A>
+<HR SIZE="6">
+<A NAME="SEC217"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC216"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC218"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC218"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Q.4 Input Methods </H2>
+<!--docid::SEC217::-->
+<P>
+
+<A NAME="IDX989"></A>
+  An <EM>input method</EM> is a kind of character conversion designed
+specifically for interactive input.  In Emacs, typically each language
+has its own input method; sometimes several languages which use the same
+characters can share one input method.  A few languages support several
+input methods.
+</P><P>
+
+  The simplest kind of input method works by mapping ASCII letters
+into another alphabet; this allows you to use one other alphabet
+instead of ASCII.  The Greek and Russian input methods
+work this way.
+</P><P>
+
+  A more powerful technique is composition: converting sequences of
+characters into one letter.  Many European input methods use composition
+to produce a single non-ASCII letter from a sequence that consists of a
+letter followed by accent characters (or vice versa).  For example, some
+methods convert the sequence <KBD>a'</KBD> into a single accented letter.
+These input methods have no special commands of their own; all they do
+is compose sequences of printing characters.
+</P><P>
+
+  The input methods for syllabic scripts typically use mapping followed
+by composition.  The input methods for Thai and Korean work this way.
+First, letters are mapped into symbols for particular sounds or tone
+marks; then, sequences of these which make up a whole syllable are
+mapped into one syllable sign.
+</P><P>
+
+  Chinese and Japanese require more complex methods.  In Chinese input
+methods, first you enter the phonetic spelling of a Chinese word (in
+input method <CODE>chinese-py</CODE>, among others), or a sequence of
+portions of the character (input methods <CODE>chinese-4corner</CODE> and
+<CODE>chinese-sw</CODE>, and others).  One input sequence typically
+corresponds to many possible Chinese characters.  You select the one
+you mean using keys such as <KBD>C-f</KBD>, <KBD>C-b</KBD>, <KBD>C-n</KBD>,
+<KBD>C-p</KBD>, and digits, which have special meanings in this situation.
+</P><P>
+
+  The possible characters are conceptually arranged in several rows,
+with each row holding up to 10 alternatives.  Normally, Emacs displays
+just one row at a time, in the echo area; <CODE>(<VAR>i</VAR>/<VAR>j</VAR>)</CODE>
+appears at the beginning, to indicate that this is the <VAR>i</VAR>th row
+out of a total of <VAR>j</VAR> rows.  Type <KBD>C-n</KBD> or <KBD>C-p</KBD> to
+display the next row or the previous row.
+</P><P>
+
+    Type <KBD>C-f</KBD> and <KBD>C-b</KBD> to move forward and backward among
+the alternatives in the current row.  As you do this, Emacs highlights
+the current alternative with a special color; type <CODE>C-<KBD>SPC</KBD></CODE>
+to select the current alternative and use it as input.  The
+alternatives in the row are also numbered; the number appears before
+the alternative.  Typing a digit <VAR>n</VAR> selects the <VAR>n</VAR>th
+alternative of the current row and uses it as input.
+</P><P>
+
+  <KBD>TAB</KBD> in these Chinese input methods displays a buffer showing
+all the possible characters at once; then clicking <KBD>Mouse-2</KBD> on
+one of them selects that alternative.  The keys <KBD>C-f</KBD>, <KBD>C-b</KBD>,
+<KBD>C-n</KBD>, <KBD>C-p</KBD>, and digits continue to work as usual, but they
+do the highlighting in the buffer showing the possible characters,
+rather than in the echo area.
+</P><P>
+
+  In Japanese input methods, first you input a whole word using
+phonetic spelling; then, after the word is in the buffer, Emacs
+converts it into one or more characters using a large dictionary.  One
+phonetic spelling corresponds to a number of different Japanese words;
+to select one of them, use <KBD>C-n</KBD> and <KBD>C-p</KBD> to cycle through
+the alternatives.
+</P><P>
+
+  Sometimes it is useful to cut off input method processing so that the
+characters you have just entered will not combine with subsequent
+characters.  For example, in input method <CODE>latin-1-postfix</CODE>, the
+sequence <KBD>e '</KBD> combines to form an <SAMP>`e'</SAMP> with an accent.  What if
+you want to enter them as separate characters?
+</P><P>
+
+  One way is to type the accent twice; this is a special feature for
+entering the separate letter and accent.  For example, <KBD>e ' '</KBD> gives
+you the two characters <SAMP>`e''</SAMP>.  Another way is to type another letter
+after the <KBD>e</KBD>---something that won't combine with that--and
+immediately delete it.  For example, you could type <KBD>e e <KBD>DEL</KBD>
+'</KBD> to get separate <SAMP>`e'</SAMP> and <SAMP>`''</SAMP>.
+</P><P>
+
+  Another method, more general but not quite as easy to type, is to use
+<KBD>C-\ C-\</KBD> between two characters to stop them from combining.  This
+is the command <KBD>C-\</KBD> (<CODE>toggle-input-method</CODE>) used twice.
+See section <A HREF="emacs_20.html#SEC218">Q.5 Selecting an Input Method</A>.
+</P><P>
+
+<A NAME="IDX990"></A>
+  <KBD>C-\ C-\</KBD> is especially useful inside an incremental search,
+because it stops waiting for more characters to combine, and starts
+searching for what you have already entered.
+</P><P>
+
+<A NAME="IDX991"></A>
+<A NAME="IDX992"></A>
+  The variables <CODE>input-method-highlight-flag</CODE> and
+<CODE>input-method-verbose-flag</CODE> control how input methods explain
+what is happening.  If <CODE>input-method-highlight-flag</CODE> is
+non-<CODE>nil</CODE>, the partial sequence is highlighted in the buffer (for
+most input methods--some disable this feature).  If
+<CODE>input-method-verbose-flag</CODE> is non-<CODE>nil</CODE>, the list of
+possible characters to type next is displayed in the echo area (but
+not when you are in the minibuffer).
+</P><P>
+
+<A NAME="IDX993"></A>
+  Input methods are implemented in the separate Leim package: they are
+available only if the system administrator used Leim when building
+Emacs.  If Emacs was built without Leim, you will find that no input
+methods are defined.
+</P><P>
+
+<A NAME="Select Input Method"></A>
+<HR SIZE="6">
+<A NAME="SEC218"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC217"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC219"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC219"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Q.5 Selecting an Input Method </H2>
+<!--docid::SEC218::-->
+<P>
+
+<DL COMPACT>
+<DT><KBD>C-\</KBD>
+<DD>Enable or disable use of the selected input method.
+<P>
+
+<DT><KBD>C-x <KBD>RET</KBD> C-\ <VAR>method</VAR> <KBD>RET</KBD></KBD>
+<DD>Select a new input method for the current buffer.
+<P>
+
+<DT><KBD>C-h I <VAR>method</VAR> <KBD>RET</KBD></KBD>
+<DD><DT><KBD>C-h C-\ <VAR>method</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX994"></A>
+<A NAME="IDX995"></A>
+<A NAME="IDX996"></A>
+Describe the input method <VAR>method</VAR> (<CODE>describe-input-method</CODE>).
+By default, it describes the current input method (if any).  This
+description should give you the full details of how to use any
+particular input method.
+<P>
+
+<DT><KBD>M-x list-input-methods</KBD>
+<DD>Display a list of all the supported input methods.
+</DL>
+<P>
+
+<A NAME="IDX997"></A>
+<A NAME="IDX998"></A>
+<A NAME="IDX999"></A>
+  To choose an input method for the current buffer, use <KBD>C-x
+<KBD>RET</KBD> C-\</KBD> (<CODE>set-input-method</CODE>).  This command reads the
+input method name from the minibuffer; the name normally starts with the
+language environment that it is meant to be used with.  The variable
+<CODE>current-input-method</CODE> records which input method is selected.
+  
+<A NAME="IDX1000"></A>
+<A NAME="IDX1001"></A>
+  Input methods use various sequences of ASCII characters to stand for
+non-ASCII characters.  Sometimes it is useful to turn off the input
+method temporarily.  To do this, type <KBD>C-\</KBD>
+(<CODE>toggle-input-method</CODE>).  To reenable the input method, type
+<KBD>C-\</KBD> again.
+</P><P>
+
+  If you type <KBD>C-\</KBD> and you have not yet selected an input method,
+it prompts for you to specify one.  This has the same effect as using
+<KBD>C-x <KBD>RET</KBD> C-\</KBD> to specify an input method.
+</P><P>
+
+  When invoked with a numeric argument, as in <KBD>C-u C-\</KBD>,
+<CODE>toggle-input-method</CODE> always prompts you for an input method,
+suggesting the most recently selected one as the default.
+</P><P>
+
+<A NAME="IDX1002"></A>
+  Selecting a language environment specifies a default input method for
+use in various buffers.  When you have a default input method, you can
+select it in the current buffer by typing <KBD>C-\</KBD>.  The variable
+<CODE>default-input-method</CODE> specifies the default input method
+(<CODE>nil</CODE> means there is none).
+</P><P>
+
+  In some language environments, which support several different input
+methods, you might want to use an input method different from the
+default chosen by <CODE>set-language-environment</CODE>.  You can instruct
+Emacs to select a different default input method for a certain
+language environment, if you wish, by using
+<CODE>set-language-environment-hook</CODE> (see section <A HREF="emacs_20.html#SEC216">set-language-environment-hook</A>).  For example:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(defun my-chinese-setup ()
+  "Set up my private Chinese environment."
+  (if (equal current-language-environment "Chinese-GB")
+      (setq default-input-method "chinese-tonepy")))
+(add-hook 'set-language-environment-hook 'my-chinese-setup)
+</pre></td></tr></table></P><P>
+
+This sets the default input method to be <CODE>chinese-tonepy</CODE>
+whenever you choose a Chinese-GB language environment.
+</P><P>
+
+<A NAME="IDX1003"></A>
+  Some input methods for alphabetic scripts work by (in effect)
+remapping the keyboard to emulate various keyboard layouts commonly used
+for those scripts.  How to do this remapping properly depends on your
+actual keyboard layout.  To specify which layout your keyboard has, use
+the command <KBD>M-x quail-set-keyboard-layout</KBD>.
+</P><P>
+
+<A NAME="IDX1004"></A>
+  To display a list of all the supported input methods, type <KBD>M-x
+list-input-methods</KBD>.  The list gives information about each input
+method, including the string that stands for it in the mode line.
+</P><P>
+
+<A NAME="Multibyte Conversion"></A>
+<HR SIZE="6">
+<A NAME="SEC219"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC218"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC220"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC220"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Q.6 Unibyte and Multibyte Non-ASCII characters </H2>
+<!--docid::SEC219::-->
+<P>
+
+  When multibyte characters are enabled, character codes 0240 (octal)
+through 0377 (octal) are not really legitimate in the buffer.  The valid
+non-ASCII printing characters have codes that start from 0400.
+</P><P>
+
+  If you type a self-inserting character in the range 0240 through
+0377, or if you use <KBD>C-q</KBD> to insert one, Emacs assumes you
+intended to use one of the ISO Latin-<VAR>n</VAR> character sets, and
+converts it to the Emacs code representing that Latin-<VAR>n</VAR>
+character.  You select <EM>which</EM> ISO Latin character set to use
+through your choice of language environment
+(see section <A HREF="emacs_20.html#SEC216">Q.3 Language Environments</A>).
+If you do not specify a choice, the default is Latin-1.
+</P><P>
+
+  If you insert a character in the range 0200 through 0237, which
+forms the <CODE>eight-bit-control</CODE> character set, it is inserted
+literally.  You should normally avoid doing this since buffers
+containing such characters have to be written out in either the
+<CODE>emacs-mule</CODE> or <CODE>raw-text</CODE> coding system, which is usually
+not what you want.
+</P><P>
+
+<A NAME="Coding Systems"></A>
+<HR SIZE="6">
+<A NAME="SEC220"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC219"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC221"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC221"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Q.7 Coding Systems </H2>
+<!--docid::SEC220::-->
+<P>
+
+  Users of various languages have established many more-or-less standard
+coding systems for representing them.  Emacs does not use these coding
+systems internally; instead, it converts from various coding systems to
+its own system when reading data, and converts the internal coding
+system to other coding systems when writing data.  Conversion is
+possible in reading or writing files, in sending or receiving from the
+terminal, and in exchanging data with subprocesses.
+</P><P>
+
+  Emacs assigns a name to each coding system.  Most coding systems are
+used for one language, and the name of the coding system starts with the
+language name.  Some coding systems are used for several languages;
+their names usually start with <SAMP>`iso'</SAMP>.  There are also special
+coding systems <CODE>no-conversion</CODE>, <CODE>raw-text</CODE> and
+<CODE>emacs-mule</CODE> which do not convert printing characters at all.
+</P><P>
+
+<A NAME="IDX1005"></A>
+  A special class of coding systems, collectively known as
+<EM>codepages</EM>, is designed to support text encoded by MS-Windows and
+MS-DOS software.  To use any of these systems, you need to create it
+with <KBD>M-x codepage-setup</KBD>.  See section <A HREF="emacs_37.html#SEC560">AH.6 International Support on MS-DOS</A>.  After
+creating the coding system for the codepage, you can use it as any
+other coding system.  For example, to visit a file encoded in codepage
+850, type <KBD>C-x <KBD>RET</KBD> c cp850 <KBD>RET</KBD> C-x C-f <VAR>filename</VAR>
+<KBD>RET</KBD></KBD>.
+</P><P>
+
+  In addition to converting various representations of non-ASCII
+characters, a coding system can perform end-of-line conversion.  Emacs
+handles three different conventions for how to separate lines in a file:
+newline, carriage-return linefeed, and just carriage-return.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-h C <VAR>coding</VAR> <KBD>RET</KBD></KBD>
+<DD>Describe coding system <VAR>coding</VAR>.
+<P>
+
+<DT><KBD>C-h C <KBD>RET</KBD></KBD>
+<DD>Describe the coding systems currently in use.
+<P>
+
+<DT><KBD>M-x list-coding-systems</KBD>
+<DD>Display a list of all the supported coding systems.
+</DL>
+<P>
+
+<A NAME="IDX1006"></A>
+<A NAME="IDX1007"></A>
+  The command <KBD>C-h C</KBD> (<CODE>describe-coding-system</CODE>) displays
+information about particular coding systems.  You can specify a coding
+system name as the argument; alternatively, with an empty argument, it
+describes the coding systems currently selected for various purposes,
+both in the current buffer and as the defaults, and the priority list
+for recognizing coding systems (see section <A HREF="emacs_20.html#SEC221">Q.8 Recognizing Coding Systems</A>).
+</P><P>
+
+<A NAME="IDX1008"></A>
+  To display a list of all the supported coding systems, type <KBD>M-x
+list-coding-systems</KBD>.  The list gives information about each coding
+system, including the letter that stands for it in the mode line
+(see section <A HREF="emacs_5.html#SEC11">B.3 The Mode Line</A>).
+</P><P>
+
+<A NAME="IDX1009"></A>
+<A NAME="IDX1010"></A>
+<A NAME="IDX1011"></A>
+  Each of the coding systems that appear in this list--except for
+<CODE>no-conversion</CODE>, which means no conversion of any kind--specifies
+how and whether to convert printing characters, but leaves the choice of
+end-of-line conversion to be decided based on the contents of each file.
+For example, if the file appears to use the sequence carriage-return
+linefeed to separate lines, DOS end-of-line conversion will be used.
+</P><P>
+
+  Each of the listed coding systems has three variants which specify
+exactly what to do for end-of-line conversion:
+</P><P>
+
+<DL COMPACT>
+<DT><CODE><small>...</small>-unix</CODE>
+<DD>Don't do any end-of-line conversion; assume the file uses
+newline to separate lines.  (This is the convention normally used
+on Unix and GNU systems.)
+<P>
+
+<DT><CODE><small>...</small>-dos</CODE>
+<DD>Assume the file uses carriage-return linefeed to separate lines, and do
+the appropriate conversion.  (This is the convention normally used on
+Microsoft systems.<A NAME="DOCF6" HREF="emacs_fot.html#FOOT6">(6)</A>)
+<P>
+
+<DT><CODE><small>...</small>-mac</CODE>
+<DD>Assume the file uses carriage-return to separate lines, and do the
+appropriate conversion.  (This is the convention normally used on the
+Macintosh system.)
+</DL>
+<P>
+
+  These variant coding systems are omitted from the
+<CODE>list-coding-systems</CODE> display for brevity, since they are entirely
+predictable.  For example, the coding system <CODE>iso-latin-1</CODE> has
+variants <CODE>iso-latin-1-unix</CODE>, <CODE>iso-latin-1-dos</CODE> and
+<CODE>iso-latin-1-mac</CODE>.
+</P><P>
+
+  The coding system <CODE>raw-text</CODE> is good for a file which is mainly
+ASCII text, but may contain byte values above 127 which are not meant to
+encode non-ASCII characters.  With <CODE>raw-text</CODE>, Emacs copies those
+byte values unchanged, and sets <CODE>enable-multibyte-characters</CODE> to
+<CODE>nil</CODE> in the current buffer so that they will be interpreted
+properly.  <CODE>raw-text</CODE> handles end-of-line conversion in the usual
+way, based on the data encountered, and has the usual three variants to
+specify the kind of end-of-line conversion to use.
+</P><P>
+
+  In contrast, the coding system <CODE>no-conversion</CODE> specifies no
+character code conversion at all--none for non-ASCII byte values and
+none for end of line.  This is useful for reading or writing binary
+files, tar files, and other files that must be examined verbatim.  It,
+too, sets <CODE>enable-multibyte-characters</CODE> to <CODE>nil</CODE>.
+</P><P>
+
+  The easiest way to edit a file with no conversion of any kind is with
+the <KBD>M-x find-file-literally</KBD> command.  This uses
+<CODE>no-conversion</CODE>, and also suppresses other Emacs features that
+might convert the file contents before you see them.  See section <A HREF="emacs_16.html#SEC112">M.2 Visiting Files</A>.
+</P><P>
+
+  The coding system <CODE>emacs-mule</CODE> means that the file contains
+non-ASCII characters stored with the internal Emacs encoding.  It
+handles end-of-line conversion based on the data encountered, and has
+the usual three variants to specify the kind of end-of-line conversion.
+</P><P>
+
+<A NAME="Recognize Coding"></A>
+<HR SIZE="6">
+<A NAME="SEC221"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC220"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC222"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC222"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Q.8 Recognizing Coding Systems </H2>
+<!--docid::SEC221::-->
+<P>
+
+  Emacs tries to recognize which coding system to use for a given text
+as an integral part of reading that text.  (This applies to files
+being read, output from subprocesses, text from X selections, etc.)
+Emacs can select the right coding system automatically most of the
+time--once you have specified your preferences.
+</P><P>
+
+  Some coding systems can be recognized or distinguished by which byte
+sequences appear in the data.  However, there are coding systems that
+cannot be distinguished, not even potentially.  For example, there is no
+way to distinguish between Latin-1 and Latin-2; they use the same byte
+values with different meanings.
+</P><P>
+
+  Emacs handles this situation by means of a priority list of coding
+systems.  Whenever Emacs reads a file, if you do not specify the coding
+system to use, Emacs checks the data against each coding system,
+starting with the first in priority and working down the list, until it
+finds a coding system that fits the data.  Then it converts the file
+contents assuming that they are represented in this coding system.
+</P><P>
+
+  The priority list of coding systems depends on the selected language
+environment (see section <A HREF="emacs_20.html#SEC216">Q.3 Language Environments</A>).  For example, if you use
+French, you probably want Emacs to prefer Latin-1 to Latin-2; if you use
+Czech, you probably want Latin-2 to be preferred.  This is one of the
+reasons to specify a language environment.
+</P><P>
+
+<A NAME="IDX1012"></A>
+  However, you can alter the priority list in detail with the command
+<KBD>M-x prefer-coding-system</KBD>.  This command reads the name of a coding
+system from the minibuffer, and adds it to the front of the priority
+list, so that it is preferred to all others.  If you use this command
+several times, each use adds one element to the front of the priority
+list.
+</P><P>
+
+  If you use a coding system that specifies the end-of-line conversion
+type, such as <CODE>iso-8859-1-dos</CODE>, what this means is that Emacs
+should attempt to recognize <CODE>iso-8859-1</CODE> with priority, and should
+use DOS end-of-line conversion when it does recognize <CODE>iso-8859-1</CODE>.
+</P><P>
+
+<A NAME="IDX1013"></A>
+  Sometimes a file name indicates which coding system to use for the
+file.  The variable <CODE>file-coding-system-alist</CODE> specifies this
+correspondence.  There is a special function
+<CODE>modify-coding-system-alist</CODE> for adding elements to this list.  For
+example, to read and write all <SAMP>`.txt'</SAMP> files using the coding system
+<CODE>china-iso-8bit</CODE>, you can execute this Lisp expression:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>(modify-coding-system-alist 'file "\\.txt\\'" 'china-iso-8bit)
+</FONT></pre></td></tr></table></P><P>
+
+The first argument should be <CODE>file</CODE>, the second argument should be
+a regular expression that determines which files this applies to, and
+the third argument says which coding system to use for these files.
+</P><P>
+
+<A NAME="IDX1014"></A>
+<A NAME="IDX1015"></A>
+  Emacs recognizes which kind of end-of-line conversion to use based on
+the contents of the file: if it sees only carriage-returns, or only
+carriage-return linefeed sequences, then it chooses the end-of-line
+conversion accordingly.  You can inhibit the automatic use of
+end-of-line conversion by setting the variable <CODE>inhibit-eol-conversion</CODE>
+to non-<CODE>nil</CODE>.  If you do that, DOS-style files will be displayed
+with the <SAMP>`^M'</SAMP> characters visible in the buffer; some people
+prefer this to the more subtle <SAMP>`(DOS)'</SAMP> end-of-line type
+indication near the left edge of the mode line (see section <A HREF="emacs_5.html#SEC11">eol-mnemonic</A>).
+</P><P>
+
+<A NAME="IDX1016"></A>
+<A NAME="IDX1017"></A>
+  By default, the automatic detection of coding system is sensitive to
+escape sequences.  If Emacs sees a sequence of characters that begin
+with an escape character, and the sequence is valid as an ISO-2022
+code, that tells Emacs to use one of the ISO-2022 encodings to decode
+the file.
+</P><P>
+
+  However, there may be cases that you want to read escape sequences
+in a file as is.  In such a case, you can set the variable
+<CODE>inhibit-iso-escape-detection</CODE> to non-<CODE>nil</CODE>.  Then the code
+detection ignores any escape sequences, and never uses an ISO-2022
+encoding.  The result is that all escape sequences become visible in
+the buffer.
+</P><P>
+
+  The default value of <CODE>inhibit-iso-escape-detection</CODE> is
+<CODE>nil</CODE>.  We recommend that you not change it permanently, only for
+one specific operation.  That's because many Emacs Lisp source files
+in the Emacs distribution contain non-ASCII characters encoded in the
+coding system <CODE>iso-2022-7bit</CODE>, and they won't be
+decoded correctly when you visit those files if you suppress the
+escape sequence detection.
+</P><P>
+
+<A NAME="IDX1018"></A>
+  You can specify the coding system for a particular file using the
+<SAMP>`-*-<small>...</small>-*-'</SAMP> construct at the beginning of a file, or a
+local variables list at the end (see section <A HREF="emacs_33.html#SEC486">AD.2.5 Local Variables in Files</A>).  You do this
+by defining a value for the "variable" named <CODE>coding</CODE>.  Emacs
+does not really have a variable <CODE>coding</CODE>; instead of setting a
+variable, this uses the specified coding system for the file.  For
+example, <SAMP>`-*-mode: C; coding: latin-1;-*-'</SAMP> specifies use of the
+Latin-1 coding system, as well as C mode.  When you specify the coding
+explicitly in the file, that overrides
+<CODE>file-coding-system-alist</CODE>.
+</P><P>
+
+<A NAME="IDX1019"></A>
+<A NAME="IDX1020"></A>
+  The variables <CODE>auto-coding-alist</CODE> and
+<CODE>auto-coding-regexp-alist</CODE> are the strongest way to specify the
+coding system for certain patterns of file names, or for files
+containing certain patterns; these variables even override
+<SAMP>`-*-coding:-*-'</SAMP> tags in the file itself.  Emacs uses
+<CODE>auto-coding-alist</CODE> for tar and archive files, to prevent it
+from being confused by a <SAMP>`-*-coding:-*-'</SAMP> tag in a member of the
+archive and thinking it applies to the archive file as a whole.
+Likewise, Emacs uses <CODE>auto-coding-regexp-alist</CODE> to ensure that
+RMAIL files, whose names in general don't match any particular pattern,
+are decoded correctly.
+</P><P>
+
+  If Emacs recognizes the encoding of a file incorrectly, you can
+reread the file using the correct coding system by typing <KBD>C-x
+<KBD>RET</KBD> c <VAR>coding-system</VAR> <KBD>RET</KBD> M-x revert-buffer
+<KBD>RET</KBD></KBD>.  To see what coding system Emacs actually used to decode
+the file, look at the coding system mnemonic letter near the left edge
+of the mode line (see section <A HREF="emacs_5.html#SEC11">B.3 The Mode Line</A>), or type <KBD>C-h C <KBD>RET</KBD></KBD>.
+</P><P>
+
+<A NAME="IDX1021"></A>
+  Once Emacs has chosen a coding system for a buffer, it stores that
+coding system in <CODE>buffer-file-coding-system</CODE> and uses that coding
+system, by default, for operations that write from this buffer into a
+file.  This includes the commands <CODE>save-buffer</CODE> and
+<CODE>write-region</CODE>.  If you want to write files from this buffer using
+a different coding system, you can specify a different coding system for
+the buffer using <CODE>set-buffer-file-coding-system</CODE> (see section <A HREF="emacs_20.html#SEC222">Q.9 Specifying a Coding System</A>).
+</P><P>
+
+  You can insert any possible character into any Emacs buffer, but
+most coding systems can only handle some of the possible characters.
+This means that it is possible for you to insert characters that
+cannot be encoded with the coding system that will be used to save the
+buffer.  For example, you could start with an ASCII file and insert a
+few Latin-1 characters into it, or you could edit a text file in
+Polish encoded in <CODE>iso-8859-2</CODE> and add some Russian words to it.
+When you save the buffer, Emacs cannot use the current value of
+<CODE>buffer-file-coding-system</CODE>, because the characters you added
+cannot be encoded by that coding system.
+</P><P>
+
+  When that happens, Emacs tries the most-preferred coding system (set
+by <KBD>M-x prefer-coding-system</KBD> or <KBD>M-x
+set-language-environment</KBD>), and if that coding system can safely
+encode all of the characters in the buffer, Emacs uses it, and stores
+its value in <CODE>buffer-file-coding-system</CODE>.  Otherwise, Emacs
+displays a list of coding systems suitable for encoding the buffer's
+contents, and asks you to choose one of those coding systems.
+</P><P>
+
+  If you insert the unsuitable characters in a mail message, Emacs
+behaves a bit differently.  It additionally checks whether the
+most-preferred coding system is recommended for use in MIME messages;
+if not, Emacs tells you that the most-preferred coding system is
+not recommended and prompts you for another coding system.  This is so
+you won't inadvertently send a message encoded in a way that your
+recipient's mail software will have difficulty decoding.  (If you do
+want to use the most-preferred coding system, you can still type its
+name in response to the question.)
+</P><P>
+
+<A NAME="IDX1022"></A>
+  When you send a message with Mail mode (see section <A HREF="emacs_29.html#SEC363">Z. Sending Mail</A>), Emacs has
+four different ways to determine the coding system to use for encoding
+the message text.  It tries the buffer's own value of
+<CODE>buffer-file-coding-system</CODE>, if that is non-<CODE>nil</CODE>.  Otherwise,
+it uses the value of <CODE>sendmail-coding-system</CODE>, if that is
+non-<CODE>nil</CODE>.  The third way is to use the default coding system for
+new files, which is controlled by your choice of language environment,
+if that is non-<CODE>nil</CODE>.  If all of these three values are <CODE>nil</CODE>,
+Emacs encodes outgoing mail using the Latin-1 coding system.
+</P><P>
+
+<A NAME="IDX1023"></A>
+  When you get new mail in Rmail, each message is translated
+automatically from the coding system it is written in, as if it were a
+separate file.  This uses the priority list of coding systems that you
+have specified.  If a MIME message specifies a character set, Rmail
+obeys that specification, unless <CODE>rmail-decode-mime-charset</CODE> is
+<CODE>nil</CODE>.
+</P><P>
+
+<A NAME="IDX1024"></A>
+  For reading and saving Rmail files themselves, Emacs uses the coding
+system specified by the variable <CODE>rmail-file-coding-system</CODE>.  The
+default value is <CODE>nil</CODE>, which means that Rmail files are not
+translated (they are read and written in the Emacs internal character
+code).
+</P><P>
+
+<A NAME="Specify Coding"></A>
+<HR SIZE="6">
+<A NAME="SEC222"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC221"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC223"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Q.9 Specifying a Coding System </H2>
+<!--docid::SEC222::-->
+<P>
+
+  In cases where Emacs does not automatically choose the right coding
+system, you can use these commands to specify one:
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-x <KBD>RET</KBD> f <VAR>coding</VAR> <KBD>RET</KBD></KBD>
+<DD>Use coding system <VAR>coding</VAR> for the visited file
+in the current buffer.
+<P>
+
+<DT><KBD>C-x <KBD>RET</KBD> c <VAR>coding</VAR> <KBD>RET</KBD></KBD>
+<DD>Specify coding system <VAR>coding</VAR> for the immediately following
+command.
+<P>
+
+<DT><KBD>C-x <KBD>RET</KBD> k <VAR>coding</VAR> <KBD>RET</KBD></KBD>
+<DD>Use coding system <VAR>coding</VAR> for keyboard input.
+<P>
+
+<DT><KBD>C-x <KBD>RET</KBD> t <VAR>coding</VAR> <KBD>RET</KBD></KBD>
+<DD>Use coding system <VAR>coding</VAR> for terminal output.
+<P>
+
+<DT><KBD>C-x <KBD>RET</KBD> p <VAR>input-coding</VAR> <KBD>RET</KBD> <VAR>output-coding</VAR> <KBD>RET</KBD></KBD>
+<DD>Use coding systems <VAR>input-coding</VAR> and <VAR>output-coding</VAR> for
+subprocess input and output in the current buffer.
+<P>
+
+<DT><KBD>C-x <KBD>RET</KBD> x <VAR>coding</VAR> <KBD>RET</KBD></KBD>
+<DD>Use coding system <VAR>coding</VAR> for transferring selections to and from
+other programs through the window system.
+<P>
+
+<DT><KBD>C-x <KBD>RET</KBD> X <VAR>coding</VAR> <KBD>RET</KBD></KBD>
+<DD>Use coding system <VAR>coding</VAR> for transferring <EM>one</EM>
+selection--the next one--to or from the window system.
+</DL>
+<P>
+
+<A NAME="IDX1025"></A>
+<A NAME="IDX1026"></A>
+  The command <KBD>C-x <KBD>RET</KBD> f</KBD> (<CODE>set-buffer-file-coding-system</CODE>)
+specifies the file coding system for the current buffer--in other
+words, which coding system to use when saving or rereading the visited
+file.  You specify which coding system using the minibuffer.  Since this
+command applies to a file you have already visited, it affects only the
+way the file is saved.
+</P><P>
+
+<A NAME="IDX1027"></A>
+<A NAME="IDX1028"></A>
+  Another way to specify the coding system for a file is when you visit
+the file.  First use the command <KBD>C-x <KBD>RET</KBD> c</KBD>
+(<CODE>universal-coding-system-argument</CODE>); this command uses the
+minibuffer to read a coding system name.  After you exit the minibuffer,
+the specified coding system is used for <EM>the immediately following
+command</EM>.
+</P><P>
+
+  So if the immediately following command is <KBD>C-x C-f</KBD>, for example,
+it reads the file using that coding system (and records the coding
+system for when the file is saved).  Or if the immediately following
+command is <KBD>C-x C-w</KBD>, it writes the file using that coding system.
+Other file commands affected by a specified coding system include
+<KBD>C-x C-i</KBD> and <KBD>C-x C-v</KBD>, as well as the other-window variants of
+<KBD>C-x C-f</KBD>.
+</P><P>
+
+  <KBD>C-x <KBD>RET</KBD> c</KBD> also affects commands that start subprocesses,
+including <KBD>M-x shell</KBD> (see section <A HREF="emacs_32.html#SEC442">AC.15 Running Shell Commands from Emacs</A>).
+</P><P>
+
+  However, if the immediately following command does not use the coding
+system, then <KBD>C-x <KBD>RET</KBD> c</KBD> ultimately has no effect.
+</P><P>
+
+  An easy way to visit a file with no conversion is with the <KBD>M-x
+find-file-literally</KBD> command.  See section <A HREF="emacs_16.html#SEC112">M.2 Visiting Files</A>.
+</P><P>
+
+<A NAME="IDX1029"></A>
+  The variable <CODE>default-buffer-file-coding-system</CODE> specifies the
+choice of coding system to use when you create a new file.  It applies
+when you find a new file, and when you create a buffer and then save it
+in a file.  Selecting a language environment typically sets this
+variable to a good choice of default coding system for that language
+environment.
+</P><P>
+
+<A NAME="IDX1030"></A>
+<A NAME="IDX1031"></A>
+  The command <KBD>C-x <KBD>RET</KBD> t</KBD> (<CODE>set-terminal-coding-system</CODE>)
+specifies the coding system for terminal output.  If you specify a
+character code for terminal output, all characters output to the
+terminal are translated into that coding system.
+</P><P>
+
+  This feature is useful for certain character-only terminals built to
+support specific languages or character sets--for example, European
+terminals that support one of the ISO Latin character sets.  You need to
+specify the terminal coding system when using multibyte text, so that
+Emacs knows which characters the terminal can actually handle.
+</P><P>
+
+  By default, output to the terminal is not translated at all, unless
+Emacs can deduce the proper coding system from your terminal type or
+your locale specification (see section <A HREF="emacs_20.html#SEC216">Q.3 Language Environments</A>).
+</P><P>
+
+<A NAME="IDX1032"></A>
+<A NAME="IDX1033"></A>
+<A NAME="IDX1034"></A>
+  The command <KBD>C-x <KBD>RET</KBD> k</KBD> (<CODE>set-keyboard-coding-system</CODE>)
+or the Custom option <CODE>keyboard-coding-system</CODE>
+specifies the coding system for keyboard input.  Character-code
+translation of keyboard input is useful for terminals with keys that
+send non-ASCII graphic characters--for example, some terminals designed
+for ISO Latin-1 or subsets of it.
+</P><P>
+
+  By default, keyboard input is not translated at all.
+</P><P>
+
+  There is a similarity between using a coding system translation for
+keyboard input, and using an input method: both define sequences of
+keyboard input that translate into single characters.  However, input
+methods are designed to be convenient for interactive use by humans, and
+the sequences that are translated are typically sequences of ASCII
+printing characters.  Coding systems typically translate sequences of
+non-graphic characters.
+</P><P>
+
+<A NAME="IDX1035"></A>
+<A NAME="IDX1036"></A>
+<A NAME="IDX1037"></A>
+<A NAME="IDX1038"></A>
+  The command <KBD>C-x <KBD>RET</KBD> x</KBD> (<CODE>set-selection-coding-system</CODE>)
+specifies the coding system for sending selected text to the window
+system, and for receiving the text of selections made in other
+applications.  This command applies to all subsequent selections, until
+you override it by using the command again.  The command <KBD>C-x
+<KBD>RET</KBD> X</KBD> (<CODE>set-next-selection-coding-system</CODE>) specifies the
+coding system for the next selection made in Emacs or read by Emacs.
+</P><P>
+
+<A NAME="IDX1039"></A>
+<A NAME="IDX1040"></A>
+  The command <KBD>C-x <KBD>RET</KBD> p</KBD> (<CODE>set-buffer-process-coding-system</CODE>)
+specifies the coding system for input and output to a subprocess.  This
+command applies to the current buffer; normally, each subprocess has its
+own buffer, and thus you can use this command to specify translation to
+and from a particular subprocess by giving the command in the
+corresponding buffer.
+</P><P>
+
+  The default for translation of process input and output depends on the
+current language environment.
+</P><P>
+
+<A NAME="IDX1041"></A>
+<A NAME="IDX1042"></A>
+  The variable <CODE>file-name-coding-system</CODE> specifies a coding system
+to use for encoding file names.  If you set the variable to a coding
+system name (as a Lisp symbol or a string), Emacs encodes file names
+using that coding system for all file operations.  This makes it
+possible to use non-ASCII characters in file names--or, at least, those
+non-ASCII characters which the specified coding system can encode.
+</P><P>
+
+  If <CODE>file-name-coding-system</CODE> is <CODE>nil</CODE>, Emacs uses a default
+coding system determined by the selected language environment.  In the
+default language environment, any non-ASCII characters in file names are
+not encoded specially; they appear in the file system using the internal
+Emacs representation.
+</P><P>
+
+  <STRONG>Warning:</STRONG> if you change <CODE>file-name-coding-system</CODE> (or the
+language environment) in the middle of an Emacs session, problems can
+result if you have already visited files whose names were encoded using
+the earlier coding system and cannot be encoded (or are encoded
+differently) under the new coding system.  If you try to save one of
+these buffers under the visited file name, saving may use the wrong file
+name, or it may get an error.  If such a problem happens, use <KBD>C-x
+C-w</KBD> to specify a new file name for that buffer.
+</P><P>
+
+<A NAME="IDX1043"></A>
+<A NAME="IDX1044"></A>
+  The variable <CODE>locale-coding-system</CODE> specifies a coding system
+to use when encoding and decoding system strings such as system error
+messages and <CODE>format-time-string</CODE> formats and time stamps.  That
+coding system is also used for decoding non-ASCII keyboard input on X
+Window systems.  You should choose a coding system that is compatible
+with the underlying system's text representation, which is normally
+specified by one of the environment variables <CODE>LC_ALL</CODE>,
+<CODE>LC_CTYPE</CODE>, and <CODE>LANG</CODE>.  (The first one, in the order
+specified above, whose value is nonempty is the one that determines
+the text representation.)
+</P><P>
+
+<A NAME="Fontsets"></A>
+<HR SIZE="6">
+<A NAME="SEC223"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC222"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC224"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC215"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Q.10 Fontsets </H2>
+<!--docid::SEC223::-->
+<P>
+
+  A font for X typically defines shapes for a single alphabet or script.
+Therefore, displaying the entire range of scripts that Emacs supports
+requires a collection of many fonts.  In Emacs, such a collection is
+called a <EM>fontset</EM>.  A fontset is defined by a list of fonts, each
+assigned to handle a range of character codes.
+</P><P>
+
+  Each fontset has a name, like a font.  The available X fonts are
+defined by the X server; fontsets, however, are defined within Emacs
+itself.  Once you have defined a fontset, you can use it within Emacs by
+specifying its name, anywhere that you could use a single font.  Of
+course, Emacs fontsets can use only the fonts that the X server
+supports; if certain characters appear on the screen as hollow boxes,
+this means that the fontset in use for them has no font for those
+characters.<A NAME="DOCF7" HREF="emacs_fot.html#FOOT7">(7)</A>
+</P><P>
+
+  Emacs creates two fontsets automatically: the <EM>standard fontset</EM>
+and the <EM>startup fontset</EM>.  The standard fontset is most likely to
+have fonts for a wide variety of non-ASCII characters; however, this is
+not the default for Emacs to use.  (By default, Emacs tries to find a
+font that has bold and italic variants.)  You can specify use of the
+standard fontset with the <SAMP>`-fn'</SAMP> option, or with the <SAMP>`Font'</SAMP> X
+resource (see section <A HREF="emacs_34.html#SEC537">AE.7 Font Specification Options</A>).  For example,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>emacs -fn fontset-standard
+</pre></td></tr></table></P><P>
+
+  A fontset does not necessarily specify a font for every character
+code.  If a fontset specifies no font for a certain character, or if it
+specifies a font that does not exist on your system, then it cannot
+display that character properly.  It will display that character as an
+empty box instead.
+</P><P>
+
+<A NAME="IDX1045"></A>
+  The fontset height and width are determined by the ASCII characters
+(that is, by the font used for ASCII characters in that fontset).  If
+another font in the fontset has a different height, or a different
+width, then characters assigned to that font are clipped to the
+fontset's size.  If <CODE>highlight-wrong-size-font</CODE> is non-<CODE>nil</CODE>,
+a box is displayed around these wrong-size characters as well.
+</P><P>
+
+<A NAME="Defining Fontsets"></A>
+<HR SIZE="6">
+<A NAME="SEC224"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC223"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC225"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC215"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Q.11 Defining fontsets </H2>
+<!--docid::SEC224::-->
+<P>
+
+<A NAME="IDX1046"></A>
+<A NAME="IDX1047"></A>
+  Emacs creates a standard fontset automatically according to the value
+of <CODE>standard-fontset-spec</CODE>.  This fontset's name is
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>-*-fixed-medium-r-normal-*-16-*-*-*-*-*-fontset-standard
+</pre></td></tr></table></P><P>
+
+or just <SAMP>`fontset-standard'</SAMP> for short.
+</P><P>
+
+  Bold, italic, and bold-italic variants of the standard fontset are
+created automatically.  Their names have <SAMP>`bold'</SAMP> instead of
+<SAMP>`medium'</SAMP>, or <SAMP>`i'</SAMP> instead of <SAMP>`r'</SAMP>, or both.
+</P><P>
+
+<A NAME="IDX1048"></A>
+  If you specify a default ASCII font with the <SAMP>`Font'</SAMP> resource or
+the <SAMP>`-fn'</SAMP> argument, Emacs generates a fontset from it
+automatically.  This is the <EM>startup fontset</EM> and its name is
+<CODE>fontset-startup</CODE>.  It does this by replacing the <VAR>foundry</VAR>,
+<VAR>family</VAR>, <VAR>add_style</VAR>, and <VAR>average_width</VAR> fields of the
+font name with <SAMP>`*'</SAMP>, replacing <VAR>charset_registry</VAR> field with
+<SAMP>`fontset'</SAMP>, and replacing <VAR>charset_encoding</VAR> field with
+<SAMP>`startup'</SAMP>, then using the resulting string to specify a fontset.
+</P><P>
+
+  For instance, if you start Emacs this way,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>emacs -fn "*courier-medium-r-normal--14-140-*-iso8859-1"
+</pre></td></tr></table></P><P>
+
+Emacs generates the following fontset and uses it for the initial X
+window frame:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>-*-*-medium-r-normal-*-14-140-*-*-*-*-fontset-startup
+</pre></td></tr></table></P><P>
+
+  With the X resource <SAMP>`Emacs.Font'</SAMP>, you can specify a fontset name
+just like an actual font name.  But be careful not to specify a fontset
+name in a wildcard resource like <SAMP>`Emacs*Font'</SAMP>---that wildcard
+specification matches various other resources, such as for menus, and
+menus cannot handle fontsets.
+</P><P>
+
+  You can specify additional fontsets using X resources named
+<SAMP>`Fontset-<VAR>n</VAR>'</SAMP>, where <VAR>n</VAR> is an integer starting from 0.
+The resource value should have this form:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre><VAR>fontpattern</VAR>, [<VAR>charsetname</VAR>:<VAR>fontname</VAR>]<small>...</small>
+</FONT></pre></td></tr></table></P><P>
+
+<VAR>fontpattern</VAR> should have the form of a standard X font name, except
+for the last two fields.  They should have the form
+<SAMP>`fontset-<VAR>alias</VAR>'</SAMP>.
+</P><P>
+
+  The fontset has two names, one long and one short.  The long name is
+<VAR>fontpattern</VAR>.  The short name is <SAMP>`fontset-<VAR>alias</VAR>'</SAMP>.  You
+can refer to the fontset by either name.
+</P><P>
+
+  The construct <SAMP>`<VAR>charset</VAR>:<VAR>font</VAR>'</SAMP> specifies which font to
+use (in this fontset) for one particular character set.  Here,
+<VAR>charset</VAR> is the name of a character set, and <VAR>font</VAR> is the
+font to use for that character set.  You can use this construct any
+number of times in defining one fontset.
+</P><P>
+
+  For the other character sets, Emacs chooses a font based on
+<VAR>fontpattern</VAR>.  It replaces <SAMP>`fontset-<VAR>alias</VAR>'</SAMP> with values
+that describe the character set.  For the ASCII character font,
+<SAMP>`fontset-<VAR>alias</VAR>'</SAMP> is replaced with <SAMP>`ISO8859-1'</SAMP>.
+</P><P>
+
+  In addition, when several consecutive fields are wildcards, Emacs
+collapses them into a single wildcard.  This is to prevent use of
+auto-scaled fonts.  Fonts made by scaling larger fonts are not usable
+for editing, and scaling a smaller font is not useful because it is
+better to use the smaller font in its own size, which is what Emacs
+does.
+</P><P>
+
+  Thus if <VAR>fontpattern</VAR> is this,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>-*-fixed-medium-r-normal-*-24-*-*-*-*-*-fontset-24
+</pre></td></tr></table></P><P>
+
+the font specification for ASCII characters would be this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>-*-fixed-medium-r-normal-*-24-*-ISO8859-1
+</pre></td></tr></table></P><P>
+
+and the font specification for Chinese GB2312 characters would be this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>-*-fixed-medium-r-normal-*-24-*-gb2312*-*
+</pre></td></tr></table></P><P>
+
+  You may not have any Chinese font matching the above font
+specification.  Most X distributions include only Chinese fonts that
+have <SAMP>`song ti'</SAMP> or <SAMP>`fangsong ti'</SAMP> in <VAR>family</VAR> field.  In
+such a case, <SAMP>`Fontset-<VAR>n</VAR>'</SAMP> can be specified as below:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Emacs.Fontset-0: -*-fixed-medium-r-normal-*-24-*-*-*-*-*-fontset-24,\
+        chinese-gb2312:-*-*-medium-r-normal-*-24-*-gb2312*-*
+</FONT></pre></td></tr></table></P><P>
+
+Then, the font specifications for all but Chinese GB2312 characters have
+<SAMP>`fixed'</SAMP> in the <VAR>family</VAR> field, and the font specification for
+Chinese GB2312 characters has a wild card <SAMP>`*'</SAMP> in the <VAR>family</VAR>
+field.
+</P><P>
+
+<A NAME="IDX1049"></A>
+  The function that processes the fontset resource value to create the
+fontset is called <CODE>create-fontset-from-fontset-spec</CODE>.  You can also
+call this function explicitly to create a fontset.
+</P><P>
+
+  See section <A HREF="emacs_34.html#SEC537">AE.7 Font Specification Options</A>, for more information about font naming in X.
+</P><P>
+
+<A NAME="Undisplayable Characters"></A>
+<HR SIZE="6">
+<A NAME="SEC225"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC224"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC226"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC215"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Q.12 Undisplayable Characters </H2>
+<!--docid::SEC225::-->
+<P>
+
+  Your terminal may be unable to display some non-ASCII
+characters.  Most non-windowing terminals can only use a single
+character set (use the variable <CODE>default-terminal-coding-system</CODE>
+(see section <A HREF="emacs_20.html#SEC222">Q.9 Specifying a Coding System</A>) to tell Emacs which one); characters which
+can't be encoded in that coding system are displayed as <SAMP>`?'</SAMP> by
+default.
+</P><P>
+
+  Windowing terminals can display a broader range of characters, but
+you may not have fonts installed for all of them; characters that have
+no font appear as a hollow box.
+</P><P>
+
+  If you use Latin-1 characters but your terminal can't display
+Latin-1, you can arrange to display mnemonic ASCII sequences
+instead, e.g. <SAMP>`"o'</SAMP> for o-umlaut.  Load the library
+<TT>`iso-ascii'</TT> to do this.
+</P><P>
+
+<A NAME="IDX1050"></A>
+  If your terminal can display Latin-1, you can display characters
+from other European character sets using a mixture of equivalent
+Latin-1 characters and ASCII mnemonics.  Use the Custom option
+<CODE>latin1-display</CODE> to enable this.  The mnemonic ASCII
+sequences mostly correspond to those of the prefix input methods.
+</P><P>
+
+<A NAME="Single-Byte Character Support"></A>
+<HR SIZE="6">
+<A NAME="SEC226"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC225"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC215"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Q.13 Single-byte Character Set Support </H2>
+<!--docid::SEC226::-->
+<P>
+
+<A NAME="IDX1051"></A>
+<A NAME="IDX1052"></A>
+<A NAME="IDX1053"></A>
+<A NAME="IDX1054"></A>
+  The ISO 8859 Latin-<VAR>n</VAR> character sets define character codes in
+the range 0240 to 0377 octal (160 to 255 decimal) to handle the
+accented letters and punctuation needed by various European languages
+(and some non-European ones).  If you disable multibyte characters,
+Emacs can still handle <EM>one</EM> of these character codes at a time.
+To specify <EM>which</EM> of these codes to use, invoke <KBD>M-x
+set-language-environment</KBD> and specify a suitable language environment
+such as <SAMP>`Latin-<VAR>n</VAR>'</SAMP>.
+</P><P>
+
+  For more information about unibyte operation, see <A HREF="emacs_20.html#SEC215">Q.2 Enabling Multibyte Characters</A>.  Note particularly that you probably want to ensure that
+your initialization files are read as unibyte if they contain non-ASCII
+characters.
+</P><P>
+
+<A NAME="IDX1055"></A>
+  Emacs can also display those characters, provided the terminal or font
+in use supports them.  This works automatically.  Alternatively, if you
+are using a window system, Emacs can also display single-byte characters
+through fontsets, in effect by displaying the equivalent multibyte
+characters according to the current language environment.  To request
+this, set the variable <CODE>unibyte-display-via-language-environment</CODE>
+to a non-<CODE>nil</CODE> value.
+</P><P>
+
+<A NAME="IDX1056"></A>
+  If your terminal does not support display of the Latin-1 character
+set, Emacs can display these characters as ASCII sequences which at
+least give you a clear idea of what the characters are.  To do this,
+load the library <CODE>iso-ascii</CODE>.  Similar libraries for other
+Latin-<VAR>n</VAR> character sets could be implemented, but we don't have
+them yet.
+</P><P>
+
+<A NAME="IDX1057"></A>
+<A NAME="IDX1058"></A>
+  Normally non-ISO-8859 characters (decimal codes between 128 and 159
+inclusive) are displayed as octal escapes.  You can change this for
+non-standard "extended" versions of ISO-8859 character sets by using the
+function <CODE>standard-display-8bit</CODE> in the <CODE>disp-table</CODE> library.
+</P><P>
+
+  There are several ways you can input single-byte non-ASCII
+characters:
+</P><P>
+
+<UL>
+<A NAME="IDX1059"></A>
+<LI>
+If your keyboard can generate character codes 128 (decimal) and up,
+representing non-ASCII characters, you can type those character codes
+directly.
+<P>
+
+On a windowing terminal, you should not need to do anything special to
+use these keys; they should simply work.  On a text-only terminal, you
+should use the command <CODE>M-x set-keyboard-coding-system</CODE> or the
+Custom option <CODE>keyboard-coding-system</CODE> to specify which coding
+system your keyboard uses (see section <A HREF="emacs_20.html#SEC222">Q.9 Specifying a Coding System</A>).  Enabling this
+feature will probably require you to use <KBD>ESC</KBD> to type Meta
+characters; however, on a Linux console or in <CODE>xterm</CODE>, you can
+arrange for Meta to be converted to <KBD>ESC</KBD> and still be able type
+8-bit characters present directly on the keyboard or using
+<KBD>Compose</KBD> or <KBD>AltGr</KBD> keys.  See section <A HREF="emacs_5.html#SEC13">B.5 Kinds of User Input</A>.
+</P><P>
+
+<LI>
+You can use an input method for the selected language environment.
+See section <A HREF="emacs_20.html#SEC217">Q.4 Input Methods</A>.  When you use an input method in a unibyte buffer,
+the non-ASCII character you specify with it is converted to unibyte.
+<P>
+
+<A NAME="IDX1060"></A>
+<A NAME="IDX1061"></A>
+<A NAME="IDX1062"></A>
+<A NAME="IDX1063"></A>
+<LI>
+For Latin-1 only, you can use the
+key <KBD>C-x 8</KBD> as a "compose character" prefix for entry of
+non-ASCII Latin-1 printing characters.  <KBD>C-x 8</KBD> is good for
+insertion (in the minibuffer as well as other buffers), for searching,
+and in any other context where a key sequence is allowed.
+<P>
+
+<KBD>C-x 8</KBD> works by loading the <CODE>iso-transl</CODE> library.  Once that
+library is loaded, the <KBD>ALT</KBD> modifier key, if you have one, serves
+the same purpose as <KBD>C-x 8</KBD>; use <KBD>ALT</KBD> together with an accent
+character to modify the following letter.  In addition, if you have keys
+for the Latin-1 "dead accent characters," they too are defined to
+compose with the following character, once <CODE>iso-transl</CODE> is loaded.
+Use <KBD>C-x 8 C-h</KBD> to list the available translations as mnemonic
+command names.
+</P><P>
+
+<LI>
+<A NAME="IDX1064"></A>
+<A NAME="IDX1065"></A>
+<A NAME="IDX1066"></A>
+<A NAME="IDX1067"></A>
+For Latin-1, Latin-2 and Latin-3, <KBD>M-x iso-accents-mode</KBD> enables
+a minor mode that works much like the <CODE>latin-1-prefix</CODE> input
+method, but does not depend on having the input methods installed.  This
+mode is buffer-local.  It can be customized for various languages with
+<KBD>M-x iso-accents-customize</KBD>.
+</UL>
+<A NAME="Major Modes"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC215"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

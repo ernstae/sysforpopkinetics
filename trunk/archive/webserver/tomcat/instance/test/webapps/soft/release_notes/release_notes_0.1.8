@@ -1,0 +1,66 @@
+---------------------------------
+RELEASE NOTES FOR VERSION 0.1.5
+---------------------------------
+USER VISIBLE CHANGES
+
+CSPK statistics routines (ie. popStatistics, indStatistics,
+derParStatistics) are overloaded so that the new interfaces would take
+a boolean vector to mask off some elements of the parameter vector.
+
+OTHER CHANGES
+
+ASPK (NONMEM) Compiler generates drivers that use the new versions of
+statistics routines.
+
+RELATED BUG REPORTS: 17
+
+BY: Sachiko
+
+WHEN: October 4, 2004
+
+---------------------------------
+RELEASE NOTES FOR VERSION 0.1.6
+---------------------------------
+USER VISIBLE CHANGES
+
+Carriage-return and null characters, inserted (unintentionally)
+into the SpkCompilerError's error messages are removed.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 65
+
+BY: Sachiko
+
+WHEN: October 6, 2004
+
+---------------------------------
+RELEASE NOTES FOR VERSION 0.1.7
+---------------------------------
+USER VISIBLE CHANGES
+
+Spk drivers try to evaluate the residuals after a failed estimation step.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 93
+
+BY: Sachiko
+
+WHEN: October 6, 2004
+
+---------------------------------
+RELEASE NOTES FOR VERSION 0.1.8
+---------------------------------
+USER VISIBLE CHANGES
+
+Enhancement: sending warm-start info to the standard error.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 87
+
+BY: Sachiko
+
+WHEN: October 6, 2004
+

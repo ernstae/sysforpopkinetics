@@ -1,0 +1,248 @@
+<html><head>
+<title>Inverse of a matrix stored as a DoubleMatrix object</title>
+<meta name="description" id="description" content="Inverse of a matrix stored as a DoubleMatrix object">
+<meta name="keywords" id="keywords" content=" inversedoublematrix matrix inverse --- Doublematrix version ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_inverse_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>general</option>
+<option>inverse</option>
+</select>
+</td>
+<td><a href="ikronbtimescva.htm" target="_top">Prev</a>
+</td><td><a href="inverseva.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>general-&gt;</option>
+<option>ABA_x</option>
+<option>ABA_xVA</option>
+<option>addition</option>
+<option>AkronBtimesC</option>
+<option>AkronBtimesCRef</option>
+<option>AkronBtimesCVA</option>
+<option>AkronItimesC</option>
+<option>AkronItimesCVA</option>
+<option>allTrue</option>
+<option>allZero</option>
+<option>backDiv</option>
+<option>BlockAlloc</option>
+<option>blockDiagonalDerivative</option>
+<option>centdiff</option>
+<option>centdiffVA</option>
+<option>cholesky</option>
+<option>countTrues</option>
+<option>CovarianceClasses</option>
+<option>elsq</option>
+<option>elsqVA</option>
+<option>elsqFuncOb</option>
+<option>elsq_x</option>
+<option>elsq_xVA</option>
+<option>elsq_xDiag</option>
+<option>elsq_xBlockDiag</option>
+<option>DBL_EPS_EQUAL_MULT</option>
+<option>det</option>
+<option>detVA</option>
+<option>divByScalar</option>
+<option>DMclass</option>
+<option>elementwiseAnd</option>
+<option>elementwiseOr</option>
+<option>File</option>
+<option>FpErrorChecker</option>
+<option>ModelFunction</option>
+<option>ModelDerivative</option>
+<option>getCol</option>
+<option>getMulCols</option>
+<option>getMulRows</option>
+<option>getRow</option>
+<option>getSubblock</option>
+<option>identityNum</option>
+<option>identityVA</option>
+<option>IkronBtimesC</option>
+<option>IkronBtimesCVA</option>
+<option>inverse</option>
+<option>inverseVA</option>
+<option>inxToMax</option>
+<option>isDblEpsEqual</option>
+<option>isDmatEpsEqual</option>
+<option>isGreaterThanOrEqualTo</option>
+<option>isLessThanOrEqualTo</option>
+<option>isSymmetric</option>
+<option>matabs</option>
+<option>matmaxScalar</option>
+<option>matmaxMatrices</option>
+<option>matminScalar</option>
+<option>matminMatrices</option>
+<option>mulByScalar</option>
+<option>multiply</option>
+<option>norm</option>
+<option>Optimizer</option>
+<option>pi</option>
+<option>placeRows</option>
+<option>printInMatrix</option>
+<option>quasinewtonanybox</option>
+<option>replaceIth</option>
+<option>replaceJth</option>
+<option>replaceSubblockDoubleMatrix</option>
+<option>replaceSubblockValarray</option>
+<option>rvec</option>
+<option>rvecVA</option>
+<option>rvecInverse</option>
+<option>SpkError</option>
+<option>SpkException</option>
+<option>SpkValarray</option>
+<option>subtraction</option>
+<option>symmetrize</option>
+<option>symmetrizeVA</option>
+<option>System</option>
+<option>transpose</option>
+<option>transposeRef</option>
+<option>transposeVA</option>
+<option>transposeDerivative</option>
+<option>transposeDerivativeVA</option>
+<option>transposeRowBlocks</option>
+<option>transposeRowBlocksVA</option>
+<option>UTranTimesSymKronSymTimesU</option>
+<option>UTranTimesSymKronSymTimesU_x</option>
+<option>WarningsManager_constructor</option>
+<option>WarningsManager_addWarning</option>
+<option>WarningsManager_addWarningList</option>
+<option>WarningsManager_clearAllWarnings</option>
+<option>WarningsManager_anyWarnings</option>
+<option>WarningsManager_getWarningList</option>
+<option>WarningsManager_getAllWarnings</option>
+</select>
+</td>
+<td>inverse</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Arguments</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Inverse of a matrix stored as a DoubleMatrix object</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype</b>   </td><td align='left'  valign='top'>
+  
+<code><font color="blue"><span style='white-space: nowrap'>const&nbsp;DoubleMatrix&nbsp;inverse(const&nbsp;DoubleMatrix&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>dmatA</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>   </td></tr><tr><td align='left'  valign='top'>
+ 
+</td></tr>
+</table>
+<br>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Returns the matrix inverse of the square, symmetric, positive-definite 
+<code><font color="blue">DoubleMatrix</font></code> <i>dmatA</i>. The return value is of type 
+<code><font color="blue">DoubleMatrix</font></code>, and it has the same dimensions as <i>dmatA</i>.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>dmatA</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dmatA</i> contains the square, symmetric, 
+positive-definite matrix <code><span style='white-space: nowrap'><i>A</i></span></code>.  If the matrix did not
+have these properties, it throws an <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile and link the C++ program,
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#include&nbsp;&lt;iostream&gt;<br>
+#include&nbsp;&lt;iomanip&gt;<br>
+#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+#include&nbsp;&quot;inverse.h&quot;<br>
+<br>
+void&nbsp;main()<br>
+{<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;int&nbsp;nARow&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;int&nbsp;nACol=&nbsp;nARow;<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dmatA(nARow,&nbsp;nACol);<br>
+&nbsp;&nbsp;double*&nbsp;pdblAData&nbsp;=&nbsp;dmatA.data();<br>
+&nbsp;&nbsp;pdblAData[0&nbsp;+&nbsp;0&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;1000000.0;<br>
+&nbsp;&nbsp;pdblAData[0&nbsp;+&nbsp;1&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1.0;<br>
+&nbsp;&nbsp;pdblAData[1&nbsp;+&nbsp;0&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1.0;<br>
+&nbsp;&nbsp;pdblAData[1&nbsp;+&nbsp;1&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.0;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;setiosflags(ios::scientific)&nbsp;&lt;&lt;&nbsp;setprecision(15);<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;A&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;dmatA.print();<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;inverse(A)&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;inverse(dmatA).print();<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+}<br>
+<br>
+</span>
+</font></code>
+then it should output the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+A&nbsp;=<br>
+[1.000000000000000e+006,&nbsp;-1.000000000000000e+000]<br>
+[-1.000000000000000e+000,&nbsp;2.000000000000000e+000]<br>
+<br>
+inverse(A)&nbsp;=<br>
+[1.000000500000250e-006,&nbsp;5.000002500001250e-007]<br>
+[5.000002500001249e-007,&nbsp;5.000002500001249e-001]<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/inverse.cpp
+
+</body>
+</html>

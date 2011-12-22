@@ -1,0 +1,641 @@
+<html><head>
+<title>Quasi-Newton Optimization with Derivatives and Box Constraints</title>
+<meta name="description" id="description" content="Quasi-Newton Optimization with Derivatives and Box Constraints">
+<meta name="keywords" id="keywords" content=" quasinewtonanybox quasi-newton optimization derivatives box constraints ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_quasinewtonanybox_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>general</option>
+<option>quasinewtonanybox</option>
+</select>
+</td>
+<td><a href="printinmatrix.htm" target="_top">Prev</a>
+</td><td><a href="replaceith.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>general-&gt;</option>
+<option>ABA_x</option>
+<option>ABA_xVA</option>
+<option>addition</option>
+<option>AkronBtimesC</option>
+<option>AkronBtimesCRef</option>
+<option>AkronBtimesCVA</option>
+<option>AkronItimesC</option>
+<option>AkronItimesCVA</option>
+<option>allTrue</option>
+<option>allZero</option>
+<option>backDiv</option>
+<option>BlockAlloc</option>
+<option>blockDiagonalDerivative</option>
+<option>centdiff</option>
+<option>centdiffVA</option>
+<option>cholesky</option>
+<option>countTrues</option>
+<option>CovarianceClasses</option>
+<option>elsq</option>
+<option>elsqVA</option>
+<option>elsqFuncOb</option>
+<option>elsq_x</option>
+<option>elsq_xVA</option>
+<option>elsq_xDiag</option>
+<option>elsq_xBlockDiag</option>
+<option>DBL_EPS_EQUAL_MULT</option>
+<option>det</option>
+<option>detVA</option>
+<option>divByScalar</option>
+<option>DMclass</option>
+<option>elementwiseAnd</option>
+<option>elementwiseOr</option>
+<option>File</option>
+<option>FpErrorChecker</option>
+<option>ModelFunction</option>
+<option>ModelDerivative</option>
+<option>getCol</option>
+<option>getMulCols</option>
+<option>getMulRows</option>
+<option>getRow</option>
+<option>getSubblock</option>
+<option>identityNum</option>
+<option>identityVA</option>
+<option>IkronBtimesC</option>
+<option>IkronBtimesCVA</option>
+<option>inverse</option>
+<option>inverseVA</option>
+<option>inxToMax</option>
+<option>isDblEpsEqual</option>
+<option>isDmatEpsEqual</option>
+<option>isGreaterThanOrEqualTo</option>
+<option>isLessThanOrEqualTo</option>
+<option>isSymmetric</option>
+<option>matabs</option>
+<option>matmaxScalar</option>
+<option>matmaxMatrices</option>
+<option>matminScalar</option>
+<option>matminMatrices</option>
+<option>mulByScalar</option>
+<option>multiply</option>
+<option>norm</option>
+<option>Optimizer</option>
+<option>pi</option>
+<option>placeRows</option>
+<option>printInMatrix</option>
+<option>quasinewtonanybox</option>
+<option>replaceIth</option>
+<option>replaceJth</option>
+<option>replaceSubblockDoubleMatrix</option>
+<option>replaceSubblockValarray</option>
+<option>rvec</option>
+<option>rvecVA</option>
+<option>rvecInverse</option>
+<option>SpkError</option>
+<option>SpkException</option>
+<option>SpkValarray</option>
+<option>subtraction</option>
+<option>symmetrize</option>
+<option>symmetrizeVA</option>
+<option>System</option>
+<option>transpose</option>
+<option>transposeRef</option>
+<option>transposeVA</option>
+<option>transposeDerivative</option>
+<option>transposeDerivativeVA</option>
+<option>transposeRowBlocks</option>
+<option>transposeRowBlocksVA</option>
+<option>UTranTimesSymKronSymTimesU</option>
+<option>UTranTimesSymKronSymTimesU_x</option>
+<option>WarningsManager_constructor</option>
+<option>WarningsManager_addWarning</option>
+<option>WarningsManager_addWarningList</option>
+<option>WarningsManager_clearAllWarnings</option>
+<option>WarningsManager_anyWarnings</option>
+<option>WarningsManager_getWarningList</option>
+<option>WarningsManager_getAllWarnings</option>
+</select>
+</td>
+<td>quasinewtonanybox</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Return Value</option>
+<option>Arguments</option>
+<option>---..Objective Function</option>
+<option>---..Gradient</option>
+<option>---..optInfo.epsilon</option>
+<option>---..optInfo.nMaxIter</option>
+<option>---..optInfo.traceLevel</option>
+<option>---..optInfo.nIterCompleted</option>
+<option>---..optInfo.isTooManyIter</option>
+<option>---..optInfo.saveStateAtEndOfOpt</option>
+<option>---..optInfo.throwExcepIfMaxIter</option>
+<option>---..optInfo.isWarmStartPossible</option>
+<option>---..optInfo.isWarmStart</option>
+<option>---..optInfo.stateInfo</option>
+<option>---..optInfo.stateInfo.n</option>
+<option>---..optInfo.stateInfo.b</option>
+<option>---..optInfo.stateInfo.r</option>
+<option>---..optInfo.stateInfo.f</option>
+<option>---..optInfo.stateInfo.x</option>
+<option>---..stateInfo.g</option>
+<option>---..stateInfo.h</option>
+<option>---..stateInfo.m</option>
+<option>---..stateInfo.low</option>
+<option>---..stateInfo.up</option>
+<option>---..stateInfo.pos</option>
+<option>---..stateInfo.acceptStepCount</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Quasi-Newton Optimization with Derivatives and Box Constraints</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype:</b>   </td><td align='left'  valign='top'>
+  
+<code><font color="blue"><span style='white-space: nowrap'>void&nbsp;quasiNewtonAnyBox(&nbsp;<br>
+&nbsp;&nbsp;QuasiNewtonAnyBoxObj&amp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>objective</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;Optimizer&amp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>optInfo</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;const&nbsp;DoubleMatrix&amp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>dvecXLow</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;const&nbsp;DoubleMatrix&amp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>dvecXUp</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;const&nbsp;DoubleMatrix&amp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>dvecXIn</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;DoubleMatrix*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>pdvecXOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;double*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>pdFOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;DoubleMatrix*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>pdrowF_xOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)<br>
+</span></font></code></td></tr>
+</table>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Uses a quasi-Newton interior-trust method with exact complimentarity 
+to solve the problem
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;minimize&nbsp;<i>f</i>(<i>x</i>)&nbsp;with&nbsp;respect&nbsp;to&nbsp;<i>x</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;subject&nbsp;to&nbsp;<i>xLow</i>&nbsp;<u>&lt;</u>&nbsp;<i>x</i>&nbsp;<u>&lt;</u>&nbsp;<i>xUp</i>&nbsp;&nbsp;.<br>
+</span></code>In order to solve the above problem, this function scales the elements 
+of <code><span style='white-space: nowrap'><i>x</i></span></code> so that they are constrained to the interval 
+<code><span style='white-space: nowrap'>[0,&nbsp;1]</span></code>.  It then solves the scaled problem
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;minimize&nbsp;<i>fScaled</i>(<i>y</i>)&nbsp;with&nbsp;respect&nbsp;to&nbsp;<i>y</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;subject&nbsp;to&nbsp;0&nbsp;<u>&lt;</u>&nbsp;<i>y</i>&nbsp;<u>&lt;</u>&nbsp;1&nbsp;,<br>
+</span></code>where
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>fScaled</i>(<i>y</i>)&nbsp;=&nbsp;<i>f</i>(<i>x</i>)&nbsp;.<br>
+</span></code>The elements of the vectors <code><span style='white-space: nowrap'><i>x</i></span></code> and <code><span style='white-space: nowrap'><i>y</i></span></code> for which 
+<code><span style='white-space: nowrap'><i>xLow</i>(<i>i</i>)</span></code> and <code><span style='white-space: nowrap'><i>xUp</i>(<i>i</i>)</span></code> are not equal are related 
+as follows: 
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>y</i>(<i>j</i>)&nbsp;=&nbsp;[&nbsp;<i>x</i>(<i>i</i>)&nbsp;-&nbsp;<i>xLow</i>(<i>i</i>)&nbsp;]&nbsp;/&nbsp;[&nbsp;<i>xUp</i>(<i>i</i>)&nbsp;-&nbsp;<i>xLow</i>(<i>i</i>)&nbsp;]&nbsp;,<br>
+</span></code>where <code><span style='white-space: nowrap'><i>j</i></span></code> is the position of the element in <code><span style='white-space: nowrap'><i>y</i></span></code> 
+that corresponds to <code><span style='white-space: nowrap'><i>x</i>(<i>i</i>)</span></code>.
+Note that if <code><span style='white-space: nowrap'><i>xLow</i>(<i>i</i>)&nbsp;=&nbsp;<i>xUp</i>(<i>i</i>)</span></code>, then <code><span style='white-space: nowrap'><i>x</i>(<i>i</i>)</span></code> is 
+not included in <code><span style='white-space: nowrap'><i>y</i></span></code>.
+
+<br>
+<br>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+If the convergence criteria specified below by the <i>optInfo</i>
+argument is satisfied, then the output value pointers are set to point
+to their respective results.
+If the convergence criteria is not satisfied, then an 
+<a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>exception</span></a>
+ will be thrown.  
+The state at which an exception is thrown is defined in
+<a href="glossary.htm#Exception Handling Policy" target="_top"><span style='white-space: nowrap'>Exception&nbsp;Handling&nbsp;Policy</span></a>
+.
+In the case of the maximum number of iterations being exhausted,
+an exception may or may not be thrown depending on the value for
+the <i>optInfo.throwExcepIfMaxIter</i> parameter.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+objective<br>
+</span></font></code>This <code><font color="blue">QuasiNewtonAnyBoxObj</font></code> function object is used to evaluate the 
+objective function <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code> and the gradient of the objective 
+function <code><span style='white-space: nowrap'><i>f</i>_<i>x</i>(<i>x</i>)</span></code> for a particular value of <code><span style='white-space: nowrap'><i>x</i></span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The class <code><font color="blue">QuasiNewtonAnyBoxObj</font></code> is an abstract base class,
+and <i>objective</i> is an instance of a concrete subclass
+of <code><font color="blue">QuasiNewtonAnyBoxObj</font></code> that is specialized for this objective
+function.
+Any values that are required to evaluate the objective function
+and its gradient can be stored as private data in the class
+and initialized when <i>objective</i> is constructed.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The concrete subclass that is the type of <i>objective</i> 
+must define the following pure virtual member functions of the 
+abstract base class <code><font color="blue">QuasiNewtonAnyBoxObj</font></code>.
+
+<br>
+<br>
+<b><a name="Arguments.Objective Function" id="Arguments.Objective Function">Objective Function</a></b>
+<br>
+The function that evaluates the objective function has this prototype:
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;virtual&nbsp;void&nbsp;function(&nbsp;const&nbsp;DoubleMatrix&amp;&nbsp;/dvecXIn/,&nbsp;double*&nbsp;/pdFOut/&nbsp;)&nbsp;=&nbsp;0;<br>
+</span></font></code>If there is a problem during the evaluation of this function,
+it should be indicated by throwing an exception.
+The function <code><font color="blue">quasiNewtonAnyBox</font></code> will catch any exception,
+and then rethrow it as an <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If no exceptions are thrown, then on return the scalar value
+pointed to by <i>pdFout</i> will be equal to the objective
+function at <i>dvecXIn</i>.
+The vector <i>dvecXIn</i> has the same dimension as the vector 
+<i>dvecXLow</i> described below.
+
+<br>
+<br>
+<b><a name="Arguments.Gradient" id="Arguments.Gradient">Gradient</a></b>
+<br>
+The function that evaluates the gradient of the objective function 
+has this prototype:
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;virtual&nbsp;void&nbsp;gradient(&nbsp;DoubleMatrix*&nbsp;/pdrowF_xOut/&nbsp;)&nbsp;const&nbsp;=&nbsp;0;<br>
+</span></font></code>If there is a problem during the evaluation of this function,
+it should be indicated by throwing an exception.
+The function <code><font color="blue">quasiNewtonAnyBox</font></code> will catch any exception,
+and then rethrow it as an <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Note that this function does not have an argument that specifies 
+the value at which the gradient should be evaluated.
+The reason for this is that during the optimization process, i.e.,
+during the call to <code><font color="blue">quasiNewtonAnyBox</font></code>, the objective function
+is alway evaluated at the same <i>dvecXIn</i> value directly before
+the gradient of the objective function is evaluated.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If no exceptions are thrown, then on return the <code><font color="blue">DoubleMatrix</font></code>
+pointed to by <i>pdrowF_xOut</i> will be equal to the gradient of
+the objective evaluated at the value of <i>dvecXIn</i> from the
+previous call to the objective function.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>optInfo</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This <a href="optimizer.htm" target="_top"><span style='white-space: nowrap'>Optimizer</span></a>
+ object contains the information 
+that controls the optimization process.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>It has attributes for holding the optimization state information 
+that is required to perform a warm start, i.e., to start the
+optimization process using a previous set of optimization state
+information.
+If a warm start is being performed, then before this function is 
+called the optimization state information must be set.
+This information may have been set during a previous call to this
+function, or the information may be set directly using the
+Optimizer class member function, setStateInfo().
+Note that the upper and lower bounds for <code><span style='white-space: nowrap'><i>x</i></span></code> must be the 
+same as they were during the earlier call to this function.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Most of the optimizer information is accessible directly via public
+get functions, e.g., the value epsilon is returned by the Optimizer 
+class function <code><font color="blue">getEpsilon()</font></code>.  
+The following set of subsections specify how this function uses 
+some of the elements of the Optimizer object that are accessed 
+directly using get functions.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.epsilon" id="Arguments.optInfo.epsilon">optInfo.epsilon</a></b>
+<br>
+This real number is used to specify the convergence criteria
+for the optimizer.
+It must be greater than <code><span style='white-space: nowrap'>0.0</span></code>.
+The value <code><span style='white-space: nowrap'><i>xOut</i></span></code> is accepted as an estimate for <code><span style='white-space: nowrap'><i>xHat</i></span></code> if 
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>abs</i>(&nbsp;<i>xOut</i>&nbsp;-&nbsp;<i>xHat</i>&nbsp;)&nbsp;<u>&lt;</u>&nbsp;<i>epsilon</i>&nbsp;(&nbsp;<i>xUp</i>&nbsp;-&nbsp;<i>xLow</i>&nbsp;)&nbsp;&nbsp;,<br>
+</span></code>where <code><span style='white-space: nowrap'><i>abs</i></span></code> is the element-by-element absolute value function
+and <code><span style='white-space: nowrap'><i>xHat</i></span></code> is a local minimizer of the objective function.
+Since <code><span style='white-space: nowrap'><i>xHat</i></span></code> is unknown, this function estimates the left hand
+side of this inequality in a way that is a good approximation when 
+the Hessian of the objective function is positive definite.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Note that if <i>nMaxIter</i> is set to zero, then <code><span style='white-space: nowrap'><i>xIn</i></span></code> is 
+accepted as the estimate for <code><span style='white-space: nowrap'><i>xHat</i></span></code>.
+
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.nMaxIter" id="Arguments.optInfo.nMaxIter">optInfo.nMaxIter</a></b>
+<br>
+This integer must be greater than or equal to zero.
+It specifies the maximum number of 
+iterations to attempt before giving up on convergence.
+If it is equal to zero, then the initial
+value for <code><span style='white-space: nowrap'><i>x</i></span></code> is accepted as the final value, and any requested output
+values are evaluated at that final value.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.traceLevel" id="Arguments.optInfo.traceLevel">optInfo.traceLevel</a></b>
+<br>
+This integer scalar specifies the amount of tracing.
+Larger values of <i>traceLevel</i> entail more tracing, 
+with <code><span style='white-space: nowrap'>4</span></code> being the highest level of tracing.
+If <code><span style='white-space: nowrap'><i>level</i>&nbsp;<u>&gt;</u>&nbsp;1</span></code>, trace values are directed to standard output 
+(stdout).  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Tracing is done using a scaled version of the
+objective function.  For this scaled version the elements of
+the parameter vector are constrained to the interval <code><span style='white-space: nowrap'>[0,&nbsp;1]</span></code>. 
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If <i>traceLevel</i> is equal to <code><span style='white-space: nowrap'>4</span></code>, then the tracing 
+will include the gradient of the objective and a finite difference 
+approximation for that gradient.
+These two gradients can be compared as a check on the consistency 
+of the objective function and its gradient.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>For more details on the tracing see the description of the level 
+parameter for the optimizer <code><font color="blue">QuasiNewton01Box</font></code>.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.nIterCompleted" id="Arguments.optInfo.nIterCompleted">optInfo.nIterCompleted</a></b>
+<br>
+This integer scalar holds the number of iteration that have been 
+completed in the optimizer.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.isTooManyIter" id="Arguments.optInfo.isTooManyIter">optInfo.isTooManyIter</a></b>
+<br>
+This flag indicates whether the too-many-iteration failure has occurred.  
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.saveStateAtEndOfOpt" id="Arguments.optInfo.saveStateAtEndOfOpt">optInfo.saveStateAtEndOfOpt</a></b>
+<br>
+This flag indicates if the state information required for a warm start
+should be saved at the end of the optimization process.
+This state information will not be saved if the optimization process
+results in an exception being thrown by <code><font color="blue">quasiNewtonAnyBox</font></code>.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.throwExcepIfMaxIter" id="Arguments.optInfo.throwExcepIfMaxIter">optInfo.throwExcepIfMaxIter</a></b>
+<br>
+This flag indicates if the optimizer should throw an exception when
+the maximum number of iterations is exhausted.
+If this parameter is true, then when
+the maximum number of iterations is exhausted, an exception will
+be thrown and the output values for this function will not be set.
+Otherwise, the calling program will
+need to check the parameter isTooManyIter to see if the 
+maximum number of iterations was exhausted.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.isWarmStartPossible" id="Arguments.optInfo.isWarmStartPossible">optInfo.isWarmStartPossible</a></b>
+<br>
+This flag indicates whether it is possible to perform a warm start 
+using the current optimizer state information.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.isWarmStart" id="Arguments.optInfo.isWarmStart">optInfo.isWarmStart</a></b>
+<br>
+This flag indicates whether the optimization should run a warm start.  
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.stateInfo" id="Arguments.optInfo.stateInfo">optInfo.stateInfo</a></b>
+<br>
+This <code><font color="blue">StateInfo</font></code> struct contains the optimization state information
+required to perform a warm start.
+Each of its elements is accessed using the Optimizer class member
+functions, <code><font color="blue">getStateInfo()</font></code> and <code><font color="blue">setStateInfo()</font></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The following set of subsections specify how this function uses 
+the elements of <code><font color="blue">optInfo.stateInfo</font></code>.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.stateInfo.n" id="Arguments.optInfo.stateInfo.n">optInfo.stateInfo.n</a></b>
+<br>
+The element <code><font color="blue">n</font></code> specifies the number of components
+in the element vector <code><font color="blue">x</font></code>.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.stateInfo.b" id="Arguments.optInfo.stateInfo.b">optInfo.stateInfo.b</a></b>
+<br>
+The element <code><font color="blue">b</font></code> specifies the number of Bfgs updates
+that have been made to the Hessian approximation <code><font color="blue">h</font></code>.
+This function assumes that once the number of Bfgs updates
+is equal to the number of objective function parameters <code><font color="blue">n</font></code>,
+then the Hessian approximation is accurate enough to use.
+If the Hessian is known, rather than being an approximation,
+then <code><font color="blue">b</font></code> should be set equal to <code><font color="blue">n</font></code>.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.stateInfo.r" id="Arguments.optInfo.stateInfo.r">optInfo.stateInfo.r</a></b>
+<br>
+The element <code><font color="blue">r</font></code> contains the current trust region radius
+(as an infinity norm bound on the step size).
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.stateInfo.f" id="Arguments.optInfo.stateInfo.f">optInfo.stateInfo.f</a></b>
+<br>
+The element <code><font color="blue">f</font></code> contains the value for <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code>
+at the point <code><span style='white-space: nowrap'><i>x</i></span></code>.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.stateInfo.x" id="Arguments.optInfo.stateInfo.x">optInfo.stateInfo.x</a></b>
+<br>
+The element <code><font color="blue">x</font></code> is a vector of length <code><font color="blue">n</font></code>.
+It specifies the point at which the objective function, 
+its gradient, and its Hessian were evaluated.
+
+<br>
+<br>
+<b><a name="Arguments.stateInfo.g" id="Arguments.stateInfo.g">stateInfo.g</a></b>
+<br>
+The element <code><font color="blue">g</font></code> is a vector of length <code><font color="blue">n</font></code>.
+It contains the gradient of <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code>
+at the point <code><span style='white-space: nowrap'><i>x</i></span></code>.
+
+<br>
+<br>
+<b><a name="Arguments.stateInfo.h" id="Arguments.stateInfo.h">stateInfo.h</a></b>
+<br>
+The element <code><font color="blue">h</font></code> is a vector of length <code><font color="blue">n * n</font></code>.
+It contains an approximation for the Hessian of <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code>
+at the point <code><span style='white-space: nowrap'><i>x</i></span></code>.
+
+<br>
+<br>
+<b><a name="Arguments.stateInfo.m" id="Arguments.stateInfo.m">stateInfo.m</a></b>
+<br>
+The element <code><font color="blue">m</font></code> specifies the total number of objective 
+function parameters, i.e., the number of free parameters plus the 
+number of parameters that are constrained by both their lower and 
+upper bounds.
+
+<br>
+<br>
+<b><a name="Arguments.stateInfo.low" id="Arguments.stateInfo.low">stateInfo.low</a></b>
+<br>
+The element <code><font color="blue">low</font></code> is a vector of length <code><font color="blue">m</font></code>.
+It specifies the lower bounds for all of the objective function 
+parameters in their original coordinates.
+
+<br>
+<br>
+<b><a name="Arguments.stateInfo.up" id="Arguments.stateInfo.up">stateInfo.up</a></b>
+<br>
+The element <code><font color="blue">up</font></code> is a vector of length <code><font color="blue">m</font></code>.
+It specifies the upper bounds for all of the objective function 
+parameters in their original coordinates.
+
+<br>
+<br>
+<b><a name="Arguments.stateInfo.pos" id="Arguments.stateInfo.pos">stateInfo.pos</a></b>
+<br>
+The element <code><font color="blue">pos</font></code> is a vector of length <code><font color="blue">n</font></code>.
+It specifies the positions, i.e., indices, of the free objective 
+function parameters in the full objective function parameter.
+
+<br>
+<br>
+<b><a name="Arguments.stateInfo.acceptStepCount" id="Arguments.stateInfo.acceptStepCount">stateInfo.acceptStepCount</a></b>
+<br>
+The element <code><font color="blue">acceptStepCount</font></code> specifies 
+the number of consecutive iterations that acceptable 
+step values have been calculated.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecXLow</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecXLow</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>xLow</i></span></code>.  It specifies the lower limit for the box constraints 
+in the problem.  
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecXUp</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecXUp</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>xUp</i></span></code>.  It specifies the upper limit for the box constraints 
+in the problem, and it has the same dimensions as <i>dvecXLow</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecXIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecXIn</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>xIn</i></span></code>.  It specifies the initial estimate for the argument that 
+solves the problem, and it has the same dimension as <i>dvecXLow</i>.  
+The initial estimate satisfies the box constraints
+<code><span style='white-space: nowrap'><i>xLow</i>&nbsp;<u>&lt;</u>&nbsp;<i>xIn</i>&nbsp;<u>&lt;</u>&nbsp;<i>xUp</i></span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Note that if a warm start is being performed, then the initial <code><span style='white-space: nowrap'><i>x</i></span></code>
+estimate will come from the warm start optimizer state information,
+and this initial estimate will not be used.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdvecXOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If the return value for <code><font color="blue">quasiNewtonAnyBox</font></code> is true, and 
+if <i>pdvecXOut</i> is not equal to zero, then on output the 
+<code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdvecXOut</i> will contain 
+the column vector <code><span style='white-space: nowrap'><i>xOut</i></span></code>.  It is the final approximation for 
+the solution to the problem, and
+it has the same dimensions as <i>xLow</i>.
+The final approximation satisfies the box constraints
+<code><span style='white-space: nowrap'><i>xLow</i>&nbsp;<u>&lt;</u>&nbsp;<i>xOut</i>&nbsp;<u>&lt;</u>&nbsp;<i>xUp</i></span></code>.  
+Note that the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdvecXOut</i> 
+must be constructed by the user.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdFOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If the return value for <code><font color="blue">quasiNewtonAnyBox</font></code> is true, i.e., the algorithm
+converged successfully, and 
+if <i>pdFOut</i> is not equal to null, then on output the <code><font color="blue">
+double</font></code> value pointed to by <i>pdFOut</i> will be equal to the 
+value of the objective function <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code> at the final iteration.
+Note that the user must allocate memory for the value pointed 
+to by <i>pdFOut</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdrowF_xOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If the return value for <code><font color="blue">quasiNewtonAnyBox</font></code> is true, i.e., the algorithm
+converged successfully, and 
+if <i>pdrowF_xOut</i> is not equal to null, then on output the matrix
+value pointed to by <i>pdrowF_xOut</i> will be equal to the 
+value of the gradient of the objective function <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code> with respect
+to the variable at the final iteration.
+Note that the user must allocate memory for the value pointed 
+to by <i>pdrowF_xOut</i>.
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+There is currently no example for this function.
+
+
+<hr>Input File: ../../spk/quasiNewtonAnyBox.cpp
+
+</body>
+</html>

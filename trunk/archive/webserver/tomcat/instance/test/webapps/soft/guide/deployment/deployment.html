@@ -1,0 +1,778 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>SPK System Deployment Guide</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+>SPK System Deployment Guide</A
+></H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	This guide describes a process for placing new versions
+	of the System for Population Kinetics (SPK) in production.
+	It is meant to be used
+	in conjunction with the process described in the
+	<A
+HREF="../system_test/system_test.html"
+TARGET="_top"
+>&#13;	  SPK System Testing Guide
+	</A
+>.
+      </P
+><P
+>&#13;	The information in this guide is essential to individuals and
+	groups participating in the development of the System for
+	Population Kinetics (SPK), an open source project of the 
+	RFPK Laboratory of the Department of Bioengineering of the University of Washington.  RFPK's work
+	is supported, in part, by grant P41 EB-001975
+	of the National Institutes of Health (NIH) of the U.S.
+	Department of Health and Human Services.	
+      </P
+><P
+>&#13;	<A
+HREF="#AEN136"
+>Copyright</A
+> (c) 2004, by the University of Washington.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN10"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN27"
+>Regression Testing</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN37"
+>Client-Side Regression Test</A
+></DT
+><DT
+><A
+HREF="#AEN40"
+>Server-Side Regression Test</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN51"
+>Deploying the Candidate</A
+></DT
+><DT
+><A
+HREF="#AEN56"
+>Publishing Release-Notes</A
+></DT
+><DT
+><A
+HREF="#AEN66"
+>Deploying a Minor Version, Step-by-Step</A
+></DT
+><DT
+><A
+HREF="#AEN136"
+>Copyright Notice</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN10"
+>Introduction</A
+></H2
+><P
+>&#13;      The Resource for Population Kinetics (RFPK), in addition to its roll
+      as an academic research group and the principal developer of 
+      the System for Population Kinetics (SPK), operates a
+      demonstration installation of the software.  This installation
+      runs every day, around the clock, providing  
+      service to selected researchers.  It is a test-bed not only for
+      the software but also the processes that support a 
+      production-quality service.
+    </P
+><P
+>&#13;      In the life-cycle of SPK, deployment is the stage which moves
+      a minor version of the software into production.  The entire
+      process of producing a new minor version is the following:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    Designing, programming and unit-testing an enhancement or
+	    modification.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    System testing, as described in the
+	    <A
+HREF="../system_test/system_test.html"
+TARGET="_top"
+>&#13;	      SPK System Testing Guide
+	    </A
+>.
+	    The output of the system testing phase is a 
+	    <I
+CLASS="emphasis"
+>candidate</I
+> for deployment.
+	  </P
+><P
+>&#13;	    A candidate is <I
+CLASS="emphasis"
+>staged</I
+> for deployment but
+	    is not, in general, deployed immediately.  Candidates 
+	    accumulate according to the rhythm of software development.
+	    Deployment occurs according to an operations schedule.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Deployment, which performs a <I
+CLASS="emphasis"
+>regression test</I
+>
+	    on the most recent candidate and, if the test is successful,
+	    moves the new minor version into production.  The purpose of
+	    the regression test is to insure that the software continues
+	    to run everything correctly that it was able to run before
+	    the change; in other words, that the software has 
+	    <I
+CLASS="emphasis"
+>not</I
+> regressed.
+	  </P
+></LI
+></OL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN27"
+>Regression Testing</A
+></H2
+><P
+>&#13;      As explained in the <A
+HREF="#AEN10"
+>Introduction</A
+>, the purpose
+      of the regression test is to demonstrate that the software has 
+      <I
+CLASS="emphasis"
+>not</I
+> regressed.  The test is run by issuing
+      the command 
+      <A
+HREF="../../ops/utils/rt_script.html"
+TARGET="_top"
+>&#13;	<B
+CLASS="command"
+>regression_test</B
+>
+      </A
+>,
+      which is a shell script that, in turn, calls the perl script
+      <A
+HREF="../../ops/utils/regression_test.html"
+TARGET="_top"
+>&#13;	<B
+CLASS="command"
+>regression_test.pl</B
+>
+      </A
+>.
+      A successful test returns zero as the value of the exit status.
+    </P
+><P
+>&#13;      The regression test consists of two parts, which will now be described.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN37"
+>Client-Side Regression Test</A
+></H3
+><P
+>&#13;	This test has not yet been developed.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN40"
+>Server-Side Regression Test</A
+></H3
+><P
+>&#13;	The server side of SPK goes into action when the client program,
+	known as the MDA, submits a job.  The responsibility of the server
+	side is to process the job and to return results to the client.
+	A regression test for the server side consists, quite naturally,
+	of a set of jobs along with their expected results.  The jobs are
+	run and the results compared with what was anticipated.  If 
+	there are no significant differences, the test is a success.
+	The entire process of extracting the set of selected jobs from the
+	database, of running them, and of comparing results is handled
+	automatically by regression_test.pl
+      </P
+><P
+>&#13;	The jobs to use are specified for regression_test.pl in a configuration
+	file.  Here are some guidelines for selecting jobs:
+	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      Jobs should be good representatives of the sort of jobs that 
+	      scientific researchers create, but they should be selected or
+	      modified so that they do not take very long to run.  As 
+	      new features are added to SPK, the set of jobs in the regression
+	      test increases in size, and so does the quantity of resources
+	      consumed each time the test is run.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Coverage should be strived for. Every computational 
+	      behavior of SPK should be exercised by at least one job.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Jobs which produce errors or fail to converge should be
+	      included, to test that error handling capabilities have not
+	      regressed.
+	    </P
+></LI
+></OL
+>
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN51"
+>Deploying the Candidate</A
+></H2
+><P
+>&#13;      Once the candidate has passed the regression test,
+      the installation of the software on the servers where it is required is 
+      handled automatically by the
+      <A
+HREF="../../ops/utils/deploy_candidate.html"
+TARGET="_top"
+>&#13;	<B
+CLASS="command"
+>deploy_candidate.pl </B
+>
+      </A
+>
+      perl script.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN56"
+>Publishing Release-Notes</A
+></H2
+><P
+>&#13;      As explained in the <A
+HREF="#AEN10"
+>Introduction</A
+>, software
+      engineers develop a sequence of deployment candidates between actual
+      deployments of the software to the production environment.  Each
+      candidate represents a potential minor version.  Each candidate
+      could be one of those that is deployed. 
+    </P
+><P
+>&#13;      Whenever a software engineer stages a candidate, it is her or his
+      responsibility to write a brief set of release-notes describing what
+      changes are included in the candidate.  The software engineer does this
+      by editing a text file that is created, in skeletal form, by 
+      the 
+      <A
+HREF="../../ops/utils/stage_candidate.html"
+TARGET="_top"
+>&#13;	<B
+CLASS="command"
+>stage_candidate.pl </B
+>
+      </A
+>
+      perl script.
+    </P
+><P
+>&#13;      When a candidate is deployed, all of the release-notes files accumulated
+      since the last deployment are concatenated to form the release-notes for
+      the deployed minor version.  This is done automatically by running the
+      <A
+HREF="../../ops/utils/rn_script.html"
+TARGET="_top"
+>&#13;	<B
+CLASS="command"
+>release_notes</B
+>
+      </A
+>
+      shell script.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN66"
+>Deploying a Minor Version, Step-by-Step</A
+></H2
+><P
+>&#13;      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    There must be at least one candidate staged for deployment.
+	    For more details, see the
+	    <A
+HREF="../system_test/system_test.html"
+TARGET="_top"
+>&#13;	      SPK System Testing Guide
+	    </A
+>.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Obtain exclusive use of the test environment, by negotiating
+	    with the other users of this facility.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Prepare for the regression test by logging into 
+	    <I
+CLASS="emphasis"
+>aspkserver</I
+> as root.
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh aspkserver
+su -
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>If the changes to your software require structural 
+	    changes to the database</I
+>, you must have a database modification
+	    script present in the current directory. You will
+	    have already used this script for unit testing and system testing.
+	    An
+	    <A
+HREF="../../howto/rhel3/mysql/mysql.html#example"
+TARGET="_top"
+>&#13;	      example
+	    </A
+>,
+	    in the "MySQL and SPK" howto document, shows how to create such a 
+	    script.
+	  </P
+><P
+>&#13;	    Run the regression test.
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;regression_test
+regression_test --pvm
+regression_test --pvm --parallel
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If the regression test runs successfully, 
+	    <A
+HREF="#after-regress"
+>&#13;	      skip 
+	    </A
+>
+	    to the "After the regresssion test" step.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    The regression test may have failed because of formatting changes 
+	    in the output files.  If you decide that all errors were due to this
+	    cause, run
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;recalibrate_regression.pl
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    and return to step 3.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    The descrepancies for some jobs may have been due to formatting
+	    changes, but others may be due to real errors in the code.
+	    Create a configuration file for calibrate_regression.pl,
+	    which lists only the jobs for which the errors were due 
+	    solely to formatting changes, then run
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;recalibrate_regression.pl --config-file="name-of-file"
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    then proceed to the next step.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If any of the discrepencies were real, they must be corrected,
+	    unit tested, system tested and this procedure repeated
+	    from the beginning.  <I
+CLASS="emphasis"
+>In the meantime, no other candidates 
+	    should be staged.</I
+>
+	  </P
+></LI
+><LI
+><A
+NAME="after-regress"
+></A
+><P
+>&#13;	    <B
+CLASS="command"
+>After the regression test</B
+>,
+	    <I
+CLASS="emphasis"
+>&#13;	      if the modifications being tested do not involve any structural
+	      modification of the database
+	    </I
+>,
+	    <A
+HREF="#deploy"
+>&#13;	      skip
+	    </A
+>
+	    to the "Deploy" step.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Stop the web server,
+	    so that changes to the software and changes to 
+	    the database can be synchronized.
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh webserver
+su -
+/etc/rc.d/init.d/tomprod    stop
+/etc/rc.d/init.d/tomprodssl stop
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><A
+NAME="deploy"
+></A
+><P
+>&#13;	    <B
+CLASS="command"
+>Deploy</B
+> the software to the production environment by running
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;deploy_candidate.pl --prod
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+            Note that without the "--prod" option, the script install the latest candidate into the test environment by default.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If your changes did not require any modification of the database,
+	    <A
+HREF="#publish"
+>&#13;	      skip
+	    </A
+>
+	     to the "Publish" step.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Run your modification script against the <I
+CLASS="emphasis"
+>production</I
+>
+	    database.  Use <B
+CLASS="command"
+>mysql</B
+> to verify the changes.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If this deployment also requires the deployment of a modified
+	    web server application, do that at this time.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Restart the webserver.
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh webserver
+su -
+/etc/rc.d/init.d/tomprod    start
+/etc/rc.d/init.d/tomprodssl start
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    After production has started, but before any additional
+	    testing can occur, <I
+CLASS="emphasis"
+>take_snapshot.pl</I
+>
+	    may have to be modified, especially if the database 
+	    modifications added to the <I
+CLASS="emphasis"
+>job</I
+> table
+	    either a blob field or any field normally NULL at the time
+	    a job is submitted.  
+	    <I
+CLASS="emphasis"
+>Do this before releasing the test environment.</I
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Release the test environment by informing other software developers
+	    that the environment is now free.
+	  </P
+></LI
+><LI
+><A
+NAME="publish"
+></A
+><P
+>&#13;	    <B
+CLASS="command"
+>Publish</B
+> the release notes:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;release_notes
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    This will concatenate the release notes together and copy them to 
+	    the web server.  
+	  </P
+><P
+>&#13;	    To make the web notes accessible, add a url to the software team
+	    web page, by editing the file <TT
+CLASS="filename"
+>index.html</TT
+>
+	    in the svn directory <TT
+CLASS="filename"
+>&#60;YOUR_LOCAL_R2_COPY_ON_ASPKSERVER&#62;/r2/src/web</TT
+>, then 
+	    executing <B
+CLASS="command"
+>make</B
+> in that directory as a root.
+            NOTE that this must be done on Aspkserver due to firewalls.
+	  </P
+></LI
+></OL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN136"
+>Copyright Notice</A
+></H2
+><P
+>&#13;      Copyright (c) 2004, by the University of Washington.
+      This material may be distributed only subject to the terms and conditions 
+      set forth in the Open Publication License, V1.0 or later
+      (the latest version is presently available
+      <A
+HREF="http://www.opencontent.org/openpub/"
+TARGET="_top"
+>here</A
+>.
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

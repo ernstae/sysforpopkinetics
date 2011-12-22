@@ -1,0 +1,119 @@
+<html><head>
+<title>Get Spk Source Code Corresponding to a Job Id Number</title>
+<meta name="description" content="Get Spk Source Code Corresponding to a Job Id Number">
+<meta name="keywords" content=" "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="jobid2source.htm" target="_top">section</a>, <a href="jobid2source_frame1.htm" target="_top">frame</a></div>
+<center><b><big><big>Get Spk Source Code Corresponding to a Job Id Number</big></big></b></center>
+<br>
+<b><big><a name="Description">Description</a></big></b>
+<br>
+The following commands will put the source code corresponding to job number
+<i>JobIdNumber</i> on the machine <code><font color="blue">whitechuck</font></code> and in the directory
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~</span></font></code><i><span style='white-space: nowrap'>UserId</span></i><code><font color="blue"><span style='white-space: nowrap'>/spkruntest-job-</span></font></code><i><span style='white-space: nowrap'>JobIdNumber</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>.
+
+<ol type="1"><li>
+Send an e-mail message with the subject field equal to
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Test&nbsp;environment&nbsp;is&nbsp;in&nbsp;use<br>
+</span>
+</font></code>
+to the following e-mail addresses:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Brad&nbsp;Bell&nbsp;&lt;bradbell@apl.washington.edu&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jiaji&nbsp;Du&nbsp;&lt;jjdu@u.washington.edu&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sachiko&nbsp;Honda&nbsp;&lt;honda99@u.washington.edu&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mitch&nbsp;&lt;watrous@u.washington.edu&gt;<br>
+</span>
+</font></code>
+</li><li>
+Log onto whitechuck and change user to root,
+and make sure that demon is stopped:
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ssh&nbsp;whitechuck<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;su&nbsp;-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>whitechuck-root-password</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd&nbsp;/tmp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/etc/rc.d/init.d/spkcmptestd&nbsp;stop<br>
+</span></font></code></li><li>
+In a separate window, log onto cspk and change user to root,
+and make sure that demon is stopped:
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ssh&nbsp;cspk<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;su&nbsp;-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>cspk-root-password</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd&nbsp;/tmp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/etc/rc.d/init.d/spkruntestd&nbsp;stop<br>
+</span></font></code></li><li>
+In the <code><font color="blue">whitechuck</font></code> window,
+load the test data base with the information for the job of interest
+and start the demon:
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;take_snapshot.pl&nbsp;</span></font></code><i><span style='white-space: nowrap'>JobIdNumber</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;load_spktest.pl<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/etc/rc.d/init.d/spkcmptestd&nbsp;start<br>
+</span></font></code></li><li>
+In the <code><font color="blue">cspk</font></code> window,
+start the demon:
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/etc/rc.d/init.d/spkruntestd&nbsp;start<br>
+</span></font></code></li><li>
+In the <code><font color="blue">whitechuck</font></code> window,
+make sure the demons are done by executing the command
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mysql&nbsp;-utester&nbsp;-ptester&nbsp;spktest<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;select&nbsp;job_id,&nbsp;abstract,&nbsp;state_code,&nbsp;end_code&nbsp;from&nbsp;job;<br>
+</span></font></code>The state code should be either 
+<code><font color="blue">q2c</font></code>, <code><font color="blue">q2r</font></code>, <code><font color="blue">run</font></code>, or <code><font color="blue">end</font></code>.
+If it is not yet <code><font color="blue">end</font></code>, 
+repeat the second command until it is <code><font color="blue">end</font></code>.
+
+</li><li>
+
+In the <code><font color="blue">whitechuck</font></code> window,
+quit <code><font color="blue">mysql</font></code> and
+copy the resulting source code directory to your home directory.
+Then change the owner of the directory,
+stop the demon, 
+and terminate log in as root:
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;quit<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scp&nbsp;-r&nbsp;cspk:/tmp/spkruntest-job-</span></font></code><i><span style='white-space: nowrap'>JobIdNumber</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;~</span></font></code><i><span style='white-space: nowrap'>UserId</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;chown&nbsp;</span></font></code><i><span style='white-space: nowrap'>UserId</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;~</span></font></code><i><span style='white-space: nowrap'>UserId</span></i><code><font color="blue"><span style='white-space: nowrap'>/spkruntest-job-</span></font></code><i><span style='white-space: nowrap'>JobIdNumber</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;chown&nbsp;</span></font></code><i><span style='white-space: nowrap'>UserId</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;~</span></font></code><i><span style='white-space: nowrap'>UserId</span></i><code><font color="blue"><span style='white-space: nowrap'>/spkruntest-job-</span></font></code><i><span style='white-space: nowrap'>JobIdNumber</span></i><code><font color="blue"><span style='white-space: nowrap'>/*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/etc/rc.d/init.d/spkcmptestd&nbsp;stop<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit<br>
+</span></font></code></li><li>
+In the <code><font color="blue">cspk</font></code> window,
+stop the demon and terminate log in as root: 
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/etc/rc.d/init.d/spkruntestd&nbsp;stop<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exit<br>
+</span></font></code></li><li>
+Send an e-mail message with the subject field equal to
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Test&nbsp;environment&nbsp;is&nbsp;free<br>
+</span>
+</font></code>
+to the following e-mail addresses:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Brad&nbsp;Bell&nbsp;&lt;bradbell@apl.washington.edu&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jiaji&nbsp;Du&nbsp;&lt;jjdu@u.washington.edu&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sachiko&nbsp;Honda&nbsp;&lt;honda99@u.washington.edu&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mitch&nbsp;&lt;watrous@u.washington.edu&gt;<br>
+</span>
+</font></code>
+</li></ol>
+
+</body>
+</html>

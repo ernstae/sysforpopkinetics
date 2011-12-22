@@ -1,0 +1,500 @@
+<html><head>
+<title>The Parametric Population Objective Function</title>
+<meta name="description" id="description" content="The Parametric Population Objective Function">
+<meta name="keywords" id="keywords" content=" ltilde parametric population objective function "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="ltilde.htm" target="_top">section</a>, <a href="ltilde_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+  </i>
+  </center><code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></code>
+  <b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Evaluates the modified Laplace as defined in the reference
+  <i>
+  Approximating The Maximum Likelihood Estimate For Models With Random Parameter
+  </i>.
+
+  <br>
+<br>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+Upon a successful completion, the function returns normally and
+  set the given output value place holders to the result values (ones that are requested).
+  If a failure occurs during the evaluation, a <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>exception</span></a>
+ may be
+  thrown.  The state at which an exception is thrown is defined in
+  <a href="glossary_frame1.htm#Exception Handling Policy" target="frame1"><i><span style='white-space: nowrap'>Exception&nbsp;Handling&nbsp;Policy</span></i></a>
+.
+
+  <br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+<br>
+The return value of <code><font color="blue">lTilde</font></code> is true if it succeeds and false otherwise.
+  <code><span style='white-space: nowrap'><i>false</i></span></code> indicates no guarantees on any output values.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>isMultiProcessed</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  A boolean flag indicating a mode SPK would run.  
+  True indicates the parallel processing mode.  False indicates the
+  single-machine, single-process mode.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  This function expects <i>model</i> to be a function of
+  all three parameters: <code><span style='white-space: nowrap'><i>alp</i></span></code>, <code><span style='white-space: nowrap'><i>b</i></span></code> and <code><span style='white-space: nowrap'><i>i</i></span></code>.
+  Refer <a href="glossary_frame1.htm#Model Functions Depend on i - alp - b" target="frame1"><i><span style='white-space: nowrap'>Model&nbsp;Functions&nbsp;Depend&nbsp;on&nbsp;i&nbsp;-&nbsp;alp&nbsp;-&nbsp;b</span></i></a>
+
+  for details.
+  <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></code>
+  When <i>whichObjective</i> is specified <code><font color="blue">NAIVE_FIRST_ORDER</font></code>, <i>model</i> must
+  be an object of <a href="naivefomodel.htm" target="_top"><span style='white-space: nowrap'>NaiveFoModel</span></a>
+ which is a subclass of <a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>whichObjective</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  This value indicates the type of objective to be computed.
+  All the objectives defined in the <a href="objective.htm" target="_top"><span style='white-space: nowrap'>Objective</span></a>
+ enumulator
+  <b>except for <code><font color="blue">FIRST_ORDER</font></code> </b> which specifies the version of FO
+  that treats a population problem as a big individual problem are legal.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>y_forAll</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  A column vector that stores all subjects' data.  The dimension must equal to
+  the sum of all numbers in <i>num_data_forEach</i> vector.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>num_data_forEach</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  A column vector that stores the number of each subject's data values.  The dimension
+  , therefore, must equal to the number of subjects in the population.
+  <code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;<i>T</i><br>
+&nbsp;&nbsp;<i>y</i>_1&nbsp;=&nbsp;[<i>y</i>(1),&nbsp;<i>y</i>(2),&nbsp;...&nbsp;,&nbsp;<i>y</i>(<i>N</i>(1))&nbsp;]<br>
+&nbsp;&nbsp;</span></code>
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>optimizer</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  This <a href="optimizer.htm" target="_top"><span style='white-space: nowrap'>Optimizer</span></a>
+ class object has three attributes.  
+  These attributes are parameters of the optimizer used in the individual 
+  level optimization.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>alp</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  A column vector <i>alp</i>
+  specifies a value for the fixed population parameter vector.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>bLow</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  A column vector <i>bLow</i>
+  specifies the lower limit for the parameter vector 
+  <code><span style='white-space: nowrap'><i>b</i></span></code> during the optimization procedure.
+  All the elements of this vector must be less than or equal zero.
+  The dimension of <i>bLow</i> must equal to the row dimension of
+  <i>bIn_forAll</i>.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>bUp</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  A column vector <i>bUp</i>
+  specifies the upper limit for the parameter vector 
+  <code><span style='white-space: nowrap'><i>b</i></span></code> during the optimization procedure.
+  All the elements of this vector must be greater than or equal zero.
+  The dimension of <i>bUp</i> must equal to the row dimension of
+  <i>bIn_forAll</i>.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>bStep</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  A column vector <i>bStep</i>
+  specifies the step size used for approximating
+  the derivatives with respect to the random population parameters.
+  The dimension of <i>bStep</i> must equal to the row dimension of
+  <i>bIn_forAll</i>.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>bIn_forAll</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  The Laplace objective requires determination
+  of the optimal random population parameters that correspond to the 
+  current value of <i>alp</i>.
+  The double-precision matrix <i>bIn</i>
+  specifies the initial value for the search for
+  the optimal random population parameter vectors.
+  The <i>i</i>-th column of <i>bIn</i> corresponds to the <i>i</i>-th individual.
+  Each column of <i>bIn_forAll</i> corresponds to each patient's initial estimate.
+  Therefore, the column dimension is equal to the number of patients in the population and
+  the row dimension is equal to the number of random parameters.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>bOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  the output value <i>bOut</i>
+  is a matrix with the same type and dimension as <i>bIn</i>.
+  When user passes a matrix with right dimensions, 
+  the <i>i</i>-th column of the matrix will contain
+  the optimal random population parameters that correspond to the 
+  <i>i</i>-th individual and the current value of <i>alp</i>.
+  <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></code>
+  If <i>bOut</i> is specified null, <i>bOut</i> remains null.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>LTildeOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  is
+  the output value <i>LTildeOut</i> is a double-precision scalar that contains
+  the value of the objective function.
+  <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></code>
+  If <i>LTildeOut</i> is specified null, no computation is performed and
+  <i>LTildeOut</i> remains null.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>drowLTilde_alpOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  the output value <i>drowLTilde_alpOut</i> is a row vector that is equal to
+  the derivative of the objective function w.r.t. <code><span style='white-space: nowrap'><i>alp</i></span></code>.
+  The dimension must be equal to the number of <code><span style='white-space: nowrap'><i>alp</i></span></code> parameters.
+  If null is specified, null is returned.
+  <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></code>
+  If <i>drowLTilde_alpOut</i> is specified null, no computation is performed and
+  <i>LTilde_alpOut</i> remains null.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>dmatLambdaTilde_alpOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  If <i>dmatLambdaTilde_alpOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+  <code><font color="blue">DoubleMatrix</font></code> object pointed to by <i>dmatLambdaTilde_alpOut</i> 
+  must be declared in the function that calls this function, and its number of columns
+  must be equal to the number of individuals and its number of rows must be equal to 
+  the length of the population parameter vector <code><span style='white-space: nowrap'><i>alp</i></span></code>.  If <i>
+  dmatLambdaTilde_alpOut</i> is not <code><font color="blue">NULL</font></code> and this function completed successfully, then 
+  the <code><font color="blue">DoubleMatrix</font></code> object pointed to by <i>dmatLambdaTilde_alpOut</i> 
+  will contain the derivatives of <b>individual</b> objectives with respect to <code><span style='white-space: nowrap'><i>alp</i></span></code> 
+  evaluated at <i>alp</i>.  Each column of the matrix is the derivative for that 
+  individual with the index being equal to the row number.  Otherwise, this function will 
+  not attempt to change the contents of the <code><font color="blue">DoubleMatrix</font></code> object pointed to by 
+  <i>dmatLambdaTilde_alpOut</i>.  The default value of <i>dmatLambdaTilde_alpOut</i> is 
+  <code><font color="blue">NULL</font></code>.
+
+  <br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+Suppose that there are two subjects and for each subject
+  <code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;/&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;\<br>
+&nbsp;&nbsp;<i>R</i>_<i>i</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>)&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;/<br>
+<br>
+&nbsp;&nbsp;/&nbsp;<i>b</i>&nbsp;\<br>
+&nbsp;&nbsp;<i>f</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)&nbsp;&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;/<br>
+<br>
+&nbsp;&nbsp;/&nbsp;1&nbsp;\<br>
+&nbsp;&nbsp;<i>y</i>_<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;1&nbsp;/<br>
+<br>
+&nbsp;&nbsp;<i>D</i>(<i>alp</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;<i>alp</i><br>
+&nbsp;&nbsp;</span></code>
+  It follows that
+  <code><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<i>Lambda</i>_<i>i</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>)&nbsp;=&nbsp;(1/2)&nbsp;#<i>log</i>{8&nbsp;#<i>pi</i>^2}&nbsp;&nbsp;&nbsp;+&nbsp;(3/4)(1&nbsp;-&nbsp;<i>b</i>)^2<br>
+&nbsp;&nbsp;+&nbsp;(1/2)&nbsp;#<i>log</i>{2&nbsp;#<i>pi</i>&nbsp;<i>alp</i>}&nbsp;+&nbsp;(1/2)&nbsp;<i>b</i>^2&nbsp;/&nbsp;<i>alp</i><br>
+&nbsp;&nbsp;</span></code>
+  It follows that the Hessian of <code><span style='white-space: nowrap'><i>Lambda</i>_<i>i</i>&nbsp;(<i>alp</i>,&nbsp;<i>b</i>)</span></code>
+  with respect to <code><span style='white-space: nowrap'><i>b</i></span></code> is
+  <code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;3&nbsp;/&nbsp;2&nbsp;+&nbsp;1&nbsp;/&nbsp;<i>alp</i><br>
+&nbsp;&nbsp;</span></code>
+  In addition, the optimal value of <code><span style='white-space: nowrap'><i>b</i></span></code> solves the equation
+  <code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;=&nbsp;-2&nbsp;(3/4)(1&nbsp;-&nbsp;<i>b</i>)&nbsp;+&nbsp;&nbsp;<i>b</i>&nbsp;/&nbsp;<i>alp</i><br>
+&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;=&nbsp;1&nbsp;-&nbsp;<i>b</i>&nbsp;-&nbsp;2&nbsp;<i>b</i>&nbsp;/&nbsp;(3&nbsp;<i>alp</i>)<br>
+&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;=&nbsp;[1&nbsp;+&nbsp;2&nbsp;/&nbsp;(3&nbsp;<i>alp</i>)]&nbsp;<i>b</i><br>
+&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;&nbsp;=&nbsp;3&nbsp;<i>alp</i>&nbsp;/&nbsp;(3&nbsp;<i>alp</i>&nbsp;+&nbsp;2)<br>
+<br>
+&nbsp;&nbsp;</span></code>
+
+  Note that in this example,
+  the model function is linear,
+  and the data variance does not depend on the random effects.
+  Thus the three objective functions (laplace, expected hessian, fo) 
+  actually have the same value.
+  <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></code>
+  If you compile, link, and run the following program:
+  <code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&lt;iomanip&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;SpkValarray.h&quot;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;Optimizer.h&quot;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;SpkModel.h&quot;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;lTilde.h&quot;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;Objective.h&quot;<br>
+<br>
+&nbsp;&nbsp;class&nbsp;UserModel&nbsp;:&nbsp;public&nbsp;SpkModel&lt;double&gt;<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;_alp,&nbsp;_b;<br>
+&nbsp;&nbsp;int&nbsp;_i;<br>
+&nbsp;&nbsp;public:<br>
+&nbsp;&nbsp;UserModel(){}&nbsp;&nbsp;<br>
+&nbsp;&nbsp;~UserModel(){}<br>
+&nbsp;&nbsp;private:<br>
+&nbsp;&nbsp;void&nbsp;doSelectIndividual(int&nbsp;i)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;_i&nbsp;=&nbsp;i;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;void&nbsp;doSetPopPar(const&nbsp;valarray&lt;double&gt;&amp;&nbsp;alp)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;In&nbsp;this&nbsp;example,&nbsp;alp&nbsp;is&nbsp;a&nbsp;single&nbsp;element&nbsp;vector.<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;alp&nbsp;=&nbsp;[&nbsp;alp(1)&nbsp;]<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;assert(&nbsp;alp.size()&nbsp;==&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;_alp&nbsp;=&nbsp;alp;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;void&nbsp;doSetIndPar(const&nbsp;valarray&lt;double&gt;&amp;&nbsp;b)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;In&nbsp;this&nbsp;example,&nbsp;b&nbsp;is&nbsp;a&nbsp;single&nbsp;element&nbsp;vector.<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;b&nbsp;=&nbsp;[&nbsp;b(1)&nbsp;]<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;assert(&nbsp;b.size()&nbsp;==&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;_b&nbsp;=&nbsp;b;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;void&nbsp;doIndParVariance(&nbsp;valarray&lt;double&gt;&amp;&nbsp;DOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;D(alp)&nbsp;=&nbsp;alp<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[&nbsp;alp(1)&nbsp;]<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;DOut&nbsp;=&nbsp;_alp;<br>
+<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;bool&nbsp;doIndParVariance_popPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;D_alpOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;D(alp)_alp&nbsp;=&nbsp;[&nbsp;1&nbsp;];<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;D_alpOut.resize(1);<br>
+&nbsp;&nbsp;D_alpOut&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;void&nbsp;doDataMean(&nbsp;valarray&lt;double&gt;&amp;&nbsp;fOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;f(alp,b)&nbsp;=&nbsp;[&nbsp;b(1)&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;b(1)&nbsp;]<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;fOut.resize(&nbsp;2&nbsp;);<br>
+&nbsp;&nbsp;fOut&nbsp;=&nbsp;_b[0];<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;bool&nbsp;doDataMean_popPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;f_alpOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;f(alp,b)_alp&nbsp;=&nbsp;[&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;f_alpOut.resize(&nbsp;2&nbsp;);<br>
+&nbsp;&nbsp;f_alpOut&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;bool&nbsp;doDataMean_indPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;f_bOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;f(alp,b)_b&nbsp;=&nbsp;[&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;f_bOut.resize(&nbsp;2&nbsp;);<br>
+&nbsp;&nbsp;f_bOut&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;void&nbsp;doDataVariance(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ROut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;R(alp,b)&nbsp;=&nbsp;[&nbsp;1&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;2&nbsp;]<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;ROut.resize(&nbsp;4&nbsp;);<br>
+&nbsp;&nbsp;ROut[0]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;ROut[1]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;ROut[2]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;ROut[3]&nbsp;=&nbsp;2.0;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;bool&nbsp;doDataVariance_popPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;R_alpOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;R(alp,b)_alp&nbsp;=&nbsp;[&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;R_alpOut.resize(&nbsp;4&nbsp;);<br>
+&nbsp;&nbsp;R_alpOut&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;bool&nbsp;doDataVariance_indPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;R_bOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;R(alp,b)_b&nbsp;&nbsp;&nbsp;=&nbsp;[&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;R_bOut.resize(&nbsp;4&nbsp;);<br>
+&nbsp;&nbsp;R_bOut&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;};<br>
+<br>
+&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;setiosflags(ios::scientific)&nbsp;&lt;&lt;&nbsp;setprecision(15);<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;lTildeTest&nbsp;begins&nbsp;(no&nbsp;message&nbsp;will&nbsp;be&nbsp;generated&nbsp;unless&nbsp;encounters&nbsp;an&nbsp;error.&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;const&nbsp;int&nbsp;numIndividuals&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;UserModel&nbsp;model;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;set&nbsp;individuals'&nbsp;data&nbsp;to:<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;y(4,1);<br>
+&nbsp;&nbsp;y.fill(1);&nbsp;&nbsp;&nbsp;&nbsp;<br>
+<br>
+&nbsp;&nbsp;//&nbsp;set&nbsp;the&nbsp;vector&nbsp;containing&nbsp;the&nbsp;number&nbsp;of&nbsp;parameters&nbsp;for&nbsp;each&nbsp;individual's&nbsp;data.<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;NOTE:&nbsp;this&nbsp;reads&nbsp;the&nbsp;first&nbsp;two&nbsp;elements&nbsp;of&nbsp;y&nbsp;are&nbsp;for&nbsp;the&nbsp;1st&nbsp;patient&nbsp;and<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;next&nbsp;two&nbsp;elements&nbsp;(3-4)&nbsp;of&nbsp;y&nbsp;are&nbsp;for&nbsp;the&nbsp;2nd&nbsp;patient.<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;N(2,1);<br>
+&nbsp;&nbsp;N.fill(2);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;set&nbsp;up&nbsp;optimizer<br>
+&nbsp;&nbsp;double&nbsp;eps&nbsp;=&nbsp;1e-5;<br>
+&nbsp;&nbsp;int&nbsp;mitr&nbsp;=&nbsp;40;<br>
+&nbsp;&nbsp;int&nbsp;level&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;Optimizer&nbsp;optimizer(eps,&nbsp;mitr,&nbsp;level);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;set&nbsp;alp&nbsp;to:<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;2.1&nbsp;]<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;alp(1,1);<br>
+&nbsp;&nbsp;alp.fill(2.1);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;set&nbsp;bIn&nbsp;to:<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;bIn(1,2);<br>
+&nbsp;&nbsp;bIn.fill(0);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;set&nbsp;bLow&nbsp;to:<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;-2&nbsp;]<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;bLow(1,1);<br>
+&nbsp;&nbsp;bLow.fill(-2);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;set&nbsp;bUp&nbsp;to:<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;+2&nbsp;]<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;bUp(1,1);<br>
+&nbsp;&nbsp;bUp.fill(2);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;set&nbsp;bStep&nbsp;to:<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;[&nbsp;1e-2&nbsp;]<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;bStep(1,1);<br>
+&nbsp;&nbsp;bStep.fill(1e-2);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;allocate&nbsp;bOut<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;bOut(1,1);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;allocate&nbsp;lTildeOut<br>
+&nbsp;&nbsp;double&nbsp;lTildeOut&nbsp;=&nbsp;0.0;<br>
+<br>
+&nbsp;&nbsp;//&nbsp;allocate&nbsp;lTilde_alpOut<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;lTilde_alpOut(1,1);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;set&nbsp;a&nbsp;flag&nbsp;in&nbsp;order&nbsp;to&nbsp;request&nbsp;the&nbsp;parallel&nbsp;processing.<br>
+&nbsp;&nbsp;bool&nbsp;isMultiProcessed&nbsp;=&nbsp;true;<br>
+<br>
+&nbsp;&nbsp;try{<br>
+&nbsp;&nbsp;lTilde(isMultiProcessed,&nbsp;model,&nbsp;MODIFIED_LAPLACE,&nbsp;y,&nbsp;N,&nbsp;optimizer,<br>
+&nbsp;&nbsp;alp,&nbsp;bLow,&nbsp;bUp,&nbsp;bStep,&nbsp;bIn,&nbsp;&amp;bOut,&nbsp;&amp;lTildeOut,&nbsp;&amp;lTilde_alpOut);<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;catch(...)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;cerr&nbsp;&lt;&lt;&nbsp;&quot;lTilde&nbsp;failed&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;abort();<br>
+&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;bOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;bOut.print();<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;lTildeOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;lTilde&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;lTilde_alpOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;lTilde_alpOut.print();<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;return;<br>
+&nbsp;&nbsp;}<br>
+<br>
+<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+  <code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;Node&nbsp;is&nbsp;running.<br>
+<br>
+&nbsp;&nbsp;bOut&nbsp;=<br>
+&nbsp;&nbsp;[7.590361445783129e-001,&nbsp;7.590361445783129e-001]<br>
+<br>
+&nbsp;&nbsp;lTildeOut&nbsp;=&nbsp;6.153455430753459e+000<br>
+<br>
+&nbsp;&nbsp;lTilde_alpOut&nbsp;=<br>
+&nbsp;&nbsp;[2.308027289881899e-001]<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/lTilde.cpp
+
+</body>
+</html>

@@ -1,0 +1,1237 @@
+<html><head>
+<title>Optimizing the Parametric Population Objective Functions</title>
+<meta name="description" id="description" content="Optimizing the Parametric Population Objective Functions">
+<meta name="keywords" id="keywords" content=" ppkaopt optimizing parametric population objective "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="ppkaopt.htm" target="_top">section</a>, <a href="ppkaopt_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Minimizes one of the parametric population objective functions:  
+the modified Laplace, the modified Expected Hessian, or the 
+modified First Order.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>To be specific, this function solves the problem 
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;minimize&nbsp;<i>LTilde</i>(<i>alp</i>)&nbsp;with&nbsp;respect&nbsp;to&nbsp;<i>alp</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;subject&nbsp;to&nbsp;<i>alpLow</i>&nbsp;<u>&lt;</u>&nbsp;<i>alp</i>&nbsp;<u>&lt;</u>&nbsp;<i>alpUp</i>&nbsp;&nbsp;,<br>
+<br>
+</span></code>where <code><span style='white-space: nowrap'><i>LTilde</i>(<i>alp</i>)</span></code> is one of the above 
+objective functions.
+Each of these objectives is the negative log of a different 
+approximation for the likelihood of all of the individuals' data.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The parametric population objective function for a population 
+of <code><span style='white-space: nowrap'><i>M</i></span></code> individuals is defined as 
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>M</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;----<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>LTilde</i>(<i>alp</i>)&nbsp;=&nbsp;&nbsp;&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>LTilde</i>_<i>i</i>(<i>alp</i>)&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;----<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;=&nbsp;1<br>
+</span></code>where the negative log-likelihood of the <i>i</i>-th individual's 
+data <code><span style='white-space: nowrap'><i>y</i>_<i>i</i></span></code> is defined as
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>LTilde</i>_<i>i</i>(<i>alp</i>)&nbsp;=&nbsp;-&nbsp;logdet[&nbsp;<i>HTilde</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>bTilde</i>_<i>i</i>)&nbsp;/&nbsp;(2pi)&nbsp;]&nbsp;+&nbsp;<i>Lambda</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>bHat</i>_<i>i</i>)&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+<br>
+</span></code>the joint negative log-likelihood of <code><span style='white-space: nowrap'><i>y</i>_<i>i</i></span></code> and 
+the random population parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code> is defined as
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>Lambda</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)&nbsp;=&nbsp;-&nbsp;logdet[&nbsp;2&nbsp;pi&nbsp;<i>R</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)&nbsp;]&nbsp;+&nbsp;-&nbsp;[<i>y</i>_<i>i</i>&nbsp;-&nbsp;<i>f</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)]&nbsp;&nbsp;<i>R</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)&nbsp;&nbsp;&nbsp;[<i>y</i>_<i>i</i>&nbsp;-&nbsp;<i>f</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;-&nbsp;logdet[&nbsp;2&nbsp;pi&nbsp;<i>D</i>(<i>alp</i>)&nbsp;]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;-&nbsp;<i>b</i>&nbsp;&nbsp;<i>D</i>(<i>alp</i>)&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2<br>
+<br>
+</span></code>and the form of <code><span style='white-space: nowrap'><i>HTilde</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> depends on the 
+particular parametric population objective function.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The random population parameter vector <code><span style='white-space: nowrap'><i>bHat</i>_<i>i</i></span></code> is the true 
+minimizer of <code><span style='white-space: nowrap'><i>Lambda</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>b</i></span></code>. 
+The random population parameter vector <code><span style='white-space: nowrap'><i>bTilde</i>_<i>i</i></span></code>, on the other
+hand, is the point where the approximate projected 
+gradient of <code><span style='white-space: nowrap'><i>Lambda</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>b</i></span></code> is zero. 
+The approximate projected gradient replaces the gradient by its 
+central difference approximate in the definition of the projected
+gradient.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>For the case of the modified Laplace objective function,
+<code><span style='white-space: nowrap'><i>HTilde</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> is the finite difference approximation 
+for the Hessian of <code><span style='white-space: nowrap'><i>Lambda</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> with respect 
+to <code><span style='white-space: nowrap'><i>b</i></span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>For the case of the modified Expected Hessian objective function,
+<code><span style='white-space: nowrap'><i>HTilde</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> is the expected value of the Hessian of 
+<code><span style='white-space: nowrap'><i>Lambda</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>b</i></span></code>, where  
+the derivatives with respect to <code><span style='white-space: nowrap'><i>b</i></span></code> are replaced 
+by their finite difference approximations.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>(The above equations use
+<a href="glossary_frame1.htm#Population Notation" target="frame1"><i><span style='white-space: nowrap'>population&nbsp;notation</span></i></a>
+.)
+
+<br>
+<br>
+<b><big><a name="Reference" id="Reference">Reference</a></big></b>
+<br>
+B. M. Bell, <i>Approximating The Marginal Likelihood Estimate 
+For Models With Random Parameters</i>, Applied Mathematics and Computation, 
+Accepted 1999. 
+
+<br>
+<br>
+<b><big><a name="Model Assumptions" id="Model Assumptions">Model Assumptions</a></big></b>
+<br>
+The following model assumptions are stated using 
+<a href="glossary_frame1.htm#Population Notation" target="frame1"><i><span style='white-space: nowrap'>population&nbsp;notation</span></i></a>
+.
+The bar above <code><span style='white-space: nowrap'><i>alp</i></span></code> and <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code> denote the true, but unknown,
+values for the fixed population parameters and the random population parameters
+for the <i>i</i>-th individual, respectively.
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___&nbsp;&nbsp;&nbsp;___<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>y</i>_<i>i</i>&nbsp;=&nbsp;<i>f</i>_<i>i</i>(&nbsp;<i>alp</i>&nbsp;,&nbsp;<i>b</i>_<i>i</i>&nbsp;)&nbsp;+&nbsp;<i>e</i>_<i>i</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___&nbsp;&nbsp;___<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>e</i>_<i>i</i>&nbsp;~&nbsp;<i>N</i>[0,&nbsp;<i>R</i>_<i>i</i>(&nbsp;<i>alp</i>,&nbsp;<i>b</i>_<i>i</i>)]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;___&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>_<i>i</i>&nbsp;~&nbsp;<i>N</i>[0,&nbsp;<i>D</i>(<i>alp</i>)]<br>
+</span></code><br>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+Upon a successful completion, the function returns normally and
+set the given output value place holders if it is able to 
+obtain an acceptable estimate for <code><span style='white-space: nowrap'><i>alpHat</i></span></code>, the true minimizer
+of <code><span style='white-space: nowrap'><i>LTilde</i>(<i>alp</i>)</span></code>, within a specified number of iterations. 
+In order for an acceptable estimate for <code><span style='white-space: nowrap'><i>alpHat</i></span></code> to be 
+found, acceptable sets of values must also be found for <code><span style='white-space: nowrap'><i>bHat</i>_<i>i</i></span></code> 
+and <code><span style='white-space: nowrap'><i>bTilde</i>_<i>i</i></span></code> that are calculated using the estimate for 
+<code><span style='white-space: nowrap'><i>alpHat</i></span></code>.  The case that too-many-iter occurred during 
+the optimization process is not a successful completion. 
+If a failure occurs during the evaluation, a SpkException object is
+thrown.  The state at which an exception is thrown is defined in
+<a href="glossary_frame1.htm#Exception Handling Policy" target="frame1"><i><span style='white-space: nowrap'>Exception&nbsp;Handling&nbsp;Policy</span></i></a>
+.
+
+<br>
+<br>
+<b><big><a name="Note" id="Note">Note</a></big></b>
+<br>
+The number of individuals in the population, <code><span style='white-space: nowrap'><i>M</i></span></code>, is
+specified by the number of rows in the argument <i>dvecN</i>,
+which is a column vector containing the number of data elements 
+for each individual.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The length of the fixed population parameter vector <code><span style='white-space: nowrap'><i>alp</i></span></code> is 
+specified by the number of rows in the argument <i>dvecAlpIn</i>, 
+which is a column vector containing the initial value for <code><span style='white-space: nowrap'><i>alp</i></span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The length of the random population parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code> is 
+specified by the number of rows in the argument <i>dmatBIn</i>, 
+which is a matrix containing the initial values for <code><span style='white-space: nowrap'><i>b</i></span></code> for
+each of the individuals in the population.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This function expects <i>model</i> to be a function of
+all three parameters: <code><span style='white-space: nowrap'><i>alp</i></span></code>, <code><span style='white-space: nowrap'><i>b</i></span></code> and <code><span style='white-space: nowrap'><i>i</i></span></code>.
+Refer <a href="glossary_frame1.htm#Model Functions Depend on i - alp - b" target="frame1"><i><span style='white-space: nowrap'>Model&nbsp;Functions&nbsp;Depend&nbsp;on&nbsp;i&nbsp;-&nbsp;alp&nbsp;-&nbsp;b</span></i></a>
+
+for details.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>When <i>whichObjective</i> is specified <code><font color="blue">NAIVE_FIRST_ORDER</font></code>, <i>model</i> must
+be an object of <a href="naivefomodel.htm" target="_top"><span style='white-space: nowrap'>NaiveFoModel</span></a>
+ which is a subclass of <a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+.
+
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>objective</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This enumulator specifies which parametric population objective 
+function will be minimized:  the modified Laplace, the modified 
+Expected Hessian, or the modified First Order.
+The allowed values for <i>objective</i> are defined in 
+the header of <a href="objective.htm" target="_top"><span style='white-space: nowrap'>Objective</span></a>
+.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecN</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecN</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>N</i></span></code>.  
+The <i>i</i>-th element of <code><span style='white-space: nowrap'><i>N</i></span></code>
+specifies the number of elements of <code><span style='white-space: nowrap'><i>y</i></span></code> that
+correspond to the <i>i</i>-th individual.
+Note that the length of <i>dvecN</i> specifies the number of 
+individuals in the population, <code><span style='white-space: nowrap'><i>M</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecY</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecY</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>y</i></span></code>, which specifies the data for all the individuals.
+The vector <code><span style='white-space: nowrap'><i>y</i></span></code> has
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>N</i>(1)&nbsp;+&nbsp;<i>N</i>(2)&nbsp;+&nbsp;...&nbsp;+&nbsp;<i>N</i>(<i>M</i>)<br>
+</span></code>elements where <code><span style='white-space: nowrap'><i>M</i></span></code> is the number of rows in <code><span style='white-space: nowrap'><i>N</i></span></code>.
+The data vector corresponding to the first individual is
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>y</i>_1&nbsp;=&nbsp;[&nbsp;<i>y</i>(1)&nbsp;,&nbsp;<i>y</i>(2)&nbsp;,&nbsp;...&nbsp;,&nbsp;<i>y</i>(<i>N</i>(1))&nbsp;]<br>
+</span></code>Elements <code><span style='white-space: nowrap'><i>y</i>(<i>N</i>(1)&nbsp;+&nbsp;1)</span></code> through <code><span style='white-space: nowrap'><i>y</i>(<i>N</i>(1)&nbsp;+&nbsp;<i>N</i>(2))</span></code> 
+correspond to the second individual and so on.
+(Note that <code><span style='white-space: nowrap'><i>y</i>_1</span></code> refers to the first subvector or <code><span style='white-space: nowrap'><i>y</i></span></code> while
+<code><span style='white-space: nowrap'><i>y</i>(1)</span></code> refers to the first element of the vector <code><span style='white-space: nowrap'><i>y</i></span></code>.)
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popOptimizer</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This <a href="optimizer.htm" target="_top"><span style='white-space: nowrap'>Optimizer</span></a>
+ object contains the information 
+that controls the population level optimization process.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>It has attributes for holding the optimization state information 
+that is required to perform a warm start, i.e., to start the
+optimization process using a previous set of optimization state
+information.
+If a warm start is being performed, then before this function is 
+called the optimization state information must be set.
+This information may have been set during a previous call to this
+function, or the information may be set directly using the
+Optimizer class member function, setStateInfo().
+Note that the upper and lower bounds for <code><span style='white-space: nowrap'><i>alp</i></span></code> must be the 
+same as they were during the earlier call to this function.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Most of the optimizer information is accessible directly via public
+get functions, e.g., the value epsilon is returned by the Optimizer 
+class function <code><font color="blue">getEpsilon()</font></code>.  
+The following subsections specify how this function uses 
+some of the elements of the Optimizer object that are accessed 
+directly using get functions.
+
+<br>
+<br>
+<b><a name="Arguments.popOptimizer.optInfo.epsilon" id="Arguments.popOptimizer.optInfo.epsilon">popOptimizer.optInfo.epsilon</a></b>
+<br>
+This real number is used to specify the convergence criteria
+for the optimizer.
+It must be greater than <code><span style='white-space: nowrap'>0.0</span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>A population parameter value <code><span style='white-space: nowrap'><i>alpOut</i></span></code> is accepted as an estimate for 
+<code><span style='white-space: nowrap'><i>alpHat</i></span></code> if 
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>abs</i>(&nbsp;<i>alpOut</i>&nbsp;-&nbsp;<i>alpHat</i>&nbsp;)&nbsp;<u>&lt;</u>&nbsp;<i>epsilon</i>&nbsp;(&nbsp;<i>alpUp</i>&nbsp;-&nbsp;<i>alpLow</i>&nbsp;)&nbsp;&nbsp;,<br>
+</span></code>where <code><span style='white-space: nowrap'><i>abs</i></span></code> is the element-by-element absolute value function
+and <code><span style='white-space: nowrap'><i>alpHat</i></span></code> is a local minimizer of the parametric population 
+objective function.
+Since <code><span style='white-space: nowrap'><i>alpHat</i></span></code> is unknown, this function estimates the left hand
+side of this inequality in a way that is a good approximation when 
+the Hessian of the objective function is positive definite.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Note that if <i>nMaxIter</i> is set to zero, then <code><span style='white-space: nowrap'><i>alpIn</i></span></code> is 
+accepted as the estimate for <code><span style='white-space: nowrap'><i>alpHat</i></span></code>.
+
+<br>
+<br>
+<b><a name="Arguments.popOptimizer.optInfo.nMaxIter" id="Arguments.popOptimizer.optInfo.nMaxIter">popOptimizer.optInfo.nMaxIter</a></b>
+<br>
+This integer must be greater than or equal to zero.
+It specifies the maximum number of 
+iterations to attempt before giving up on convergence.
+If it is equal to zero, then the initial
+value for <code><span style='white-space: nowrap'><i>alp</i></span></code> is accepted as the final value, and any requested output
+values are evaluated at that final value.
+
+<br>
+<br>
+<b><a name="Arguments.popOptimizer.optInfo.traceLevel" id="Arguments.popOptimizer.optInfo.traceLevel">popOptimizer.optInfo.traceLevel</a></b>
+<br>
+This integer scalar specifies the amount of tracing.
+Larger values of <i>traceLevel</i> entail more tracing, 
+with <code><span style='white-space: nowrap'>4</span></code> being the highest level of tracing.
+If <code><span style='white-space: nowrap'><i>level</i>&nbsp;<u>&gt;</u>&nbsp;1</span></code>, trace values are directed to standard output 
+(stdout).  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Tracing is done using a scaled version of the
+objective function.  For this scaled version the elements of
+the parameter vector are constrained to the interval <code><span style='white-space: nowrap'>[0,&nbsp;1]</span></code>. 
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If <i>traceLevel</i> is equal to <code><span style='white-space: nowrap'>4</span></code>, then the tracing 
+will include the gradient of the objective and a finite difference 
+approximation for that gradient.
+These two gradients can be compared as a check on the consistency 
+of the objective function and its gradient.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>For more details on the tracing see the description of the level 
+parameter for the optimizer <code><font color="blue">QuasiNewton01Box</font></code>.
+
+<br>
+<br>
+<b><a name="Arguments.popOptimizer.optInfo.nIterCompleted" id="Arguments.popOptimizer.optInfo.nIterCompleted">popOptimizer.optInfo.nIterCompleted</a></b>
+<br>
+This integer scalar holds the number of iteration that have been 
+completed in the optimizer.
+
+<br>
+<br>
+<b><a name="Arguments.popOptimizer.optInfo.isTooManyIter" id="Arguments.popOptimizer.optInfo.isTooManyIter">popOptimizer.optInfo.isTooManyIter</a></b>
+<br>
+This flag indicates whether the too-many-iteration failure has occurred.  
+
+<br>
+<br>
+<b><a name="Arguments.popOptimizer.optInfo.saveStateAtEndOfOpt" id="Arguments.popOptimizer.optInfo.saveStateAtEndOfOpt">popOptimizer.optInfo.saveStateAtEndOfOpt</a></b>
+<br>
+This flag indicates if the state information required for a warm start
+should be saved at the end of the optimization process.
+This state information will not be saved if the optimization process
+results in an exception being thrown by <code><font color="blue">quasiNewtonAnyBox</font></code>.
+
+<br>
+<br>
+<b><a name="Arguments.popOptimizer.optInfo.throwExcepIfMaxIter" id="Arguments.popOptimizer.optInfo.throwExcepIfMaxIter">popOptimizer.optInfo.throwExcepIfMaxIter</a></b>
+<br>
+This flag indicates if the optimizer should throw an exception when
+the maximum number of iterations is exhausted.
+If this parameter is true, then when
+the maximum number of iterations is exhausted, an exception will
+be thrown and the output values for this function will not be set.
+Otherwise, the calling program will
+need to check the parameter isTooManyIter to see if the 
+maximum number of iterations was exhausted.
+
+<br>
+<br>
+<b><a name="Arguments.popOptimizer.optInfo.isWarmStartPossible" id="Arguments.popOptimizer.optInfo.isWarmStartPossible">popOptimizer.optInfo.isWarmStartPossible</a></b>
+<br>
+This flag indicates whether it is possible to perform a warm start 
+using the current optimizer state information.
+
+<br>
+<br>
+<b><a name="Arguments.popOptimizer.optInfo.isWarmStart" id="Arguments.popOptimizer.optInfo.isWarmStart">popOptimizer.optInfo.isWarmStart</a></b>
+<br>
+This flag indicates whether the optimization should run a warm start.  
+
+<br>
+<br>
+<b><a name="Arguments.popOptimizer.optInfo.stateInfo" id="Arguments.popOptimizer.optInfo.stateInfo">popOptimizer.optInfo.stateInfo</a></b>
+<br>
+This <code><font color="blue">StateInfo</font></code> struct contains the optimization state information
+required to perform a warm start.
+Each of its elements is accessed using the Optimizer class member
+functions, <code><font color="blue">getStateInfo()</font></code> and <code><font color="blue">setStateInfo()</font></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecAlpLow</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecAlpLow</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>alpLow</i></span></code>, which specifies the lower limit for <code><span style='white-space: nowrap'><i>alp</i></span></code> during 
+the optimization procedure.
+The length of <i>dvecAlpLow</i> is equal to the length of 
+the fixed population parameter vector <code><span style='white-space: nowrap'><i>alp</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecAlpUp</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecAlpUp</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>alpUp</i></span></code>, which specifies the upper limit for <code><span style='white-space: nowrap'><i>alp</i></span></code> during 
+the optimization procedure.
+The length of <i>dvecAlpUp</i> specifies the length of 
+the fixed population parameter vector <code><span style='white-space: nowrap'><i>alp</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecAlpIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecAlpIn</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>alpIn</i></span></code>, which specifies the initial value for the fixed population 
+parameters.
+The <a href="glossary_frame1.htm#Ordering Of Vectors" target="frame1"><i><span style='white-space: nowrap'>order&nbsp;condition</span></i></a>
+,
+<code><span style='white-space: nowrap'><i>alpLow</i>&nbsp;<u>&lt;</u>&nbsp;<i>alpIn</i>&nbsp;<u>&lt;</u>&nbsp;<i>alpUp</i></span></code>, is assumed to hold.
+Note that the length of <i>dvecAlpIn</i> specifies the length of 
+the fixed population parameter vector <code><span style='white-space: nowrap'><i>alp</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdvecAlpOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>pdvecAlpOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdvecAlpOut</i> must 
+be declared in the function that calls this function, and it 
+must have the same dimensions as <i>dvecAlpIn</i>.
+If <i>pdvecAlpOut</i> is not <code><font color="blue">NULL</font></code>, 
+and if this function completed the optimization successfully, 
+then the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdvecAlpOut</i> 
+will contain the column vector <code><span style='white-space: nowrap'><i>alpOut</i></span></code>, which is the 
+estimate for the true minimizer of the population objective function.
+Otherwise, this function will not attempt to change the contents of the 
+<code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdvecAlpOut</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecAlpStep</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecAlpStep</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>alpStep</i></span></code>, which specifies the step size used for approximating
+the derivatives with respect to the fixed population parameters.
+The value of this parameter does not matter if
+<i>pdmatLTilde_alp_alpOut</i> is <code><font color="blue">NULL</font></code>.
+The length of <i>dvecAlpStep</i> is equal to the length of 
+the fixed population parameter vector <code><span style='white-space: nowrap'><i>alp</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indOptimizer</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This <a href="optimizer.htm" target="_top"><span style='white-space: nowrap'>Optimizer</span></a>
+ object contains the information 
+that controls the individual level optimization process.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Note that warm starts are not supported for the individual 
+level optimization.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Most of the optimizer information is accessible directly via public
+get functions, e.g., the value epsilon is returned by the Optimizer 
+class function <code><font color="blue">getEpsilon()</font></code>.  
+The following subsections specify how this function uses 
+some of the elements of the Optimizer object that are accessed 
+directly using get functions.
+
+<br>
+<br>
+<b><a name="Arguments.indOptimizer.optInfo.epsilon" id="Arguments.indOptimizer.optInfo.epsilon">indOptimizer.optInfo.epsilon</a></b>
+<br>
+This real number is used to specify the convergence criteria
+for the optimizer.
+It must be greater than <code><span style='white-space: nowrap'>0.0</span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>For a particular value of <code><span style='white-space: nowrap'><i>alp</i></span></code> and for the <code><span style='white-space: nowrap'><i>i</i></span></code>-th 
+individual in the population, an individual parameter value 
+<code><span style='white-space: nowrap'><i>bOut</i>_<i>i</i></span></code> is accepted as an estimate for <code><span style='white-space: nowrap'><i>bHat</i>_<i>i</i></span></code> if 
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>abs</i>(&nbsp;<i>bOut</i>_<i>i</i>&nbsp;-&nbsp;<i>bHat</i>_<i>i</i>&nbsp;)&nbsp;<u>&lt;</u>&nbsp;<i>epsilon</i>&nbsp;(&nbsp;<i>bUp</i>&nbsp;-&nbsp;<i>bLow</i>&nbsp;)&nbsp;&nbsp;,<br>
+</span></code>where <code><span style='white-space: nowrap'><i>abs</i></span></code> is the element-by-element absolute value function
+and <code><span style='white-space: nowrap'><i>bHat</i>_<i>i</i></span></code> is a local minimizer of <code><span style='white-space: nowrap'><i>Lambda</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> 
+with respect to <code><span style='white-space: nowrap'><i>b</i></span></code>.
+Since <code><span style='white-space: nowrap'><i>bHat</i>_<i>i</i></span></code> is unknown, this function estimates the left hand
+side of this inequality in a way that is a good approximation when 
+the Hessian of the objective function is positive definite.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Note that if <i>nMaxIter</i> is set to zero, then the <i>i</i>-th 
+column of <code><span style='white-space: nowrap'><i>bIn</i></span></code> is accepted as the estimate for 
+<code><span style='white-space: nowrap'><i>bHat</i>_<i>i</i></span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>For a particular value of <code><span style='white-space: nowrap'><i>alp</i></span></code> and for the <code><span style='white-space: nowrap'><i>i</i></span></code>-th 
+individual in the population, an individual parameter value 
+<code><span style='white-space: nowrap'><i>bOut</i>_<i>i</i></span></code> is accepted as an estimate for <code><span style='white-space: nowrap'><i>bTilde</i>_<i>i</i></span></code> if 
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>abs</i>(&nbsp;<i>bOut</i>_<i>i</i>&nbsp;-&nbsp;<i>bTilde</i>_<i>i</i>&nbsp;)&nbsp;<u>&lt;</u>&nbsp;<i>epsilon</i>&nbsp;(&nbsp;<i>bUp</i>&nbsp;-&nbsp;<i>bLow</i>&nbsp;)&nbsp;&nbsp;,<br>
+</span></code>where <code><span style='white-space: nowrap'><i>abs</i></span></code> is the element-by-element absolute value function
+and <code><span style='white-space: nowrap'><i>bTilde</i>_<i>i</i></span></code> is the point where the approximate projected 
+gradient of <code><span style='white-space: nowrap'><i>Lambda</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>b</i></span></code> 
+is zero.
+Since <code><span style='white-space: nowrap'><i>bTilde</i>_<i>i</i></span></code> is unknown, this function estimates the left hand
+side of this inequality in a way that is a good approximation when 
+the Hessian of the objective function is positive definite.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Note that if <i>nMaxIter</i> is set to zero, then the <i>i</i>-th 
+column of <code><span style='white-space: nowrap'><i>bIn</i></span></code> is accepted as the estimate for 
+<code><span style='white-space: nowrap'><i>bTilde</i>_<i>i</i></span></code>.
+
+<br>
+<br>
+<b><a name="Arguments.indOptimizer.optInfo.nMaxIter" id="Arguments.indOptimizer.optInfo.nMaxIter">indOptimizer.optInfo.nMaxIter</a></b>
+<br>
+This integer must be greater than or equal to zero.
+It specifies the maximum number of 
+iterations to attempt before giving up on convergence.
+If it is equal to zero, then the initial
+value for <code><span style='white-space: nowrap'><i>b</i></span></code> is accepted as the final value, and any requested output
+values are evaluated at that final value.
+
+<br>
+<br>
+<b><a name="Arguments.indOptimizer.optInfo.traceLevel" id="Arguments.indOptimizer.optInfo.traceLevel">indOptimizer.optInfo.traceLevel</a></b>
+<br>
+This integer scalar specifies the amount of tracing.
+Larger values of <i>traceLevel</i> entail more tracing, 
+with <code><span style='white-space: nowrap'>4</span></code> being the highest level of tracing.
+If <code><span style='white-space: nowrap'><i>level</i>&nbsp;<u>&gt;</u>&nbsp;1</span></code>, trace values are directed to standard output 
+(stdout).  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Tracing is done using a scaled version of the
+objective function.  For this scaled version the elements of
+the parameter vector are constrained to the interval <code><span style='white-space: nowrap'>[0,&nbsp;1]</span></code>. 
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If <i>traceLevel</i> is equal to <code><span style='white-space: nowrap'>4</span></code>, then the tracing 
+will include the gradient of the objective and a finite difference 
+approximation for that gradient.
+These two gradients can be compared as a check on the consistency 
+of the objective function and its gradient.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>For more details on the tracing see the description of the level 
+parameter for the optimizer <code><font color="blue">QuasiNewton01Box</font></code>.
+
+<br>
+<br>
+<b><a name="Arguments.indOptimizer.optInfo.nIterCompleted" id="Arguments.indOptimizer.optInfo.nIterCompleted">indOptimizer.optInfo.nIterCompleted</a></b>
+<br>
+This integer scalar holds the number of iteration that have been 
+completed in the optimizer.
+
+<br>
+<br>
+<b><a name="Arguments.indOptimizer.optInfo.isTooManyIter" id="Arguments.indOptimizer.optInfo.isTooManyIter">indOptimizer.optInfo.isTooManyIter</a></b>
+<br>
+This flag indicates whether the too-many-iteration failure has occurred.  
+
+<br>
+<br>
+<b><a name="Arguments.indOptimizer.optInfo.saveStateAtEndOfOpt" id="Arguments.indOptimizer.optInfo.saveStateAtEndOfOpt">indOptimizer.optInfo.saveStateAtEndOfOpt</a></b>
+<br>
+This flag is not used for the individual level optimization.
+
+<br>
+<br>
+<b><a name="Arguments.indOptimizer.optInfo.throwExcepIfMaxIter" id="Arguments.indOptimizer.optInfo.throwExcepIfMaxIter">indOptimizer.optInfo.throwExcepIfMaxIter</a></b>
+<br>
+This flag is not used for the individual level optimization.
+
+<br>
+<br>
+<b><a name="Arguments.indOptimizer.optInfo.isWarmStartPossible" id="Arguments.indOptimizer.optInfo.isWarmStartPossible">indOptimizer.optInfo.isWarmStartPossible</a></b>
+<br>
+This flag is not used for the individual level optimization.
+
+<br>
+<br>
+<b><a name="Arguments.indOptimizer.optInfo.isWarmStart" id="Arguments.indOptimizer.optInfo.isWarmStart">indOptimizer.optInfo.isWarmStart</a></b>
+<br>
+This flag is not used for the individual level optimization.
+
+<br>
+<br>
+<b><a name="Arguments.indOptimizer.optInfo.stateInfo" id="Arguments.indOptimizer.optInfo.stateInfo">indOptimizer.optInfo.stateInfo</a></b>
+<br>
+This <code><font color="blue">StateInfo</font></code> struct is not used for the individual 
+level optimization.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecBLow</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecBLow</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>bLow</i></span></code>, which specifies the lower limit for the random parameters 
+during the optimization procedure for all the individuals.
+The length of <i>dvecBLow</i> is equal to the length of 
+the random population parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecBUp</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecBUp</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>bUp</i></span></code>, which specifies the upper limit for the random parameters 
+during the optimization procedure for all the individuals.
+The length of <i>dvecBUp</i> is equal to the length of 
+the random population parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dmatBIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dmatBIn</i> contains the matrix 
+<code><span style='white-space: nowrap'><i>bIn</i></span></code>.  
+The <i>i</i>-th column of <code><span style='white-space: nowrap'><i>bIn</i></span></code> specifies the initial value for 
+the random parameters for the <i>i</i>-th individual.
+If <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code> is any column of <code><span style='white-space: nowrap'><i>bIn</i></span></code>,
+it is assumed that <code><span style='white-space: nowrap'><i>bLow</i>&nbsp;<u>&lt;</u>&nbsp;<i>b</i>_<i>i</i>&nbsp;<u>&lt;</u>&nbsp;<i>bUp</i></span></code>.
+The column dimension of <code><span style='white-space: nowrap'><i>bIn</i></span></code> is equal to the number of 
+individuals in the population, <code><span style='white-space: nowrap'><i>M</i></span></code>.
+Note that the number of rows in <i>dmatBIn</i> specifies the 
+length of the random population parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdmatBOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>pdmatBOut</i> is not <code><font color="blue">NULL</font></code>, 
+then the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdmatBOut</i> must 
+be declared in the function that calls this function, 
+and it must have the same dimensions as <code><span style='white-space: nowrap'><i>bIn</i></span></code>.
+If <i>pdmatBOut</i> is not <code><font color="blue">NULL</font></code>, 
+and if this function completed the optimization successfully, 
+then the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdmatBOut</i> will 
+contain <code><span style='white-space: nowrap'><i>bOut</i></span></code>, which is the matrix of estimates for the true 
+minimizers of the individual objective functions.
+Otherwise, this function will not attempt to change the contents of 
+the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdmatBOut</i>.
+To be specific, the <i>i</i>-th column of <code><span style='white-space: nowrap'><i>bOut</i></span></code> contains a column
+vector that is an estimate for <code><span style='white-space: nowrap'><i>bHat</i>_<i>i</i></span></code>, the minimizer 
+of <code><span style='white-space: nowrap'><i>Lambda</i>_<i>i</i>(<i>alpOut</i>,&nbsp;<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>b</i></span></code>. 
+This is under the assumption that <code><span style='white-space: nowrap'><i>alpOut</i></span></code>
+is the true value for the fixed population parameters.
+The value <code><span style='white-space: nowrap'><i>epsilon</i>(1)</span></code> is used for accepting the minimizers with 
+respect to the random population parameters.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecBStep</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecBStep</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>bStep</i></span></code>, which specifies the step size used for approximating
+the derivatives with respect to the random population parameters.
+The length of <i>dvecBStep</i> is equal to the length of 
+the random population parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdLTildeOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>pdLTildeOut</i> is not <code><font color="blue">NULL</font></code>, then the <code><font color="blue">double</font></code> 
+value pointed to by <i>pdLTildeOut</i> must be declared in the 
+function that calls this function.
+If <i>pdLTildeOut</i> is not <code><font color="blue">NULL</font></code>, 
+and if this function completed the optimization successfully, 
+then the <code><font color="blue">double</font></code> value pointed to by <i>pdLTildeOut</i> will 
+be equal to <code><span style='white-space: nowrap'><i>LTilde</i>(<i>alpOut</i>)</span></code>, which is the value of the population 
+objective function evaluated at <code><span style='white-space: nowrap'><i>alpOut</i></span></code>.
+Otherwise, this function will not attempt to change the contents of the 
+<code><font color="blue">double</font></code> value pointed to by <i>pdLTildeOut</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdrowLTilde_alpOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>pdrowLTilde_alpOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdrowLTilde_alpOut</i> 
+must be declared in the function that calls this function, and it 
+must be a row vector that is the same length as
+the fixed population parameter vector <code><span style='white-space: nowrap'><i>alp</i></span></code>.
+If <i>pdrowLTilde_alpOut</i> is not <code><font color="blue">NULL</font></code>, 
+and if this function completed the optimization successfully, 
+then the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdrowLTilde_alpOut</i> 
+will contain the row vector <code><span style='white-space: nowrap'><i>LTilde</i>_<i>alp</i>(<i>alpOut</i>)</span></code>, which is
+the derivative of the population objective function evaluated at 
+<code><span style='white-space: nowrap'><i>alpOut</i></span></code>.
+Otherwise, this function will not attempt to change the contents of the 
+<code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdrowLTilde_alpOut</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdmatLTilde_alp_alpOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>pdmatLTilde_alp_alpOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdmatLTilde_alp_alpOut</i> 
+must be declared in the function that calls this function, and it 
+must have the same number of rows and columns as the length of
+the fixed population parameter vector <code><span style='white-space: nowrap'><i>alp</i></span></code>.
+If <i>pdmatLTilde_alp_alpOut</i> is not <code><font color="blue">NULL</font></code>, 
+and if this function completed the optimization successfully, 
+then the <code><font color="blue">DoubleMatrix</font></code> pointed to by 
+<i>pdmatLTilde_alp_alpOut</i> will contain the matrix 
+<code><span style='white-space: nowrap'><i>LTilde</i>_<i>alp</i>_<i>alp</i>(<i>alpOut</i>)</span></code>, which is an approximation 
+for the second derivative of the population objective function 
+evaluated at <code><span style='white-space: nowrap'><i>alpOut</i></span></code>. 
+Otherwise, this function will not attempt to change the contents of the 
+<code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdmatLTilde_alp_alpOut</i>.
+The approximation for the second derivative is formed using central
+differences of the function <code><span style='white-space: nowrap'><i>LTilde</i>_<i>alp</i>(<i>alp</i>)</span></code> with
+step sizes specified by <i>dvecAlpStep</i>.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If you compile, link, and run the following program:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#include&nbsp;&quot;ppkaOpt.h&quot;<br>
+#include&nbsp;&quot;namespace_population_analysis.h&quot;<br>
+#include&nbsp;&quot;identity.h&quot;<br>
+#include&nbsp;&quot;pi.h&quot;<br>
+#include&nbsp;&quot;allZero.h&quot;<br>
+#include&nbsp;&quot;randNormal.h&quot;<br>
+#include&nbsp;&lt;iostream&gt;<br>
+#include&nbsp;&lt;iomanip&gt;<br>
+#include&nbsp;&lt;string&gt;<br>
+#include&nbsp;&lt;cmath&gt;<br>
+#include&nbsp;&quot;SpkValarray.h&quot;<br>
+<br>
+using&nbsp;std::string;<br>
+<br>
+namespace&nbsp;ppkaoptexample<br>
+{<br>
+&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funF&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecB&nbsp;);<br>
+&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funF_alp(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecF,&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecB&nbsp;);<br>
+&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funF_b&nbsp;&nbsp;(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecF,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp,&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecB&nbsp;);<br>
+&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funR&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecB&nbsp;);<br>
+&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funR_alp(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dmatR,&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecB&nbsp;);<br>
+&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funR_b&nbsp;&nbsp;(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dmatR,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp,&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecB&nbsp;);<br>
+&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funD&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp&nbsp;);<br>
+&nbsp;&nbsp;static&nbsp;DoubleMatrix&nbsp;funD_alp(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dmatD,&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp&nbsp;);<br>
+}<br>
+<br>
+class&nbsp;PopModel&nbsp;:&nbsp;public&nbsp;SpkModel&lt;double&gt;<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;_a,&nbsp;_b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;_i;<br>
+<br>
+public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;PopModel(){}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;~PopModel(){}<br>
+protected:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSelectIndividual(int&nbsp;i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_i&nbsp;=&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSetPopPar(const&nbsp;valarray&lt;double&gt;&amp;&nbsp;alp&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_a&nbsp;=&nbsp;DoubleMatrix(&nbsp;alp,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSetIndPar(const&nbsp;valarray&lt;double&gt;&amp;&nbsp;b&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_b&nbsp;=&nbsp;DoubleMatrix(&nbsp;b,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataMean(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;ppkaoptexample;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funF(_a,&nbsp;_b).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataMean_popPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;ppkaoptexample;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doDataMean(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funF_alp(ret,&nbsp;_a,&nbsp;_b).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;!allZero(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataMean_indPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;ppkaoptexample;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doDataMean(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funF_b(ret,&nbsp;_a,&nbsp;_b).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;!allZero(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataVariance(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;ppkaoptexample;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funR(_a,&nbsp;_b).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataVariance_popPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;ppkaoptexample;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doDataVariance(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funR_alp(ret,&nbsp;_a,&nbsp;_b).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;!allZero(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataVariance_indPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;ppkaoptexample;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doDataVariance(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funR_b(ret,&nbsp;_a,&nbsp;_b).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;!allZero(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doIndParVariance(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;ppkaoptexample;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funD(_a).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doIndParVariance_popPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;ppkaoptexample;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doIndParVariance(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funD_alp(ret,&nbsp;_a).toValarray();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;!allZero(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+};<br>
+//--------------------------------------------------------------<br>
+//<br>
+//&nbsp;Function:&nbsp;main<br>
+//<br>
+//--------------------------------------------------------------<br>
+<br>
+void&nbsp;main()<br>
+{<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Preliminaries.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;population_analysis;<br>
+<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;ppkaoptexample;<br>
+<br>
+&nbsp;&nbsp;int&nbsp;i;<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;user-provided&nbsp;model.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;PopModel&nbsp;model;<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;that&nbsp;define&nbsp;the&nbsp;problem.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Mean&nbsp;and&nbsp;variance&nbsp;of&nbsp;the&nbsp;true&nbsp;transfer&nbsp;rate,&nbsp;betaTrue.<br>
+&nbsp;&nbsp;double&nbsp;meanBetaTrue&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;double&nbsp;varBetaTrue&nbsp;&nbsp;=&nbsp;5.0;<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Number&nbsp;of&nbsp;individuals.<br>
+&nbsp;&nbsp;int&nbsp;nInd&nbsp;=&nbsp;10;<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;data&nbsp;vector,&nbsp;y.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Number&nbsp;of&nbsp;measurements.<br>
+&nbsp;&nbsp;int&nbsp;nY&nbsp;=&nbsp;nInd;<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Measurement&nbsp;values,&nbsp;y.<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dvecY(&nbsp;nY,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;double*&nbsp;pdYData&nbsp;=&nbsp;dvecY.data();<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Number&nbsp;of&nbsp;measurements&nbsp;for&nbsp;each&nbsp;individual.&nbsp;<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dvecN(&nbsp;nInd,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;dvecN.fill(&nbsp;(double)&nbsp;1&nbsp;);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;These&nbsp;will&nbsp;hold&nbsp;the&nbsp;generated&nbsp;values&nbsp;for&nbsp;the&nbsp;true&nbsp;measurement&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;noise,&nbsp;eTrue,&nbsp;and&nbsp;the&nbsp;true&nbsp;random&nbsp;population&nbsp;parameters,&nbsp;bTrue.<br>
+&nbsp;&nbsp;double&nbsp;eTrue;<br>
+&nbsp;&nbsp;double&nbsp;bTrue;<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Mean,&nbsp;variance,&nbsp;and&nbsp;standard&nbsp;deviation&nbsp;of&nbsp;eTrue&nbsp;and&nbsp;bTrue.<br>
+&nbsp;&nbsp;double&nbsp;meanETrue&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;double&nbsp;varETrue&nbsp;&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;double&nbsp;sdETrue&nbsp;&nbsp;&nbsp;=&nbsp;sqrt(&nbsp;varETrue&nbsp;);<br>
+&nbsp;&nbsp;double&nbsp;meanBTrue&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;double&nbsp;varBTrue&nbsp;&nbsp;=&nbsp;varBetaTrue;<br>
+&nbsp;&nbsp;double&nbsp;sdBTrue&nbsp;&nbsp;&nbsp;=&nbsp;sqrt(&nbsp;varBTrue&nbsp;);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Compute&nbsp;the&nbsp;measurements&nbsp;for&nbsp;each&nbsp;individual.<br>
+&nbsp;&nbsp;Integer&nbsp;seed&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;g05cbc(seed);<br>
+&nbsp;&nbsp;for&nbsp;(&nbsp;i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;nInd;&nbsp;i++&nbsp;)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;eTrue&nbsp;=&nbsp;randNormal(&nbsp;meanETrue,&nbsp;sdETrue&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bTrue&nbsp;=&nbsp;randNormal(&nbsp;meanBTrue,&nbsp;sdBTrue&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pdYData[&nbsp;i&nbsp;]&nbsp;=&nbsp;meanBetaTrue&nbsp;+&nbsp;bTrue&nbsp;+&nbsp;eTrue;<br>
+&nbsp;&nbsp;}<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;fixed&nbsp;population&nbsp;parameter,&nbsp;alp.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;int&nbsp;nAlp&nbsp;=&nbsp;2;<br>
+<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dvecAlpTrue(&nbsp;nAlp,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dvecAlpLow&nbsp;(&nbsp;nAlp,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dvecAlpUp&nbsp;&nbsp;(&nbsp;nAlp,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dvecAlpIn&nbsp;&nbsp;(&nbsp;nAlp,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dvecAlpOut&nbsp;(&nbsp;nAlp,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dvecAlpStep(&nbsp;nAlp,&nbsp;1&nbsp;);<br>
+<br>
+&nbsp;&nbsp;double*&nbsp;pdAlpTrueData&nbsp;=&nbsp;dvecAlpTrue.data();<br>
+&nbsp;&nbsp;double*&nbsp;pdAlpLowData&nbsp;&nbsp;=&nbsp;dvecAlpLow&nbsp;.data();<br>
+&nbsp;&nbsp;double*&nbsp;pdAlpUpData&nbsp;&nbsp;&nbsp;=&nbsp;dvecAlpUp&nbsp;&nbsp;.data();<br>
+&nbsp;&nbsp;double*&nbsp;pdAlpInData&nbsp;&nbsp;&nbsp;=&nbsp;dvecAlpIn&nbsp;&nbsp;.data();<br>
+&nbsp;&nbsp;double*&nbsp;pdAlpOutData&nbsp;&nbsp;=&nbsp;dvecAlpOut&nbsp;.data();<br>
+&nbsp;&nbsp;double*&nbsp;pdAlpStepData&nbsp;=&nbsp;dvecAlpStep.data();<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Set&nbsp;the&nbsp;values&nbsp;associated&nbsp;with&nbsp;alp(1).<br>
+&nbsp;&nbsp;pdAlpTrueData[&nbsp;0&nbsp;]&nbsp;=&nbsp;meanBetaTrue;<br>
+&nbsp;&nbsp;pdAlpLowData&nbsp;[&nbsp;0&nbsp;]&nbsp;=&nbsp;-10.0;<br>
+&nbsp;&nbsp;pdAlpUpData&nbsp;&nbsp;[&nbsp;0&nbsp;]&nbsp;=&nbsp;10.0;<br>
+&nbsp;&nbsp;pdAlpInData&nbsp;&nbsp;[&nbsp;0&nbsp;]&nbsp;=&nbsp;-1.0;<br>
+&nbsp;&nbsp;pdAlpStepData[&nbsp;0&nbsp;]&nbsp;=&nbsp;1.0e-2;<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Set&nbsp;the&nbsp;values&nbsp;associated&nbsp;with&nbsp;alp(2).<br>
+&nbsp;&nbsp;pdAlpTrueData[&nbsp;1&nbsp;]&nbsp;=&nbsp;varBetaTrue;<br>
+&nbsp;&nbsp;pdAlpLowData&nbsp;[&nbsp;1&nbsp;]&nbsp;=&nbsp;1.0e-3;<br>
+&nbsp;&nbsp;pdAlpUpData&nbsp;&nbsp;[&nbsp;1&nbsp;]&nbsp;=&nbsp;100.0;<br>
+&nbsp;&nbsp;pdAlpInData&nbsp;&nbsp;[&nbsp;1&nbsp;]&nbsp;=&nbsp;0.5;<br>
+&nbsp;&nbsp;pdAlpStepData[&nbsp;1&nbsp;]&nbsp;=&nbsp;1.0e-2;<br>
+&nbsp;&nbsp;<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;random&nbsp;population&nbsp;parameters,&nbsp;b.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;int&nbsp;nB&nbsp;=&nbsp;1;<br>
+<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dvecBLow&nbsp;(&nbsp;nB,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dvecBUp&nbsp;&nbsp;(&nbsp;nB,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dvecBStep(&nbsp;nB,&nbsp;1&nbsp;);<br>
+<br>
+&nbsp;&nbsp;dvecBLow&nbsp;.fill(&nbsp;-1.5e+1&nbsp;);<br>
+&nbsp;&nbsp;dvecBUp&nbsp;&nbsp;.fill(&nbsp;+1.0e+1&nbsp;);<br>
+&nbsp;&nbsp;dvecBStep.fill(&nbsp;&nbsp;1.0e-2&nbsp;);<br>
+<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dmatBIn&nbsp;(&nbsp;nB,&nbsp;nInd&nbsp;);<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dmatBOut(&nbsp;nB,&nbsp;nInd&nbsp;);<br>
+<br>
+&nbsp;&nbsp;dmatBIn.fill(&nbsp;1.0&nbsp;);<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;population&nbsp;objective&nbsp;function.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;double&nbsp;dLTildeOut;<br>
+<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;drowLTilde_alpOut&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;1,&nbsp;&nbsp;&nbsp;&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dmatLTilde_alp_alpOut(&nbsp;nAlp,&nbsp;nAlp&nbsp;);<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Remaining&nbsp;inputs&nbsp;to&nbsp;ppkaOpt.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;enum&nbsp;Objective&nbsp;objective&nbsp;=&nbsp;MODIFIED_LAPLACE;<br>
+<br>
+&nbsp;&nbsp;Optimizer&nbsp;popOptimizer(&nbsp;1.0e-6,&nbsp;40,&nbsp;0&nbsp;);<br>
+&nbsp;&nbsp;Optimizer&nbsp;indOptimizer(&nbsp;1.0e-6,&nbsp;40,&nbsp;0&nbsp;);<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Optimize&nbsp;the&nbsp;population&nbsp;objective&nbsp;function.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;try{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ppkaOpt(&nbsp;&nbsp;model,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objective,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dvecN,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dvecY,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;popOptimizer,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dvecAlpLow,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dvecAlpUp,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dvecAlpIn,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;dvecAlpOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dvecAlpStep,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indOptimizer,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dvecBLow,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dvecBUp,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dmatBIn,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;dmatBOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dvecBStep,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;dLTildeOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;drowLTilde_alpOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;dmatLTilde_alp_alpOut&nbsp;);<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;catch(...)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cerr&nbsp;&lt;&lt;&nbsp;&quot;ppkaOpt&nbsp;failed&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;abort();<br>
+&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Print&nbsp;the&nbsp;results.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;alpOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;dvecAlpOut.print();&nbsp;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;bOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;dmatBOut.print();&nbsp;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;LTildeOut&nbsp;&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;dLTildeOut&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;LTilde_alpOut&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;drowLTilde_alpOut.print();<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;LTilde_alp_alpOut&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;dmatLTilde_alp_alpOut.print();<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+}<br>
+<br>
+<br>
+//--------------------------------------------------------------<br>
+//<br>
+//&nbsp;Function:&nbsp;funF<br>
+//<br>
+//<br>
+//&nbsp;Calculates<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f(alp,&nbsp;b)&nbsp;=&nbsp;|&nbsp;&nbsp;alp(1)&nbsp;+&nbsp;b(1)&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+//<br>
+//--------------------------------------------------------------<br>
+<br>
+static&nbsp;DoubleMatrix&nbsp;ppkaoptexample::funF(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecB&nbsp;)<br>
+{<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dvecF(&nbsp;1,&nbsp;1&nbsp;);<br>
+<br>
+&nbsp;&nbsp;double*&nbsp;pdAlpData&nbsp;=&nbsp;dvecAlp.data();<br>
+&nbsp;&nbsp;double*&nbsp;pdBData&nbsp;&nbsp;&nbsp;=&nbsp;dvecB&nbsp;&nbsp;.data();<br>
+<br>
+&nbsp;&nbsp;dvecF.fill(&nbsp;pdAlpData[&nbsp;0&nbsp;]&nbsp;+&nbsp;pdBData[&nbsp;0&nbsp;]&nbsp;);<br>
+<br>
+&nbsp;&nbsp;return&nbsp;dvecF;<br>
+}<br>
+<br>
+<br>
+//--------------------------------------------------------------<br>
+//<br>
+//&nbsp;Function:&nbsp;funF_alp<br>
+//<br>
+//<br>
+//&nbsp;Calculates<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_alp(alp,&nbsp;b)&nbsp;=&nbsp;|&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+//<br>
+//--------------------------------------------------------------<br>
+<br>
+static&nbsp;DoubleMatrix&nbsp;ppkaoptexample::funF_alp(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecF,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecB&nbsp;)<br>
+{<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;drowF_alp(&nbsp;1,&nbsp;2&nbsp;);<br>
+<br>
+&nbsp;&nbsp;double*&nbsp;pdF_alpData&nbsp;=&nbsp;drowF_alp.data();<br>
+<br>
+&nbsp;&nbsp;pdF_alpData[&nbsp;0&nbsp;]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;pdF_alpData[&nbsp;1&nbsp;]&nbsp;=&nbsp;0.0;<br>
+<br>
+&nbsp;&nbsp;return&nbsp;drowF_alp;<br>
+}<br>
+<br>
+<br>
+//--------------------------------------------------------------<br>
+//<br>
+//&nbsp;Function:&nbsp;funF_b<br>
+//<br>
+//<br>
+//&nbsp;Calculates<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_b(alp,&nbsp;b)&nbsp;=&nbsp;|&nbsp;&nbsp;1&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+//<br>
+//--------------------------------------------------------------<br>
+<br>
+static&nbsp;DoubleMatrix&nbsp;ppkaoptexample::funF_b(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecF,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecB&nbsp;)<br>
+{<br>
+&nbsp;&nbsp;return&nbsp;identity(&nbsp;1&nbsp;);<br>
+}<br>
+<br>
+<br>
+//--------------------------------------------------------------<br>
+//<br>
+//&nbsp;Function:&nbsp;funR<br>
+//<br>
+//<br>
+//&nbsp;Calculates<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R(alp,&nbsp;b)&nbsp;=&nbsp;|&nbsp;&nbsp;1&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+//<br>
+//--------------------------------------------------------------<br>
+<br>
+static&nbsp;DoubleMatrix&nbsp;ppkaoptexample::funR(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecB&nbsp;)<br>
+{<br>
+&nbsp;&nbsp;return&nbsp;identity(&nbsp;1&nbsp;);<br>
+}<br>
+<br>
+<br>
+//--------------------------------------------------------------<br>
+//<br>
+//&nbsp;Function:&nbsp;funR_alp<br>
+//<br>
+//<br>
+//&nbsp;Calculates<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_alp(alp,&nbsp;b)&nbsp;=&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+//<br>
+//--------------------------------------------------------------<br>
+<br>
+static&nbsp;DoubleMatrix&nbsp;ppkaoptexample::funR_alp(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dmatR,&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecB&nbsp;)<br>
+{<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dmatR_alp(&nbsp;1,&nbsp;2&nbsp;);<br>
+<br>
+&nbsp;&nbsp;dmatR_alp.fill(0.0);<br>
+<br>
+&nbsp;&nbsp;return&nbsp;dmatR_alp;<br>
+}<br>
+<br>
+<br>
+//--------------------------------------------------------------<br>
+//<br>
+//&nbsp;Function:&nbsp;funR_b<br>
+//<br>
+//<br>
+//&nbsp;Calculates<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_b(alp,&nbsp;b)&nbsp;=&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+//<br>
+//--------------------------------------------------------------<br>
+<br>
+static&nbsp;DoubleMatrix&nbsp;ppkaoptexample::funR_b(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dmatR,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp,&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecB&nbsp;)<br>
+{<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dmatR_b(&nbsp;1,&nbsp;1&nbsp;);<br>
+<br>
+&nbsp;&nbsp;dmatR_b.fill(0.0);<br>
+<br>
+&nbsp;&nbsp;return&nbsp;dmatR_b;<br>
+}<br>
+<br>
+<br>
+//--------------------------------------------------------------<br>
+//<br>
+//&nbsp;Function:&nbsp;funD<br>
+//<br>
+//<br>
+//&nbsp;Calculates<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D(alp)&nbsp;=&nbsp;|&nbsp;&nbsp;alp(2)&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+//<br>
+//--------------------------------------------------------------<br>
+<br>
+static&nbsp;DoubleMatrix&nbsp;ppkaoptexample::funD(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp&nbsp;)<br>
+{<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dmatD(&nbsp;1,&nbsp;1&nbsp;);<br>
+<br>
+&nbsp;&nbsp;double*&nbsp;pdAlpData&nbsp;=&nbsp;dvecAlp.data();<br>
+<br>
+&nbsp;&nbsp;dmatD.fill(&nbsp;pdAlpData[&nbsp;1&nbsp;]&nbsp;);<br>
+<br>
+&nbsp;&nbsp;return&nbsp;dmatD;<br>
+}<br>
+<br>
+<br>
+//--------------------------------------------------------------<br>
+//<br>
+//&nbsp;Function:&nbsp;funD_alp<br>
+//<br>
+//<br>
+//&nbsp;Calculates<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D_alp(alp)&nbsp;=&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+//<br>
+//--------------------------------------------------------------<br>
+<br>
+static&nbsp;DoubleMatrix&nbsp;ppkaoptexample::funD_alp(&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dmatD,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;dvecAlp&nbsp;)<br>
+{<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dmatD_alp(&nbsp;1,&nbsp;2&nbsp;);<br>
+<br>
+&nbsp;&nbsp;double*&nbsp;pdD_alpData&nbsp;=&nbsp;dmatD_alp.data();<br>
+<br>
+&nbsp;&nbsp;pdD_alpData[&nbsp;0&nbsp;]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;pdD_alpData[&nbsp;1&nbsp;]&nbsp;=&nbsp;1.0;<br>
+<br>
+&nbsp;&nbsp;return&nbsp;dmatD_alp;<br>
+}<br>
+<br>
+<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+ok&nbsp;=&nbsp;True<br>
+<br>
+alpOut&nbsp;=<br>
+[1.95115]<br>
+[3.63406]<br>
+<br>
+bOut&nbsp;=<br>
+[1.94171,&nbsp;0.446611,&nbsp;-0.312347,&nbsp;-0.938796,&nbsp;-3.12919,&nbsp;2.01348,&nbsp;2.47441,&nbsp;-1.48642,&nbsp;-1.16138,&nbsp;0.151919]<br>
+<br>
+LTildeOut&nbsp;&nbsp;&nbsp;=&nbsp;21.8566<br>
+<br>
+LTilde_alpOut&nbsp;&nbsp;=<br>
+[-2.767e-007,&nbsp;1.50158e-007]<br>
+<br>
+LTilde_alp_alpOut&nbsp;&nbsp;=<br>
+[2.15793,&nbsp;5.97158e-008]<br>
+[5.97208e-008,&nbsp;0.232837]<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/ppkaOpt.cpp
+
+</body>
+</html>

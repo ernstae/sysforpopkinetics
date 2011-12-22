@@ -1,0 +1,14 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.216
+----------------------------------
+USER VISIBLE CHANGES
+
+Fixed incorrect status code for jobs that converge with optimization errors.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:  820
+
+BY:  Mitch Watrous
+
+WHEN:  November 29, 2007 

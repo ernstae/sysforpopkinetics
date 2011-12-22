@@ -1,0 +1,108 @@
+<html><head>
+<title>Element-wise subtraction</title>
+<meta name="description" id="description" content="Element-wise subtraction">
+<meta name="keywords" id="keywords" content=" subtract matrix subtraction "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="subtraction.htm" target="_top">section</a>, <a href="subtraction_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This function performs matrix subtraction.  
+
+<br>
+<br>
+<b><big><a name="Returned Value" id="Returned Value">Returned Value</a></big></b>
+<br>
+Given a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> matrix, <i>A</i>, and another matrix with the same dimensions, <i>B</i>,
+the resulting matrix is also a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code>.  The result is returned by value unless
+the third argument <i>C</i>
+is given.  When <i>C</i> is given, the result is set to the memory location referred by <i>C</i>.
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>This function checks to see whether a floating-point error has occurred or not at the
+end of computation.  If detected, it will throw an <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+ whose last
+(<a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>error</span></a>
+) element is set to indicate the nature of the error.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is the <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code>left hand side  matrix, where m and n are greater than or equal to zero.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>B</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is the <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> right hand side matrix, where m and n are greater than or equal to zero.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>C</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is the <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> right hand side matrix, which will contain the result, if given.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link and run the following program,
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;subtract.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;void&nbsp;main(){<br>
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;A(3,&nbsp;2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;B(3,&nbsp;2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;C;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*a&nbsp;=&nbsp;A.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*b&nbsp;=&nbsp;B.data();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;A&nbsp;to&nbsp;a&nbsp;matrix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;3&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;4&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;&nbsp;5&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;and&nbsp;B&nbsp;to&nbsp;a&nbsp;matrix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(&nbsp;int&nbsp;i=0;&nbsp;i&lt;6;&nbsp;i++&nbsp;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[i]&nbsp;=&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b[i]&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Computes&nbsp;C&nbsp;=&nbsp;A&nbsp;-&nbsp;B<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;=&nbsp;subtract(A,&nbsp;B);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;display&nbsp;C<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C.print();<br>
+&nbsp;&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+a matrix
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;[&nbsp;-1&nbsp;&nbsp;2&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;0&nbsp;&nbsp;3&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;1&nbsp;&nbsp;4&nbsp;]<br>
+<br>
+</span>
+</font></code>
+will be displayed.
+
+<hr>Input File: ../../spk/subtract.cpp
+
+</body>
+</html>

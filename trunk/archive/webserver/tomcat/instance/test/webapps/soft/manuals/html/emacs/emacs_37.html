@@ -1,0 +1,1088 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: MS-DOS</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: MS-DOS">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: MS-DOS">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC554"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC553"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC555"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_36.html#SEC547"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_38.html#SEC564"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> AH. Emacs and MS-DOS </H1>
+<!--docid::SEC554::-->
+<P>
+
+  This section briefly describes the peculiarities of using Emacs under
+the MS-DOS "operating system" (also known as "MS-DOG").  If you
+build Emacs for MS-DOS, the binary will also run on Windows 3.X, Windows
+NT, Windows 9X/ME, Windows 2000, or OS/2 as a DOS application; the
+information in this chapter applies for all of those systems, if you use
+an Emacs that was built for MS-DOS.
+</P><P>
+
+  Note that it is possible to build Emacs specifically for Windows NT/2K
+or Windows 9X/ME.  If you do that, most of this chapter does not apply;
+instead, you get behavior much closer to what is documented in the rest
+of the manual, including support for long file names, multiple frames,
+scroll bars, mouse menus, and subprocesses.  However, the section on
+text files and binary files does still apply.  There are also two
+sections at the end of this chapter which apply specifically for the
+Windows version.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_37.html#SEC555">AH.1 Keyboard and Mouse on MS-DOS</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Keyboard and mouse usage on MS-DOS.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_37.html#SEC556">AH.2 Display on MS-DOS</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Fonts, frames and display size on MS-DOS.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_37.html#SEC557">AH.3 File Names on MS-DOS</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">File name conventions on MS-DOS.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_37.html#SEC558">AH.4 Text Files and Binary Files</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Text files on MS-DOS use CRLF to separate lines.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_37.html#SEC559">AH.5 Printing and MS-DOS</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to specify the printer on MS-DOS.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_37.html#SEC560">AH.6 International Support on MS-DOS</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Support for internationalization on MS-DOS.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_37.html#SEC561">AH.7 Subprocesses on MS-DOS</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Running subprocesses on MS-DOS.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_37.html#SEC562">AH.8 Subprocesses on Windows 9X/ME and Windows NT/2K</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Running subprocesses on Windows.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_37.html#SEC563">AH.9 Using the System Menu on Windows</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Controlling what the ALT key does.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="MS-DOS Input"></A>
+<HR SIZE="6">
+<A NAME="SEC555"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC556"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_38.html#SEC564"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AH.1 Keyboard and Mouse on MS-DOS </H2>
+<!--docid::SEC555::-->
+<P>
+
+<A NAME="IDX2936"></A>
+<A NAME="IDX2937"></A>
+<A NAME="IDX2938"></A>
+<A NAME="IDX2939"></A>
+<A NAME="IDX2940"></A>
+  The PC keyboard maps use the left <KBD>ALT</KBD> key as the <KBD>META</KBD> key.
+You have two choices for emulating the <KBD>SUPER</KBD> and <KBD>HYPER</KBD> keys:
+choose either the right <KBD>CTRL</KBD> key or the right <KBD>ALT</KBD> key by
+setting the variables <CODE>dos-hyper-key</CODE> and <CODE>dos-super-key</CODE> to 1
+or 2 respectively.  If neither <CODE>dos-super-key</CODE> nor
+<CODE>dos-hyper-key</CODE> is 1, then by default the right <KBD>ALT</KBD> key is
+also mapped to the <KBD>META</KBD> key.  However, if the MS-DOS international
+keyboard support program <TT>`KEYB.COM'</TT> is installed, Emacs will
+<EM>not</EM> map the right <KBD>ALT</KBD> to <KBD>META</KBD>, since it is used for
+accessing characters like <KBD>~</KBD> and <KBD>@</KBD> on non-US keyboard
+layouts; in this case, you may only use the left <KBD>ALT</KBD> as <KBD>META</KBD>
+key.
+</P><P>
+
+<A NAME="IDX2941"></A>
+<A NAME="IDX2942"></A>
+  The variable <CODE>dos-keypad-mode</CODE> is a flag variable that controls
+what key codes are returned by keys in the numeric keypad.  You can also
+define the keypad <KBD>ENTER</KBD> key to act like <KBD>C-j</KBD>, by putting the
+following line into your <TT>`_emacs'</TT> file:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>;; Make the <KBD>ENTER</KBD> key from the numeric keypad act as <KBD>C-j</KBD>.
+(define-key function-key-map [kp-enter] [?\C-j])
+</FONT></pre></td></tr></table></P><P>
+
+<A NAME="IDX2943"></A>
+<A NAME="IDX2944"></A>
+  The key that is called <KBD>DEL</KBD> in Emacs (because that's how it is
+designated on most workstations) is known as <KBD>BS</KBD> (backspace) on a
+PC.  That is why the PC-specific terminal initialization remaps the
+<KBD>BS</KBD> key to act as <KBD>DEL</KBD>; the <KBD>DEL</KBD> key is remapped to act
+as <KBD>C-d</KBD> for the same reasons.
+</P><P>
+
+<A NAME="IDX2945"></A>
+<A NAME="IDX2946"></A>
+<A NAME="IDX2947"></A>
+  Emacs built for MS-DOS recognizes <KBD>C-<KBD>BREAK</KBD></KBD> as a quit
+character, just like <KBD>C-g</KBD>.  This is because Emacs cannot detect
+that you have typed <KBD>C-g</KBD> until it is ready for more input.  As a
+consequence, you cannot use <KBD>C-g</KBD> to stop a running command
+(see section <A HREF="emacs_33.html#SEC510">AD.8 Quitting and Aborting</A>).  By contrast, <KBD>C-<KBD>BREAK</KBD></KBD> <EM>is</EM> detected
+as soon as you type it (as <KBD>C-g</KBD> is on other systems), so it can be
+used to stop a running command and for emergency escape
+(see section <A HREF="emacs_33.html#SEC519">AD.9.8 Emergency Escape</A>).
+</P><P>
+
+<A NAME="IDX2948"></A>
+  Emacs on MS-DOS supports a mouse (on the default terminal only).
+The mouse commands work as documented, including those that use menus
+and the menu bar (see section <A HREF="emacs_5.html#SEC12">B.4 The Menu Bar</A>).  Scroll bars don't work in
+MS-DOS Emacs.  PC mice usually have only two buttons; these act as
+<KBD>Mouse-1</KBD> and <KBD>Mouse-2</KBD>, but if you press both of them
+together, that has the effect of <KBD>Mouse-3</KBD>.  If the mouse does have
+3 buttons, Emacs detects that at startup, and all the 3 buttons function
+normally, as on X.
+</P><P>
+
+  Help strings for menu-bar and pop-up menus are displayed in the echo
+area when the mouse pointer moves across the menu items.
+Highlighting of mouse-sensitive text (see section <A HREF="emacs_19.html#SEC195">P.4 Following References with the Mouse</A>) is also
+supported.
+</P><P>
+
+<A NAME="IDX2949"></A>
+<A NAME="IDX2950"></A>
+  Some versions of mouse drivers don't report the number of mouse
+buttons correctly.  For example, mice with a wheel report that they
+have 3 buttons, but only 2 of them are passed to Emacs; the clicks on
+the wheel, which serves as the middle button, are not passed.  In
+these cases, you can use the <KBD>M-x msdos-set-mouse-buttons</KBD> command
+to tell Emacs how many mouse buttons to expect.  You could make such a
+setting permanent by adding this fragment to your <TT>`_emacs'</TT> init
+file:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>;; Treat the mouse like a 2-button mouse.
+(msdos-set-mouse-buttons 2)
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX2951"></A>
+  Emacs built for MS-DOS supports clipboard operations when it runs on
+Windows.  Commands that put text on the kill ring, or yank text from the
+ring, check the Windows clipboard first, just as Emacs does on the X
+Window System (see section <A HREF="emacs_19.html#SEC192">P.1 Mouse Commands for Editing</A>).  Only the primary selection and
+the cut buffer are supported by MS-DOS Emacs on Windows; the secondary
+selection always appears as empty.
+</P><P>
+
+  Due to the way clipboard access is implemented by Windows, the
+length of text you can put into the clipboard is limited by the amount
+of free DOS memory that is available to Emacs.  Usually, up to 620KB of
+text can be put into the clipboard, but this limit depends on the system
+configuration and is lower if you run Emacs as a subprocess of
+another program.  If the killed text does not fit, Emacs outputs a
+message saying so, and does not put the text into the clipboard.
+</P><P>
+
+  Null characters also cannot be put into the Windows clipboard.  If the
+killed text includes null characters, Emacs does not put such text into
+the clipboard, and displays in the echo area a message to that effect.
+</P><P>
+
+<A NAME="IDX2952"></A>
+  The variable <CODE>dos-display-scancodes</CODE>, when non-<CODE>nil</CODE>,
+directs Emacs to display the ASCII value and the keyboard scan code of
+each keystroke; this feature serves as a complement to the
+<CODE>view-lossage</CODE> command, for debugging.
+</P><P>
+
+<A NAME="MS-DOS Display"></A>
+<HR SIZE="6">
+<A NAME="SEC556"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC555"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC557"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC557"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_38.html#SEC564"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AH.2 Display on MS-DOS </H2>
+<!--docid::SEC556::-->
+<P>
+
+  Display on MS-DOS cannot use font variants, like bold or italic,
+but it does support
+multiple faces, each of which can specify a foreground and a background
+color.  Therefore, you can get the full functionality of Emacs packages
+that use fonts (such as <CODE>font-lock</CODE>, Enriched Text mode, and
+others) by defining the relevant faces to use different colors.  Use the
+<CODE>list-colors-display</CODE> command (see section <A HREF="emacs_19.html#SEC203">P.12 Setting Frame Parameters</A>) and the
+<CODE>list-faces-display</CODE> command (see section <A HREF="emacs_13.html#SEC78">J.1 Using Multiple Typefaces</A>) to see what colors and
+faces are available and what they look like.
+</P><P>
+
+  See section <A HREF="emacs_37.html#SEC560">AH.6 International Support on MS-DOS</A>, later in this chapter, for information on
+how Emacs displays glyphs and characters that aren't supported by the
+native font built into the DOS display.
+</P><P>
+
+<A NAME="IDX2953"></A>
+  When Emacs starts, it changes the cursor shape to a solid box.  This
+is for compatibility with other systems, where the box cursor is the
+default in Emacs.  This default shape can be changed to a bar by
+specifying the <CODE>cursor-type</CODE> parameter in the variable
+<CODE>default-frame-alist</CODE> (see section <A HREF="emacs_19.html#SEC198">P.7 Creating Frames</A>).  The MS-DOS
+terminal doesn't support a vertical-bar cursor, so the bar cursor is
+horizontal, and the <CODE><VAR>width</VAR></CODE> parameter, if specified by the
+frame parameters, actually determines its height.  As an extension,
+the bar cursor specification can include the starting scan line of the
+cursor as well as its width, like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre> '(cursor-type bar <VAR>width</VAR> . <VAR>start</VAR>)
+</pre></td></tr></table></P><P>
+
+In addition, if the <VAR>width</VAR> parameter is negative, the cursor bar
+begins at the top of the character cell.
+</P><P>
+
+<A NAME="IDX2954"></A>
+  The MS-DOS terminal can only display a single frame at a time.  The
+Emacs frame facilities work on MS-DOS much as they do on text-only
+terminals (see section <A HREF="emacs_19.html#SEC191">P. Frames and X Windows</A>).  When you run Emacs from a DOS window on
+MS-Windows, you can make the visible frame smaller than the full
+screen, but Emacs still cannot display more than a single frame at a
+time.
+</P><P>
+
+<A NAME="IDX2955"></A>
+<A NAME="IDX2956"></A>
+<A NAME="IDX2957"></A>
+  The <CODE>mode4350</CODE> command switches the display to 43 or 50
+lines, depending on your hardware; the <CODE>mode25</CODE> command switches
+to the default 80x25 screen size.
+</P><P>
+
+  By default, Emacs only knows how to set screen sizes of 80 columns by
+25, 28, 35, 40, 43 or 50 rows.  However, if your video adapter has
+special video modes that will switch the display to other sizes, you can
+have Emacs support those too.  When you ask Emacs to switch the frame to
+<VAR>n</VAR> rows by <VAR>m</VAR> columns dimensions, it checks if there is a
+variable called <CODE>screen-dimensions-<VAR>n</VAR>x<VAR>m</VAR></CODE>, and if so,
+uses its value (which must be an integer) as the video mode to switch
+to.  (Emacs switches to that video mode by calling the BIOS <CODE>Set
+Video Mode</CODE> function with the value of
+<CODE>screen-dimensions-<VAR>n</VAR>x<VAR>m</VAR></CODE> in the <CODE>AL</CODE> register.)
+For example, suppose your adapter will switch to 66x80 dimensions when
+put into video mode 85.  Then you can make Emacs support this screen
+size by putting the following into your <TT>`_emacs'</TT> file:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(setq screen-dimensions-66x80 85)
+</pre></td></tr></table></P><P>
+
+  Since Emacs on MS-DOS can only set the frame size to specific
+supported dimensions, it cannot honor every possible frame resizing
+request.  When an unsupported size is requested, Emacs chooses the next
+larger supported size beyond the specified size.  For example, if you
+ask for 36x80 frame, you will get 40x80 instead.
+</P><P>
+
+  The variables <CODE>screen-dimensions-<VAR>n</VAR>x<VAR>m</VAR></CODE> are used only
+when they exactly match the specified size; the search for the next
+larger supported size ignores them.  In the above example, even if your
+VGA supports 38x80 dimensions and you define a variable
+<CODE>screen-dimensions-38x80</CODE> with a suitable value, you will still get
+40x80 screen when you ask for a 36x80 frame.  If you want to get the
+38x80 size in this case, you can do it by setting the variable named
+<CODE>screen-dimensions-36x80</CODE> with the same video mode value as
+<CODE>screen-dimensions-38x80</CODE>.
+</P><P>
+
+  Changing frame dimensions on MS-DOS has the effect of changing all the
+other frames to the new dimensions.
+</P><P>
+
+<A NAME="MS-DOS File Names"></A>
+<HR SIZE="6">
+<A NAME="SEC557"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC556"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC558"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC558"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_38.html#SEC564"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AH.3 File Names on MS-DOS </H2>
+<!--docid::SEC557::-->
+<P>
+
+  MS-DOS normally uses a backslash, <SAMP>`\'</SAMP>, to separate name units
+within a file name, instead of the slash used on other systems.  Emacs
+on MS-DOS permits use of either slash or backslash, and also knows
+about drive letters in file names.
+</P><P>
+
+  On MS-DOS, file names are case-insensitive and limited to eight
+characters, plus optionally a period and three more characters.  Emacs
+knows enough about these limitations to handle file names that were
+meant for other operating systems.  For instance, leading dots <SAMP>`.'</SAMP>
+in file names are invalid in MS-DOS, so Emacs transparently converts
+them to underscores <SAMP>`_'</SAMP>; thus your default init file (see section <A HREF="emacs_33.html#SEC505">AD.7 The Init File, <TT>`~/.emacs'</TT></A>) is called <TT>`_emacs'</TT> on MS-DOS.  Excess characters before or
+after the period are generally ignored by MS-DOS itself; thus, if you
+visit the file <TT>`LongFileName.EvenLongerExtension'</TT>, you will
+silently get <TT>`longfile.eve'</TT>, but Emacs will still display the long
+file name on the mode line.  Other than that, it's up to you to specify
+file names which are valid under MS-DOS; the transparent conversion as
+described above only works on file names built into Emacs.
+</P><P>
+
+<A NAME="IDX2958"></A>
+  The above restrictions on the file names on MS-DOS make it almost
+impossible to construct the name of a backup file (see section <A HREF="emacs_16.html#SEC115">M.3.1.1 Single or Numbered Backups</A>) without losing some of the original file name characters.  For
+example, the name of a backup file for <TT>`docs.txt'</TT> is
+<TT>`docs.tx~'</TT> even if single backup is used.
+</P><P>
+
+<A NAME="IDX2959"></A>
+<A NAME="IDX2960"></A>
+  If you run Emacs as a DOS application under Windows 9X, Windows ME, or
+Windows 2000, you can turn on support for long file names.  If you do
+that, Emacs doesn't truncate file names or convert them to lower case;
+instead, it uses the file names that you specify, verbatim.  To enable
+long file name support, set the environment variable <CODE>LFN</CODE> to
+<SAMP>`y'</SAMP> before starting Emacs.  Unfortunately, Windows NT doesn't allow
+DOS programs to access long file names, so Emacs built for MS-DOS will
+only see their short 8+3 aliases.
+</P><P>
+
+<A NAME="IDX2961"></A>
+  MS-DOS has no notion of home directory, so Emacs on MS-DOS pretends
+that the directory where it is installed is the value of <CODE>HOME</CODE>
+environment variable.  That is, if your Emacs binary,
+<TT>`emacs.exe'</TT>, is in the directory <TT>`c:/utils/emacs/bin'</TT>, then
+Emacs acts as if <CODE>HOME</CODE> were set to <SAMP>`c:/utils/emacs'</SAMP>.  In
+particular, that is where Emacs looks for the init file <TT>`_emacs'</TT>.
+With this in mind, you can use <SAMP>`~'</SAMP> in file names as an alias for
+the home directory, as you would on GNU or Unix.  You can also set
+<CODE>HOME</CODE> variable in the environment before starting Emacs; its
+value will then override the above default behavior.
+</P><P>
+
+  Emacs on MS-DOS handles the directory name <TT>`/dev'</TT> specially,
+because of a feature in the emulator libraries of DJGPP that pretends
+I/O devices have names in that directory.  We recommend that you avoid
+using an actual directory named <TT>`/dev'</TT> on any disk.
+</P><P>
+
+<A NAME="Text and Binary"></A>
+<HR SIZE="6">
+<A NAME="SEC558"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC557"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC559"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC559"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_38.html#SEC564"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AH.4 Text Files and Binary Files </H2>
+<!--docid::SEC558::-->
+<P>
+
+  GNU Emacs uses newline characters to separate text lines.  This is the
+convention used on GNU and Unix.
+</P><P>
+
+<A NAME="IDX2962"></A>
+  MS-DOS and MS-Windows normally use carriage-return linefeed, a
+two-character sequence, to separate text lines.  (Linefeed is the same
+character as newline.)  Therefore, convenient editing of typical files
+with Emacs requires conversion of these end-of-line (EOL) sequences.
+And that is what Emacs normally does: it converts carriage-return
+linefeed into newline when reading files, and converts newline into
+carriage-return linefeed when writing files.  The same mechanism that
+handles conversion of international character codes does this conversion
+also (see section <A HREF="emacs_20.html#SEC220">Q.7 Coding Systems</A>).
+</P><P>
+
+<A NAME="IDX2963"></A>
+<A NAME="IDX2964"></A>
+  One consequence of this special format-conversion of most files is
+that character positions as reported by Emacs (see section <A HREF="emacs_7.html#SEC28">D.9 Cursor Position Information</A>) do
+not agree with the file size information known to the operating system.
+</P><P>
+
+  In addition, if Emacs recognizes from a file's contents that it uses
+newline rather than carriage-return linefeed as its line separator, it
+does not perform EOL conversion when reading or writing that file.
+Thus, you can read and edit files from GNU and Unix systems on MS-DOS
+with no special effort, and they will retain their Unix-style
+end-of-line convention after you edit them.
+</P><P>
+
+  The mode line indicates whether end-of-line translation was used for
+the current buffer.  If MS-DOS end-of-line translation is in use for the
+buffer, a backslash <SAMP>`\'</SAMP> is displayed after the coding system
+mnemonic near the beginning of the mode line (see section <A HREF="emacs_5.html#SEC11">B.3 The Mode Line</A>).  If no
+EOL translation was performed, the string <SAMP>`(Unix)'</SAMP> is displayed
+instead of the backslash, to alert you that the file's EOL format is not
+the usual carriage-return linefeed.
+</P><P>
+
+<A NAME="IDX2965"></A>
+  To visit a file and specify whether it uses DOS-style or Unix-style
+end-of-line, specify a coding system (see section <A HREF="emacs_20.html#SEC222">Q.9 Specifying a Coding System</A>).  For
+example, <KBD>C-x <KBD>RET</KBD> c unix <KBD>RET</KBD> C-x C-f foobar.txt</KBD>
+visits the file <TT>`foobar.txt'</TT> without converting the EOLs; if some
+line ends with a carriage-return linefeed pair, Emacs will display
+<SAMP>`^M'</SAMP> at the end of that line.  Similarly, you can direct Emacs to
+save a buffer in a specified EOL format with the <KBD>C-x <KBD>RET</KBD> f</KBD>
+command.  For example, to save a buffer with Unix EOL format, type
+<KBD>C-x <KBD>RET</KBD> f unix <KBD>RET</KBD> C-x C-s</KBD>.  If you visit a file
+with DOS EOL conversion, then save it with Unix EOL format, that
+effectively converts the file to Unix EOL style, like <CODE>dos2unix</CODE>.
+</P><P>
+
+<A NAME="IDX2966"></A>
+<A NAME="IDX2967"></A>
+  When you use NFS or Samba to access file systems that reside on
+computers using GNU or Unix systems, Emacs should not perform
+end-of-line translation on any files in these file systems--not even
+when you create a new file.  To request this, designate these file
+systems as <EM>untranslated</EM> file systems by calling the function
+<CODE>add-untranslated-filesystem</CODE>.  It takes one argument: the file
+system name, including a drive letter and optionally a directory.  For
+example,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(add-untranslated-filesystem "Z:")
+</pre></td></tr></table></P><P>
+
+designates drive Z as an untranslated file system, and
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(add-untranslated-filesystem "Z:\\foo")
+</pre></td></tr></table></P><P>
+
+designates directory <TT>`\foo'</TT> on drive Z as an untranslated file
+system.
+</P><P>
+
+  Most often you would use <CODE>add-untranslated-filesystem</CODE> in your
+<TT>`_emacs'</TT> file, or in <TT>`site-start.el'</TT> so that all the users at
+your site get the benefit of it.
+</P><P>
+
+<A NAME="IDX2968"></A>
+  To countermand the effect of <CODE>add-untranslated-filesystem</CODE>, use
+the function <CODE>remove-untranslated-filesystem</CODE>.  This function takes
+one argument, which should be a string just like the one that was used
+previously with <CODE>add-untranslated-filesystem</CODE>.
+</P><P>
+
+  Designating a file system as untranslated does not affect character
+set conversion, only end-of-line conversion.  Essentially, it directs
+Emacs to create new files with the Unix-style convention of using
+newline at the end of a line.  See section <A HREF="emacs_20.html#SEC220">Q.7 Coding Systems</A>.
+</P><P>
+
+<A NAME="IDX2969"></A>
+<A NAME="IDX2970"></A>
+  Some kinds of files should not be converted at all, because their
+contents are not really text.  Therefore, Emacs on MS-DOS distinguishes
+certain files as <EM>binary files</EM>.  (This distinction is not part of
+MS-DOS; it is made by Emacs only.)  Binary files include executable
+programs, compressed archives, etc.  Emacs uses the file name to decide
+whether to treat a file as binary: the variable
+<CODE>file-name-buffer-file-type-alist</CODE> defines the file-name patterns
+that indicate binary files.  If a file name matches one of the patterns
+for binary files (those whose associations are of the type
+<CODE>(<VAR>pattern</VAR> . t)</CODE>, Emacs reads and writes that file using the
+<CODE>no-conversion</CODE> coding system (see section <A HREF="emacs_20.html#SEC220">Q.7 Coding Systems</A>) which turns
+off <EM>all</EM> coding-system conversions, not only the EOL conversion.
+<CODE>file-name-buffer-file-type-alist</CODE> also includes file-name patterns
+for files which are known to be DOS-style text files with
+carriage-return linefeed EOL format, such as <TT>`CONFIG.SYS'</TT>; Emacs
+always writes those files with DOS-style EOLs.
+</P><P>
+
+  If a file which belongs to an untranslated file system matches one of
+the file-name patterns in <CODE>file-name-buffer-file-type-alist</CODE>, the
+EOL conversion is determined by <CODE>file-name-buffer-file-type-alist</CODE>.
+</P><P>
+
+<A NAME="MS-DOS Printing"></A>
+<HR SIZE="6">
+<A NAME="SEC559"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC558"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC560"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC560"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_38.html#SEC564"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AH.5 Printing and MS-DOS </H2>
+<!--docid::SEC559::-->
+<P>
+
+  Printing commands, such as <CODE>lpr-buffer</CODE> (see section <A HREF="emacs_32.html#SEC458">AC.18 Hardcopy Output</A>) and
+<CODE>ps-print-buffer</CODE> (see section <A HREF="emacs_32.html#SEC459">AC.19 PostScript Hardcopy</A>) can work in MS-DOS and
+MS-Windows by sending the output to one of the printer ports, if a
+Posix-style <CODE>lpr</CODE> program is unavailable.  The same Emacs
+variables control printing on all systems (see section <A HREF="emacs_32.html#SEC458">AC.18 Hardcopy Output</A>), but in
+some cases they have different default values on MS-DOS and
+MS-Windows.
+</P><P>
+
+<A NAME="IDX2971"></A>
+  If you want to use your local printer, printing on it in the usual DOS
+manner, then set the Lisp variable <CODE>lpr-command</CODE> to <CODE>""</CODE> (its
+default value) and <CODE>printer-name</CODE> to the name of the printer
+port--for example, <CODE>"PRN"</CODE>, the usual local printer port (that's
+the default), or <CODE>"LPT2"</CODE>, or <CODE>"COM1"</CODE> for a serial printer.
+You can also set <CODE>printer-name</CODE> to a file name, in which case
+"printed" output is actually appended to that file.  If you set
+<CODE>printer-name</CODE> to <CODE>"NUL"</CODE>, printed output is silently
+discarded (sent to the system null device).
+</P><P>
+
+  On MS-Windows, when the Windows network software is installed, you can
+also use a printer shared by another machine by setting
+<CODE>printer-name</CODE> to the UNC share name for that printer--for example,
+<CODE>"//joes_pc/hp4si"</CODE>.  (It doesn't matter whether you use forward
+slashes or backslashes here.)  To find out the names of shared printers,
+run the command <SAMP>`net view'</SAMP> at a DOS command prompt to obtain a list
+of servers, and <SAMP>`net view <VAR>server-name</VAR>'</SAMP> to see the names of printers
+(and directories) shared by that server.  Alternatively, click the
+<SAMP>`Network Neighborhood'</SAMP> icon on your desktop, and look for machines
+which share their printers via the network.
+</P><P>
+
+<A NAME="IDX2972"></A>
+<A NAME="IDX2973"></A>
+  If the printer doesn't appear in the output of <SAMP>`net view'</SAMP>, or
+if setting <CODE>printer-name</CODE> to the UNC share name doesn't produce a
+hardcopy on that printer, you can use the <SAMP>`net use'</SAMP> command to
+connect a local print port such as <CODE>"LPT2"</CODE> to the networked
+printer.  For example, typing <KBD>net use LPT2:
+\\joes_pc\hp4si</KBD><A NAME="DOCF18" HREF="emacs_fot.html#FOOT18">(18)</A>
+causes Windows to <EM>capture</EM> the LPT2 port and redirect the printed
+material to the printer connected to the machine <CODE>joes_pc</CODE>.
+After this command, setting <CODE>printer-name</CODE> to <CODE>"LPT2"</CODE>
+should produce the hardcopy on the networked printer.
+</P><P>
+
+  With some varieties of Windows network software, you can instruct
+Windows to capture a specific printer port such as <CODE>"LPT2"</CODE>, and
+redirect it to a networked printer via the <CODE>Control
+Panel-&#62;Printers</CODE> applet instead of <SAMP>`net use'</SAMP>.
+</P><P>
+
+  Some printers expect DOS codepage encoding of non-ASCII text, even
+though they are connected to a Windows machine which uses a different
+encoding for the same locale.  For example, in the Latin-1 locale, DOS
+uses codepage 850 whereas Windows uses codepage 1252.  See section <A HREF="emacs_37.html#SEC560">AH.6 International Support on MS-DOS</A>.  When you print to such printers from Windows, you can use the
+<KBD>C-x RET c</KBD> (<CODE>universal-coding-system-argument</CODE>) command before
+<KBD>M-x lpr-buffer</KBD>; Emacs will then convert the text to the DOS
+codepage that you specify.  For example, <KBD>C-x RET c cp850-dos RET
+M-x lpr-region RET</KBD> will print the region while converting it to the
+codepage 850 encoding.  You may need to create the <CODE>cp<VAR>nnn</VAR></CODE>
+coding system with <KBD>M-x codepage-setup</KBD>.
+</P><P>
+
+  If you set <CODE>printer-name</CODE> to a file name, it's best to use an
+absolute file name.  Emacs changes the working directory according to
+the default directory of the current buffer, so if the file name in
+<CODE>printer-name</CODE> is relative, you will end up with several such
+files, each one in the directory of the buffer from which the printing
+was done.
+</P><P>
+
+<A NAME="IDX2974"></A>
+<A NAME="IDX2975"></A>
+<A NAME="IDX2976"></A>
+  The commands <CODE>print-buffer</CODE> and <CODE>print-region</CODE> call the
+<CODE>pr</CODE> program, or use special switches to the <CODE>lpr</CODE> program, to
+produce headers on each printed page.  MS-DOS and MS-Windows don't
+normally have these programs, so by default, the variable
+<CODE>lpr-headers-switches</CODE> is set so that the requests to print page
+headers are silently ignored.  Thus, <CODE>print-buffer</CODE> and
+<CODE>print-region</CODE> produce the same output as <CODE>lpr-buffer</CODE> and
+<CODE>lpr-region</CODE>, respectively.  If you do have a suitable <CODE>pr</CODE>
+program (for example, from GNU Textutils), set
+<CODE>lpr-headers-switches</CODE> to <CODE>nil</CODE>; Emacs will then call
+<CODE>pr</CODE> to produce the page headers, and print the resulting output as
+specified by <CODE>printer-name</CODE>.
+</P><P>
+
+<A NAME="IDX2977"></A>
+<A NAME="IDX2978"></A>
+<A NAME="IDX2979"></A>
+<A NAME="IDX2980"></A>
+  Finally, if you do have an <CODE>lpr</CODE> work-alike, you can set the
+variable <CODE>lpr-command</CODE> to <CODE>"lpr"</CODE>.  Then Emacs will use
+<CODE>lpr</CODE> for printing, as on other systems.  (If the name of the
+program isn't <CODE>lpr</CODE>, set <CODE>lpr-command</CODE> to specify where to
+find it.)  The variable <CODE>lpr-switches</CODE> has its standard meaning
+when <CODE>lpr-command</CODE> is not <CODE>""</CODE>.  If the variable
+<CODE>printer-name</CODE> has a string value, it is used as the value for the
+<CODE>-P</CODE> option to <CODE>lpr</CODE>, as on Unix.
+</P><P>
+
+<A NAME="IDX2981"></A>
+<A NAME="IDX2982"></A>
+<A NAME="IDX2983"></A>
+<A NAME="IDX2984"></A>
+<A NAME="IDX2985"></A>
+  A parallel set of variables, <CODE>ps-lpr-command</CODE>,
+<CODE>ps-lpr-switches</CODE>, and <CODE>ps-printer-name</CODE> (see section <A HREF="emacs_32.html#SEC460">AC.20 Variables for PostScript Hardcopy</A>), defines how PostScript files should be printed.  These
+variables are used in the same way as the corresponding variables
+described above for non-PostScript printing.  Thus, the value of
+<CODE>ps-printer-name</CODE> is used as the name of the device (or file) to
+which PostScript output is sent, just as <CODE>printer-name</CODE> is used for
+non-PostScript printing.  (There are two distinct sets of variables in
+case you have two printers attached to two different ports, and only one
+of them is a PostScript printer.)
+</P><P>
+
+  The default value of the variable <CODE>ps-lpr-command</CODE> is <CODE>""</CODE>,
+which causes PostScript output to be sent to the printer port specified
+by <CODE>ps-printer-name</CODE>, but <CODE>ps-lpr-command</CODE> can also be set to
+the name of a program which will accept PostScript files.  Thus, if you
+have a non-PostScript printer, you can set this variable to the name of
+a PostScript interpreter program (such as Ghostscript).  Any switches
+that need to be passed to the interpreter program are specified using
+<CODE>ps-lpr-switches</CODE>.  (If the value of <CODE>ps-printer-name</CODE> is a
+string, it will be added to the list of switches as the value for the
+<CODE>-P</CODE> option.  This is probably only useful if you are using
+<CODE>lpr</CODE>, so when using an interpreter typically you would set
+<CODE>ps-printer-name</CODE> to something other than a string so it is
+ignored.)
+</P><P>
+
+  For example, to use Ghostscript for printing on an Epson printer
+connected to the <SAMP>`LPT2'</SAMP> port, put this in your <TT>`_emacs'</TT> file:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(setq ps-printer-name t)  ; Ghostscript doesn't understand -P
+(setq ps-lpr-command "c:/gs/gs386")
+(setq ps-lpr-switches '("-q" "-dNOPAUSE"
+			"-sDEVICE=epson"
+			"-r240x72"
+			"-sOutputFile=LPT2"
+			"-Ic:/gs"))
+</pre></td></tr></table></P><P>
+
+(This assumes that Ghostscript is installed in the <TT>`"c:/gs"'</TT>
+directory.)
+</P><P>
+
+<A NAME="IDX2986"></A>
+<A NAME="IDX2987"></A>
+  For backwards compatibility, the value of <CODE>dos-printer</CODE>
+(<CODE>dos-ps-printer</CODE>), if it has a value, overrides the value of
+<CODE>printer-name</CODE> (<CODE>ps-printer-name</CODE>), on MS-DOS and MS-Windows
+only.
+</P><P>
+
+<A NAME="MS-DOS and MULE"></A>
+<HR SIZE="6">
+<A NAME="SEC560"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC559"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC561"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC561"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_38.html#SEC564"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AH.6 International Support on MS-DOS </H2>
+<!--docid::SEC560::-->
+<P>
+
+  Emacs on MS-DOS supports the same international character sets as it
+does on GNU, Unix and other platforms (see section <A HREF="emacs_20.html#SEC213">Q. International Character Set Support</A>), including
+coding systems for converting between the different character sets.
+However, due to incompatibilities between MS-DOS/MS-Windows and other systems,
+there are several DOS-specific aspects of this support that you should
+be aware of.  This section describes these aspects.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-x dos-codepage-setup</KBD>
+<DD>Set up Emacs display and coding systems as appropriate for the current
+DOS codepage.
+<P>
+
+<DT><KBD>M-x codepage-setup</KBD>
+<DD>Create a coding system for a certain DOS codepage.
+</DL>
+<P>
+
+<A NAME="IDX2988"></A>
+<A NAME="IDX2989"></A>
+  MS-DOS is designed to support one character set of 256 characters at
+any given time, but gives you a variety of character sets to choose
+from.  The alternative character sets are known as <EM>DOS codepages</EM>.
+Each codepage includes all 128 ASCII characters, but the other 128
+characters (codes 128 through 255) vary from one codepage to another.
+Each DOS codepage is identified by a 3-digit number, such as 850, 862,
+etc.
+</P><P>
+
+  In contrast to X, which lets you use several fonts at the same time,
+MS-DOS normally doesn't allow use of several codepages in a single
+session.  MS-DOS was designed to load a single codepage at system
+startup, and require you to reboot in order to change
+it<A NAME="DOCF19" HREF="emacs_fot.html#FOOT19">(19)</A>.  Much the same limitation applies when you run DOS
+executables on other systems such as MS-Windows.
+</P><P>
+
+<A NAME="IDX2990"></A>
+  If you invoke Emacs on MS-DOS with the <SAMP>`--unibyte'</SAMP> option
+(see section <A HREF="emacs_34.html#SEC530">AE.2 Initial Options</A>), Emacs does not perform any conversion of
+non-ASCII characters.  Instead, it reads and writes any non-ASCII
+characters verbatim, and sends their 8-bit codes to the display
+verbatim.  Thus, unibyte Emacs on MS-DOS supports the current codepage,
+whatever it may be, but cannot even represent any other characters.
+</P><P>
+
+<A NAME="IDX2991"></A>
+  For multibyte operation on MS-DOS, Emacs needs to know which
+characters the chosen DOS codepage can display.  So it queries the
+system shortly after startup to get the chosen codepage number, and
+stores the number in the variable <CODE>dos-codepage</CODE>.  Some systems
+return the default value 437 for the current codepage, even though the
+actual codepage is different.  (This typically happens when you use the
+codepage built into the display hardware.)  You can specify a different
+codepage for Emacs to use by setting the variable <CODE>dos-codepage</CODE> in
+your init file.
+</P><P>
+
+<A NAME="IDX2992"></A>
+  Multibyte Emacs supports only certain DOS codepages: those which can
+display Far-Eastern scripts, like the Japanese codepage 932, and those
+that encode a single ISO 8859 character set.
+</P><P>
+
+  The Far-Eastern codepages can directly display one of the MULE
+character sets for these countries, so Emacs simply sets up to use the
+appropriate terminal coding system that is supported by the codepage.
+The special features described in the rest of this section mostly
+pertain to codepages that encode ISO 8859 character sets.
+</P><P>
+
+  For the codepages which correspond to one of the ISO character sets,
+Emacs knows the character set name based on the codepage number.  Emacs
+automatically creates a coding system to support reading and writing
+files that use the current codepage, and uses this coding system by
+default.  The name of this coding system is <CODE>cp<VAR>nnn</VAR></CODE>, where
+<VAR>nnn</VAR> is the codepage number.<A NAME="DOCF20" HREF="emacs_fot.html#FOOT20">(20)</A>
+</P><P>
+
+<A NAME="IDX2993"></A>
+  All the <CODE>cp<VAR>nnn</VAR></CODE> coding systems use the letter <SAMP>`D'</SAMP> (for
+"DOS") as their mode-line mnemonic.  Since both the terminal coding
+system and the default coding system for file I/O are set to the proper
+<CODE>cp<VAR>nnn</VAR></CODE> coding system at startup, it is normal for the mode
+line on MS-DOS to begin with <SAMP>`-DD\-'</SAMP>.  See section <A HREF="emacs_5.html#SEC11">B.3 The Mode Line</A>.
+Far-Eastern DOS terminals do not use the <CODE>cp<VAR>nnn</VAR></CODE> coding
+systems, and thus their initial mode line looks like the Emacs default.
+</P><P>
+
+  Since the codepage number also indicates which script you are using,
+Emacs automatically runs <CODE>set-language-environment</CODE> to select the
+language environment for that script (see section <A HREF="emacs_20.html#SEC216">Q.3 Language Environments</A>).
+</P><P>
+
+  If a buffer contains a character belonging to some other ISO 8859
+character set, not the one that the chosen DOS codepage supports, Emacs
+displays it using a sequence of ASCII characters.  For example, if the
+current codepage doesn't have a glyph for the letter <SAMP>`&ograve;'</SAMP> (small
+<SAMP>`o'</SAMP> with a grave accent), it is displayed as <SAMP>`{`o}'</SAMP>, where
+the braces serve as a visual indication that this is a single character.
+(This may look awkward for some non-Latin characters, such as those from
+Greek or Hebrew alphabets, but it is still readable by a person who
+knows the language.)  Even though the character may occupy several
+columns on the screen, it is really still just a single character, and
+all Emacs commands treat it as one.
+</P><P>
+
+<A NAME="IDX2994"></A>
+<A NAME="IDX2995"></A>
+<A NAME="IDX2996"></A>
+  Not all characters in DOS codepages correspond to ISO 8859
+characters--some are used for other purposes, such as box-drawing
+characters and other graphics.  Emacs maps these characters to two
+special character sets called <CODE>eight-bit-control</CODE> and
+<CODE>eight-bit-graphic</CODE>, and displays them as their IBM glyphs.
+However, you should be aware that other systems might display these
+characters differently, so you should avoid them in text that might be
+copied to a different operating system, or even to another DOS machine
+that uses a different codepage.
+</P><P>
+
+<A NAME="IDX2997"></A>
+  Emacs supports many other characters sets aside from ISO 8859, but it
+cannot display them on MS-DOS.  So if one of these multibyte characters
+appears in a buffer, Emacs on MS-DOS displays them as specified by the
+<CODE>dos-unsupported-character-glyph</CODE> variable; by default, this glyph
+is an empty triangle.  Use the <KBD>C-u C-x =</KBD> command to display the
+actual code and character set of such characters.  See section <A HREF="emacs_7.html#SEC28">D.9 Cursor Position Information</A>.
+</P><P>
+
+<A NAME="IDX2998"></A>
+  By default, Emacs defines a coding system to support the current
+codepage.  To define a coding system for some other codepage (e.g., to
+visit a file written on a DOS machine in another country), use the
+<KBD>M-x codepage-setup</KBD> command.  It prompts for the 3-digit code of
+the codepage, with completion, then creates the coding system for the
+specified codepage.  You can then use the new coding system to read and
+write files, but you must specify it explicitly for the file command
+when you want to use it (see section <A HREF="emacs_20.html#SEC222">Q.9 Specifying a Coding System</A>).
+</P><P>
+
+  These coding systems are also useful for visiting a file encoded using
+a DOS codepage, using Emacs running on some other operating system.
+</P><P>
+
+<A NAME="IDX2999"></A>
+  MS-Windows provides its own codepages, which are different from the
+DOS codepages for the same locale.  For example, DOS codepage 850
+supports the same character set as Windows codepage 1252; DOS codepage
+855 supports the same character set as Windows codepage 1251, etc.
+The MS-Windows version of Emacs uses the current codepage for display
+when invoked with the <SAMP>`-nw'</SAMP> option.
+</P><P>
+
+<A NAME="MS-DOS Processes"></A>
+<HR SIZE="6">
+<A NAME="SEC561"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC560"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC562"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC562"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_38.html#SEC564"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AH.7 Subprocesses on MS-DOS </H2>
+<!--docid::SEC561::-->
+<P>
+
+<A NAME="IDX3000"></A>
+<A NAME="IDX3001"></A>
+<A NAME="IDX3002"></A>
+<A NAME="IDX3003"></A>
+  Because MS-DOS is a single-process "operating system,"
+asynchronous subprocesses are not available.  In particular, Shell
+mode and its variants do not work.  Most Emacs features that use
+asynchronous subprocesses also don't work on MS-DOS, including
+Shell mode and GUD.  When in doubt, try and see; commands that
+don't work output an error message saying that asynchronous processes
+aren't supported.
+</P><P>
+
+  Compilation under Emacs with <KBD>M-x compile</KBD>, searching files with
+<KBD>M-x grep</KBD> and displaying differences between files with <KBD>M-x
+diff</KBD> do work, by running the inferior processes synchronously.  This
+means you cannot do any more editing until the inferior process
+finishes.
+</P><P>
+
+  Spell checking also works, by means of special support for synchronous
+invocation of the <CODE>ispell</CODE> program.  This is slower than the
+asynchronous invocation on other platforms
+</P><P>
+
+  Instead of the Shell mode, which doesn't work on MS-DOS, you can use
+the <KBD>M-x eshell</KBD> command.  This invokes the Eshell package that
+implements a Posix-like shell entirely in Emacs Lisp.
+</P><P>
+
+  By contrast, Emacs compiled as native Windows application
+<STRONG>does</STRONG> support asynchronous subprocesses.  See section <A HREF="emacs_37.html#SEC562">AH.8 Subprocesses on Windows 9X/ME and Windows NT/2K</A>.
+</P><P>
+
+<A NAME="IDX3004"></A>
+  Printing commands, such as <CODE>lpr-buffer</CODE> (see section <A HREF="emacs_32.html#SEC458">AC.18 Hardcopy Output</A>) and
+<CODE>ps-print-buffer</CODE> (see section <A HREF="emacs_32.html#SEC459">AC.19 PostScript Hardcopy</A>), work in MS-DOS by sending
+the output to one of the printer ports.  See section <A HREF="emacs_37.html#SEC559">AH.5 Printing and MS-DOS</A>.
+</P><P>
+
+  When you run a subprocess synchronously on MS-DOS, make sure the
+program terminates and does not try to read keyboard input.  If the
+program does not terminate on its own, you will be unable to terminate
+it, because MS-DOS provides no general way to terminate a process.
+Pressing <KBD>C-c</KBD> or <KBD>C-<KBD>BREAK</KBD></KBD> might sometimes help in these
+cases.
+</P><P>
+
+  Accessing files on other machines is not supported on MS-DOS.  Other
+network-oriented commands such as sending mail, Web browsing, remote
+login, etc., don't work either, unless network access is built into
+MS-DOS with some network redirector.
+</P><P>
+
+<A NAME="IDX3005"></A>
+<A NAME="IDX3006"></A>
+  Dired on MS-DOS uses the <CODE>ls-lisp</CODE> package where other
+platforms use the system <CODE>ls</CODE> command.  Therefore, Dired on
+MS-DOS supports only some of the possible options you can mention in
+the <CODE>dired-listing-switches</CODE> variable.  The options that work are
+<SAMP>`-A'</SAMP>, <SAMP>`-a'</SAMP>, <SAMP>`-c'</SAMP>, <SAMP>`-i'</SAMP>, <SAMP>`-r'</SAMP>, <SAMP>`-S'</SAMP>,
+<SAMP>`-s'</SAMP>, <SAMP>`-t'</SAMP>, and <SAMP>`-u'</SAMP>.
+</P><P>
+
+<A NAME="Windows Processes"></A>
+<HR SIZE="6">
+<A NAME="SEC562"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC561"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC563"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC563"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_38.html#SEC564"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AH.8 Subprocesses on Windows 9X/ME and Windows NT/2K </H2>
+<!--docid::SEC562::-->
+<P>
+
+Emacs compiled as a native Windows application (as opposed to the DOS
+version) includes full support for asynchronous subprocesses.
+In the Windows version, synchronous and asynchronous subprocesses work
+fine on both
+Windows 9X and Windows NT/2K as long as you run only 32-bit Windows
+applications.  However, when you run a DOS application in a subprocess,
+you may encounter problems or be unable to run the application at all;
+and if you run two DOS applications at the same time in two
+subprocesses, you may have to reboot your system.
+</P><P>
+
+Since the standard command interpreter (and most command line utilities)
+on Windows 95 are DOS applications, these problems are significant when
+using that system.  But there's nothing we can do about them; only
+Microsoft can fix them.
+</P><P>
+
+If you run just one DOS application subprocess, the subprocess should
+work as expected as long as it is "well-behaved" and does not perform
+direct screen access or other unusual actions.  If you have a CPU
+monitor application, your machine will appear to be 100% busy even when
+the DOS application is idle, but this is only an artifact of the way CPU
+monitors measure processor load.
+</P><P>
+
+You must terminate the DOS application before you start any other DOS
+application in a different subprocess.  Emacs is unable to interrupt or
+terminate a DOS subprocess.  The only way you can terminate such a
+subprocess is by giving it a command that tells its program to exit.
+</P><P>
+
+If you attempt to run two DOS applications at the same time in separate
+subprocesses, the second one that is started will be suspended until the
+first one finishes, even if either or both of them are asynchronous.
+</P><P>
+
+If you can go to the first subprocess, and tell it to exit, the second
+subprocess should continue normally.  However, if the second subprocess
+is synchronous, Emacs itself will be hung until the first subprocess
+finishes.  If it will not finish without user input, then you have no
+choice but to reboot if you are running on Windows 9X.  If you are
+running on Windows NT/2K, you can use a process viewer application to kill
+the appropriate instance of ntvdm instead (this will terminate both DOS
+subprocesses).
+</P><P>
+
+If you have to reboot Windows 9X in this situation, do not use the
+<CODE>Shutdown</CODE> command on the <CODE>Start</CODE> menu; that usually hangs the
+system.  Instead, type <KBD>CTL-ALT-<KBD>DEL</KBD></KBD> and then choose
+<CODE>Shutdown</CODE>.  That usually works, although it may take a few minutes
+to do its job.
+</P><P>
+
+<A NAME="Windows System Menu"></A>
+<HR SIZE="6">
+<A NAME="SEC563"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC562"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_38.html#SEC564"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_38.html#SEC564"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AH.9 Using the System Menu on Windows </H2>
+<!--docid::SEC563::-->
+<P>
+
+Emacs compiled as a native Windows application normally turns off the
+Windows feature that tapping the <KBD>ALT</KBD>
+key invokes the Windows menu.  The reason is that the <KBD>ALT</KBD> also
+serves as <KBD>META</KBD> in Emacs.  When using Emacs, users often press the
+<KBD>META</KBD> key temporarily and then change their minds; if this has the
+effect of bringing up the Windows menu, it alters the meaning of
+subsequent commands.  Many users find this frustrating. 
+</P><P>
+
+<A NAME="IDX3007"></A>
+You can reenable Windows's default handling of tapping the <KBD>ALT</KBD> key
+by setting <CODE>w32-pass-alt-to-system</CODE> to a non-<CODE>nil</CODE> value.
+</P><P>
+
+<A NAME="Manifesto"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_37.html#SEC554"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_38.html#SEC564"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

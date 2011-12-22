@@ -1,0 +1,447 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Handling Data Exports from DLLs</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Handling Data Exports from DLLs">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Handling Data Exports from DLLs">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC255"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_254.html#SEC254" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: A configure.in for DLLs" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_256.html#SEC256" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Runtime Loading of DLLs" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_256.html#SEC256" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Runtime Loading of DLLs" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_251.html#SEC251" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: DLLs with Libtool" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_257.html#SEC257" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Package Installation" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 25.4.4 Handling Data Exports from DLLs </H3>
+<!--docid::SEC255::-->
+<P>
+
+Unfortunately, things are not quite that simple in reality, except in
+the rare cases where no data symbols are exported across a DLL boundary.
+If you look back at the example in <A HREF="autobook_254.html#SEC254">A configure.in for DLLs</A>, you will notice that the Libtool object,
+<TT>`hello.lo'</TT> was built with the preprocessor macro <SAMP>`DLL_EXPORT'</SAMP>
+defined.  Libtool does this deliberately so that it is possible to
+distinguish between a static object build and a Libtool object build,
+from within the source code.
+</P><P>
+
+Lets add a data export to the DLL source to illustrate:
+</P><P>
+
+The <TT>`hello.h'</TT> header must be changed quite significantly:
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#ifndef HELLO_H
+#define HELLO_H 1
+
+#if HAVE_CONFIG_H
+#  include &#60;config.h&#62;
+#endif
+
+#ifdef _WIN32
+#  ifdef DLL_EXPORT
+#    define HELLO_SCOPE         __declspec(dllexport)
+#  else
+#    ifdef LIBHELLO_DLL_IMPORT
+#      define HELLO_SCOPE       extern __declspec(dllimport)
+#    endif
+#  endif
+#endif
+#ifndef HELLO_SCOPE
+#  define HELLO_SCOPE           extern
+#endif
+
+HELLO_SCOPE const char *greet; 
+extern int hello (const char *who);
+
+#endif /* !HELLO_H */
+</pre></td></tr></table></P><P>
+
+The nasty block of preprocessor would need to be shared among all the
+source files which comprise the <TT>`libhello.la'</TT> Libtool library,
+which in this example is just <TT>`hello.c'</TT>.  It needs to take care of
+five different cases:
+</P><P>
+
+<DL COMPACT>
+<DT>compiling <TT>`hello.lo'</TT>
+<DD>When compiling the Libtool object which will be included in the
+DLL, we need to tell the compiler which symbols are exported data
+so that it can  do the automatic extra dereference required to refer to
+that data from a program which uses this DLL.  We need to flag the
+data with <CODE>__declspec(dllexport)</CODE>, See section <A HREF="autobook_251.html#SEC251">25.4 DLLs with Libtool</A>.
+<P>
+
+<DT>compilation unit which will link with <TT>`libhello-0-0-0.dll'</TT>
+<DD>When compiling an object which will import data from the DLL, again we
+need to tell the compiler so that it can perform the extra dereference,
+except this time we use <CODE>extern __declspec(dllimport)</CODE>.  From the
+preprocessor block, you will see that we need to define
+<SAMP>`LIBHELLO_DLL_IMPORT'</SAMP> to get this define, which I will describe
+shortly.
+<P>
+
+<DT>compiling <TT>`hello.o'</TT>
+<DD>When compiling the object for inclusion in the static archive, we must be 
+careful to hide the <CODE>__declspec()</CODE> declarations from the compiler,
+or else it will start dereferencing variables for us by mistake at
+runtime, and in all likelihood cause a segmentation fault.  In this case 
+we want the compiler to see a simple <CODE>extern</CODE> declaration.
+<P>
+
+<DT>compilation unit which will link with <TT>`libhello.a'</TT>
+<DD>Similarly, an object which references a data symbol which will be
+statically linked into the final binary from a static archive must not
+see any of the <CODE>__declspec()</CODE> code, and requires a simple
+<CODE>extern</CODE>.
+<P>
+
+<DT>non Windows host
+<DD>It seems obvious, but we must also be careful not to contaminate the
+code when it is compiled on a machine which doesn't need to jump through 
+the DLL hoops.
+</DL>
+<P>
+
+The changes to <TT>`hello.c'</TT> are no different to what would be required 
+on a Unix machine.  I have declared the <CODE>greet</CODE> variable to
+allow the caller to override the default greeting:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if HAVE_CONFIG_H
+#  include &#60;config.h&#62;
+#endif
+
+#include &#60;stdio.h&#62;
+
+#include "hello.h"
+
+const char *greet = "Hello";
+
+int
+hello (const char *who)
+{
+    printf("%s, %s!\n", greet, who);
+    return 0;
+}
+</pre></td></tr></table></P><P>
+
+Again, since the DLL specific changes have been encapsulated in the
+<TT>`hello.h'</TT> file, enhancements to <TT>`main.c'</TT> are unsurprising too: 
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if HAVE_CONFIG_H
+#  include &#60;config.h&#62;
+#endif
+
+#include "hello.h"
+
+int
+main (int argc, const char *const argv[])
+{
+    if (argc &#62; 1)
+      {
+        greet = argv[1];
+      }
+    return hello("World");
+}
+</pre></td></tr></table></P><P>
+
+The final thing to be aware of is to be careful about ensuring that
+<SAMP>`LIBHELLO_DLL_IMPORT'</SAMP> is defined when we link an executable against 
+the <TT>`libhello'</TT> DLL, but not defined if we link it against the
+static archive.  It is impossible to automate this completely,
+particularly when the executable in question is from another package and 
+is using the installed <TT>`hello.h'</TT> header.  In that case it is the
+responsibility of the author of that package to probe the system with
+<CODE>configure</CODE> to decide whether it will be linking with the
+DLL or the static archive, and defining <SAMP>`LIBHELLO_DLL_IMPORT'</SAMP>
+as appropriate.
+</P><P>
+
+Things are a little simpler when everything is under the control of a
+single package, but even then it isn't quite possible to tell for sure
+whether Libtool is going to build a DLL or only a static  library.
+For example, if some dependencies are dropped for being static, Libtool
+may disregard <SAMP>`-no-undefined'</SAMP> (see section <A HREF="autobook_88.html#SEC88">11.2.1 Creating Libtool Libraries with Automake</A>).  One possible solution is:
+</P><P>
+
+<OL>
+<LI>
+Define a function in the library that invokes <SAMP>`return 1'</SAMP> from a
+DLL.   Fortunately that's easy to accomplish thanks to
+<SAMP>`-DDLL_EXPORT'</SAMP>, in this case, by adding the following to
+<TT>`hello.c'</TT>: 
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if defined WIN32 &#38;&#38; defined DLL_EXPORT
+char
+libhello_is_dll (void)
+{
+  return 1;
+}
+#endif /* WIN32 &#38;&#38; DLL_EXPORT */
+</pre></td></tr></table></P><P>
+
+<LI>
+Link a program with the library, and check whether it is a DLL by
+seeing if the link succeeded.
+<P>
+
+<LI>
+To get cross builds to work, you must, in the same vein, test whether
+linking a program which calls <SAMP>`libhello_is_dll'</SAMP> succeeds to tell
+whether or not to define <SAMP>`LIBHELLO_DLL_IMPORT'</SAMP>.
+</OL>
+<P>
+
+As an example of building the <TT>`hello'</TT> binary we can add the
+following code to <TT>`configure.in'</TT>, just before the call 
+to <SAMP>`AC_OUTPUT'</SAMP>:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre># ----------------------------------------------------------------------
+# Win32 objects need to tell the header whether they will be linking
+# with a dll or static archive in order that everything is imported
+# to the object in the same way that it was exported from the
+# archive (extern for static, __declspec(dllimport) for dlls)
+# ----------------------------------------------------------------------
+LIBHELLO_DLL_IMPORT=
+case "$host" in
+*-*-cygwin* | *-*-mingw* )
+  if test X"$enable_shared" = Xyes; then
+    AC_TRY_LINK_FUNC([libhello_is_dll],
+                     [LIBHELLO_DLL_IMPORT=-DLIBHELLO_DLL_IMPORT])
+  fi
+  ;;
+esac
+AC_SUBST(LIBHELLO_DLL_IMPORT)
+</FONT></pre></td></tr></table></P><P>
+
+And we must also arrange for the flag to be passed while compiling any
+objects which will end up in a binary which links with the dll.  For
+this simple example, only <TT>`main.c'</TT> is affected, and we can add the
+following rule to the end of <TT>`Makefile.am'</TT>:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>main.o: main.c
+        $(COMPILE) @LIBHELLO_DLL_IMPORT@ -c main.c
+</FONT></pre></td></tr></table></P><P>
+
+In a more realistic project, there would probably be dozens of files
+involved, in which case it would probably be easier to move them all
+to a separate subdirectory, and give them a <TT>`Makefile.am'</TT> of their
+own which could include:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>CPPFLAGS        = @LIBHELLO_DLL_IMPORT@
+</FONT></pre></td></tr></table></P><P>
+
+Now, lets put all this into practice, and check that it works:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ make
+cd . &#38;&#38; aclocal
+cd . &#38;&#38; automake --foreign Makefile
+cd . &#38;&#38; autoconf
+...
+checking for gcc option to produce PIC ... -DDLL_EXPORT
+checking if gcc PIC flag  -DDLL_EXPORT works... yes
+...
+checking whether to build shared libraries... yes
+...
+gcc -DHAVE_CONFIG_H -I. -I. -I. -g -O2 -Wp,-MD,.deps/hello.pp \
+-c  -DDLL_EXPORT -DPIC hello.c -o .libs/hello.lo
+gcc -DHAVE_CONFIG_H -I. -I. -I. -g -O2 -Wp,-MD,.deps/hello.pp \
+-c hello.c -o hello.o &#62;/dev/null 2&#62;&#38;1
+...
+gcc -DHAVE_CONFIG_H -I. -I. -I.     -g -O2 -DLIBHELLO_DLL_IMPORT \
+-c main.c
+...
+gcc -g -O2 -o ./libs/hello main.o .libs/libimp-hello-0-0-0.a \
+-Wl,--rpath -Wl,/usr/local/lib
+creating hello
+...
+$ ./hello
+Hello, World!
+$ ./hello Howdy
+Howdy, World!
+</pre></td></tr></table></P><P>
+
+The recipe also works if I use only the static archives:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ make clean
+...
+$ ./configure --disable-shared
+...
+checking whether to build shared libraries... no
+...
+$ make
+...
+gcc -DHAVE_CONFIG_H -I. -I. -I. -f -O2 -Wp,-MD,.deps/hello.pp \
+-c hello.c -o hello.o
+...
+ar cru ./libs/libhello.a  hello.o
+...
+gcc -DHAVE_CONFIG_H -I. -I. -I.     -g -O2 -c main.c
+...
+gcc -g -O2 -o hello main.o ./.libs/libhello.a
+$ ./hello
+Hello, World!
+$ ./hello "G'Day"
+G'day, World!
+</pre></td></tr></table></P><P>
+
+And just to be certain that I am really testing a new statically linked
+executable:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ ldd ./hello
+hello.exe       -&#62; /tmp/hello.exe
+cygwin1.dll     -&#62; /usr/bin/cygwin1.dll
+kernel32.dll    -&#62; /WINNT/system32/kernel32.dll
+ntdll.dll       -&#62; /WINNT/system32/ntdll.dll
+advapi32.dll    -&#62; /WINNT/system32/advapi32.dll
+user32.dll      -&#62; /WINNT/system32/user32.dll
+gdi32.dll       -&#62; /WINNT/system32/gdi32.dll
+rpcrt4.dll      -&#62; /WINNT/system32/rpcrt4.dll
+</FONT></pre></td></tr></table></P><P>
+
+<A NAME="Runtime Loading of DLLs"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

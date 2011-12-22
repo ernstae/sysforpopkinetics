@@ -1,0 +1,197 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Configure Development</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Configure Development">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Configure Development">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC9"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_8.html#SEC8" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: First Configure Programs" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_10.html#SEC10" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Automake Development" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_10.html#SEC10" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Automake Development" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_6.html#SEC6" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: History" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_13.html#SEC13" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Invoking configure" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 2.3 Configure Development </H2>
+<!--docid::SEC9::-->
+<P>
+
+The Cygnus <TT>`configure'</TT> script and the original GCC
+<TT>`configure'</TT> script both had to be updated for each new Unix variant
+they supported.  This meant that packages which used them were
+continually out of date as new Unix variants appeared.  It was not hard
+for the developer to add support for a new system variant; however, it
+was not something which package users could easily do themselves.
+</P><P>
+
+The same was true of Imake as it was commonly used.  While it
+was possible for a user to build and configure Imake for a
+particular system, it was not commonly done.  In practice, packages such
+as the X window system which use Imake are shipped with
+configuration information detailed for specific Unix variants.
+</P><P>
+
+Because Metaconfig and Autoconf used feature tests,
+the scripts they generated were often able to work correctly on new Unix
+variants without modification.  This made them more flexible and easier
+to work with over time, and led to the wide adoption of Autoconf.
+</P><P>
+
+In 1994, David MacKenzie extended Autoconf to incorporate the features
+of the Cygnus <TT>`configure'</TT> script and the original GCC
+<TT>`configure'</TT> script.  This included support for using system
+specified header file and makefile fragments, and support for
+cross-compilation.
+</P><P>
+
+GCC has since been converted to use Autoconf, eliminating the
+GCC <TT>`configure'</TT> script.  Most programs which use the Cygnus
+<TT>`configure'</TT> script have also been converted, and no new programs
+are being written to use the Cygnus <TT>`configure'</TT> script.
+</P><P>
+
+The <CODE>metaconfig</CODE> program is still used today to configure Perl
+and a few other programs.  <CODE>imake</CODE> is still used to configure
+the X window system.  However, these tools are not generally used for
+new packages.
+</P><P>
+
+<A NAME="Automake Development"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

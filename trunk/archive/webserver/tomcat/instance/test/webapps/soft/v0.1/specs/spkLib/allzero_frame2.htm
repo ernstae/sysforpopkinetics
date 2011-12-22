@@ -1,0 +1,95 @@
+<html><head>
+<title>Testing Whether a Matrix is Filled With Zero</title>
+<meta name="description" id="description" content="Testing Whether a Matrix is Filled With Zero">
+<meta name="keywords" id="keywords" content=" allzero matrix all zero? logical operation "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="allzero.htm" target="_top">section</a>, <a href="allzero_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Returns true if (0.0 - DBL_EPSILON) &lt; A[i,j] &lt; (0.0 + DBL_EPSILON) for every element of A, 
+or false otherwise.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&amp;</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> arbitrary matrix.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;allTrue.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Test&nbsp;the&nbsp;DoubleMatrix&nbsp;version.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatA(3,3);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*pdA&nbsp;=&nbsp;dmatA.data();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;set&nbsp;the&nbsp;matrix&nbsp;to:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[0,&nbsp;3,&nbsp;2]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[1,&nbsp;0,&nbsp;3]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[2,&nbsp;1,&nbsp;0]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(&nbsp;int&nbsp;i=0;&nbsp;i&lt;3*3;&nbsp;i++&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pdA[i]&nbsp;=&nbsp;i%4;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Matrix&nbsp;version:&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;(allZero(dmatA)?&nbsp;&quot;All&nbsp;zero.&quot;&nbsp;:&nbsp;&quot;Some&nbsp;element&nbsp;is&nbsp;non&nbsp;zero.&quot;)&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Test&nbsp;the&nbsp;valarray&nbsp;version.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Create&nbsp;a&nbsp;vector&nbsp;of&nbsp;size&nbsp;3&nbsp;filled&nbsp;with&nbsp;all&nbsp;0.0.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;x(&nbsp;3,&nbsp;0.0&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;valarray&nbsp;version:&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;(allZero(x)?&nbsp;&quot;All&nbsp;zero.&quot;&nbsp;:&nbsp;&quot;Some&nbsp;element&nbsp;is&nbsp;non&nbsp;zero.&quot;)&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;Matrix&nbsp;version:<br>
+&nbsp;&nbsp;Some&nbsp;element&nbsp;is&nbsp;non&nbsp;zero.<br>
+<br>
+&nbsp;&nbsp;valarray&nbsp;version:<br>
+&nbsp;&nbsp;All&nbsp;zero.<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/allZero.cpp
+
+</body>
+</html>

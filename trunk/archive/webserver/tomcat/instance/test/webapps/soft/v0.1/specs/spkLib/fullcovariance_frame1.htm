@@ -1,0 +1,131 @@
+<html><head>
+<title>FullCovariance Class</title>
+<meta name="description" id="description" content="FullCovariance Class">
+<meta name="keywords" id="keywords" content=" Fullcovariance Class "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="covariance_inv_indpar.htm" target="_top">previous</a>
+&nbsp;&nbsp;<a href="fullcovariance_redefiningmathfunctions.htm" target="_top">next</a>
+&nbsp;&nbsp;<a href="_contents.htm" target="_top">contents</a>
+&nbsp;&nbsp;<a href="_reference.htm" target="_top">reference</a>
+&nbsp;&nbsp;<a href="_index.htm" target="_top">index</a>
+&nbsp;&nbsp;<a href="_search.htm" target="_top">search</a>
+&nbsp;&nbsp;<a href="_external.htm" target="_top">external</a>
+&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="fullcovariance.htm" target="_top">section</a>, <a href="fullcovariance_frame1.htm" target="_top">frame</a></div>
+<hr>
+
+
+<center><b><big><big>FullCovariance Class</big></big></b></center>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This is a subclass of <a href="covariance.htm" target="_top"><span style='white-space: nowrap'>Covariance</span></a>
+ 
+that serves interfaces for mathematical operations.
+It provides default implementations for some of the interfaces that
+are designed to handle non-sparse matrices.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The intended use of this class is for the client to define a yet-another
+level of abstract class derived from this class and one of the Covariance classes
+on the right hand side of the diagram shown below.
+
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>Covariance</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>Abstract</i>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/|\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/|\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>math</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>states</i><br>
+&nbsp;&nbsp;&nbsp;-----------------------&nbsp;&nbsp;&nbsp;&nbsp;-------------------------<br>
+&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>FullCovariance</i>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;<i>Data</i>/<i>IndParCovariance</i>&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;-----------------------&nbsp;&nbsp;&nbsp;&nbsp;-------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>Abstract</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>Abstract</i>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/|\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/|\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>ex</i>.|&nbsp;&nbsp;&nbsp;&nbsp;<i>FullDataCovariance</i>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>Abstract</i>)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/|\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>ex</i>.|&nbsp;&nbsp;<i>UserFullDataCovariance</i>&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>concrete</i>)<br>
+</span></code>Objects of this class are used to calculate and cache the following 
+quantities for a covariance matrix:
+<table><tr><td align='left'  valign='top'>
+
+(1.) the covariance, </td></tr><tr><td align='left'  valign='top'>
+
+(2.) the inverse of the covariance, </td></tr><tr><td align='left'  valign='top'>
+
+(3.) the log determinant, and  </td></tr><tr><td align='left'  valign='top'>
+
+(4.) the weighted sum of squares of an arbitrary vector. </td></tr><tr><td align='left'  valign='top'>
+
+</td></tr>
+</table>
+In addition, objects of this class are used to evaluate the 
+derivatives of these quantities with respect to the population
+and the individual parameters.
+
+<br>
+<br>
+<b><big><a name="Note" id="Note">Note</a></big></b>
+<br>
+(1.) This class defines virtual functions that calculate the
+above mathematical quantities and their derivatives and that were
+declared in the <code><font color="blue">Covariance</font></code> base class.  
+These functions may be redefined in subclasses of this class 
+in order to take advantage of more efficient algorithms or methods 
+known to the implementer of the subclass.
+If these functions are redefined, their new implementations 
+must update the cached values before they do any computations. 
+See  <a href="fullcovariance_redefiningmathfunctions.htm" target="_top"><span style='white-space: nowrap'>FullCovariance_RedefiningMathFunctions</span></a>
+ for more.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>(2.) This class declares pure virtual functions that get the 
+current value of the covariance matrix and its derivatives.  
+These functions must be defined in concrete subclasses of this class 
+before any <code><font color="blue">FullCovariance</font></code> objects may be instantiated.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>(3.) This class defines a virtual function 
+<a href="fullcovariance_calccholesky.htm" target="_top"><span style='white-space: nowrap'>calcCholesky</span></a>
+ that calculates 
+the Cholesky factorization of the full covariance matrix.
+This function may be redefined in subclasses of this class 
+in order to take advantage of more efficient implementations 
+known to the implementer of the subclass.
+
+<br>
+<br>
+<b><big><a name="Contents" id="Contents">Contents</a></big></b>
+<br>
+<div><a href="fullcovariance_redefiningmathfunctions.htm" target="_top">Redefining&nbsp;the&nbsp;Cache&nbsp;Dependent&nbsp;Functions</a><br>
+<a href="fullcovariance_default_constructor.htm" target="_top">Default&nbsp;Constructor</a><br>
+<a href="fullcovariance_copy_constructor.htm" target="_top">Copy&nbsp;Constructor</a><br>
+<a href="fullcovariance_assignment_operator.htm" target="_top">Assignment&nbsp;Operator</a><br>
+<a href="fullcovariance_default_destructor.htm" target="_top">Default&nbsp;Destructor</a><br>
+<a href="fullcovariance_docov.htm" target="_top">FullCovariance::doCov</a><br>
+<a href="fullcovariance_calccholesky.htm" target="_top">FullCovariance::calcCholesky</a><br>
+<a href="fullcovariance_logdet.htm" target="_top">FullCovariance::logdet</a><br>
+<a href="fullcovariance_weightedsumofsquares.htm" target="_top">FullCovariance::weightedSumOfSquares</a><br>
+</div>
+<hr>Input File: ../../spk/FullCovariance.h
+
+</body>
+</html>

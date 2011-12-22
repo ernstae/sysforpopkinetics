@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>take_snapshot.pl -- take a snapshot of the production database</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#dependencies">DEPENDENCIES</a></li>
+	<li><a href="#bugs">BUGS</a></li>
+	<li><a href="#files">FILES</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<pre>
+    take_snapshot.pl -- take a snapshot of the production database</pre>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<pre>
+    take_snapshot.pl job_id ...</pre>
+<pre>
+    =head1 DESCRIPTION</pre>
+<pre>
+    Given a list of job_id numbers, this program extracts from the
+    production database, spkdb, the corresponding rows of the job
+    table, along with all related rows from the job, history, user,
+    model and dataset tables, as if the selected jobs had been
+    submitted but had not yet been compiled.  The output consists of
+    three files suitable as input to the load_spktest.pl utility;
+    namely the files schema.sql, basedata.sql, and userdata.sql.  In
+    conjunction with the load_spktest.pl program, take_snapshot.pl can
+    be used to populate the spktest database with a specific set of
+    jobs prior to testing.</pre>
+<pre>
+    Here is a simple shell script that demonstrates the principle.  It
+    extracts jobs 5, 11, and 15 from spkdb and uses them and related
+    rows to reinitialize and load spktest:</pre>
+<pre>
+    #!/bin/bash
+    take_snapshot.pl 5 11 15
+    load_spktest.pl</pre>
+<pre>
+    The program is normally run on dbserver, although it can be run on
+    any system that has an spktmp database and a properly defined
+    database user, named extractor.  (See the discussion of this,
+    below, in the section titled BUGS).</pre>
+<p>
+</p>
+<hr />
+<h1><a name="dependencies">DEPENDENCIES</a></h1>
+<pre>
+    This program uses the following utility programs to do much of its work:
+    
+    dump_spkdb.pl
+    load_spktest.pl
+    mysqldump</pre>
+<pre>
+    It also uses the SPK Perl API module:</pre>
+<pre>
+    Spkdb.pm</pre>
+<p>
+</p>
+<hr />
+<h1><a name="bugs">BUGS</a></h1>
+<pre>
+    The output files, schema.sql, basedata.sql, and userdata.sql, are
+    created in the current directory.  If files with those same names
+    already exist, they will be overwritten.</pre>
+<pre>
+    The utility makes use of a temporary database called spktmp, which
+    is assumed to be located on the local system.  The utility can be
+    run on any system which has a local spktmp database.  In
+    particular, it can be run on dbserver, where such a database is
+    known to exist.  To make it run on another machine, an spktmp
+    database must be created, along with a user called
+    &quot;extractor@localhost identified by 'extractor'&quot;, with table drop
+    and create privileges.</pre>
+<pre>
+    Because the utility drops all tables in spktmp, then recreates
+    them, only one copy of the program can run at a time.  A lock file
+    is used to enforce this discipline.  If the lock file already
+    exists, the program will refuse to run.  If no lock file can be
+    found, the program will create one.  When the program terminates,
+    whether successfully or with errors, it removes the lock file.
+    If, however, the program is killed, the lock file will not be
+    removed, and the utility will refuse to run until the lock file is
+    removed manually.</pre>
+<p>
+</p>
+<hr />
+<h1><a name="files">FILES</a></h1>
+<pre>
+    /tmp/lock-take_snapshot           -- the lock file</pre>
+
+</body>
+
+</html>

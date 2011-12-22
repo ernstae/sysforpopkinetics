@@ -1,0 +1,2750 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html40/loose.dtd">
+<HTML>
+<!-- Created on April, 18 2002 by texi2html 1.66 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<HEAD>
+<TITLE>CVS--Concurrent Versions System v1.11.2: Repository</TITLE>
+
+<META NAME="description" CONTENT="CVS--Concurrent Versions System v1.11.2: Repository">
+<META NAME="keywords" CONTENT="CVS--Concurrent Versions System v1.11.2: Repository">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.66">
+
+</HEAD>
+
+<BODY LANG="en" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC9"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC8"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC10"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC1"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> 2. The Repository </H1>
+<!--docid::SEC9::-->
+<P>
+
+The CVS <EM>repository</EM> stores a complete copy of
+all the files and directories which are under version
+control.
+</P>
+<P>
+
+Normally, you never access any of the files in the
+repository directly.  Instead, you use CVS
+commands to get your own copy of the files into a
+<EM>working directory</EM>, and then
+work on that copy.  When you've finished a set of
+changes, you check (or <EM>commit</EM>) them back into the
+repository.  The repository then contains the changes
+which you have made, as well as recording exactly what
+you changed, when you changed it, and other such
+information.  Note that the repository is not a
+subdirectory of the working directory, or vice versa;
+they should be in separate locations.
+</P>
+<P>
+
+<A NAME="IDX10"></A>
+CVS can access a repository by a variety of
+means.  It might be on the local computer, or it might
+be on a computer across the room or across the world.
+To distinguish various ways to access a repository, the
+repository name can start with an <EM>access method</EM>.
+For example, the access method <CODE>:local:</CODE> means to
+access a repository directory, so the repository
+<CODE>:local:/usr/local/cvsroot</CODE> means that the
+repository is in `<TT>/usr/local/cvsroot</TT>' on the
+computer running CVS.  For information on other
+access methods, see <A HREF="cvs_2.html#SEC26">2.9 Remote repositories</A>.
+</P>
+<P>
+
+If the access method is omitted, then if the repository
+starts with `<SAMP>/</SAMP>', then <CODE>:local:</CODE> is
+assumed.  If it does not start with `<SAMP>/</SAMP>' then either
+<CODE>:ext:</CODE> or <CODE>:server:</CODE> is assumed.  For
+example, if you have a local repository in
+`<TT>/usr/local/cvsroot</TT>', you can use
+<CODE>/usr/local/cvsroot</CODE> instead of
+<CODE>:local:/usr/local/cvsroot</CODE>.  But if (under
+Windows NT, for example) your local repository is
+`<TT>c:\src\cvsroot</TT>', then you must specify the access
+method, as in <CODE>:local:c:/src/cvsroot</CODE>.
+</P>
+<P>
+
+The repository is split in two parts.  `<TT>$CVSROOT/CVSROOT</TT>' contains
+administrative files for CVS.  The other directories contain the actual
+user-defined modules.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC10">2.1 Telling CVS where your repository is</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC11">2.2 How data is stored in the repository</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">The structure of the repository</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC19">2.3 How data is stored in the working directory</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">The structure of working directories</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC20">2.4 The administrative files</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Defining modules</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC22">2.5 Multiple repositories</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC23">2.6 Creating a repository</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC24">2.7 Backing up a repository</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC25">2.8 Moving a repository</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC26">2.9 Remote repositories</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Accessing repositories on remote machines</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC36">2.10 Read-only repository access</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Granting read-only access to the repository</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC37">2.11 Temporary directories for the server</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">The server creates temporary directories</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="Specifying a repository"></A>
+<HR SIZE="6">
+<A NAME="SEC10"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC11"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 2.1 Telling CVS where your repository is </H2>
+<!--docid::SEC10::-->
+<P>
+
+There are several ways to tell CVS
+where to find the repository.  You can name the
+repository on the command line explicitly, with the
+<CODE>-d</CODE> (for &quot;directory&quot;) option:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs -d /usr/local/cvsroot checkout yoyodyne/tc
+</pre></td></tr></table><P>
+
+<A NAME="IDX11"></A>
+<A NAME="IDX12"></A>
+<A NAME="IDX13"></A>
+<A NAME="IDX14"></A>
+<A NAME="IDX15"></A>
+        Or you can set the <CODE>$CVSROOT</CODE> environment
+variable to an absolute path to the root of the
+repository, `<TT>/usr/local/cvsroot</TT>' in this example.
+To set <CODE>$CVSROOT</CODE>, <CODE>csh</CODE> and <CODE>tcsh</CODE>
+users should have this line in their `<TT>.cshrc</TT>' or
+`<TT>.tcshrc</TT>' files:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>setenv CVSROOT /usr/local/cvsroot
+</pre></td></tr></table><P>
+
+<CODE>sh</CODE> and <CODE>bash</CODE> users should instead have these lines in their
+`<TT>.profile</TT>' or `<TT>.bashrc</TT>':
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>CVSROOT=/usr/local/cvsroot
+export CVSROOT
+</pre></td></tr></table><P>
+
+<A NAME="IDX16"></A>
+<A NAME="IDX17"></A>
+        A repository specified with <CODE>-d</CODE> will
+override the <CODE>$CVSROOT</CODE> environment variable.
+Once you've checked a working copy out from the
+repository, it will remember where its repository is
+(the information is recorded in the
+`<TT>CVS/Root</TT>' file in the working copy).
+</P>
+<P>
+
+The <CODE>-d</CODE> option and the `<TT>CVS/Root</TT>' file both
+override the <CODE>$CVSROOT</CODE> environment variable.  If
+<CODE>-d</CODE> option differs from `<TT>CVS/Root</TT>', the
+former is used.  Of course, for proper operation they
+should be two ways of referring to the same repository.
+</P>
+<P>
+
+<A NAME="Repository storage"></A>
+<HR SIZE="6">
+<A NAME="SEC11"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC10"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC12"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 2.2 How data is stored in the repository </H2>
+<!--docid::SEC11::-->
+<P>
+
+For most purposes it isn't important <EM>how</EM>
+CVS stores information in the repository.  In
+fact, the format has changed in the past, and is likely
+to change in the future.  Since in almost all cases one
+accesses the repository via CVS commands, such
+changes need not be disruptive.
+</P>
+<P>
+
+However, in some cases it may be necessary to
+understand how CVS stores data in the repository,
+for example you might need to track down CVS locks
+(see section <A HREF="cvs_10.html#SEC88">10.5 Several developers simultaneously attempting to run CVS</A>) or you might need to deal with
+the file permissions appropriate for the repository.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC12">2.2.1 Where files are stored within the repository</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">What files are stored in the repository</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC13">2.2.2 File permissions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC14">2.2.3 File Permission issues specific to Windows</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Issues specific to Windows</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC15">2.2.4 The attic</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Some files are stored in the Attic</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC16">2.2.5 The CVS directory in the repository</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Additional information in CVS directory</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC17">2.2.6 CVS locks in the repository</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">CVS locks control concurrent accesses</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC18">2.2.7 How files are stored in the CVSROOT directory</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">A few things about CVSROOT are different</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="Repository files"></A>
+<HR SIZE="6">
+<A NAME="SEC12"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC11"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC13"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC11"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 2.2.1 Where files are stored within the repository </H3>
+<!--docid::SEC12::-->
+<P>
+
+The overall structure of the repository is a directory
+tree corresponding to the directories in the working
+directory.  For example, supposing the repository is in
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>/usr/local/cvsroot
+</pre></td></tr></table><P>
+
+here is a possible directory tree (showing only the
+directories):
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre><TT>/usr</TT>
+ |
+ +--<TT>local</TT>
+ |   |
+ |   +--<TT>cvsroot</TT>
+ |   |    |
+ |   |    +--<TT>CVSROOT</TT>
+          |      (administrative files)
+          |
+          +--<TT>gnu</TT>
+          |   |
+          |   +--<TT>diff</TT>
+          |   |   (source code to GNU diff)
+          |   |
+          |   +--<TT>rcs</TT>
+          |   |   (source code to RCS)
+          |   |
+          |   +--<TT>cvs</TT>
+          |       (source code to CVS)
+          |
+          +--<TT>yoyodyne</TT>
+              |
+              +--<TT>tc</TT>
+              |    |
+              |    +--<TT>man</TT>
+              |    |
+              |    +--<TT>testing</TT>
+              |
+              +--(other Yoyodyne software)
+</pre></td></tr></table><P>
+
+With the directories are <EM>history files</EM> for each file
+under version control.  The name of the history file is
+the name of the corresponding file with `<SAMP>,v</SAMP>'
+appended to the end.  Here is what the repository for
+the `<TT>yoyodyne/tc</TT>' directory might look like:
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>  <CODE>$CVSROOT</CODE>
+    |
+    +--<TT>yoyodyne</TT>
+    |   |
+    |   +--<TT>tc</TT>
+    |   |   |
+            +--<TT>Makefile,v</TT>
+            +--<TT>backend.c,v</TT>
+            +--<TT>driver.c,v</TT>
+            +--<TT>frontend.c,v</TT>
+            +--<TT>parser.c,v</TT>
+            +--<TT>man</TT>
+            |    |
+            |    +--<TT>tc.1,v</TT>
+            |
+            +--<TT>testing</TT>
+                 |
+                 +--<TT>testpgm.t,v</TT>
+                 +--<TT>test2.t,v</TT>
+</pre></td></tr></table><P>
+
+<A NAME="IDX18"></A>
+<A NAME="IDX19"></A>
+The history files contain, among other things, enough
+information to recreate any revision of the file, a log
+of all commit messages and the user-name of the person
+who committed the revision.  The history files are
+known as <EM>RCS files</EM>, because the first program to
+store files in that format was a version control system
+known as RCS.  For a full
+description of the file format, see the <CODE>man</CODE> page
+<CITE>rcsfile(5)</CITE>, distributed with RCS, or the
+file `<TT>doc/RCSFILES</TT>' in the CVS source
+distribution.  This
+file format has become very common--many systems other
+than CVS or RCS can at least import history
+files in this format.
+</P>
+<P>
+
+The RCS files used in CVS differ in a few
+ways from the standard format.  The biggest difference
+is magic branches; for more information see <A HREF="cvs_5.html#SEC59">5.5 Magic branch numbers</A>.  Also in CVS the valid tag names
+are a subset of what RCS accepts; for CVS's
+rules see <A HREF="cvs_4.html#SEC48">4.4 Tags--Symbolic revisions</A>.
+</P>
+<P>
+
+<A NAME="File permissions"></A>
+<HR SIZE="6">
+<A NAME="SEC13"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC12"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC14"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC11"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 2.2.2 File permissions </H3>
+<!--docid::SEC13::-->
+All `<SAMP>,v</SAMP>' files are created read-only, and you
+should not change the permission of those files.  The
+directories inside the repository should be writable by
+the persons that have permission to modify the files in
+each directory.  This normally means that you must
+create a UNIX group (see group(5)) consisting of the
+persons that are to edit the files in a project, and
+set up the repository so that it is that group that
+owns the directory.
+(On some systems, you also need to set the set-group-ID-on-execution bit
+on the repository directories (see chmod(1)) so that newly-created files
+and directories get the group-ID of the parent directory rather than
+that of the current process.)
+<P>
+
+This means that you can only control access to files on
+a per-directory basis.
+</P>
+<P>
+
+Note that users must also have write access to check
+out files, because CVS needs to create lock files
+(see section <A HREF="cvs_10.html#SEC88">10.5 Several developers simultaneously attempting to run CVS</A>).  You can use LockDir in CVSROOT/config
+to put the lock files somewhere other than in the repository
+if you want to allow read-only access to some directories
+(see section <A HREF="cvs_18.html#SEC179">C.9 The CVSROOT/config configuration file</A>).
+</P>
+<P>
+
+Also note that users must have write access to the
+`<TT>CVSROOT/val-tags</TT>' file.  CVS uses it to keep
+track of what tags are valid tag names (it is sometimes
+updated when tags are used, as well as when they are
+created).
+</P>
+<P>
+
+Each RCS file will be owned by the user who last
+checked it in.  This has little significance; what
+really matters is who owns the directories.
+</P>
+<P>
+
+<A NAME="IDX20"></A>
+<A NAME="IDX21"></A>
+CVS tries to set up reasonable file permissions
+for new directories that are added inside the tree, but
+you must fix the permissions manually when a new
+directory should have different permissions than its
+parent directory.  If you set the <CODE>CVSUMASK</CODE>
+environment variable that will control the file
+permissions which CVS uses in creating directories
+and/or files in the repository.  <CODE>CVSUMASK</CODE> does
+not affect the file permissions in the working
+directory; such files have the permissions which are
+typical for newly created files, except that sometimes
+CVS creates them read-only (see the sections on
+watches, <A HREF="cvs_10.html#SEC90">10.6.1 Telling CVS to watch certain files</A>; -r, <A HREF="cvs_16.html#SEC117">A.4 Global options</A>; or <CODE>CVSREAD</CODE>, <A HREF="cvs_19.html#SEC180">D. All environment variables which affect CVS</A>).
+</P>
+<P>
+
+Note that using the client/server CVS
+(see section <A HREF="cvs_2.html#SEC26">2.9 Remote repositories</A>), there is no good way to
+set <CODE>CVSUMASK</CODE>; the setting on the client machine
+has no effect.  If you are connecting with <CODE>rsh</CODE>, you
+can set <CODE>CVSUMASK</CODE> in `<TT>.bashrc</TT>' or `<TT>.cshrc</TT>', as
+described in the documentation for your operating
+system.  This behavior might change in future versions
+of CVS; do not rely on the setting of
+<CODE>CVSUMASK</CODE> on the client having no effect.
+</P>
+<P>
+
+Using pserver, you will generally need stricter
+permissions on the CVSROOT directory and
+directories above it in the tree; see <A HREF="cvs_2.html#SEC32">2.9.3.3 Security considerations with password authentication</A>.
+</P>
+<P>
+
+<A NAME="IDX22"></A>
+<A NAME="IDX23"></A>
+<A NAME="IDX24"></A>
+<A NAME="IDX25"></A>
+Some operating systems have features which allow a
+particular program to run with the ability to perform
+operations which the caller of the program could not.
+For example, the set user ID (setuid) or set group ID
+(setgid) features of unix or the installed image
+feature of VMS.  CVS was not written to use such
+features and therefore attempting to install CVS in
+this fashion will provide protection against only
+accidental lapses; anyone who is trying to circumvent
+the measure will be able to do so, and depending on how
+you have set it up may gain access to more than just
+CVS.  You may wish to instead consider pserver.  It
+shares some of the same attributes, in terms of
+possibly providing a false sense of security or opening
+security holes wider than the ones you are trying to
+fix, so read the documentation on pserver security
+carefully if you are considering this option
+(<A HREF="cvs_2.html#SEC32">2.9.3.3 Security considerations with password authentication</A>).
+</P>
+<P>
+
+<A NAME="Windows permissions"></A>
+<HR SIZE="6">
+<A NAME="SEC14"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC13"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC15"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC11"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 2.2.3 File Permission issues specific to Windows </H3>
+<!--docid::SEC14::-->
+<P>
+
+Some file permission issues are specific to Windows
+operating systems (Windows 95, Windows NT, and
+presumably future operating systems in this family.
+Some of the following might apply to OS/2 but I'm not
+sure).
+</P>
+<P>
+
+If you are using local CVS and the repository is on a
+networked file system which is served by the Samba SMB
+server, some people have reported problems with
+permissions.  Enabling WRITE=YES in the samba
+configuration is said to fix/workaround it.
+Disclaimer: I haven't investigated enough to know the
+implications of enabling that option, nor do I know
+whether there is something which CVS could be doing
+differently in order to avoid the problem.  If you find
+something out, please let us know as described in
+<A HREF="cvs_23.html#SEC187">H. Dealing with bugs in CVS or this manual</A>.
+</P>
+<P>
+
+<A NAME="Attic"></A>
+<HR SIZE="6">
+<A NAME="SEC15"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC14"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC16"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC11"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 2.2.4 The attic </H3>
+<!--docid::SEC15::-->
+<P>
+
+You will notice that sometimes CVS stores an
+RCS file in the <CODE>Attic</CODE>.  For example, if the
+CVSROOT is `<TT>/usr/local/cvsroot</TT>' and we are
+talking about the file `<TT>backend.c</TT>' in the
+directory `<TT>yoyodyne/tc</TT>', then the file normally
+would be in
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>/usr/local/cvsroot/yoyodyne/tc/backend.c,v
+</pre></td></tr></table><P>
+
+but if it goes in the attic, it would be in
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>/usr/local/cvsroot/yoyodyne/tc/Attic/backend.c,v
+</pre></td></tr></table><P>
+
+<A NAME="IDX26"></A>
+instead.  It should not matter from a user point of
+view whether a file is in the attic; CVS keeps
+track of this and looks in the attic when it needs to.
+But in case you want to know, the rule is that the RCS
+file is stored in the attic if and only if the head
+revision on the trunk has state <CODE>dead</CODE>.  A
+<CODE>dead</CODE> state means that file has been removed, or
+never added, for that revision.  For example, if you
+add a file on a branch, it will have a trunk revision
+in <CODE>dead</CODE> state, and a branch revision in a
+non-<CODE>dead</CODE> state.
+</P>
+<P>
+
+<A NAME="CVS in repository"></A>
+<HR SIZE="6">
+<A NAME="SEC16"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC15"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC17"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC11"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 2.2.5 The CVS directory in the repository </H3>
+<!--docid::SEC16::-->
+<P>
+
+The `<TT>CVS</TT>' directory in each repository directory
+contains information such as file attributes (in a file
+called `<TT>CVS/fileattr</TT>'.  In the
+future additional files may be added to this directory,
+so implementations should silently ignore additional
+files.
+</P>
+<P>
+
+This behavior is implemented only by CVS 1.7 and
+later; for details see <A HREF="cvs_10.html#SEC94">10.6.5 Using watches with old versions of CVS</A>.
+</P>
+<P>
+
+The format of the fileattr file is a series of entries
+of the following form (where `<SAMP>{</SAMP>' and `<SAMP>}</SAMP>'
+means the text between the braces can be repeated zero
+or more times):
+</P>
+<P>
+
+<VAR>ent-type</VAR> <VAR>filename</VAR> &lt;tab&gt; <VAR>attrname</VAR> = <VAR>attrval</VAR>
+  {; <VAR>attrname</VAR> = <VAR>attrval</VAR>} &lt;linefeed&gt;
+</P>
+<P>
+
+<VAR>ent-type</VAR> is `<SAMP>F</SAMP>' for a file, in which case the entry specifies the
+attributes for that file.
+</P>
+<P>
+
+<VAR>ent-type</VAR> is `<SAMP>D</SAMP>',
+and <VAR>filename</VAR> empty, to specify default attributes
+to be used for newly added files.
+</P>
+<P>
+
+Other <VAR>ent-type</VAR> are reserved for future expansion.  CVS 1.9 and older
+will delete them any time it writes file attributes.
+CVS 1.10 and later will preserve them.
+</P>
+<P>
+
+Note that the order of the lines is not significant;
+a program writing the fileattr file may
+rearrange them at its convenience.
+</P>
+<P>
+
+There is currently no way of quoting tabs or linefeeds in the
+filename, `<SAMP>=</SAMP>' in <VAR>attrname</VAR>,
+`<SAMP>;</SAMP>' in <VAR>attrval</VAR>, etc.  Note: some implementations also
+don't handle a NUL character in any of the fields, but
+implementations are encouraged to allow it.
+</P>
+<P>
+
+By convention, <VAR>attrname</VAR> starting with `<SAMP>_</SAMP>' is for an attribute given
+special meaning by CVS; other <VAR>attrname</VAR>s are for user-defined attributes
+(or will be, once implementations start supporting user-defined attributes).
+</P>
+<P>
+
+Builtin attributes:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>_watched</CODE>
+<DD>Present means the file is watched and should be checked out
+read-only.
+<P>
+
+</P>
+<DT><CODE>_watchers</CODE>
+<DD>Users with watches for this file.  Value is
+<VAR>watcher</VAR> &gt; <VAR>type</VAR> { , <VAR>watcher</VAR> &gt; <VAR>type</VAR> }
+where <VAR>watcher</VAR> is a username, and <VAR>type</VAR>
+is zero or more of edit,unedit,commit separated by
+`<SAMP>+</SAMP>' (that is, nothing if none; there is no &quot;none&quot; or &quot;all&quot; keyword).
+<P>
+
+</P>
+<DT><CODE>_editors</CODE>
+<DD>Users editing this file.  Value is
+<VAR>editor</VAR> &gt; <VAR>val</VAR> { , <VAR>editor</VAR> &gt; <VAR>val</VAR> }
+where <VAR>editor</VAR> is a username, and <VAR>val</VAR> is
+<VAR>time</VAR>+<VAR>hostname</VAR>+<VAR>pathname</VAR>, where
+<VAR>time</VAR> is when the <CODE>cvs edit</CODE> command (or
+equivalent) happened,
+and <VAR>hostname</VAR> and <VAR>pathname</VAR> are for the working directory.
+</DL>
+<P>
+
+Example:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>Ffile1 _watched=;_watchers=joe&gt;edit,mary&gt;commit
+Ffile2 _watched=;_editors=sue&gt;8 Jan 1975+workstn1+/home/sue/cvs
+D _watched=
+</pre></td></tr></table><P>
+
+means that the file `<TT>file1</TT>' should be checked out
+read-only.  Furthermore, joe is watching for edits and
+mary is watching for commits.  The file `<TT>file2</TT>'
+should be checked out read-only; sue started editing it
+on 8 Jan 1975 in the directory `<TT>/home/sue/cvs</TT>' on
+the machine <CODE>workstn1</CODE>.  Future files which are
+added should be checked out read-only.  To represent
+this example here, we have shown a space after
+`<SAMP>D</SAMP>', `<SAMP>Ffile1</SAMP>', and `<SAMP>Ffile2</SAMP>', but in fact
+there must be a single tab character there and no spaces.
+</P>
+<P>
+
+<A NAME="Locks"></A>
+<HR SIZE="6">
+<A NAME="SEC17"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC16"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC18"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC11"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 2.2.6 CVS locks in the repository </H3>
+<!--docid::SEC17::-->
+<P>
+
+<A NAME="IDX27"></A>
+<A NAME="IDX28"></A>
+<A NAME="IDX29"></A>
+<A NAME="IDX30"></A>
+For an introduction to CVS locks focusing on
+user-visible behavior, see <A HREF="cvs_10.html#SEC88">10.5 Several developers simultaneously attempting to run CVS</A>.  The
+following section is aimed at people who are writing
+tools which want to access a CVS repository without
+interfering with other tools acessing the same
+repository.  If you find yourself confused by concepts
+described here, like <EM>read lock</EM>, <EM>write lock</EM>,
+and <EM>deadlock</EM>, you might consult the literature on
+operating systems or databases.
+</P>
+<P>
+
+<A NAME="IDX31"></A>
+Any file in the repository with a name starting
+with `<TT>#cvs.rfl.</TT>' is a read lock.  Any file in
+the repository with a name starting with
+`<TT>#cvs.wfl</TT>' is a write lock.  Old versions of CVS
+(before CVS 1.5) also created files with names starting
+with `<TT>#cvs.tfl</TT>', but they are not discussed here.
+The directory `<TT>#cvs.lock</TT>' serves as a master
+lock.  That is, one must obtain this lock first before
+creating any of the other locks.
+</P>
+<P>
+
+To obtain a readlock, first create the `<TT>#cvs.lock</TT>'
+directory.  This operation must be atomic (which should
+be true for creating a directory under most operating
+systems).  If it fails because the directory already
+existed, wait for a while and try again.  After
+obtaining the `<TT>#cvs.lock</TT>' lock, create a file
+whose name is `<TT>#cvs.rfl.</TT>' followed by information
+of your choice (for example, hostname and process
+identification number).  Then remove the
+`<TT>#cvs.lock</TT>' directory to release the master lock.
+Then proceed with reading the repository.  When you are
+done, remove the `<TT>#cvs.rfl</TT>' file to release the
+read lock.
+</P>
+<P>
+
+To obtain a writelock, first create the
+`<TT>#cvs.lock</TT>' directory, as with a readlock.  Then
+check that there are no files whose names start with
+`<TT>#cvs.rfl.</TT>'.  If there are, remove
+`<TT>#cvs.lock</TT>', wait for a while, and try again.  If
+there are no readers, then create a file whose name is
+`<TT>#cvs.wfl</TT>' followed by information of your choice
+(for example, hostname and process identification
+number).  Hang on to the `<TT>#cvs.lock</TT>' lock.  Proceed
+with writing the repository.  When you are done, first
+remove the `<TT>#cvs.wfl</TT>' file and then the
+`<TT>#cvs.lock</TT>' directory. Note that unlike the
+`<TT>#cvs.rfl</TT>' file, the `<TT>#cvs.wfl</TT>' file is just
+informational; it has no effect on the locking operation
+beyond what is provided by holding on to the
+`<TT>#cvs.lock</TT>' lock itself.
+</P>
+<P>
+
+Note that each lock (writelock or readlock) only locks
+a single directory in the repository, including
+`<TT>Attic</TT>' and `<TT>CVS</TT>' but not including
+subdirectories which represent other directories under
+version control.  To lock an entire tree, you need to
+lock each directory (note that if you fail to obtain
+any lock you need, you must release the whole tree
+before waiting and trying again, to avoid deadlocks).
+</P>
+<P>
+
+Note also that CVS expects writelocks to control
+access to individual `<TT>foo,v</TT>' files.  RCS has
+a scheme where the `<TT>,foo,</TT>' file serves as a lock,
+but CVS does not implement it and so taking out a
+CVS writelock is recommended.  See the comments at
+rcs_internal_lockfile in the CVS source code for
+further discussion/rationale.
+</P>
+<P>
+
+<A NAME="CVSROOT storage"></A>
+<HR SIZE="6">
+<A NAME="SEC18"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC17"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC19"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC11"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 2.2.7 How files are stored in the CVSROOT directory </H3>
+<!--docid::SEC18::-->
+<P>
+
+The `<TT>$CVSROOT/CVSROOT</TT>' directory contains the
+various administrative files.  In some ways this
+directory is just like any other directory in the
+repository; it contains RCS files whose names end
+in `<SAMP>,v</SAMP>', and many of the CVS commands operate
+on it the same way.  However, there are a few
+differences.
+</P>
+<P>
+
+For each administrative file, in addition to the
+RCS file, there is also a checked out copy of the
+file.  For example, there is an RCS file
+`<TT>loginfo,v</TT>' and a file `<TT>loginfo</TT>' which
+contains the latest revision contained in
+`<TT>loginfo,v</TT>'.  When you check in an administrative
+file, CVS should print
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs commit: Rebuilding administrative file database
+</pre></td></tr></table><P>
+
+and update the checked out copy in
+`<TT>$CVSROOT/CVSROOT</TT>'.  If it does not, there is
+something wrong (see section <A HREF="cvs_23.html#SEC187">H. Dealing with bugs in CVS or this manual</A>).  To add your own files
+to the files to be updated in this fashion, you can add
+them to the `<TT>checkoutlist</TT>' administrative file
+(see section <A HREF="cvs_18.html#SEC176">C.6 The checkoutlist file</A>).
+</P>
+<P>
+
+<A NAME="IDX32"></A>
+<A NAME="IDX33"></A>
+<A NAME="IDX34"></A>
+By default, the `<TT>modules</TT>' file behaves as
+described above.  If the modules file is very large,
+storing it as a flat text file may make looking up
+modules slow (I'm not sure whether this is as much of a
+concern now as when CVS first evolved this
+feature; I haven't seen benchmarks).  Therefore, by
+making appropriate edits to the CVS source code
+one can store the modules file in a database which
+implements the <CODE>ndbm</CODE> interface, such as Berkeley
+db or GDBM.  If this option is in use, then the modules
+database will be stored in the files `<TT>modules.db</TT>',
+`<TT>modules.pag</TT>', and/or `<TT>modules.dir</TT>'.
+</P>
+<P>
+
+For information on the meaning of the various
+administrative files, see <A HREF="cvs_18.html#SEC156">C. Reference manual for Administrative files</A>.
+</P>
+<P>
+
+<A NAME="Working directory storage"></A>
+<HR SIZE="6">
+<A NAME="SEC19"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC18"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC20"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 2.3 How data is stored in the working directory </H2>
+<!--docid::SEC19::-->
+<P>
+
+<A NAME="IDX35"></A>
+While we are discussing CVS internals which may
+become visible from time to time, we might as well talk
+about what CVS puts in the `<TT>CVS</TT>' directories
+in the working directories.  As with the repository,
+CVS handles this information and one can usually
+access it via CVS commands.  But in some cases it
+may be useful to look at it, and other programs, such
+as the <CODE>jCVS</CODE> graphical user interface or the
+<CODE>VC</CODE> package for emacs, may need to look at it.
+Such programs should follow the recommendations in this
+section if they hope to be able to work with other
+programs which use those files, including future
+versions of the programs just mentioned and the
+command-line CVS client.
+</P>
+<P>
+
+The `<TT>CVS</TT>' directory contains several files.
+Programs which are reading this directory should
+silently ignore files which are in the directory but
+which are not documented here, to allow for future
+expansion.
+</P>
+<P>
+
+The files are stored according to the text file
+convention for the system in question.  This means that
+working directories are not portable between systems
+with differing conventions for storing text files.
+This is intentional, on the theory that the files being
+managed by CVS probably will not be portable between
+such systems either.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT>`<TT>Root</TT>'
+<DD>This file contains the current CVS root, as
+described in <A HREF="cvs_2.html#SEC10">2.1 Telling CVS where your repository is</A>.
+<P>
+
+<A NAME="IDX36"></A>
+<A NAME="IDX37"></A>
+</P>
+<DT>`<TT>Repository</TT>'
+<DD>This file contains the directory within the repository
+which the current directory corresponds with.  It can
+be either an absolute pathname or a relative pathname;
+CVS has had the ability to read either format
+since at least version 1.3 or so.  The relative
+pathname is relative to the root, and is the more
+sensible approach, but the absolute pathname is quite
+common and implementations should accept either.  For
+example, after the command
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs -d :local:/usr/local/cvsroot checkout yoyodyne/tc
+</pre></td></tr></table><P>
+
+`<TT>Root</TT>' will contain
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>:local:/usr/local/cvsroot
+</pre></td></tr></table><P>
+
+and `<TT>Repository</TT>' will contain either
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>/usr/local/cvsroot/yoyodyne/tc
+</pre></td></tr></table><P>
+
+or
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>yoyodyne/tc
+</pre></td></tr></table><P>
+
+If the particular working directory does not correspond
+to a directory in the repository, then `<TT>Repository</TT>'
+should contain `<TT>CVSROOT/Emptydir</TT>'.
+<A NAME="IDX38"></A>
+<A NAME="IDX39"></A>
+</P>
+<P>
+
+<A NAME="IDX40"></A>
+<A NAME="IDX41"></A>
+</P>
+<DT>`<TT>Entries</TT>'
+<DD>This file lists the files and directories in the
+working directory.
+The first character of each line indicates what sort of
+line it is.  If the character is unrecognized, programs
+reading the file should silently skip that line, to
+allow for future expansion.
+<P>
+
+If the first character is `<SAMP>/</SAMP>', then the format is:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>/<VAR>name</VAR>/<VAR>revision</VAR>/<VAR>timestamp</VAR>[+<VAR>conflict</VAR>]/<VAR>options</VAR>/<VAR>tagdate</VAR>
+</pre></td></tr></table><P>
+
+where `<SAMP>[</SAMP>' and `<SAMP>]</SAMP>' are not part of the entry,
+but instead indicate that the `<SAMP>+</SAMP>' and conflict
+marker are optional.  <VAR>name</VAR> is the name of the
+file within the directory.  <VAR>revision</VAR> is the
+revision that the file in the working derives from, or
+`<SAMP>0</SAMP>' for an added file, or `<SAMP>-</SAMP>' followed by a
+revision for a removed file.  <VAR>timestamp</VAR> is the
+timestamp of the file at the time that CVS created
+it; if the timestamp differs with the actual
+modification time of the file it means the file has
+been modified.  It is stored in
+the format used by the ISO C asctime() function (for
+example, `<SAMP>Sun Apr  7 01:29:26 1996</SAMP>').  One may
+write a string which is not in that format, for
+example, `<SAMP>Result of merge</SAMP>', to indicate that the
+file should always be considered to be modified.  This
+is not a special case; to see whether a file is
+modified a program should take the timestamp of the file
+and simply do a string compare with <VAR>timestamp</VAR>.
+If there was a conflict, <VAR>conflict</VAR> can be set to
+the modification time of the file after the file has been
+written with conflict markers (see section <A HREF="cvs_10.html#SEC86">10.3 Conflicts example</A>).
+Thus if <VAR>conflict</VAR> is subsequently the same as the actual
+modification time of the file it means that the user
+has obviously not resolved the conflict.  <VAR>options</VAR>
+contains sticky options (for example `<SAMP>-kb</SAMP>' for a
+binary file).  <VAR>tagdate</VAR> contains `<SAMP>T</SAMP>' followed
+by a tag name, or `<SAMP>D</SAMP>' for a date, followed by a
+sticky tag or date.  Note that if <VAR>timestamp</VAR>
+contains a pair of timestamps separated by a space,
+rather than a single timestamp, you are dealing with a
+version of CVS earlier than CVS 1.5 (not
+documented here).
+</P>
+<P>
+
+The timezone on the timestamp in CVS/Entries (local or
+universal) should be the same as the operating system
+stores for the timestamp of the file itself.  For
+example, on Unix the file's timestamp is in universal
+time (UT), so the timestamp in CVS/Entries should be
+too.  On VMS, the file's timestamp is in local
+time, so CVS on VMS should use local time.
+This rule is so that files do not appear to be modified
+merely because the timezone changed (for example, to or
+from summer time).
+</P>
+<P>
+
+If the first character of a line in `<TT>Entries</TT>' is
+`<SAMP>D</SAMP>', then it indicates a subdirectory.  `<SAMP>D</SAMP>'
+on a line all by itself indicates that the program
+which wrote the `<TT>Entries</TT>' file does record
+subdirectories (therefore, if there is such a line and
+no other lines beginning with `<SAMP>D</SAMP>', one knows there
+are no subdirectories).  Otherwise, the line looks
+like:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>D/<VAR>name</VAR>/<VAR>filler1</VAR>/<VAR>filler2</VAR>/<VAR>filler3</VAR>/<VAR>filler4</VAR>
+</pre></td></tr></table><P>
+
+where <VAR>name</VAR> is the name of the subdirectory, and
+all the <VAR>filler</VAR> fields should be silently ignored,
+for future expansion.  Programs which modify
+<CODE>Entries</CODE> files should preserve these fields.
+</P>
+<P>
+
+The lines in the `<TT>Entries</TT>' file can be in any order.
+</P>
+<P>
+
+<A NAME="IDX42"></A>
+<A NAME="IDX43"></A>
+</P>
+<DT>`<TT>Entries.Log</TT>'
+<DD>This file does not record any information beyond that
+in `<TT>Entries</TT>', but it does provide a way to update
+the information without having to rewrite the entire
+`<TT>Entries</TT>' file, including the ability to preserve
+the information even if the program writing
+`<TT>Entries</TT>' and `<TT>Entries.Log</TT>' abruptly aborts.
+Programs which are reading the `<TT>Entries</TT>' file
+should also check for `<TT>Entries.Log</TT>'.  If the latter
+exists, they should read `<TT>Entries</TT>' and then apply
+the changes mentioned in `<TT>Entries.Log</TT>'.  After
+applying the changes, the recommended practice is to
+rewrite `<TT>Entries</TT>' and then delete `<TT>Entries.Log</TT>'.
+The format of a line in `<TT>Entries.Log</TT>' is a single
+character command followed by a space followed by a
+line in the format specified for a line in
+`<TT>Entries</TT>'.  The single character command is
+`<SAMP>A</SAMP>' to indicate that the entry is being added,
+`<SAMP>R</SAMP>' to indicate that the entry is being removed,
+or any other character to indicate that the entire line
+in `<TT>Entries.Log</TT>' should be silently ignored (for
+future expansion).  If the second character of the line
+in `<TT>Entries.Log</TT>' is not a space, then it was
+written by an older version of CVS (not documented
+here).
+<P>
+
+Programs which are writing rather than reading can
+safely ignore `<TT>Entries.Log</TT>' if they so choose.
+</P>
+<P>
+
+<A NAME="IDX44"></A>
+<A NAME="IDX45"></A>
+</P>
+<DT>`<TT>Entries.Backup</TT>'
+<DD>This is a temporary file.  Recommended usage is to
+write a new entries file to `<TT>Entries.Backup</TT>', and
+then to rename it (atomically, where possible) to `<TT>Entries</TT>'.
+<P>
+
+<A NAME="IDX46"></A>
+<A NAME="IDX47"></A>
+</P>
+<DT>`<TT>Entries.Static</TT>'
+<DD>The only relevant thing about this file is whether it
+exists or not.  If it exists, then it means that only
+part of a directory was gotten and CVS will
+not create additional files in that directory.  To
+clear it, use the <CODE>update</CODE> command with the
+`<SAMP>-d</SAMP>' option, which will get the additional files
+and remove `<TT>Entries.Static</TT>'.
+<P>
+
+<A NAME="IDX48"></A>
+<A NAME="IDX49"></A>
+<A NAME="IDX50"></A>
+<A NAME="IDX51"></A>
+</P>
+<DT>`<TT>Tag</TT>'
+<DD>This file contains per-directory sticky tags or dates.
+The first character is `<SAMP>T</SAMP>' for a branch tag,
+`<SAMP>N</SAMP>' for a non-branch tag, or `<SAMP>D</SAMP>' for a date,
+or another character to mean the file should be
+silently ignored, for future expansion.  This character
+is followed by the tag or date.  Note that
+per-directory sticky tags or dates are used for things
+like applying to files which are newly added; they
+might not be the same as the sticky tags or dates on
+individual files.  For general information on sticky
+tags and dates, see <A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A>.
+<P>
+
+<A NAME="IDX52"></A>
+<A NAME="IDX53"></A>
+<A NAME="IDX54"></A>
+<A NAME="IDX55"></A>
+</P>
+<DT>`<TT>Checkin.prog</TT>'
+<DD><DT>`<TT>Update.prog</TT>'
+<DD>These files store the programs specified by the
+`<SAMP>-i</SAMP>' and `<SAMP>-u</SAMP>' options in the modules file,
+respectively.
+<P>
+
+<A NAME="IDX56"></A>
+<A NAME="IDX57"></A>
+</P>
+<DT>`<TT>Notify</TT>'
+<DD>This file stores notifications (for example, for
+<CODE>edit</CODE> or <CODE>unedit</CODE>) which have not yet been
+sent to the server.  Its format is not yet documented
+here.
+<P>
+
+<A NAME="IDX58"></A>
+<A NAME="IDX59"></A>
+</P>
+<DT>`<TT>Notify.tmp</TT>'
+<DD>This file is to `<TT>Notify</TT>' as `<TT>Entries.Backup</TT>'
+is to `<TT>Entries</TT>'.  That is, to write `<TT>Notify</TT>',
+first write the new contents to `<TT>Notify.tmp</TT>' and
+then (atomically where possible), rename it to
+`<TT>Notify</TT>'.
+<P>
+
+<A NAME="IDX60"></A>
+<A NAME="IDX61"></A>
+</P>
+<DT>`<TT>Base</TT>'
+<DD>If watches are in use, then an <CODE>edit</CODE> command
+stores the original copy of the file in the `<TT>Base</TT>'
+directory.  This allows the <CODE>unedit</CODE> command to
+operate even if it is unable to communicate with the
+server.
+<P>
+
+<A NAME="IDX62"></A>
+<A NAME="IDX63"></A>
+</P>
+<DT>`<TT>Baserev</TT>'
+<DD>The file lists the revision for each of the files in
+the `<TT>Base</TT>' directory.  The format is:
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>B<VAR>name</VAR>/<VAR>rev</VAR>/<VAR>expansion</VAR>
+</pre></td></tr></table><P>
+
+where <VAR>expansion</VAR> should be ignored, to allow for
+future expansion.
+</P>
+<P>
+
+<A NAME="IDX64"></A>
+<A NAME="IDX65"></A>
+</P>
+<DT>`<TT>Baserev.tmp</TT>'
+<DD>This file is to `<TT>Baserev</TT>' as `<TT>Entries.Backup</TT>'
+is to `<TT>Entries</TT>'.  That is, to write `<TT>Baserev</TT>',
+first write the new contents to `<TT>Baserev.tmp</TT>' and
+then (atomically where possible), rename it to
+`<TT>Baserev</TT>'.
+<P>
+
+<A NAME="IDX66"></A>
+<A NAME="IDX67"></A>
+</P>
+<DT>`<TT>Template</TT>'
+<DD>This file contains the template specified by the
+`<TT>rcsinfo</TT>' file (see section <A HREF="cvs_18.html#SEC174">C.4 Rcsinfo</A>).  It is only used
+by the client; the non-client/server CVS consults
+`<TT>rcsinfo</TT>' directly.
+</DL>
+<P>
+
+<A NAME="Intro administrative files"></A>
+<HR SIZE="6">
+<A NAME="SEC20"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC19"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC21"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 2.4 The administrative files </H2>
+<!--docid::SEC20::-->
+<P>
+
+The directory `<TT>$CVSROOT/CVSROOT</TT>' contains some <EM>administrative
+files</EM>.  See section <A HREF="cvs_18.html#SEC156">C. Reference manual for Administrative files</A>, for a complete description.
+You can use CVS without any of these files, but
+some commands work better when at least the
+`<TT>modules</TT>' file is properly set up.
+</P>
+<P>
+
+The most important of these files is the `<TT>modules</TT>'
+file.  It defines all modules in the repository.  This
+is a sample `<TT>modules</TT>' file.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>CVSROOT         CVSROOT
+modules         CVSROOT modules
+cvs             gnu/cvs
+rcs             gnu/rcs
+diff            gnu/diff
+tc              yoyodyne/tc
+</pre></td></tr></table><P>
+
+The `<TT>modules</TT>' file is line oriented.  In its
+simplest form each line contains the name of the
+module, whitespace, and the directory where the module
+resides.  The directory is a path relative to
+<CODE>$CVSROOT</CODE>.  The last four lines in the example
+above are examples of such lines.
+</P>
+<P>
+
+The line that defines the module called `<SAMP>modules</SAMP>'
+uses features that are not explained here.
+See section <A HREF="cvs_18.html#SEC157">C.1 The modules file</A>, for a full explanation of all the
+available features.
+</P>
+<P>
+
+<HR SIZE="6">
+<A NAME="SEC21"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC20"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC22"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC20"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 2.4.1 Editing administrative files </H3>
+<!--docid::SEC21::-->
+<P>
+
+You edit the administrative files in the same way that you would edit
+any other module.  Use `<SAMP>cvs checkout CVSROOT</SAMP>' to get a working
+copy, edit it, and commit your changes in the normal way.
+</P>
+<P>
+
+It is possible to commit an erroneous administrative
+file.  You can often fix the error and check in a new
+revision, but sometimes a particularly bad error in the
+administrative file makes it impossible to commit new
+revisions.
+</P>
+<P>
+
+<A NAME="Multiple repositories"></A>
+<HR SIZE="6">
+<A NAME="SEC22"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC21"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC23"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 2.5 Multiple repositories </H2>
+<!--docid::SEC22::-->
+<P>
+
+In some situations it is a good idea to have more than
+one repository, for instance if you have two
+development groups that work on separate projects
+without sharing any code.  All you have to do to have
+several repositories is to specify the appropriate
+repository, using the <CODE>CVSROOT</CODE> environment
+variable, the `<SAMP>-d</SAMP>' option to CVS, or (once
+you have checked out a working directory) by simply
+allowing CVS to use the repository that was used
+to check out the working directory
+(see section <A HREF="cvs_2.html#SEC10">2.1 Telling CVS where your repository is</A>).
+</P>
+<P>
+
+The big advantage of having multiple repositories is
+that they can reside on different servers.  With CVS
+version 1.10, a single command cannot recurse into
+directories from different repositories.  With development
+versions of CVS, you can check out code from multiple
+servers into your working directory.  CVS will
+recurse and handle all the details of making
+connections to as many server machines as necessary to
+perform the requested command.  Here is an example of
+how to set up a working directory:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs -d server1:/cvs co dir1
+cd dir1
+cvs -d server2:/root co sdir
+cvs update
+</pre></td></tr></table><P>
+
+The <CODE>cvs co</CODE> commands set up the working
+directory, and then the <CODE>cvs update</CODE> command will
+contact server2, to update the dir1/sdir subdirectory,
+and server1, to update everything else.
+</P>
+<P>
+
+<A NAME="Creating a repository"></A>
+<HR SIZE="6">
+<A NAME="SEC23"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC22"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC24"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 2.6 Creating a repository </H2>
+<!--docid::SEC23::-->
+<P>
+
+<A NAME="IDX68"></A>
+<A NAME="IDX69"></A>
+<A NAME="IDX70"></A>
+</P>
+<P>
+
+To set up a CVS repository, first choose the
+machine and disk on which you want to store the
+revision history of the source files.  CPU and memory
+requirements are modest, so most machines should be
+adequate.  For details see <A HREF="cvs_2.html#SEC27">2.9.1 Server requirements</A>.
+</P>
+<P>
+
+To estimate disk space
+requirements, if you are importing RCS files from
+another system, the size of those files is the
+approximate initial size of your repository, or if you
+are starting without any version history, a rule of
+thumb is to allow for the server approximately three
+times the size of the code to be under CVS for the
+repository (you will eventually outgrow this, but not
+for a while).  On the machines on which the developers
+will be working, you'll want disk space for
+approximately one working directory for each developer
+(either the entire tree or a portion of it, depending
+on what each developer uses).
+</P>
+<P>
+
+The repository should be accessible
+(directly or via a networked file system) from all
+machines which want to use CVS in server or local
+mode; the client machines need not have any access to
+it other than via the CVS protocol.  It is not
+possible to use CVS to read from a repository
+which one only has read access to; CVS needs to be
+able to create lock files (see section <A HREF="cvs_10.html#SEC88">10.5 Several developers simultaneously attempting to run CVS</A>).
+</P>
+<P>
+
+<A NAME="IDX71"></A>
+To create a repository, run the <CODE>cvs init</CODE>
+command.  It will set up an empty repository in the
+CVS root specified in the usual way
+(see section <A HREF="cvs_2.html#SEC9">2. The Repository</A>).  For example,
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs -d /usr/local/cvsroot init
+</pre></td></tr></table><P>
+
+<CODE>cvs init</CODE> is careful to never overwrite any
+existing files in the repository, so no harm is done if
+you run <CODE>cvs init</CODE> on an already set-up
+repository.
+</P>
+<P>
+
+<CODE>cvs init</CODE> will enable history logging; if you
+don't want that, remove the history file after running
+<CODE>cvs init</CODE>.  See section <A HREF="cvs_18.html#SEC177">C.7 The history file</A>.
+</P>
+<P>
+
+<A NAME="Backing up"></A>
+<HR SIZE="6">
+<A NAME="SEC24"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC23"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC25"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 2.7 Backing up a repository </H2>
+<!--docid::SEC24::-->
+<P>
+
+There is nothing particularly magical about the files
+in the repository; for the most part it is possible to
+back them up just like any other files.  However, there
+are a few issues to consider.
+</P>
+<P>
+
+<A NAME="IDX72"></A>
+<A NAME="IDX73"></A>
+The first is that to be paranoid, one should either not
+use CVS during the backup, or have the backup
+program lock CVS while doing the backup.  To not
+use CVS, you might forbid logins to machines which
+can access the repository, turn off your CVS
+server, or similar mechanisms.  The details would
+depend on your operating system and how you have
+CVS set up.  To lock CVS, you would create
+`<TT>#cvs.rfl</TT>' locks in each repository directory.
+See <A HREF="cvs_10.html#SEC88">10.5 Several developers simultaneously attempting to run CVS</A>, for more on CVS locks.
+Having said all this, if you just back up without any
+of these precautions, the results are unlikely to be
+particularly dire.  Restoring from backup, the
+repository might be in an inconsistent state, but this
+would not be particularly hard to fix manually.
+</P>
+<P>
+
+When you restore a repository from backup, assuming
+that changes in the repository were made after the time
+of the backup, working directories which were not
+affected by the failure may refer to revisions which no
+longer exist in the repository.  Trying to run CVS
+in such directories will typically produce an error
+message.  One way to get those changes back into the
+repository is as follows:
+</P>
+<P>
+
+<UL>
+<LI>
+Get a new working directory.
+<P>
+
+</P>
+<LI>
+Copy the files from the working directory from before
+the failure over to the new working directory (do not
+copy the contents of the `<TT>CVS</TT>' directories, of
+course).
+<P>
+
+</P>
+<LI>
+Working in the new working directory, use commands such
+as <CODE>cvs update</CODE> and <CODE>cvs diff</CODE> to figure out
+what has changed, and then when you are ready, commit
+the changes into the repository.
+</UL>
+<P>
+
+<A NAME="Moving a repository"></A>
+<HR SIZE="6">
+<A NAME="SEC25"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC24"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC26"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 2.8 Moving a repository </H2>
+<!--docid::SEC25::-->
+<P>
+
+Just as backing up the files in the repository is
+pretty much like backing up any other files, if you
+need to move a repository from one place to another it
+is also pretty much like just moving any other
+collection of files.
+</P>
+<P>
+
+The main thing to consider is that working directories
+point to the repository.  The simplest way to deal with
+a moved repository is to just get a fresh working
+directory after the move.  Of course, you'll want to
+make sure that the old working directory had been
+checked in before the move, or you figured out some
+other way to make sure that you don't lose any
+changes.  If you really do want to reuse the existing
+working directory, it should be possible with manual
+surgery on the `<TT>CVS/Repository</TT>' files.  You can
+see <A HREF="cvs_2.html#SEC19">2.3 How data is stored in the working directory</A>, for information on
+the `<TT>CVS/Repository</TT>' and `<TT>CVS/Root</TT>' files, but
+unless you are sure you want to bother, it probably
+isn't worth it.
+</P>
+<P>
+
+<A NAME="Remote repositories"></A>
+<HR SIZE="6">
+<A NAME="SEC26"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC25"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC27"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 2.9 Remote repositories </H2>
+<!--docid::SEC26::-->
+<P>
+
+        Your working copy of the sources can be on a
+different machine than the repository.  Using CVS
+in this manner is known as <EM>client/server</EM>
+operation.  You run CVS on a machine which can
+mount your working directory, known as the
+<EM>client</EM>, and tell it to communicate to a machine
+which can mount the repository, known as the
+<EM>server</EM>.  Generally, using a remote
+repository is just like using a local one, except that
+the format of the repository name is:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>:<VAR>method</VAR>:[[<VAR>user</VAR>][:<VAR>password</VAR>]@]<VAR>hostname</VAR>[:[<VAR>port</VAR>]]/path/to/repository
+</pre></td></tr></table><P>
+
+Specifying a password in the repository name is not recommended during
+checkout, since this will cause CVS to store a cleartext copy of the
+password in each created directory.  <CODE>cvs login</CODE> first instead
+(see section <A HREF="cvs_2.html#SEC31">2.9.3.2 Using the client with password authentication</A>).
+</P>
+<P>
+
+The details of exactly what needs to be set up depend
+on how you are connecting to the server.
+</P>
+<P>
+
+If <VAR>method</VAR> is not specified, and the repository
+name contains `<SAMP>:</SAMP>', then the default is <CODE>ext</CODE>
+or <CODE>server</CODE>, depending on your platform; both are
+described in <A HREF="cvs_2.html#SEC28">2.9.2 Connecting with rsh</A>.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC27">2.9.1 Server requirements</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Memory and other resources for servers</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC28">2.9.2 Connecting with rsh</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Using the <CODE>rsh</CODE> program to connect</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC29">2.9.3 Direct connection with password authentication</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Direct connections using passwords</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC33">2.9.4 Direct connection with GSSAPI</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Direct connections using GSSAPI</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC34">2.9.5 Direct connection with kerberos</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Direct connections with kerberos</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC35">2.9.6 Connecting with fork</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Using a forked <CODE>cvs server</CODE> to connect</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="Server requirements"></A>
+<HR SIZE="6">
+<A NAME="SEC27"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC26"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC28"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC26"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 2.9.1 Server requirements </H3>
+<!--docid::SEC27::-->
+<P>
+
+The quick answer to what sort of machine is suitable as
+a server is that requirements are modest--a server
+with 32M of memory or even less can handle a fairly
+large source tree with a fair amount of activity.
+</P>
+<P>
+
+The real answer, of course, is more complicated.
+Estimating the known areas of large memory consumption
+should be sufficient to estimate memory requirements.
+There are two such areas documented here; other memory
+consumption should be small by comparison (if you find
+that is not the case, let us know, as described in
+<A HREF="cvs_23.html#SEC187">H. Dealing with bugs in CVS or this manual</A>, so we can update this documentation).
+</P>
+<P>
+
+The first area of big memory consumption is large
+checkouts, when using the CVS server.  The server
+consists of two processes for each client that it is
+serving.  Memory consumption on the child process
+should remain fairly small.  Memory consumption on the
+parent process, particularly if the network connection
+to the client is slow, can be expected to grow to
+slightly more than the size of the sources in a single
+directory, or two megabytes, whichever is larger.
+</P>
+<P>
+
+Multiplying the size of each CVS server by the
+number of servers which you expect to have active at
+one time should give an idea of memory requirements for
+the server.  For the most part, the memory consumed by
+the parent process probably can be swap space rather
+than physical memory.
+</P>
+<P>
+
+The second area of large memory consumption is
+<CODE>diff</CODE>, when checking in large files.  This is
+required even for binary files.  The rule of thumb is
+to allow about ten times the size of the largest file
+you will want to check in, although five times may be
+adequate.  For example, if you want to check in a file
+which is 10 megabytes, you should have 100 megabytes of
+memory on the machine doing the checkin (the server
+machine for client/server, or the machine running
+CVS for non-client/server).  This can be swap
+space rather than physical memory.  Because the memory
+is only required briefly, there is no particular need
+to allow memory for more than one such checkin at a
+time.
+</P>
+<P>
+
+Resource consumption for the client is even more
+modest--any machine with enough capacity to run the
+operating system in question should have little
+trouble.
+</P>
+<P>
+
+For information on disk space requirements, see
+<A HREF="cvs_2.html#SEC23">2.6 Creating a repository</A>.
+</P>
+<P>
+
+<A NAME="Connecting via rsh"></A>
+<HR SIZE="6">
+<A NAME="SEC28"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC27"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC29"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC26"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 2.9.2 Connecting with rsh </H3>
+<!--docid::SEC28::-->
+<P>
+
+<A NAME="IDX74"></A>
+CVS uses the `<SAMP>rsh</SAMP>' protocol to perform these
+operations, so the remote user host needs to have a
+`<TT>.rhosts</TT>' file which grants access to the local
+user.
+</P>
+<P>
+
+For example, suppose you are the user `<SAMP>mozart</SAMP>' on
+the local machine `<SAMP>toe.example.com</SAMP>', and the
+server machine is `<SAMP>faun.example.org</SAMP>'.  On
+faun, put the following line into the file
+`<TT>.rhosts</TT>' in `<SAMP>bach</SAMP>''s home directory:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>toe.example.com  mozart
+</pre></td></tr></table><P>
+
+Then test that `<SAMP>rsh</SAMP>' is working with
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>rsh -l bach faun.example.org 'echo $PATH'
+</pre></td></tr></table><P>
+
+<A NAME="IDX75"></A>
+Next you have to make sure that <CODE>rsh</CODE> will be able
+to find the server.  Make sure that the path which
+<CODE>rsh</CODE> printed in the above example includes the
+directory containing a program named <CODE>cvs</CODE> which
+is the server.  You need to set the path in
+`<TT>.bashrc</TT>', `<TT>.cshrc</TT>', etc., not `<TT>.login</TT>'
+or `<TT>.profile</TT>'.  Alternately, you can set the
+environment variable <CODE>CVS_SERVER</CODE> on the client
+machine to the filename of the server you want to use,
+for example `<TT>/usr/local/bin/cvs-1.6</TT>'.
+</P>
+<P>
+
+There is no need to edit `<TT>inetd.conf</TT>' or start a
+CVS server daemon.
+</P>
+<P>
+
+<A NAME="IDX76"></A>
+<A NAME="IDX77"></A>
+<A NAME="IDX78"></A>
+<A NAME="IDX79"></A>
+<A NAME="IDX80"></A>
+There are two access methods that you use in <CODE>CVSROOT</CODE>
+for rsh.  <CODE>:server:</CODE> specifies an internal rsh
+client, which is supported only by some CVS ports.
+<CODE>:ext:</CODE> specifies an external rsh program.  By
+default this is <CODE>rsh</CODE> but you may set the
+<CODE>CVS_RSH</CODE> environment variable to invoke another
+program which can access the remote server (for
+example, <CODE>remsh</CODE> on HP-UX 9 because <CODE>rsh</CODE> is
+something different).  It must be a program which can
+transmit data to and from the server without modifying
+it; for example the Windows NT <CODE>rsh</CODE> is not
+suitable since it by default translates between CRLF
+and LF.  The OS/2 CVS port has a hack to pass `<SAMP>-b</SAMP>'
+to <CODE>rsh</CODE> to get around this, but since this could
+potentially cause problems for programs other than the
+standard <CODE>rsh</CODE>, it may change in the future.  If
+you set <CODE>CVS_RSH</CODE> to <CODE>SSH</CODE> or some other rsh
+replacement, the instructions in the rest of this
+section concerning `<TT>.rhosts</TT>' and so on are likely
+to be inapplicable; consult the documentation for your rsh
+replacement.
+</P>
+<P>
+
+Continuing our example, supposing you want to access
+the module `<TT>foo</TT>' in the repository
+`<TT>/usr/local/cvsroot/</TT>', on machine
+`<TT>faun.example.org</TT>', you are ready to go:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs -d :ext:bach@faun.example.org:/usr/local/cvsroot checkout foo
+</pre></td></tr></table><P>
+
+(The `<TT>bach@</TT>' can be omitted if the username is
+the same on both the local and remote hosts.)
+</P>
+<P>
+
+<A NAME="Password authenticated"></A>
+<HR SIZE="6">
+<A NAME="SEC29"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC28"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC30"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC26"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 2.9.3 Direct connection with password authentication </H3>
+<!--docid::SEC29::-->
+<P>
+
+The CVS client can also connect to the server
+using a password protocol.  This is particularly useful
+if using <CODE>rsh</CODE> is not feasible (for example,
+the server is behind a firewall), and Kerberos also is
+not available.
+</P>
+<P>
+
+        To use this method, it is necessary to make
+some adjustments on both the server and client sides.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC30">2.9.3.1 Setting up the server for password authentication</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Setting up the server</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC31">2.9.3.2 Using the client with password authentication</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Using the client</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_2.html#SEC32">2.9.3.3 Security considerations with password authentication</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">What this method does and does not do</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="Password authentication server"></A>
+<HR SIZE="6">
+<A NAME="SEC30"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC29"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC31"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC29"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H4> 2.9.3.1 Setting up the server for password authentication </H4>
+<!--docid::SEC30::-->
+<P>
+
+First of all, you probably want to tighten the
+permissions on the `<TT>$CVSROOT</TT>' and
+`<TT>$CVSROOT/CVSROOT</TT>' directories.  See <A HREF="cvs_2.html#SEC32">2.9.3.3 Security considerations with password authentication</A>, for more details.
+</P>
+<P>
+
+<A NAME="IDX81"></A>
+<A NAME="IDX82"></A>
+<A NAME="IDX83"></A>
+<A NAME="IDX84"></A>
+<A NAME="IDX85"></A>
+<A NAME="IDX86"></A>
+<A NAME="IDX87"></A>
+<A NAME="IDX88"></A>
+<A NAME="IDX89"></A>
+<A NAME="IDX90"></A>
+<A NAME="IDX91"></A>
+<A NAME="IDX92"></A>
+On the server side, the file `<TT>/etc/inetd.conf</TT>'
+needs to be edited so <CODE>inetd</CODE> knows to run the
+command <CODE>cvs pserver</CODE> when it receives a
+connection on the right port.  By default, the port
+number is 2401; it would be different if your client
+were compiled with <CODE>CVS_AUTH_PORT</CODE> defined to
+something else, though.  This can also be sepcified in the CVSROOT variable
+(see section <A HREF="cvs_2.html#SEC26">2.9 Remote repositories</A>) or overridden with the CVS_CLIENT_PORT
+environment variable (see section <A HREF="cvs_19.html#SEC180">D. All environment variables which affect CVS</A>).
+</P>
+<P>
+
+        If your <CODE>inetd</CODE> allows raw port numbers in
+`<TT>/etc/inetd.conf</TT>', then the following (all on a
+single line in `<TT>inetd.conf</TT>') should be sufficient:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>2401  stream  tcp  nowait  root  /usr/local/bin/cvs
+cvs -f --allow-root=/usr/cvsroot pserver
+</pre></td></tr></table><P>
+
+(You could also use the
+`<SAMP>-T</SAMP>' option to specify a temporary directory.)
+</P>
+<P>
+
+The `<SAMP>--allow-root</SAMP>' option specifies the allowable
+CVSROOT directory.  Clients which attempt to use a
+different CVSROOT directory will not be allowed to
+connect.  If there is more than one CVSROOT
+directory which you want to allow, repeat the option.
+(Unfortunately, many versions of <CODE>inetd</CODE> have very small
+limits on the number of arguments and/or the total length
+of the command.  The usual solution to this problem is
+to have <CODE>inetd</CODE> run a shell script which then invokes
+CVS with the necessary arguments.)
+</P>
+<P>
+
+        If your <CODE>inetd</CODE> wants a symbolic service
+name instead of a raw port number, then put this in
+`<TT>/etc/services</TT>':
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvspserver      2401/tcp
+</pre></td></tr></table><P>
+
+and put <CODE>cvspserver</CODE> instead of <CODE>2401</CODE> in `<TT>inetd.conf</TT>'.
+</P>
+<P>
+
+If your system uses <CODE>xinetd</CODE> instead of <CODE>inetd</CODE>,
+the procedure is slightly different.
+Create a file called `<TT>/etc/xinetd.d/cvspserver</TT>' containing the following:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>service cvspserver
+{
+   port        = 2401
+   socket_type = stream
+   protocol    = tcp
+   wait        = no
+   user        = root
+   passenv     = PATH
+   server      = /usr/local/bin/cvs
+   server_args = -f --allow-root=/usr/cvsroot pserver
+}
+</pre></td></tr></table><P>
+
+(If <CODE>cvspserver</CODE> is defined in `<TT>/etc/services</TT>', you can omit
+the <CODE>port</CODE> line.)
+</P>
+<P>
+
+        Once the above is taken care of, restart your
+<CODE>inetd</CODE>, or do whatever is necessary to force it
+to reread its initialization files.
+</P>
+<P>
+
+If you are having trouble setting this up, see
+<A HREF="cvs_21.html#SEC184">F.2 Trouble making a connection to a CVS server</A>.
+</P>
+<P>
+
+<A NAME="IDX93"></A>
+<A NAME="IDX94"></A>
+Because the client stores and transmits passwords in
+cleartext (almost--see <A HREF="cvs_2.html#SEC32">2.9.3.3 Security considerations with password authentication</A>, for details), a separate CVS password
+file is generally used, so people don't compromise
+their regular passwords when they access the
+repository.  This file is
+`<TT>$CVSROOT/CVSROOT/passwd</TT>' (see section <A HREF="cvs_2.html#SEC20">2.4 The administrative files</A>).  It uses a colon-separated
+format, similar to `<TT>/etc/passwd</TT>' on Unix systems,
+except that it has fewer fields: CVS username,
+optional password, and an optional system username for
+CVS to run as if authentication succeeds.  Here is
+an example `<TT>passwd</TT>' file with five entries:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>anonymous:
+bach:ULtgRLXo7NRxs
+spwang:1sOp854gDF3DY
+melissa:tGX1fS8sun6rY:pubcvs
+qproj:XR4EZcEs0szik:pubcvs
+</pre></td></tr></table><P>
+
+(The passwords are encrypted according to the standard
+Unix <CODE>crypt()</CODE> function, so it is possible to
+paste in passwords directly from regular Unix
+`<TT>/etc/passwd</TT>' files.)
+</P>
+<P>
+
+The first line in the example will grant access to any
+CVS client attempting to authenticate as user
+<CODE>anonymous</CODE>, no matter what password they use,
+including an empty password.  (This is typical for
+sites granting anonymous read-only access; for
+information on how to do the &quot;read-only&quot; part, see
+<A HREF="cvs_2.html#SEC36">2.10 Read-only repository access</A>.)
+</P>
+<P>
+
+The second and third lines will grant access to
+<CODE>bach</CODE> and <CODE>spwang</CODE> if they supply their
+respective plaintext passwords.
+</P>
+<P>
+
+<A NAME="IDX95"></A>
+The fourth line will grant access to <CODE>melissa</CODE>, if
+she supplies the correct password, but her CVS
+operations will actually run on the server side under
+the system user <CODE>pubcvs</CODE>.  Thus, there need not be
+any system user named <CODE>melissa</CODE>, but there
+<EM>must</EM> be one named <CODE>pubcvs</CODE>.
+</P>
+<P>
+
+The fifth line shows that system user identities can be
+shared: any client who successfully authenticates as
+<CODE>qproj</CODE> will actually run as <CODE>pubcvs</CODE>, just
+as <CODE>melissa</CODE> does.  That way you could create a
+single, shared system user for each project in your
+repository, and give each developer their own line in
+the `<TT>$CVSROOT/CVSROOT/passwd</TT>' file.  The CVS
+username on each line would be different, but the
+system username would be the same.  The reason to have
+different CVS usernames is that CVS will log their
+actions under those names: when <CODE>melissa</CODE> commits
+a change to a project, the checkin is recorded in the
+project's history under the name <CODE>melissa</CODE>, not
+<CODE>pubcvs</CODE>.  And the reason to have them share a
+system username is so that you can arrange permissions
+in the relevant area of the repository such that only
+that account has write-permission there.
+</P>
+<P>
+
+If the system-user field is present, all
+password-authenticated CVS commands run as that
+user; if no system user is specified, CVS simply
+takes the CVS username as the system username and
+runs commands as that user.  In either case, if there
+is no such user on the system, then the CVS
+operation will fail (regardless of whether the client
+supplied a valid password).
+</P>
+<P>
+
+The password and system-user fields can both be omitted
+(and if the system-user field is omitted, then also
+omit the colon that would have separated it from the
+encrypted password).  For example, this would be a
+valid `<TT>$CVSROOT/CVSROOT/passwd</TT>' file:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>anonymous::pubcvs
+fish:rKa5jzULzmhOo:kfogel
+sussman:1sOp854gDF3DY
+</pre></td></tr></table><P>
+
+When the password field is omitted or empty, then the
+client's authentication attempt will succeed with any
+password, including the empty string.  However, the
+colon after the CVS username is always necessary,
+even if the password is empty.
+</P>
+<P>
+
+CVS can also fall back to use system authentication.
+When authenticating a password, the server first checks
+for the user in the `<TT>$CVSROOT/CVSROOT/passwd</TT>'
+file.  If it finds the user, it will use that entry for
+authentication as described above.  But if it does not
+find the user, or if the CVS `<TT>passwd</TT>' file
+does not exist, then the server can try to authenticate
+the username and password using the operating system's
+user-lookup routines (this &quot;fallback&quot; behavior can be
+disabled by setting <CODE>SystemAuth=no</CODE> in the
+CVS `<TT>config</TT>' file, see section <A HREF="cvs_18.html#SEC179">C.9 The CVSROOT/config configuration file</A>).  Be
+aware, however, that falling back to system
+authentication might be a security risk: CVS
+operations would then be authenticated with that user's
+regular login password, and the password flies across
+the network in plaintext.  See <A HREF="cvs_2.html#SEC32">2.9.3.3 Security considerations with password authentication</A> for more on this.
+</P>
+<P>
+
+Right now, the only way to put a password in the
+CVS `<TT>passwd</TT>' file is to paste it there from
+somewhere else.  Someday, there may be a <CODE>cvs
+passwd</CODE> command.
+</P>
+<P>
+
+Unlike many of the files in `<TT>$CVSROOT/CVSROOT</TT>', it
+is normal to edit the `<TT>passwd</TT>' file in-place,
+rather than via CVS.  This is because of the
+possible security risks of having the `<TT>passwd</TT>'
+file checked out to people's working copies.  If you do
+want to include the `<TT>passwd</TT>' file in checkouts of
+`<TT>$CVSROOT/CVSROOT</TT>', see <A HREF="cvs_18.html#SEC176">C.6 The checkoutlist file</A>.
+</P>
+<P>
+
+<A NAME="Password authentication client"></A>
+<HR SIZE="6">
+<A NAME="SEC31"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC30"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC32"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC29"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H4> 2.9.3.2 Using the client with password authentication </H4>
+<!--docid::SEC31::-->
+To run a CVS command on a remote repository via
+the password-authenticating server, one specifies the
+<CODE>pserver</CODE> protocol, optional username, repository host, an
+optional port number, and path to the repository.  For example:
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs -d :pserver:faun.example.org:/usr/local/cvsroot checkout someproj
+</pre></td></tr></table><P>
+
+or
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>CVSROOT=:pserver:bach@faun.example.org:2401/usr/local/cvsroot
+cvs checkout someproj
+</pre></td></tr></table><P>
+
+However, unless you're connecting to a public-access
+repository (i.e., one where that username doesn't
+require a password), you'll need to supply a password or <EM>log in</EM> first.
+Logging in verifies your password with the repository and stores it in a file.
+It's done with the <CODE>login</CODE> command, which will
+prompt you interactively for the password if you didn't supply one as part of
+<VAR>$CVSROOT</VAR>:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs -d :pserver:bach@faun.example.org:/usr/local/cvsroot login
+CVS password:
+</pre></td></tr></table><P>
+
+or
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs -d :pserver:bach:p4ss30rd@faun.example.org:/usr/local/cvsroot login
+</pre></td></tr></table><P>
+
+After you enter the password, CVS verifies it with
+the server.  If the verification succeeds, then that
+combination of username, host, repository, and password
+is permanently recorded, so future transactions with
+that repository won't require you to run <CODE>cvs
+login</CODE>.  (If verification fails, CVS will exit
+complaining that the password was incorrect, and
+nothing will be recorded.)
+</P>
+<P>
+
+The records are stored, by default, in the file
+`<TT>$HOME/.cvspass</TT>'.  That file's format is
+human-readable, and to a degree human-editable, but
+note that the passwords are not stored in
+cleartext--they are trivially encoded to protect them
+from &quot;innocent&quot; compromise (i.e., inadvertent viewing
+by a system administrator or other non-malicious
+person).
+</P>
+<P>
+
+<A NAME="IDX96"></A>
+You can change the default location of this file by
+setting the <CODE>CVS_PASSFILE</CODE> environment variable.
+If you use this variable, make sure you set it
+<EM>before</EM> <CODE>cvs login</CODE> is run.  If you were to
+set it after running <CODE>cvs login</CODE>, then later
+CVS commands would be unable to look up the
+password for transmission to the server.
+  
+Once you have logged in, all CVS commands using
+that remote repository and username will authenticate
+with the stored password.  So, for example
+  
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs -d :pserver:bach@faun.example.org:/usr/local/cvsroot checkout foo
+</pre></td></tr></table><P>
+
+should just work (unless the password changes on the
+server side, in which case you'll have to re-run
+<CODE>cvs login</CODE>).
+</P>
+<P>
+
+Note that if the `<SAMP>:pserver:</SAMP>' were not present in
+the repository specification, CVS would assume it
+should use <CODE>rsh</CODE> to connect with the server
+instead (see section <A HREF="cvs_2.html#SEC28">2.9.2 Connecting with rsh</A>).
+</P>
+<P>
+
+Of course, once you have a working copy checked out and
+are running CVS commands from within it, there is
+no longer any need to specify the repository
+explicitly, because CVS can deduce the repository
+from the working copy's `<TT>CVS</TT>' subdirectory.
+</P>
+<P>
+
+<A NAME="IDX97"></A>
+The password for a given remote repository can be
+removed from the <CODE>CVS_PASSFILE</CODE> by using the
+<CODE>cvs logout</CODE> command.
+</P>
+<P>
+
+<A NAME="Password authentication security"></A>
+<HR SIZE="6">
+<A NAME="SEC32"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC31"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC33"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC29"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H4> 2.9.3.3 Security considerations with password authentication </H4>
+<!--docid::SEC32::-->
+<P>
+
+<A NAME="IDX98"></A>
+The passwords are stored on the client side in a
+trivial encoding of the cleartext, and transmitted in
+the same encoding.  The encoding is done only to
+prevent inadvertent password compromises (i.e., a
+system administrator accidentally looking at the file),
+and will not prevent even a naive attacker from gaining
+the password.
+</P>
+<P>
+
+The separate CVS password file (see section <A HREF="cvs_2.html#SEC30">2.9.3.1 Setting up the server for password authentication</A>) allows people
+to use a different password for repository access than
+for login access.  On the other hand, once a user has
+non-read-only
+access to the repository, she can execute programs on
+the server system through a variety of means.  Thus, repository
+access implies fairly broad system access as well.  It
+might be possible to modify CVS to prevent that,
+but no one has done so as of this writing.
+</P>
+<P>
+
+Note that because the `<TT>$CVSROOT/CVSROOT</TT>' directory
+contains `<TT>passwd</TT>' and other files which are used
+to check security, you must control the permissions on
+this directory as tightly as the permissions on
+`<TT>/etc</TT>'.  The same applies to the `<TT>$CVSROOT</TT>'
+directory itself and any directory
+above it in the tree.  Anyone who has write access to
+such a directory will have the ability to become any
+user on the system.  Note that these permissions are
+typically tighter than you would use if you are not
+using pserver.
+</P>
+<P>
+
+In summary, anyone who gets the password gets
+repository access (which may imply some measure of general system
+access as well).  The password is available to anyone
+who can sniff network packets or read a protected
+(i.e., user read-only) file.  If you want real
+security, get Kerberos.
+</P>
+<P>
+
+<A NAME="GSSAPI authenticated"></A>
+<HR SIZE="6">
+<A NAME="SEC33"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC32"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC34"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC26"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 2.9.4 Direct connection with GSSAPI </H3>
+<!--docid::SEC33::-->
+<P>
+
+<A NAME="IDX99"></A>
+<A NAME="IDX100"></A>
+<A NAME="IDX101"></A>
+<A NAME="IDX102"></A>
+GSSAPI is a generic interface to network security
+systems such as Kerberos 5.
+If you have a working GSSAPI library, you can have
+CVS connect via a direct TCP connection,
+authenticating with GSSAPI.
+</P>
+<P>
+
+To do this, CVS needs to be compiled with GSSAPI
+support; when configuring CVS it tries to detect
+whether GSSAPI libraries using kerberos version 5 are
+present.  You can also use the `<TT>--with-gssapi</TT>'
+flag to configure.
+</P>
+<P>
+
+The connection is authenticated using GSSAPI, but the
+message stream is <EM>not</EM> authenticated by default.
+You must use the <CODE>-a</CODE> global option to request
+stream authentication.
+</P>
+<P>
+
+The data transmitted is <EM>not</EM> encrypted by
+default.  Encryption support must be compiled into both
+the client and the server; use the
+`<TT>--enable-encrypt</TT>' configure option to turn it on.
+You must then use the <CODE>-x</CODE> global option to
+request encryption.
+</P>
+<P>
+
+GSSAPI connections are handled on the server side by
+the same server which handles the password
+authentication server; see <A HREF="cvs_2.html#SEC30">2.9.3.1 Setting up the server for password authentication</A>.  If you are using a GSSAPI mechanism such as
+Kerberos which provides for strong authentication, you
+will probably want to disable the ability to
+authenticate via cleartext passwords.  To do so, create
+an empty `<TT>CVSROOT/passwd</TT>' password file, and set
+<CODE>SystemAuth=no</CODE> in the config file
+(see section <A HREF="cvs_18.html#SEC179">C.9 The CVSROOT/config configuration file</A>).
+</P>
+<P>
+
+The GSSAPI server uses a principal name of
+cvs/<VAR>hostname</VAR>, where <VAR>hostname</VAR> is the
+canonical name of the server host.  You will have to
+set this up as required by your GSSAPI mechanism.
+</P>
+<P>
+
+To connect using GSSAPI, use `<SAMP>:gserver:</SAMP>'.  For
+example,
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs -d :gserver:faun.example.org:/usr/local/cvsroot checkout foo
+</pre></td></tr></table><P>
+
+<A NAME="Kerberos authenticated"></A>
+<HR SIZE="6">
+<A NAME="SEC34"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC33"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC35"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC26"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 2.9.5 Direct connection with kerberos </H3>
+<!--docid::SEC34::-->
+<P>
+
+<A NAME="IDX103"></A>
+<A NAME="IDX104"></A>
+<A NAME="IDX105"></A>
+The easiest way to use kerberos is to use the kerberos
+<CODE>rsh</CODE>, as described in <A HREF="cvs_2.html#SEC28">2.9.2 Connecting with rsh</A>.
+The main disadvantage of using rsh is that all the data
+needs to pass through additional programs, so it may be
+slower.  So if you have kerberos installed you can
+connect via a direct TCP connection,
+authenticating with kerberos.
+</P>
+<P>
+
+This section concerns the kerberos network security
+system, version 4.  Kerberos version 5 is supported via
+the GSSAPI generic network security interface, as
+described in the previous section.
+</P>
+<P>
+
+To do this, CVS needs to be compiled with kerberos
+support; when configuring CVS it tries to detect
+whether kerberos is present or you can use the
+`<TT>--with-krb4</TT>' flag to configure.
+</P>
+<P>
+
+The data transmitted is <EM>not</EM> encrypted by
+default.  Encryption support must be compiled into both
+the client and server; use the
+`<TT>--enable-encryption</TT>' configure option to turn it
+on.  You must then use the <CODE>-x</CODE> global option to
+request encryption.
+</P>
+<P>
+
+<A NAME="IDX106"></A>
+You need to edit `<TT>inetd.conf</TT>' on the server
+machine to run <CODE>cvs kserver</CODE>.  The client uses
+port 1999 by default; if you want to use another port
+specify it in the <CODE>CVSROOT</CODE> (see section <A HREF="cvs_2.html#SEC26">2.9 Remote repositories</A>)
+or the <CODE>CVS_CLIENT_PORT</CODE> environment variable on the client.
+</P>
+<P>
+
+<A NAME="IDX107"></A>
+When you want to use CVS, get a ticket in the
+usual way (generally <CODE>kinit</CODE>); it must be a ticket
+which allows you to log into the server machine.  Then
+you are ready to go:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs -d :kserver:faun.example.org:/usr/local/cvsroot checkout foo
+</pre></td></tr></table><P>
+
+Previous versions of CVS would fall back to a
+connection via rsh; this version will not do so.
+</P>
+<P>
+
+<A NAME="Connecting via fork"></A>
+<HR SIZE="6">
+<A NAME="SEC35"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC34"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC36"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC26"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 2.9.6 Connecting with fork </H3>
+<!--docid::SEC35::-->
+<P>
+
+<A NAME="IDX108"></A>
+<A NAME="IDX109"></A>
+This access method allows you to connect to a
+repository on your local disk via the remote protocol.
+In other words it does pretty much the same thing as
+<CODE>:local:</CODE>, but various quirks, bugs and the like are
+those of the remote CVS rather than the local
+CVS.
+</P>
+<P>
+
+For day-to-day operations you might prefer either
+<CODE>:local:</CODE> or <CODE>:fork:</CODE>, depending on your
+preferences.  Of course <CODE>:fork:</CODE> comes in
+particularly handy in testing or
+debugging <CODE>cvs</CODE> and the remote protocol.
+Specifically, we avoid all of the network-related
+setup/configuration, timeouts, and authentication
+inherent in the other remote access methods but still
+create a connection which uses the remote protocol.
+</P>
+<P>
+
+To connect using the <CODE>fork</CODE> method, use
+`<SAMP>:fork:</SAMP>' and the pathname to your local
+repository.  For example:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs -d :fork:/usr/local/cvsroot checkout foo
+</pre></td></tr></table><P>
+
+<A NAME="IDX110"></A>
+As with <CODE>:ext:</CODE>, the server is called `<SAMP>cvs</SAMP>'
+by default, or the value of the <CODE>CVS_SERVER</CODE>
+environment variable.
+</P>
+<P>
+
+<A NAME="Read-only access"></A>
+<HR SIZE="6">
+<A NAME="SEC36"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC35"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC37"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 2.10 Read-only repository access </H2>
+<!--docid::SEC36::-->
+<P>
+
+        It is possible to grant read-only repository
+access to people using the password-authenticated
+server (see section <A HREF="cvs_2.html#SEC29">2.9.3 Direct connection with password authentication</A>).  (The
+other access methods do not have explicit support for
+read-only users because those methods all assume login
+access to the repository machine anyway, and therefore
+the user can do whatever local file permissions allow
+her to do.)
+</P>
+<P>
+
+        A user who has read-only access can do only
+those CVS operations which do not modify the
+repository, except for certain &quot;administrative&quot; files
+(such as lock files and the history file).  It may be
+desirable to use this feature in conjunction with
+user-aliasing (see section <A HREF="cvs_2.html#SEC30">2.9.3.1 Setting up the server for password authentication</A>).
+</P>
+<P>
+
+Unlike with previous versions of CVS, read-only
+users should be able merely to read the repository, and
+not to execute programs on the server or otherwise gain
+unexpected levels of access.  Or to be more accurate,
+the <EM>known</EM> holes have been plugged.  Because this
+feature is new and has not received a comprehensive
+security audit, you should use whatever level of
+caution seems warranted given your attitude concerning
+security.
+</P>
+<P>
+
+        There are two ways to specify read-only access
+for a user: by inclusion, and by exclusion.
+</P>
+<P>
+
+        &quot;Inclusion&quot; means listing that user
+specifically in the `<TT>$CVSROOT/CVSROOT/readers</TT>'
+file, which is simply a newline-separated list of
+users.  Here is a sample `<TT>readers</TT>' file:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>melissa
+splotnik
+jrandom
+</pre></td></tr></table><P>
+
+        (Don't forget the newline after the last user.)
+</P>
+<P>
+
+        &quot;Exclusion&quot; means explicitly listing everyone
+who has <EM>write</EM> access--if the file
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$CVSROOT/CVSROOT/writers
+</pre></td></tr></table><P>
+
+exists, then only
+those users listed in it have write access, and
+everyone else has read-only access (of course, even the
+read-only users still need to be listed in the
+CVS `<TT>passwd</TT>' file).  The
+`<TT>writers</TT>' file has the same format as the
+`<TT>readers</TT>' file.
+</P>
+<P>
+
+        Note: if your CVS `<TT>passwd</TT>'
+file maps cvs users onto system users (see section <A HREF="cvs_2.html#SEC30">2.9.3.1 Setting up the server for password authentication</A>), make sure you deny or grant
+read-only access using the <EM>cvs</EM> usernames, not
+the system usernames.  That is, the `<TT>readers</TT>' and
+`<TT>writers</TT>' files contain cvs usernames, which may
+or may not be the same as system usernames.
+</P>
+<P>
+
+        Here is a complete description of the server's
+behavior in deciding whether to grant read-only or
+read-write access:
+</P>
+<P>
+
+        If `<TT>readers</TT>' exists, and this user is
+listed in it, then she gets read-only access.  Or if
+`<TT>writers</TT>' exists, and this user is NOT listed in
+it, then she also gets read-only access (this is true
+even if `<TT>readers</TT>' exists but she is not listed
+there).  Otherwise, she gets full read-write access.
+</P>
+<P>
+
+        Of course there is a conflict if the user is
+listed in both files.  This is resolved in the more
+conservative way, it being better to protect the
+repository too much than too little: such a user gets
+read-only access.
+</P>
+<P>
+
+<A NAME="Server temporary directory"></A>
+<HR SIZE="6">
+<A NAME="SEC37"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC36"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 2.11 Temporary directories for the server </H2>
+<!--docid::SEC37::-->
+<P>
+
+While running, the CVS server creates temporary
+directories.  They are named
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs-serv<VAR>pid</VAR>
+</pre></td></tr></table><P>
+
+where <VAR>pid</VAR> is the process identification number of
+the server.  They are located in the directory
+specified by the <CODE>TMPDIR</CODE> environment variable
+(see section <A HREF="cvs_19.html#SEC180">D. All environment variables which affect CVS</A>), the `<SAMP>-T</SAMP>' global
+option (see section <A HREF="cvs_16.html#SEC117">A.4 Global options</A>), or failing that
+`<TT>/tmp</TT>'.
+</P>
+<P>
+
+In most cases the server will remove the temporary
+directory when it is done, whether it finishes normally
+or abnormally.  However, there are a few cases in which
+the server does not or cannot remove the temporary
+directory, for example:
+</P>
+<P>
+
+<UL>
+<LI>
+If the server aborts due to an internal server error,
+it may preserve the directory to aid in debugging
+<P>
+
+</P>
+<LI>
+If the server is killed in a way that it has no way of
+cleaning up (most notably, `<SAMP>kill -KILL</SAMP>' on unix).
+<P>
+
+</P>
+<LI>
+If the system shuts down without an orderly shutdown,
+which tells the server to clean up.
+</UL>
+<P>
+
+In cases such as this, you will need to manually remove
+the `<TT>cvs-serv<VAR>pid</VAR></TT>' directories.  As long as
+there is no server running with process identification
+number <VAR>pid</VAR>, it is safe to do so.
+</P>
+<P>
+
+<A NAME="Starting a new project"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>
+<FONT SIZE="-1">
+This document was generated
+by <I>Derek Robert Price</I> on <I>April, 18 2002</I>
+using <A HREF="http://texi2html.cvshome.org"><I>texi2html</I></A>
+</FONT>
+
+</BODY>
+</HTML>

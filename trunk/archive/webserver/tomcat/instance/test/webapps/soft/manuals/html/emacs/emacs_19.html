@@ -1,0 +1,1380 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Frames</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Frames">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Frames">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC191"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC190"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC192"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC183"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> P. Frames and X Windows </H1>
+<!--docid::SEC191::-->
+<P>
+
+  When using the X Window System, you can create multiple windows at the
+X level in a single Emacs session.  Each X window that belongs to Emacs
+displays a <EM>frame</EM> which can contain one or several Emacs windows.
+A frame initially contains a single general-purpose Emacs window which
+you can subdivide vertically or horizontally into smaller windows.  A
+frame normally contains its own echo area and minibuffer, but you can
+make frames that don't have these--they use the echo area and
+minibuffer of another frame.
+</P><P>
+
+  Editing you do in one frame also affects the other frames.  For
+instance, if you put text in the kill ring in one frame, you can yank it
+in another frame.  If you exit Emacs through <KBD>C-x C-c</KBD> in one frame,
+it terminates all the frames.  To delete just one frame, use <KBD>C-x 5
+0</KBD> (that is zero, not <KBD>o</KBD>).
+</P><P>
+
+  To avoid confusion, we reserve the word "window" for the
+subdivisions that Emacs implements, and never use it to refer to a
+frame.
+</P><P>
+
+  Emacs compiled for MS-DOS emulates some aspects of the window system
+so that you can use many of the features described in this chapter.
+See section <A HREF="emacs_37.html#SEC555">AH.1 Keyboard and Mouse on MS-DOS</A>, for more information.
+</P><P>
+
+<A NAME="IDX851"></A>
+  Emacs compiled for MS Windows mostly supports the same features as
+under X.  However, images, tool bars, and tooltips are not yet
+available in Emacs version 21.1 on MS-Windows.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC192">P.1 Mouse Commands for Editing</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Moving, cutting, and pasting, with the mouse.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC193">P.2 Secondary Selection</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Cutting without altering point and mark.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC194">P.3 Using the Clipboard</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Using the clipboard for selections.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC195">P.4 Following References with the Mouse</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Using the mouse to select an item from a list.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC196">P.5 Mouse Clicks for Menus</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Mouse clicks that bring up menus.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC197">P.6 Mode Line Mouse Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Mouse clicks on the mode line.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC198">P.7 Creating Frames</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Creating additional Emacs frames with various contents.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC199">P.8 Frame Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Iconifying, deleting, and switching frames.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC200">P.9 Making and Using a Speedbar Frame</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to make and use a speedbar frame.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC201">P.10 Multiple Displays</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How one Emacs job can talk to several displays.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC202">P.11 Special Buffer Frames</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">You can make certain buffers have their own frames.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC203">P.12 Setting Frame Parameters</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Changing the colors and other modes of frames.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC204">P.13 Scroll Bars</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to enable and disable scroll bars; how to use them.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC205">P.14 Scrolling With "Wheeled" Mice</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Using mouse wheels for scrolling.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC206">P.15 Menu Bars</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Enabling and disabling the menu bar.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC207">P.16 Tool Bars</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Enabling and disabling the tool bar.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC208">P.17 Using Dialog Boxes</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Controlling use of dialog boxes.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC209">P.18 Tooltips (or "Balloon Help")</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Showing "tooltips", AKA "balloon help" for active text.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC210">P.19 Mouse Avoidance</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Moving the mouse pointer out of the way.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC211">P.20 Non-Window Terminals</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Multiple frames on terminals that show only one.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_19.html#SEC212">P.21 Using a Mouse in Terminal Emulators</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Using the mouse in an XTerm terminal emulator.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Mouse Commands"></A>
+<HR SIZE="6">
+<A NAME="SEC192"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC193"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.1 Mouse Commands for Editing </H2>
+<!--docid::SEC192::-->
+<P>
+
+  The mouse commands for selecting and copying a region are mostly
+compatible with the <CODE>xterm</CODE> program.  You can use the same mouse
+commands for copying between Emacs and other X client programs.
+</P><P>
+
+<A NAME="IDX852"></A>
+  If you select a region with any of these mouse commands, and then
+immediately afterward type the <KBD>DELETE</KBD> function key, it deletes the
+region that you selected.  The <KBD>BACKSPACE</KBD> function key and the
+ASCII character <KBD>DEL</KBD> do not do this; if you type any other key
+in between the mouse command and <KBD>DELETE</KBD>, it does not do this.
+</P><P>
+
+<A NAME="IDX853"></A>
+<A NAME="IDX854"></A>
+<A NAME="IDX855"></A>
+<A NAME="IDX856"></A>
+<A NAME="IDX857"></A>
+<A NAME="IDX858"></A>
+<A NAME="IDX859"></A>
+<DL COMPACT>
+<DT><KBD>Mouse-1</KBD>
+<DD>Move point to where you click (<CODE>mouse-set-point</CODE>).
+This is normally the left button.
+<P>
+
+<DT><KBD>Drag-Mouse-1</KBD>
+<DD>Set the region to the text you select by dragging, and copy it to the
+kill ring (<CODE>mouse-set-region</CODE>).  You can specify both ends of the
+region with this single command.
+<P>
+
+<A NAME="IDX860"></A>
+If you move the mouse off the top or bottom of the window while
+dragging, the window scrolls at a steady rate until you move the mouse
+back into the window.  This way, you can select regions that don't fit
+entirely on the screen.  The number of lines scrolled per step depends
+on how far away from the window edge the mouse has gone; the variable
+<CODE>mouse-scroll-min-lines</CODE> specifies a minimum step size.
+</P><P>
+
+<DT><KBD>Mouse-2</KBD>
+<DD>Yank the last killed text, where you click (<CODE>mouse-yank-at-click</CODE>).
+This is normally the middle button.
+<P>
+
+<DT><KBD>Mouse-3</KBD>
+<DD>This command, <CODE>mouse-save-then-kill</CODE>, has several functions
+depending on where you click and the status of the region.
+<P>
+
+The most basic case is when you click <KBD>Mouse-1</KBD> in one place and
+then <KBD>Mouse-3</KBD> in another.  This selects the text between those two
+positions as the region.  It also copies the new region to the kill
+ring, so that you can copy it to someplace else.
+</P><P>
+
+If you click <KBD>Mouse-1</KBD> in the text, scroll with the scroll bar, and
+then click <KBD>Mouse-3</KBD>, it remembers where point was before scrolling
+(where you put it with <KBD>Mouse-1</KBD>), and uses that position as the
+other end of the region.  This is so that you can select a region that
+doesn't fit entirely on the screen.
+</P><P>
+
+More generally, if you do not have a highlighted region, <KBD>Mouse-3</KBD>
+selects the text between point and the click position as the region.  It
+does this by setting the mark where point was, and moving point to where
+you click.
+</P><P>
+
+If you have a highlighted region, or if the region was set just before
+by dragging button 1, <KBD>Mouse-3</KBD> adjusts the nearer end of the region
+by moving it to where you click.  The adjusted region's text also
+replaces the old region's text in the kill ring.
+</P><P>
+
+If you originally specified the region using a double or triple
+<KBD>Mouse-1</KBD>, so that the region is defined to consist of entire words
+or lines, then adjusting the region with <KBD>Mouse-3</KBD> also proceeds by
+entire words or lines.
+</P><P>
+
+If you use <KBD>Mouse-3</KBD> a second time consecutively, at the same place,
+that kills the region already selected.
+</P><P>
+
+<DT><KBD>Double-Mouse-1</KBD>
+<DD>This key sets the region around the word which you click on.  If you
+click on a character with "symbol" syntax (such as underscore, in C
+mode), it sets the region around the symbol surrounding that character.
+<P>
+
+If you click on a character with open-parenthesis or close-parenthesis
+syntax, it sets the region around the parenthetical grouping
+which that character starts or ends.  If you click on a character with
+string-delimiter syntax (such as a singlequote or doublequote in C), it
+sets the region around the string constant (using heuristics to figure
+out whether that character is the beginning or the end of it).
+</P><P>
+
+<DT><KBD>Double-Drag-Mouse-1</KBD>
+<DD>This key selects a region made up of the words you drag across.
+<P>
+
+<DT><KBD>Triple-Mouse-1</KBD>
+<DD>This key sets the region around the line you click on.
+<P>
+
+<DT><KBD>Triple-Drag-Mouse-1</KBD>
+<DD>This key selects a region made up of the lines you drag across.
+</DL>
+<P>
+
+  The simplest way to kill text with the mouse is to press <KBD>Mouse-1</KBD>
+at one end, then press <KBD>Mouse-3</KBD> twice at the other end.
+See section <A HREF="emacs_11.html#SEC59">H.7 Deletion and Killing</A>.  To copy the text into the kill ring without deleting it
+from the buffer, press <KBD>Mouse-3</KBD> just once--or just drag across the
+text with <KBD>Mouse-1</KBD>.  Then you can copy it elsewhere by yanking it.
+</P><P>
+
+<A NAME="IDX861"></A>
+  To yank the killed or copied text somewhere else, move the mouse there
+and press <KBD>Mouse-2</KBD>.  See section <A HREF="emacs_11.html#SEC63">H.8 Yanking</A>.  However, if
+<CODE>mouse-yank-at-point</CODE> is non-<CODE>nil</CODE>, <KBD>Mouse-2</KBD> yanks at
+point.  Then it does not matter where you click, or even which of the
+frame's windows you click on.  The default value is <CODE>nil</CODE>.  This
+variable also affects yanking the secondary selection.
+</P><P>
+
+<A NAME="IDX862"></A>
+<A NAME="IDX863"></A>
+<A NAME="IDX864"></A>
+  To copy text to another X window, kill it or save it in the kill ring.
+Under X, this also sets the <EM>primary selection</EM>.  Then use the
+"paste" or "yank" command of the program operating the other window
+to insert the text from the selection.
+</P><P>
+
+  To copy text from another X window, use the "cut" or "copy"
+command of the program operating the other window, to select the text
+you want.  Then yank it in Emacs with <KBD>C-y</KBD> or <KBD>Mouse-2</KBD>.
+</P><P>
+
+  The standard coding system for X selections is <CODE>compound-text</CODE>.
+To specify another coding system for X selections, use <KBD>C-x
+<KBD>RET</KBD> x</KBD> or <KBD>C-x <KBD>RET</KBD> X</KBD>.  See section <A HREF="emacs_20.html#SEC222">Q.9 Specifying a Coding System</A>.
+</P><P>
+
+  These cutting and pasting commands also work on MS-Windows.
+</P><P>
+
+<A NAME="IDX865"></A>
+<A NAME="IDX866"></A>
+<A NAME="IDX867"></A>
+<A NAME="IDX868"></A>
+  When Emacs puts text into the kill ring, or rotates text to the front
+of the kill ring, it sets the <EM>primary selection</EM> in the X server.
+This is how other X clients can access the text.  Emacs also stores the
+text in the cut buffer, but only if the text is short enough
+(the value of <CODE>x-cut-buffer-max</CODE> specifies the maximum number of
+characters); putting long strings in the cut buffer can be slow.
+</P><P>
+
+  The commands to yank the first entry in the kill ring actually check
+first for a primary selection in another program; after that, they check
+for text in the cut buffer.  If neither of those sources provides text
+to yank, the kill ring contents are used.
+</P><P>
+
+<A NAME="Secondary Selection"></A>
+<HR SIZE="6">
+<A NAME="SEC193"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC192"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC194"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC194"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.2 Secondary Selection </H2>
+<!--docid::SEC193::-->
+<P>
+
+  The <EM>secondary selection</EM> is another way of selecting text using
+X.  It does not use point or the mark, so you can use it to kill text
+without setting point or the mark.
+</P><P>
+
+<DL COMPACT>
+<A NAME="IDX869"></A>
+<A NAME="IDX870"></A>
+<DT><KBD>M-Drag-Mouse-1</KBD>
+<DD>Set the secondary selection, with one end at the place where you press
+down the button, and the other end at the place where you release it
+(<CODE>mouse-set-secondary</CODE>).  The highlighting appears and changes as
+you drag.  You can control the appearance of the highlighting by
+customizing the <CODE>secondary-selection</CODE> face (see section <A HREF="emacs_33.html#SEC482">AD.2.2.3 Customizing Faces</A>).
+<P>
+
+If you move the mouse off the top or bottom of the window while
+dragging, the window scrolls at a steady rate until you move the mouse
+back into the window.  This way, you can mark regions that don't fit
+entirely on the screen.
+</P><P>
+
+<A NAME="IDX871"></A>
+<A NAME="IDX872"></A>
+<DT><KBD>M-Mouse-1</KBD>
+<DD>Set one endpoint for the <EM>secondary selection</EM>
+(<CODE>mouse-start-secondary</CODE>).
+<P>
+
+<A NAME="IDX873"></A>
+<A NAME="IDX874"></A>
+<DT><KBD>M-Mouse-3</KBD>
+<DD>Make a secondary selection, using the place specified with <KBD>M-Mouse-1</KBD>
+as the other end (<CODE>mouse-secondary-save-then-kill</CODE>).  A second click
+at the same place kills the secondary selection just made.
+<P>
+
+<A NAME="IDX875"></A>
+<A NAME="IDX876"></A>
+<DT><KBD>M-Mouse-2</KBD>
+<DD>Insert the secondary selection where you click
+(<CODE>mouse-yank-secondary</CODE>).  This places point at the end of the
+yanked text.
+</DL>
+<P>
+
+Double or triple clicking of <KBD>M-Mouse-1</KBD> operates on words and
+lines, much like <KBD>Mouse-1</KBD>.
+</P><P>
+
+If <CODE>mouse-yank-at-point</CODE> is non-<CODE>nil</CODE>, <KBD>M-Mouse-2</KBD>
+yanks at point.  Then it does not matter precisely where you click; all
+that matters is which window you click on.  See section <A HREF="emacs_19.html#SEC192">P.1 Mouse Commands for Editing</A>.
+</P><P>
+
+<A NAME="Clipboard"></A>
+<HR SIZE="6">
+<A NAME="SEC194"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC193"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC195"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC195"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.3 Using the Clipboard </H2>
+<!--docid::SEC194::-->
+<P>
+
+  As well as the primary and secondary selection types, X supports a
+<EM>clipboard</EM> selection type which is used by some applications,
+particularly under OpenWindows and Gnome.
+</P><P>
+
+  The command <KBD>M-x menu-bar-enable-clipboard</KBD> makes the <CODE>Cut</CODE>,
+<CODE>Paste</CODE> and <CODE>Copy</CODE> menu items, as well as the keys of the same
+names, all use the clipboard.
+ 
+  You can customize the option <CODE>x-select-enable-clipboard</CODE> to make
+the Emacs yank functions consult the clipboard before the primary
+selection, and to make the kill functions to store in the clipboard as
+well as the primary selection.  Otherwise they do not access the
+clipboard at all.  Using the clipboard is the default on MS-Windows,
+unlike most systems.
+</P><P>
+
+<A NAME="Mouse References"></A>
+<HR SIZE="6">
+<A NAME="SEC195"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC194"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC196"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC196"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.4 Following References with the Mouse </H2>
+<!--docid::SEC195::-->
+<P>
+
+  Some Emacs buffers display lists of various sorts.  These include
+lists of files, of buffers, of possible completions, of matches for
+a pattern, and so on.
+</P><P>
+
+  Since yanking text into these buffers is not very useful, most of them
+define <KBD>Mouse-2</KBD> specially, as a command to use or view the item you
+click on.
+</P><P>
+
+  For example, if you click <KBD>Mouse-2</KBD> on a file name in a Dired
+buffer, you visit that file.  If you click <KBD>Mouse-2</KBD> on an error
+message in the <SAMP>`*Compilation*'</SAMP> buffer, you go to the source code
+for that error message.  If you click <KBD>Mouse-2</KBD> on a completion in
+the <SAMP>`*Completions*'</SAMP> buffer, you choose that completion.
+</P><P>
+
+  You can usually tell when <KBD>Mouse-2</KBD> has this special sort of
+meaning because the sensitive text highlights when you move the mouse
+over it.
+</P><P>
+
+<A NAME="Menu Mouse Clicks"></A>
+<HR SIZE="6">
+<A NAME="SEC196"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC195"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC197"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC197"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.5 Mouse Clicks for Menus </H2>
+<!--docid::SEC196::-->
+<P>
+
+  Mouse clicks modified with the <KBD>CTRL</KBD> and <KBD>SHIFT</KBD> keys
+bring up menus.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-Mouse-1</KBD>
+<DD><A NAME="IDX877"></A>
+This menu is for selecting a buffer.
+<P>
+
+The MSB ("mouse select buffer") global minor mode makes this
+menu smarter and more customizable.  See section <A HREF="emacs_17.html#SEC182">N.7.3 Customizing Buffer Menus</A>.
+</P><P>
+
+<DT><KBD>C-Mouse-2</KBD>
+<DD><A NAME="IDX878"></A>
+This menu is for specifying faces and other text properties
+for editing formatted text.  See section <A HREF="emacs_23.html#SEC258">T.11 Editing Formatted Text</A>.
+<P>
+
+<DT><KBD>C-Mouse-3</KBD>
+<DD><A NAME="IDX879"></A>
+This menu is mode-specific.  For most modes if Menu-bar mode is on, this
+menu has the same items as all the mode-specific menu-bar menus put
+together.  Some modes may specify a different menu for this
+button.<A NAME="DOCF2" HREF="emacs_fot.html#FOOT2">(2)</A>  If Menu-bar mode is off, this menu
+contains all the items which would be present in the menu bar--not just
+the mode-specific ones--so that you can access them without having to
+display the menu bar.
+<P>
+
+<DT><KBD>S-Mouse-1</KBD>
+<DD>This menu is for specifying the frame's principal font.
+</DL>
+<P>
+
+<A NAME="Mode Line Mouse"></A>
+<HR SIZE="6">
+<A NAME="SEC197"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC196"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC198"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC198"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.6 Mode Line Mouse Commands </H2>
+<!--docid::SEC197::-->
+<P>
+
+  You can use mouse clicks on window mode lines to select and manipulate
+windows.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>Mouse-1</KBD>
+<DD><A NAME="IDX880"></A>
+<KBD>Mouse-1</KBD> on a mode line selects the window above.  By dragging
+<KBD>Mouse-1</KBD> on the mode line, you can move it, thus changing the
+height of the windows above and below.
+<P>
+
+<DT><KBD>Mouse-2</KBD>
+<DD><A NAME="IDX881"></A>
+<KBD>Mouse-2</KBD> on a mode line expands that window to fill its frame.
+<P>
+
+<DT><KBD>Mouse-3</KBD>
+<DD><A NAME="IDX882"></A>
+<KBD>Mouse-3</KBD> on a mode line deletes the window above.  If the frame has
+only one window, it buries the current buffer instead and switches to
+another buffer.
+<P>
+
+<DT><KBD>C-Mouse-2</KBD>
+<DD><A NAME="IDX883"></A>
+<KBD>C-Mouse-2</KBD> on a mode line splits the window above
+horizontally, above the place in the mode line where you click.
+</DL>
+<P>
+
+<A NAME="IDX884"></A>
+  <KBD>C-Mouse-2</KBD> on a scroll bar splits the corresponding window
+vertically, unless you are using an X toolkit's implementation of
+scroll bars.  See section <A HREF="emacs_18.html#SEC185">O.2 Splitting Windows</A>.
+</P><P>
+
+  The commands above apply to areas of the mode line which do not have
+special mouse bindings of their own.  Some areas, such as the buffer
+name and the major mode name, have their own special mouse bindings.
+Emacs displays information about these bindings when you hold the
+mouse over such a place (see section <A HREF="emacs_19.html#SEC209">P.18 Tooltips (or "Balloon Help")</A>).
+</P><P>
+
+<A NAME="Creating Frames"></A>
+<HR SIZE="6">
+<A NAME="SEC198"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC197"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC199"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC199"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.7 Creating Frames </H2>
+<!--docid::SEC198::-->
+<P>
+
+<A NAME="IDX885"></A>
+  The prefix key <KBD>C-x 5</KBD> is analogous to <KBD>C-x 4</KBD>, with parallel
+subcommands.  The difference is that <KBD>C-x 5</KBD> commands create a new
+frame rather than just a new window in the selected frame (see section <A HREF="emacs_18.html#SEC187">O.4 Displaying in Another Window</A>).  If an existing visible or iconified frame already displays
+the requested material, these commands use the existing frame, after
+raising or deiconifying as necessary. 
+</P><P>
+
+  The various <KBD>C-x 5</KBD> commands differ in how they find or create the
+buffer to select:
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-x 5 2</KBD>
+<DD><A NAME="IDX886"></A>
+<A NAME="IDX887"></A>
+Create a new frame (<CODE>make-frame-command</CODE>).
+<DT><KBD>C-x 5 b <VAR>bufname</VAR> <KBD>RET</KBD></KBD>
+<DD>Select buffer <VAR>bufname</VAR> in another frame.  This runs
+<CODE>switch-to-buffer-other-frame</CODE>.
+<DT><KBD>C-x 5 f <VAR>filename</VAR> <KBD>RET</KBD></KBD>
+<DD>Visit file <VAR>filename</VAR> and select its buffer in another frame.  This
+runs <CODE>find-file-other-frame</CODE>.  See section <A HREF="emacs_16.html#SEC112">M.2 Visiting Files</A>.
+<DT><KBD>C-x 5 d <VAR>directory</VAR> <KBD>RET</KBD></KBD>
+<DD>Select a Dired buffer for directory <VAR>directory</VAR> in another frame.
+This runs <CODE>dired-other-frame</CODE>.  See section <A HREF="emacs_31.html#SEC396">AB. Dired, the Directory Editor</A>.
+<DT><KBD>C-x 5 m</KBD>
+<DD>Start composing a mail message in another frame.  This runs
+<CODE>mail-other-frame</CODE>.  It is the other-frame variant of <KBD>C-x m</KBD>.
+See section <A HREF="emacs_29.html#SEC363">Z. Sending Mail</A>.
+<DT><KBD>C-x 5 .</KBD>
+<DD>Find a tag in the current tag table in another frame.  This runs
+<CODE>find-tag-other-frame</CODE>, the multiple-frame variant of <KBD>M-.</KBD>.
+See section <A HREF="emacs_26.html#SEC334">W.2 Tags Tables</A>.
+<DT><KBD>C-x 5 r <VAR>filename</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX888"></A>
+<A NAME="IDX889"></A>
+Visit file <VAR>filename</VAR> read-only, and select its buffer in another
+frame.  This runs <CODE>find-file-read-only-other-frame</CODE>.
+See section <A HREF="emacs_16.html#SEC112">M.2 Visiting Files</A>.
+</DL>
+<P>
+
+<A NAME="IDX890"></A>
+<A NAME="IDX891"></A>
+  You can control the appearance of new frames you create by setting the
+frame parameters in <CODE>default-frame-alist</CODE>.  You can use the
+variable <CODE>initial-frame-alist</CODE> to specify parameters that affect
+only the initial frame.  See section `Initial Parameters' in <CITE>The Emacs Lisp Reference Manual</CITE>, for more information.
+</P><P>
+
+<A NAME="IDX892"></A>
+  The easiest way to specify the principal font for all your Emacs
+frames is with an X resource (see section <A HREF="emacs_34.html#SEC537">AE.7 Font Specification Options</A>), but you can also do it by
+modifying <CODE>default-frame-alist</CODE> to specify the <CODE>font</CODE>
+parameter, as shown here:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(add-to-list 'default-frame-alist '(font . "10x20"))
+</pre></td></tr></table></P><P>
+
+Here's a similar example for specifying a foreground color:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(add-to-list 'default-frame-alist '(background-color . "blue"))
+</pre></td></tr></table></P><P>
+
+<A NAME="Frame Commands"></A>
+<HR SIZE="6">
+<A NAME="SEC199"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC198"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC200"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC200"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.8 Frame Commands </H2>
+<!--docid::SEC199::-->
+<P>
+
+  The following commands let you create, delete and operate on frames:
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-z</KBD>
+<DD><A NAME="IDX893"></A>
+<A NAME="IDX894"></A>
+Iconify the selected Emacs frame (<CODE>iconify-or-deiconify-frame</CODE>).
+The normal meaning of <KBD>C-z</KBD>, to suspend Emacs, is not useful under a
+window system, so it has a different binding in that case.
+<P>
+
+If you type this command on an Emacs frame's icon, it deiconifies the frame.
+</P><P>
+
+<DT><KBD>C-x 5 0</KBD>
+<DD><A NAME="IDX895"></A>
+<A NAME="IDX896"></A>
+Delete the selected frame (<CODE>delete-frame</CODE>).  This is not allowed if
+there is only one frame.
+<P>
+
+<DT><KBD>C-x 5 o</KBD>
+<DD><A NAME="IDX897"></A>
+<A NAME="IDX898"></A>
+Select another frame, raise it, and warp the mouse to it so that it
+stays selected.  If you repeat this command, it cycles through all the
+frames on your terminal.
+<P>
+
+<DT><KBD>C-x 5 1</KBD>
+<DD><A NAME="IDX899"></A>
+<A NAME="IDX900"></A>
+Delete all frames except the selected one.
+</DL>
+<P>
+
+<A NAME="Speedbar"></A>
+<HR SIZE="6">
+<A NAME="SEC200"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC199"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC201"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.9 Making and Using a Speedbar Frame </H2>
+<!--docid::SEC200::-->
+<P>
+
+  An Emacs frame can have a <EM>speedbar</EM>, which is a vertical window
+that serves as a scrollable menu of files you could visit and tags
+within those files.  To create a speedbar, type <KBD>M-x speedbar</KBD>; this
+creates a speedbar window for the selected frame.  From then on, you can
+click on a file name in the speedbar to visit that file in the
+corresponding Emacs frame, or click on a tag name to jump to that tag in
+the Emacs frame.
+</P><P>
+
+  Initially the speedbar lists the immediate contents of the current
+directory, one file per line.  Each line also has a box, <SAMP>`[+]'</SAMP> or
+<SAMP>`&#60;+&#62;'</SAMP>, that you can click on with <KBD>Mouse-2</KBD> to "open up" the
+contents of that item.  If the line names a directory, opening it adds
+the contents of that directory to the speedbar display, underneath the
+directory's own line.  If the line lists an ordinary file, opening it up
+adds a list of the tags in that file to the speedbar display.  When a
+file is opened up, the <SAMP>`[+]'</SAMP> changes to <SAMP>`[-]'</SAMP>; you can click
+on that box to "close up" that file (hide its contents).
+</P><P>
+
+  Some major modes, including Rmail mode, Info, and GUD, have
+specialized ways of putting useful items into the speedbar for you to
+select.  For example, in Rmail mode, the speedbar shows a list of Rmail
+files, and lets you move the current message to another Rmail file by
+clicking on its <SAMP>`&#60;M&#62;'</SAMP> box.
+</P><P>
+
+  A speedbar belongs to one Emacs frame, and always operates on that
+frame.  If you use multiple frames, you can make a speedbar for some or
+all of the frames; type <KBD>M-x speedbar</KBD> in any given frame to make a
+speedbar for it.
+</P><P>
+
+<A NAME="Multiple Displays"></A>
+<HR SIZE="6">
+<A NAME="SEC201"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC200"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC202"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC193"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.10 Multiple Displays </H2>
+<!--docid::SEC201::-->
+<P>
+
+  A single Emacs can talk to more than one X display.  Initially, Emacs
+uses just one display--the one specified with the <CODE>DISPLAY</CODE>
+environment variable or with the <SAMP>`--display'</SAMP> option (see section <A HREF="emacs_34.html#SEC530">AE.2 Initial Options</A>).  To connect to another display, use the command
+<CODE>make-frame-on-display</CODE>:
+</P><P>
+
+<A NAME="IDX901"></A>
+<DL COMPACT>
+<DT><KBD>M-x make-frame-on-display <KBD>RET</KBD> <VAR>display</VAR> <KBD>RET</KBD></KBD>
+<DD>Create a new frame on display <VAR>display</VAR>.
+</DL>
+<P>
+
+  A single X server can handle more than one screen.  When you open
+frames on two screens belonging to one server, Emacs knows they share a
+single keyboard, and it treats all the commands arriving from these
+screens as a single stream of input.
+</P><P>
+
+  When you open frames on different X servers, Emacs makes a separate
+input stream for each server.  This way, two users can type
+simultaneously on the two displays, and Emacs will not garble their
+input.  Each server also has its own selected frame.  The commands you
+enter with a particular X server apply to that server's selected frame.
+</P><P>
+
+  Despite these features, people using the same Emacs job from different
+displays can still interfere with each other if they are not careful.
+For example, if any one types <KBD>C-x C-c</KBD>, that exits the Emacs job
+for all of them!
+</P><P>
+
+<A NAME="Special Buffer Frames"></A>
+<HR SIZE="6">
+<A NAME="SEC202"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC201"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC203"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC193"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.11 Special Buffer Frames </H2>
+<!--docid::SEC202::-->
+<P>
+
+<A NAME="IDX902"></A>
+  You can make certain chosen buffers, for which Emacs normally creates
+a second window when you have just one window, appear in special frames
+of their own.  To do this, set the variable
+<CODE>special-display-buffer-names</CODE> to a list of buffer names; any
+buffer whose name is in that list automatically gets a special frame,
+when an Emacs command wants to display it "in another window."
+</P><P>
+
+  For example, if you set the variable this way,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(setq special-display-buffer-names
+      '("*Completions*" "*grep*" "*tex-shell*"))
+</pre></td></tr></table></P><P>
+
+then completion lists, <CODE>grep</CODE> output and the TeX mode shell
+buffer get individual frames of their own.  These frames, and the
+windows in them, are never automatically split or reused for any other
+buffers.  They continue to show the buffers they were created for,
+unless you alter them by hand.  Killing the special buffer deletes its
+frame automatically.
+</P><P>
+
+<A NAME="IDX903"></A>
+  More generally, you can set <CODE>special-display-regexps</CODE> to a list
+of regular expressions; then a buffer gets its own frame if its name
+matches any of those regular expressions.  (Once again, this applies only
+to buffers that normally get displayed for you in a separate window.)
+</P><P>
+
+<A NAME="IDX904"></A>
+  The variable <CODE>special-display-frame-alist</CODE> specifies the frame
+parameters for these frames.  It has a default value, so you don't need
+to set it.
+</P><P>
+
+  For those who know Lisp, an element of
+<CODE>special-display-buffer-names</CODE> or <CODE>special-display-regexps</CODE>
+can also be a list.  Then the first element is the buffer name or
+regular expression; the rest of the list specifies how to create the
+frame.  It can be an association list specifying frame parameter values;
+these values take precedence over parameter values specified in
+<CODE>special-display-frame-alist</CODE>.  Alternatively, it can have this
+form:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(<VAR>function</VAR> <VAR>args</VAR>...)
+</pre></td></tr></table></P><P>
+
+where <VAR>function</VAR> is a symbol.  Then the frame is constructed by
+calling <VAR>function</VAR>; its first argument is the buffer, and its
+remaining arguments are <VAR>args</VAR>.
+</P><P>
+
+   An analogous feature lets you specify buffers which should be
+displayed in the selected window.  See section <A HREF="emacs_18.html#SEC188">O.5 Forcing Display in the Same Window</A>.  The
+same-window feature takes precedence over the special-frame feature;
+therefore, if you add a buffer name to
+<CODE>special-display-buffer-names</CODE> and it has no effect, check to see
+whether that feature is also in use for the same buffer name.
+</P><P>
+
+<A NAME="Frame Parameters"></A>
+<HR SIZE="6">
+<A NAME="SEC203"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC202"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC204"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC193"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.12 Setting Frame Parameters </H2>
+<!--docid::SEC203::-->
+<P>
+
+  This section describes commands for altering the display style and
+window management behavior of the selected frame.
+</P><P>
+
+<A NAME="IDX905"></A>
+<A NAME="IDX906"></A>
+<A NAME="IDX907"></A>
+<A NAME="IDX908"></A>
+<A NAME="IDX909"></A>
+<A NAME="IDX910"></A>
+<A NAME="IDX911"></A>
+<DL COMPACT>
+<DT><KBD>M-x set-foreground-color <KBD>RET</KBD> <VAR>color</VAR> <KBD>RET</KBD></KBD>
+<DD>Specify color <VAR>color</VAR> for the foreground of the selected frame.
+(This also changes the foreground color of the default face.)
+<P>
+
+<DT><KBD>M-x set-background-color <KBD>RET</KBD> <VAR>color</VAR> <KBD>RET</KBD></KBD>
+<DD>Specify color <VAR>color</VAR> for the background of the selected frame.
+(This also changes the background color of the default face.)
+<P>
+
+<DT><KBD>M-x set-cursor-color <KBD>RET</KBD> <VAR>color</VAR> <KBD>RET</KBD></KBD>
+<DD>Specify color <VAR>color</VAR> for the cursor of the selected frame.
+<P>
+
+<DT><KBD>M-x set-mouse-color <KBD>RET</KBD> <VAR>color</VAR> <KBD>RET</KBD></KBD>
+<DD>Specify color <VAR>color</VAR> for the mouse cursor when it is over the
+selected frame.
+<P>
+
+<DT><KBD>M-x set-border-color <KBD>RET</KBD> <VAR>color</VAR> <KBD>RET</KBD></KBD>
+<DD>Specify color <VAR>color</VAR> for the border of the selected frame.
+<P>
+
+<DT><KBD>M-x list-colors-display</KBD>
+<DD>Display the defined color names and show what the colors look like.
+This command is somewhat slow.
+<P>
+
+<DT><KBD>M-x auto-raise-mode</KBD>
+<DD>Toggle whether or not the selected frame should auto-raise.  Auto-raise
+means that every time you move the mouse onto the frame, it raises the
+frame.
+<P>
+
+Note that this auto-raise feature is implemented by Emacs itself.  Some
+window managers also implement auto-raise.  If you enable auto-raise for
+Emacs frames in your X window manager, it should work, but it is beyond
+Emacs's control and therefore <CODE>auto-raise-mode</CODE> has no effect on
+it.
+</P><P>
+
+<DT><KBD>M-x auto-lower-mode</KBD>
+<DD>Toggle whether or not the selected frame should auto-lower.
+Auto-lower means that every time you move the mouse off the frame,
+the frame moves to the bottom of the stack of X windows.
+<P>
+
+The command <CODE>auto-lower-mode</CODE> has no effect on auto-lower
+implemented by the X window manager.  To control that, you must use
+the appropriate window manager features.
+</P><P>
+
+<A NAME="IDX912"></A>
+<DT><KBD>M-x set-frame-font <KBD>RET</KBD> <VAR>font</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX913"></A>
+Specify font <VAR>font</VAR> as the principal font for the selected frame.
+The principal font controls several face attributes of the
+<CODE>default</CODE> face (see section <A HREF="emacs_13.html#SEC78">J.1 Using Multiple Typefaces</A>).  For example, if the principal font
+has a height of 12 pt, all text will be drawn in 12 pt fonts, unless you
+use another face that specifies a different height.  See section <A HREF="emacs_34.html#SEC537">AE.7 Font Specification Options</A>, for
+ways to list the available fonts on your system.
+<P>
+
+<A NAME="IDX914"></A>
+You can also set a frame's principal font through a pop-up menu.
+Press <KBD>S-Mouse-1</KBD> to activate this menu.
+</DL>
+<P>
+
+  In Emacs versions that use an X toolkit, the color-setting and
+font-setting functions don't affect menus and the menu bar, since they
+are displayed by their own widget classes.  To change the appearance of
+the menus and menu bar, you must use X resources (see section <A HREF="emacs_34.html#SEC543">AE.13 X Resources</A>).
+See section <A HREF="emacs_34.html#SEC538">AE.8 Window Color Options</A>, regarding colors.  See section <A HREF="emacs_34.html#SEC537">AE.7 Font Specification Options</A>, regarding choice of
+font.
+</P><P>
+
+  Colors, fonts, and other attributes of the frame's display can also
+be customized by setting frame parameters in the variable
+<CODE>default-frame-alist</CODE> (see section <A HREF="emacs_19.html#SEC198">P.7 Creating Frames</A>).  For a detailed
+description of frame parameters and customization, see section `Frame Parameters' in <CITE>The Emacs Lisp Reference Manual</CITE>.
+</P><P>
+
+<A NAME="Scroll Bars"></A>
+<HR SIZE="6">
+<A NAME="SEC204"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC203"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC205"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC193"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.13 Scroll Bars </H2>
+<!--docid::SEC204::-->
+<P>
+
+  When using X, Emacs normally makes a <EM>scroll bar</EM> at the left of
+each Emacs window.<A NAME="DOCF3" HREF="emacs_fot.html#FOOT3">(3)</A>
+The scroll bar runs the height of the window, and shows a moving
+rectangular inner box which represents the portion of the buffer
+currently displayed.  The entire height of the scroll bar represents the
+entire length of the buffer.
+</P><P>
+
+  You can use <KBD>Mouse-2</KBD> (normally, the middle button) in the scroll
+bar to move or drag the inner box up and down.  If you move it to the
+top of the scroll bar, you see the top of the buffer.  If you move it to
+the bottom of the scroll bar, you see the bottom of the buffer.
+</P><P>
+
+  The left and right buttons in the scroll bar scroll by controlled
+increments.  <KBD>Mouse-1</KBD> (normally, the left button) moves the line at
+the level where you click up to the top of the window.  <KBD>Mouse-3</KBD>
+(normally, the right button) moves the line at the top of the window
+down to the level where you click.  By clicking repeatedly in the same
+place, you can scroll by the same distance over and over.
+</P><P>
+
+  If you are using Emacs's own implementation of scroll bars, as opposed
+to scroll bars from an X toolkit, you can also click <KBD>C-Mouse-2</KBD> in
+the scroll bar to split a window vertically.  The split occurs on the
+line where you click.
+</P><P>
+
+<A NAME="IDX915"></A>
+<A NAME="IDX916"></A>
+  You can enable or disable Scroll Bar mode with the command <KBD>M-x
+scroll-bar-mode</KBD>.  With no argument, it toggles the use of scroll bars.
+With an argument, it turns use of scroll bars on if and only if the
+argument is positive.  This command applies to all frames, including
+frames yet to be created.  Customize the option <CODE>scroll-bar-mode</CODE>
+to control the use of scroll bars at startup.  You can use it to specify
+that they are placed at the right of windows if you prefer that.  You
+can use the X resource <SAMP>`verticalScrollBars'</SAMP> to control the initial
+setting of Scroll Bar mode similarly.  See section <A HREF="emacs_34.html#SEC543">AE.13 X Resources</A>.
+</P><P>
+
+<A NAME="IDX917"></A>
+  To enable or disable scroll bars for just the selected frame, use the
+<KBD>M-x toggle-scroll-bar</KBD> command.
+</P><P>
+
+<A NAME="IDX918"></A>
+<A NAME="IDX919"></A>
+  You can control the scroll bar width by changing the value of the
+<CODE>scroll-bar-width</CODE> frame parameter.
+</P><P>
+
+<A NAME="Wheeled Mice"></A>
+<HR SIZE="6">
+<A NAME="SEC205"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC204"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC206"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC193"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.14 Scrolling With "Wheeled" Mice </H2>
+<!--docid::SEC205::-->
+<P>
+
+<A NAME="IDX920"></A>
+<A NAME="IDX921"></A>
+<A NAME="IDX922"></A>
+<A NAME="IDX923"></A>
+<A NAME="IDX924"></A>
+  Some mice have a "wheel" instead of a third button.  You can
+usually click the wheel to act as either <KBD>Mouse-2</KBD> or
+<KBD>Mouse-3</KBD>, depending on the setup.  You can also use the wheel to
+scroll windows instead of using the scroll bar or keyboard commands.
+To do so, turn on Mouse Wheel global minor mode with the command
+<KBD>M-x mouse-wheel-mode</KBD> or by customizing the option
+<CODE>mouse-wheel-mode</CODE>.  Support for the wheel depends on the system
+generating appropriate events for Emacs.
+</P><P>
+
+<A NAME="IDX925"></A>
+<A NAME="IDX926"></A>
+  The variables <CODE>mouse-wheel-follow-mouse</CODE> and
+<CODE>mouse-wheel-scroll-amount</CODE> determine where and by how much
+buffers are scrolled.
+</P><P>
+
+<A NAME="Menu Bars"></A>
+<HR SIZE="6">
+<A NAME="SEC206"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC205"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC207"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC193"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.15 Menu Bars </H2>
+<!--docid::SEC206::-->
+<P>
+
+  You can turn display of menu bars on or off with <KBD>M-x
+menu-bar-mode</KBD> or by customizing the option <CODE>menu-bar-mode</CODE>.
+With no argument, this command toggles Menu Bar mode, a
+minor mode.  With an argument, the command turns Menu Bar mode on if the
+argument is positive, off if the argument is not positive.  You can use
+the X resource <SAMP>`menuBarLines'</SAMP> to control the initial setting of
+Menu Bar mode.  See section <A HREF="emacs_34.html#SEC543">AE.13 X Resources</A>.
+</P><P>
+
+<A NAME="IDX927"></A>
+  Expert users often turn off the menu bar, especially on text-only
+terminals, where this makes one additional line available for text.
+If the menu bar is off, you can still pop up a menu of its contents
+with <KBD>C-Mouse-3</KBD> on a display which supports pop-up menus.
+See section <A HREF="emacs_19.html#SEC196">P.5 Mouse Clicks for Menus</A>.
+</P><P>
+
+  See section <A HREF="emacs_5.html#SEC12">B.4 The Menu Bar</A>, for information on how to invoke commands with the
+menu bar.
+</P><P>
+
+<A NAME="Tool Bars"></A>
+<HR SIZE="6">
+<A NAME="SEC207"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC206"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC208"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC193"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.16 Tool Bars </H2>
+<!--docid::SEC207::-->
+<P>
+
+The <EM>tool bar</EM> is a line (or multiple lines) of icons at the top
+of the Emacs window.  You can click on these icons with the mouse
+to do various jobs.
+</P><P>
+
+The global tool bar contains general commands.  Some major modes
+define their own tool bars to replace it.  A few "special" modes
+that are not designed for ordinary editing remove some items from the
+global tool bar.
+</P><P>
+
+Tool bars work only on a graphical display.  The tool bar uses colored
+XPM icons if Emacs was built with XPM support.  Otherwise, the tool
+bar uses monochrome icons (PBM or XBM format).
+</P><P>
+
+You can turn display of tool bars on or off with <KBD>M-x
+tool-bar-mode</KBD>.
+</P><P>
+
+<A NAME="Dialog Boxes"></A>
+<HR SIZE="6">
+<A NAME="SEC208"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC207"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC209"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC193"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.17 Using Dialog Boxes </H2>
+<!--docid::SEC208::-->
+<P>
+
+<A NAME="IDX928"></A>
+  A dialog box is a special kind of menu for asking you a yes-or-no
+question or some other special question.  Many Emacs commands use a
+dialog box to ask a yes-or-no question, if you used the mouse to
+invoke the command to begin with.
+</P><P>
+
+  You can customize the option <CODE>use-dialog-box</CODE> to suppress the
+use of dialog boxes.  This also controls whether to use file selection
+windows (but those are not supported on all platforms).
+</P><P>
+
+<A NAME="Tooltips"></A>
+<HR SIZE="6">
+<A NAME="SEC209"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC208"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC210"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC193"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.18 Tooltips (or "Balloon Help") </H2>
+<!--docid::SEC209::-->
+<P>
+
+<A NAME="IDX929"></A>
+  Tooltips are small X windows displaying a help string at the current
+mouse position, typically over text--including the mode line--which
+can be activated with the mouse or other keys.  (This facility is
+sometimes known as <EM>balloon help</EM>.)  Help text may be available for
+menu items too.
+</P><P>
+
+<A NAME="IDX930"></A>
+  To use tooltips, enable Tooltip mode with the command <KBD>M-x
+tooltip-mode</KBD>.  The customization group <CODE>tooltip</CODE> controls
+various aspects of how tooltips work.  When Tooltip mode is disabled,
+the help text is displayed in the echo area instead.
+</P><P>
+
+  As of Emacs 21.1, tooltips are not supported on MS-Windows.
+So help text always appears in the echo area.
+</P><P>
+
+<A NAME="Mouse Avoidance"></A>
+<HR SIZE="6">
+<A NAME="SEC210"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC209"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC211"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC193"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.19 Mouse Avoidance </H2>
+<!--docid::SEC210::-->
+<P>
+
+<A NAME="IDX931"></A>
+Mouse Avoidance mode keeps the window system mouse pointer away from
+point, to avoid obscuring text.  Whenever it moves the mouse, it also
+raises the frame.  To use Mouse Avoidance mode, customize the option
+<CODE>mouse-avoidance-mode</CODE>.  You can set this to various values to
+move the mouse in several ways:
+</P><P>
+
+<DL COMPACT>
+<DT><CODE>banish</CODE>
+<DD>Move the mouse to the upper-right corner on any key-press;
+<DT><CODE>exile</CODE>
+<DD>Move the mouse to the corner only if the cursor gets too close,
+and allow it to return once the cursor is out of the way;
+<DT><CODE>jump</CODE>
+<DD>If the cursor gets too close to the mouse, displace the mouse
+a random distance &#38; direction;
+<DT><CODE>animate</CODE>
+<DD>As <CODE>jump</CODE>, but shows steps along the way for illusion of motion;
+<DT><CODE>cat-and-mouse</CODE>
+<DD>The same as <CODE>animate</CODE>;
+<DT><CODE>proteus</CODE>
+<DD>As <CODE>animate</CODE>, but changes the shape of the mouse pointer too.
+</DL>
+<P>
+
+<A NAME="IDX932"></A>
+You can also use the command <KBD>M-x mouse-avoidance-mode</KBD> to enable
+the mode.
+</P><P>
+
+<A NAME="Non-Window Terminals"></A>
+<HR SIZE="6">
+<A NAME="SEC211"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC210"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC212"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC194"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.20 Non-Window Terminals </H2>
+<!--docid::SEC211::-->
+<P>
+
+  If your terminal does not have a window system that Emacs supports,
+then it can display only one Emacs frame at a time.  However, you can
+still create multiple Emacs frames, and switch between them.  Switching
+frames on these terminals is much like switching between different
+window configurations.
+</P><P>
+
+  Use <KBD>C-x 5 2</KBD> to create a new frame and switch to it; use <KBD>C-x
+5 o</KBD> to cycle through the existing frames; use <KBD>C-x 5 0</KBD> to delete
+the current frame.
+</P><P>
+
+  Each frame has a number to distinguish it.  If your terminal can
+display only one frame at a time, the selected frame's number <VAR>n</VAR>
+appears near the beginning of the mode line, in the form
+<SAMP>`F<VAR>n</VAR>'</SAMP>.
+</P><P>
+
+<A NAME="IDX933"></A>
+<A NAME="IDX934"></A>
+  <SAMP>`F<VAR>n</VAR>'</SAMP> is actually the frame's name.  You can also specify a
+different name if you wish, and you can select a frame by its name.  Use
+the command <KBD>M-x set-frame-name <KBD>RET</KBD> <VAR>name</VAR> <KBD>RET</KBD></KBD> to
+specify a new name for the selected frame, and use <KBD>M-x
+select-frame-by-name <KBD>RET</KBD> <VAR>name</VAR> <KBD>RET</KBD></KBD> to select a frame
+according to its name.  The name you specify appears in the mode line
+when the frame is selected.
+</P><P>
+
+<A NAME="XTerm Mouse"></A>
+<HR SIZE="6">
+<A NAME="SEC212"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC211"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC194"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> P.21 Using a Mouse in Terminal Emulators </H2>
+<!--docid::SEC212::-->
+<P>
+
+Some terminal emulators under X support mouse clicks in the terminal
+window.  In a terminal emulator which is compatible with <CODE>xterm</CODE>,
+you can use <KBD>M-x xterm-mouse-mode</KBD> to enable simple use of the
+mouse--only single clicks are supported.  The normal <CODE>xterm</CODE> mouse
+functionality is still available by holding down the <KBD>SHIFT</KBD> key
+when you press the mouse button.  The Linux console supports this
+mode if it has support for the mouse enabled, e.g. using the
+<CODE>gpm</CODE> daemon.
+<A NAME="International"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC194"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_20.html#SEC213"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

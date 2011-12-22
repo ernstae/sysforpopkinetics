@@ -1,0 +1,1606 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>SPK System Testing Guide</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.7"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+>SPK System Testing Guide</A
+></H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	This guide describes a process that can be followed by software
+	developers to perform end-to-end system testing whenever enhancements or
+	modifications are made.  This process is critical for maintaining
+	and improving the quality of the system.
+      </P
+><P
+>&#13;	The information in this guide is essential to individuals and
+	groups participating in the development of the System for
+	Population Kinetics (SPK), an open source project of the 
+	RFPK Laboratory of the Department of Bioengineering of the University of Washington.  RFPK's work
+	is supported, in part, by grant P41 EB-001975
+	of the National Institutes of Health (NIH) of the U.S.
+	Department of Health and Human Services.	
+      </P
+><P
+>&#13;	<A
+HREF="#AEN301"
+>Copyright</A
+> (c) 2004, by the University of Washington.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN9"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN58"
+>Testing a Deployment Candidate, Step-by-Step</A
+></DT
+><DT
+><A
+HREF="#AEN252"
+>Appendix A: Production Files</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN254"
+>Jobqserver</A
+></DT
+><DT
+><A
+HREF="#AEN258"
+>Aspkserver</A
+></DT
+><DT
+><A
+HREF="#AEN262"
+>Cspkserver</A
+></DT
+><DT
+><A
+HREF="#AEN266"
+>Webserver</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN270"
+>Appendix B: Test Files</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN272"
+>Jobqserver</A
+></DT
+><DT
+><A
+HREF="#AEN276"
+>Aspkserver</A
+></DT
+><DT
+><A
+HREF="#AEN280"
+>Cspkserver</A
+></DT
+><DT
+><A
+HREF="#AEN284"
+>Webserver</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN288"
+>Appendix C: Test Web Site</A
+></DT
+><DT
+><A
+HREF="#AEN301"
+>Copyright Notice</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN9"
+>Introduction</A
+></H2
+><P
+>&#13;      Three stages of testing are employed in the enhancement
+      and modification of SPK:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    Unit testing -- responsibility of the developer
+	    who is making the changes and is normally performed on 
+	    the developer's workstation.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    System testing -- also the responsibility of the
+	    developer making the changes, but is performed in a
+	    special test environment. 
+	    <I
+CLASS="emphasis"
+>This stage of testing is the subject of this guide.</I
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Regression testing -- responsibility of the 
+	    deployment coordinator, who may be a developer or 
+	    may be operations staff. This is an
+	    automated test in which a set of jobs is run and the
+	    results compared with results previously judged to 
+	    be acceptable.  In effect, the regression test 
+	    insures that the software has <I
+CLASS="emphasis"
+>not regressed</I
+>.
+	    Because this test takes considerable time to run and
+	    consumes significant computational resources, it is not
+	    routinely run as part of a system test.  It must, however,
+	    be run before any new or modified software is deployed to
+	    the production environment.
+	  </P
+></LI
+></OL
+>
+    </P
+><P
+>&#13;      SPK is a complex system, comprising many software
+      modules, a number of computers, and several technologies.
+      When any software is modified, it must be tested
+      thoroughly before being put into production.  To minimize
+      the risk that modifications would destabilize the system, it
+      is crucial that system-wide testing be performed on exactly the
+      same software and hardware infrastructure as is used in production.
+      It is for this reason that an SPK installation includes both 
+      production and test environments.   Both are identical
+      in terms of the following infrastructure components:
+      <P
+></P
+><UL
+><LI
+><P
+>Database server (dbserver)</P
+></LI
+><LI
+><P
+>Web server (webserver)</P
+></LI
+><LI
+><P
+>Job-queue server (jobqserver)</P
+></LI
+><LI
+><P
+>Application server for population kinetics (aspkserver)</P
+></LI
+><LI
+><P
+>Computational server for population kinetics (cspkserver)</P
+></LI
+></UL
+>
+    </P
+><P
+>&#13;      One of the key concepts in the 
+      <A
+HREF="../../whitepaper/overArch/overArch.html"
+TARGET="_top"
+>architecture</A
+>
+      of SPK is that of the <I
+CLASS="emphasis"
+>job</I
+>.  With the help of the
+      Model Design Agent (MDA), which is the internet client portion of SPK,
+      a user creates or imports a model and a dataset, combines them
+      as a job, and then submits the job to be processed by the rest of the system. 
+      To test the system, it
+      is necessary to have jobs which will exercise portions of the system which
+      have been added or modified. The principal inputs to the system testing
+      process are, therefore, sets of jobs.  These jobs come from two sources:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    The production database, <I
+CLASS="emphasis"
+>spkdb</I
+>.  The utility program
+	    <B
+CLASS="command"
+>take_snapshot.pl</B
+> can be used to copy a set of 
+	    previously run jobs 
+	    from <I
+CLASS="emphasis"
+>spkdb</I
+>, creating files that can be used by
+	    another utility, <B
+CLASS="command"
+>load_spktest.pl</B
+> to initialize
+	    the test database,
+	    <I
+CLASS="emphasis"
+>spktest</I
+>, with the selected set of jobs along with
+	    all related jobs and data.  This is most useful for testing
+	    modifications that either fix bugs or enhance existing functions.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    The MDA.  Sometimes new features cannot be tested with existing jobs
+	    because those jobs would not have requested the features.  In this
+	    case, the tester can use the MDA to create new jobs.
+	  </P
+></LI
+></OL
+>
+    </P
+><P
+>&#13;      Sometimes a test set must be run many times, as the software is debugged.  
+      Eventually, all jobs in the set should run as expected.  At that point, the tester
+      runs a utility called <B
+CLASS="command"
+>stage_candidate.pl</B
+>, which saves
+      all the software in the test environment for subsequent deployment to the
+      production environment.
+    </P
+><P
+>&#13;      RFPK recommends a policy of deploying modifications to production on a scheduled
+      basis, rather than doing it every time that some software has passed a 
+      system test.  Instead, a number of deployment candidates will accumulate
+      during the period between scheduled deployments, and it will be the 
+      most recent candidate that finally moves into production.  This strategy
+      has a number of advantages:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    Users learn to expect the behavior of the system to change on 
+	    a scheduled basis, rather than randomly. This improves the
+	    perception of stability.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Communication of the changes can occur in an orderly fashion.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Before deployment, a recursion test should be run to insure that 
+	    the modifications do not "break" something that worked previously.
+	    Scheduled deployments reduce the frequency with which the recursion
+	    test must be executed.
+	  </P
+></LI
+></UL
+>
+    </P
+><P
+>&#13;      The process of deployment is covered in another document, 
+      titled <I
+CLASS="emphasis"
+>SPK System Deployment Guide</I
+>.  Some organizations
+      may wish to assign the responsibility of deployment to a different 
+      group than the one responsible for system testing, based on the
+      theory that an "arms-length" relationship between development and 
+      operations improves quality.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN58"
+>Testing a Deployment Candidate, Step-by-Step</A
+></H2
+><P
+>&#13;      The following procedure should be followed whenever changes are made to any
+      of the server side SPK software.
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    All new and modified software should first be unit-tested
+	    in your own workspace. 
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Do <I
+CLASS="emphasis"
+>not</I
+> commit changes to CVS, at this time.
+	    Changes must not be committed to the
+	    CVS repository until they have passed a full system test. 
+	  </P
+></LI
+><LI
+><P
+>&#13;	    As explained in the introduction, regression testing is not 
+	    a routine part of system testing.  If you have reason to believe
+	    that your modifications might "break" some existing features,
+	    you can use the regression testing infrastructure to prepare 
+	    a small automated test to include as part of your system test.
+	    See the manual pages for <B
+CLASS="command"
+>regression_test.pl</B
+>
+	    for details.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Obtain exclusive access to the test environment.  This must be done through coordination
+	    with other developers who might also need this environment.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    It is convenient
+	    at this point to open two new windows: one to <I
+CLASS="emphasis"
+>aspkserver</I
+>, and
+	    the other to <I
+CLASS="emphasis"
+>cspkserver</I
+>.
+	  </P
+><P
+>&#13;	    Note: the minus sign in the <B
+CLASS="command"
+>su -</B
+> commands, below, is necessary.
+	  </P
+><P
+>&#13;	    In a new terminal window:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh jobqserver
+su -
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    In another new terminal window:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh aspkserver
+su -
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    In another new terminal window:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh cspkserver
+su -
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Use the most recent deployment candidate to initialize the test environment; for example, /usr/local/include/spktest/* on all relevant machines.
+	  </P
+><P
+>&#13;	    In your <I
+CLASS="emphasis"
+>aspkserver</I
+> root window:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;deploy_candidate.pl --test
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;           You may want to test the (supposedly) initialized test environment
+           is clean before you add your new modifications.  Run the regresssion
+           test suite in the test environment if you prefer.
+          </P
+><P
+>&#13;           Continuing on <I
+CLASS="emphasis"
+>aspkserver</I
+>:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;regression_test --ignore-candidate
+regression_test --ignore-candidate --pvm
+regression_test --ignore-candidate --pvm --parallel
+          </PRE
+></TD
+></TR
+></TABLE
+>
+          </P
+></LI
+><LI
+><P
+>&#13;	    Make sure that the test daemons are <I
+CLASS="emphasis"
+>not</I
+> running. 
+	  </P
+><P
+>&#13;	    In your <I
+CLASS="emphasis"
+>aspkserver</I
+> root window:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;spkinit.sh spktest stop
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Take a test snapshot of the production database. 
+	    Pick jobs that are related to the bug fix or enhancement.
+            For example, Job 382 is an individual analysis and
+            Job 390 is a population analysis.
+            You may want to change to a temporary directory.
+	  </P
+><P
+>&#13;	    Continue as root:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh dbserver
+cd /tmp
+take_snapshot.pl 382 390
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    If you do not want any jobs that have previously run, use 
+	    <B
+CLASS="command"
+>take_snapshot.pl</B
+>
+	    without providing any arguments. No jobs will be copied 
+	    from <I
+CLASS="emphasis"
+>spkdb</I
+>, but the files to build a valid
+	    <I
+CLASS="emphasis"
+>spktest</I
+>, containing no jobs, will be
+	    created.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If your changes require the modification of the structure of the
+	    database, you will need a database modification script.  An
+	    <A
+HREF="../../howto/rhel3/mysql/mysql.html#example"
+TARGET="_top"
+>&#13;	      example
+	    </A
+>
+	    of a modification script can be found in the 
+	    <I
+CLASS="emphasis"
+>MySQL and SPK</I
+> howto document.
+	    Place the script, which should
+	    be named <TT
+CLASS="filename"
+>modscript.sql</TT
+> in the current directory
+	    on <I
+CLASS="emphasis"
+>dbserver</I
+>, along with the 
+	    <TT
+CLASS="filename"
+>basedata.sql</TT
+>, <TT
+CLASS="filename"
+>schema.sql</TT
+>
+	    and <TT
+CLASS="filename"
+>userdata.sql</TT
+> files that were just created
+	    by <B
+CLASS="command"
+>take_snapshot.pl</B
+>.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Create a test database from the <TT
+CLASS="filename"
+>.sql</TT
+> files
+	    that were created by <B
+CLASS="command"
+>take_snapshot.pl</B
+> and,
+	    only if you are modifying the structure of the database,
+	     <TT
+CLASS="filename"
+>modscript.sql</TT
+> file.
+            </P
+><P
+>       
+            Continuing on <I
+CLASS="emphasis"
+>dbserver</I
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;load_spktest.pl
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    You now have a test database.  If you need to add additional jobs
+	    to exercise new features, go to the test instance of the web site
+	    and use the MDA to create the additional jobs you need and to submit them.
+	    You can find the URL to use in <A
+HREF="#AEN288"
+>Appendix C</A
+>.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If you have added jobs using the MDA,
+	    make a backup copy of your test database, in case you need to run
+	    your tests several times before your modifications work correctly.
+	  </P
+><P
+>&#13;	    Continuing on <I
+CLASS="emphasis"
+>dbserver</I
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;dump_spktest.pl
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Transfer source code to the target host(s).  Consider these two distinct
+	    cases:
+	    <P
+></P
+><OL
+TYPE="a"
+><LI
+><P
+>&#13;		  <I
+CLASS="emphasis"
+>Source that you have added or modified</I
+> should
+		  not be committed to cvs until after a successful system test, 
+		  hence cvs update cannot be used for the transfer.
+		  <I
+CLASS="emphasis"
+>Use scp instead of cvs.</I
+>
+		</P
+></LI
+><LI
+><P
+>&#13;		  <I
+CLASS="emphasis"
+>All other source required for your build</I
+> 
+		  should be updated by using the command
+		  <B
+CLASS="command"
+>cvs update -dP</B
+> in your cvs workspace on the
+		  target host.
+		</P
+></LI
+></OL
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Build your software on the target host and
+	    install the object code into the correct test directories (see
+	    <A
+HREF="#AEN270"
+>Appendix B</A
+>).
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Start the Job-queue server and the daemons, so that the jobs will compile and run.
+	  </P
+><P
+>&#13;	    In your root window to <I
+CLASS="emphasis"
+>aspkserver</I
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;spkinit.sh spktest start
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    In these terminal windows, you can verify that the daemon
+	    you started there is actually running
+	  </P
+><P
+>&#13;	    On <I
+CLASS="emphasis"
+>aspkserver</I
+>
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ps -efl | grep spktest
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    should show you that <B
+CLASS="command"
+>spktest/spkcmpd.pl</B
+> is running.
+	  </P
+><P
+>&#13;	    On <I
+CLASS="emphasis"
+>cspkserver</I
+>, the same command should show that
+	    <B
+CLASS="command"
+>spktest/spkrund.pl</B
+> is running.
+	  </P
+><P
+>&#13;	    In the system log, the daemons record many important events, including their own starting and
+	    stopping, but also the beginning and completion of jobs and the occurrence of errors.
+	    In each of your two windows, you can view the latest 40 messages in the system log with 
+	    the following command:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;tail -n 40 /var/log/messages
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Verify the output.
+	    <P
+></P
+><OL
+TYPE="a"
+><LI
+><P
+>&#13;		  Check the status of your jobs by examining the database.  
+		  As an ordinary user on your workstation, open up a 
+		  window and run the MySQL client on any machine:
+		  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;mysql -hdbserver -ureader -preader
+use spktest;
+		  </PRE
+></TD
+></TR
+></TABLE
+>
+		  Periodically check the status of jobs in the test database:
+		  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;select job_id, state_code, end_code, abstract from job;
+		  </PRE
+></TD
+></TR
+></TABLE
+>
+		  When the value of <I
+CLASS="emphasis"
+>state_code</I
+> for a given
+		  job changes to <I
+CLASS="emphasis"
+>end</I
+>, the job has completed.
+		</P
+></LI
+><LI
+><P
+>&#13;		  If a job completes with the value of <I
+CLASS="emphasis"
+>end_code</I
+>
+		  equal to <I
+CLASS="emphasis"
+>srun</I
+>, no faults or exceptions were
+		  detected, and you can skip the next step.
+		</P
+></LI
+><LI
+><P
+>&#13;		  If <I
+CLASS="emphasis"
+>end_code</I
+> is equal to any value other than
+		  <I
+CLASS="emphasis"
+>srun</I
+>, you should check the system log for
+		  error messages and the working directory for additional evidence
+		  of what went wrong.
+		</P
+><P
+>&#13;		  You can determine whether the job terminated on 
+		  <I
+CLASS="emphasis"
+>aspkserver</I
+> or on <I
+CLASS="emphasis"
+>cspkserver</I
+>
+		  by consulting the <I
+CLASS="emphasis"
+>history</I
+> table in the 
+		  test database.
+		</P
+><P
+>&#13;		  In your database client window:
+		  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;select * from history where job_id=n;
+		  </PRE
+></TD
+></TR
+></TABLE
+>
+		  where <I
+CLASS="emphasis"
+>n</I
+> is the <I
+CLASS="emphasis"
+>job_id</I
+> of
+		  the job that has terminated.  The <I
+CLASS="emphasis"
+>host</I
+> field
+		  will have a value that is the host name of the computer on which the
+		  event occurred.  Look for the host on which the final event for 
+		  the given job took place.
+		</P
+><P
+>&#13;		  Now you can check the system log by executing <B
+CLASS="command"
+>tail</B
+>
+		  in your root window to the server on which the job terminated:
+		  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;tail -n40 /var/log/messages
+		  </PRE
+></TD
+></TR
+></TABLE
+>
+		</P
+></LI
+><LI
+><P
+>&#13;		  Now you can also examine the contents of the working directory,
+		  which will be named
+		  <TT
+CLASS="filename"
+>/tmp/spkcmptest-job-n</TT
+>,
+		  if the job terminated
+		  on <I
+CLASS="emphasis"
+>aspkserver</I
+> or 
+		  <TT
+CLASS="filename"
+>/tmp/spkruntest-job-n</TT
+>,
+		  if the job terminated on <I
+CLASS="emphasis"
+>cspkserver</I
+>
+		  (where <I
+CLASS="emphasis"
+>n</I
+> is the job_id number of the job.)
+		  The working directory contains inputs, outputs, source code and object code.
+		</P
+></LI
+><LI
+><P
+>&#13;                Now you may want to run a comprehensive list of system tests, which may take up to 1 hour to complete.  This is not mandatory but highly recommended to make sure your will-be candidate is in a correct state.  
+                </P
+><P
+>&#13;                On <I
+CLASS="emphasis"
+>dbserver</I
+> as a root (i.e. 'su -')
+                <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;regression_test --ignore-candidate
+regression_test --ignore-candidate --pvm
+regression_test --ignore-candidate --pvm --parallel
+                </PRE
+></TD
+></TR
+></TABLE
+>
+                The option "--ignore-candidate" forces the system to retain
+                the installation of your modifications.
+                </P
+></LI
+><LI
+><P
+>&#13;		  Log into the test web site (find the URL to use in
+		  <A
+HREF="#AEN288"
+>Appendix C</A
+>).
+		  Use the MDA to examine the output.
+		</P
+></LI
+></OL
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Stop both test daemons and Job-queue server when the database shows that all your jobs have
+	    <I
+CLASS="emphasis"
+>end</I
+> as the value for <I
+CLASS="emphasis"
+>state_code</I
+>.
+	  </P
+><P
+>&#13;	    In your root window to <I
+CLASS="emphasis"
+>aspkserver</I
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/etc/rc.d/init.d/spkcmptestd stop
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    and in your root window to <I
+CLASS="emphasis"
+>cspkserver</I
+>
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/etc/rc.d/init.d/spkruntestd stop
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    and in your root window to <I
+CLASS="emphasis"
+>jobqserver</I
+>
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/etc/rc.d/init.d/jobqtestd stop
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If the test fails and you want to make a few changes and try again:
+	    <P
+></P
+><OL
+TYPE="a"
+><LI
+><P
+>&#13;		  Restore your test database.
+		</P
+><P
+>&#13;		  In the same directory on dbserver where you 
+		  made the backup copy of your test database
+		  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;load_spktest.pl
+		  </PRE
+></TD
+></TR
+></TABLE
+>
+		</P
+></LI
+><LI
+><P
+>&#13;		  Modify your source code.
+		</P
+></LI
+><LI
+><P
+>&#13;		  Return to step 10.
+		</P
+></LI
+></OL
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If the test fails and you do not want to make changes and 
+	    retest immediately:
+	    <P
+></P
+><OL
+TYPE="a"
+><LI
+><P
+>&#13;		  Inform the other developers that the test environment is
+		  now available.
+		</P
+></LI
+><LI
+><P
+>&#13;		  Exit this step-by-step procedure.
+		</P
+></LI
+></OL
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If the test is successful:
+	    <P
+></P
+><OL
+TYPE="a"
+><LI
+><P
+>&#13;		  You can now commit your additions and modifications to
+		  the cvs repository.
+		</P
+></LI
+><LI
+><P
+>&#13;		  Add your candidate to the list of deployment candidates.
+		</P
+><P
+>&#13;		  In your root window to <I
+CLASS="emphasis"
+>aspkserver</I
+>:
+		  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;stage_candidate.pl
+		  </PRE
+></TD
+></TR
+></TABLE
+>
+		  You may want to write down the name of the release-notes
+		  file created by <B
+CLASS="command"
+>stage_candidate.pl</B
+>,
+		  because you will need to edit it.
+		</P
+></LI
+><LI
+><P
+>&#13;		  Inform the other developers that the test environment is
+		  now available.
+		</P
+></LI
+><LI
+><P
+>&#13;		  Edit the release-notes file created by the execution of 
+		  <B
+CLASS="command"
+>stage_candidate.pl</B
+>
+		</P
+></LI
+><LI
+><P
+>&#13;		  Exit this step-by-step procedure.
+		</P
+></LI
+></OL
+>
+	  </P
+></LI
+></OL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN252"
+>Appendix A: Production Files</A
+></H2
+><DIV
+CLASS="sect2"
+><H3
+CLASS="sect2"
+><A
+NAME="AEN254"
+>Jobqserver</A
+></H3
+><P
+>&#13;	All files in the following directory:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/usr/local/bin/spkprod
+	</PRE
+></TD
+></TR
+></TABLE
+>	
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN258"
+>Aspkserver</A
+></H3
+><P
+>&#13;	All files in the following directories:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/usr/local/bin/spkprod
+/usr/local/lib/spkprod
+/usr/local/include/spkprod
+	</PRE
+></TD
+></TR
+></TABLE
+>	
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN262"
+>Cspkserver</A
+></H3
+><P
+>&#13;	All files in the following directories:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/usr/local/src/spkprod
+/usr/local/bin/spkprod
+/usr/local/lib/spkprod
+/usr/local/include/spkprod
+	</PRE
+></TD
+></TR
+></TABLE
+>	
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN266"
+>Webserver</A
+></H3
+><P
+>&#13;	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/usr/local/tomcat/instance/prodssl/webapps/user.war
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN270"
+>Appendix B: Test Files</A
+></H2
+><DIV
+CLASS="sect2"
+><H3
+CLASS="sect2"
+><A
+NAME="AEN272"
+>Jobqserver</A
+></H3
+><P
+>&#13;	All files in the following directory:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/usr/local/bin/spktest
+	</PRE
+></TD
+></TR
+></TABLE
+>	
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN276"
+>Aspkserver</A
+></H3
+><P
+>&#13;	All files in the following directories:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/usr/local/bin/spktest
+/usr/local/lib/spktest
+/usr/local/include/spktest
+	</PRE
+></TD
+></TR
+></TABLE
+>	
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN280"
+>Cspkserver</A
+></H3
+><P
+>&#13;	All files in the following directories:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/usr/local/src/spktest
+/usr/local/bin/spktest
+/usr/local/lib/spktest
+/usr/local/include/spktest
+	</PRE
+></TD
+></TR
+></TABLE
+>	
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN284"
+>Webserver</A
+></H3
+><P
+>&#13;	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/usr/local/tomcat/instance/testssl/webapps/user.war
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN288"
+>Appendix C: Test Web Site</A
+></H2
+><P
+>&#13;      The following URLs are those used for the SPK demonstration 
+      site operated by RFPK.  At other SPK installations, the 
+      domain names will most certainly be different, but the IP
+      addresses to be used behind the firewall may be the same, depending
+      on whether or not RFPK practice was followed in setting
+      up the web site.
+    </P
+><P
+>&#13;      There are two instances of the
+      web application running on the same machine and using the same
+      web server software. For production and test, the two URLs for 
+      access from the public internet are, respectively,
+    </P
+><P
+>&#13;      <A
+HREF="http://spk.rfpk.washington.edu"
+TARGET="_top"
+>&#13;	http://spk.rfpk.washington.edu
+      </A
+>
+    </P
+><P
+>&#13;      <A
+HREF="http://spk.rfpk.washington.edu:8080"
+TARGET="_top"
+>&#13;	http://spk.rfpk.washington.edu:8080
+      </A
+>
+    </P
+><P
+>&#13;      For access from behind the firewall, the corresponding URLs are
+    </P
+><P
+>&#13;      <A
+HREF="https://192.168.2.2/info/"
+TARGET="_top"
+>&#13;	https://192.168.2.2/info/
+      </A
+>
+    </P
+><P
+>&#13;      <A
+HREF="https://192.168.2.2:8443/info/"
+TARGET="_top"
+>&#13;	https://192.168.2.2:8443/info/
+      </A
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN301"
+>Copyright Notice</A
+></H2
+><P
+>&#13;      Copyright (c) 2004,  by the University of Washington.
+      This material may be distributed only subject to the terms and conditions 
+      set forth in the Open Publication License, V1.0 or later
+      (the latest version is presently available
+      <A
+HREF="http://www.opencontent.org/openpub/"
+TARGET="_top"
+>here</A
+>.
+    </P
+><P
+>&#13;    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

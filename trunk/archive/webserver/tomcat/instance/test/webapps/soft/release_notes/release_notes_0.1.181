@@ -1,0 +1,50 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.179
+----------------------------------
+USER VISIBLE CHANGES
+
+Added the FO model minimizer of the Map Bayesian objective to the residuals
+calculation.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  509
+
+BY:  Mitch Watrous
+
+WHEN:  August 21, 2006
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.180
+----------------------------------
+USER VISIBLE CHANGES
+
+Added new definitions for the FO versions of CPRED, CRES, CWRES.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  509
+
+BY:  Mitch Watrous
+
+WHEN:  August 22, 2006
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.181
+----------------------------------
+USER VISIBLE CHANGES
+
+Made IPRED, IRES, and IWRES contain the two-stage residuals.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  None.
+
+BY:  Mitch Watrous
+
+WHEN:  August 22, 2006
+

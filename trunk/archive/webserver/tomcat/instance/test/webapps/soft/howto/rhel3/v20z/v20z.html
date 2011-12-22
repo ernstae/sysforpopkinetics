@@ -1,0 +1,238 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Administering the RFPK Sunfire v20z Server</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Administering the RFPK Sunfire v20z Server</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	As the computation server for the pilot installation of 
+	the System for Population Kinetics (SPK), a Sunfire V20z
+	server, manufactured by Sun Microsystems, is employed.
+	This document describes some of the details of system
+	administration required to configure and maintain this
+	computer for its assigned role.
+      </P
+><P
+>&#13;	The information in this document is targeted primarily towards
+	the RFPK Software Team and associates and is specific to the
+	computer systems and network installed in the RFPK Laboratory
+	of the Department of Bioengineering of the University of Washington.  RFPK is the Resource for
+	Population Kinetics.  Its work is supported, in part, by grant
+	P41 EB-001975 of the National Institutes of Health (NIH) of
+	the U.S.  Department of Health and Human Services.
+      </P
+><P
+>&#13;	<A
+HREF="#AEN33"
+>Copyright</A
+> (c) 2004, by the University of Washington.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN9"
+>Operating System</A
+></DT
+><DT
+><A
+HREF="#AEN33"
+>Copyright Notice</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN9"
+></A
+>Operating System</H2
+><P
+>&#13;      RFPK uses the same operating system for the v20z as for
+      <I
+CLASS="emphasis"
+>aspkserver</I
+>
+      (a.k.a. whitechuck), for <I
+CLASS="emphasis"
+>webserver</I
+>
+      and for development workstations.
+      The operating system is RedHat Enterprise Linux (RHEL), Workstation
+      Edition. At present, the v20z is the only RFPK computer with
+      64-bit processors, however, hence the AMD64 version rather than
+      the x86 version of RHEL should be used for it.
+    </P
+><P
+>&#13;      RHEL can be kept
+      up-to-date by simply using the RHN <B
+CLASS="command"
+>up2date</B
+>
+      utility.  If, however, it should
+      become necessary to install the software again from scratch, the following
+      procedure can be followed:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Download the software and burn CDROMs</I
+>.
+	    If you do not have CDROMs for the latest version of RHEL WS for
+	    AMD64, go to the
+	    <A
+HREF="https://rhn.redhat.com/network/software/download_isos.pxt"
+TARGET="_top"
+>&#13;	      Easy ISOs
+	    </A
+>
+	    page, download the iso files that you need,
+	    then burn a set of CDROMs, using <B
+CLASS="command"
+>cdrecord</B
+>
+	    as described in 
+	    <A
+HREF="https://www.redhat.com/docs/manuals/enterprise/RHEL-3-Manual/step-guide/s1-disks-cdrw.html"
+TARGET="_top"
+>&#13;	      RHEL Step By Step Guide
+	    </A
+>.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Delete the system profile from the RHN database.</I
+>
+	    The v20z was previously registered with RHN and,
+	    consequently, RHN has in its database a description of the hardware
+	    and software in the system.  Because we are going to change the
+	    software, we start by deleting the profile currently in the 
+	    RHN database.
+	    At the RHN
+	    <A
+HREF="https://rhn.redhat.com/network/systems/index.pxt"
+TARGET="_top"
+>&#13;	      System Overview
+	    </A
+>
+	    page, click the link to the v20z, and then the
+	    <B
+CLASS="guimenuitem"
+>delete system</B
+> link.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Place <I
+CLASS="emphasis"
+>disc1</I
+> of your set of CDROMs in the 
+	    CD reader of the v20z, and boot the machine. Let the installation
+	    wizard guide you.  Be sure to include the scientific software
+	    package in the set of packages to be installed.  As for network
+	    configuration, choose the option which relies on a DHCP server
+	    (there is a DHCP server in the firewall).
+	  </P
+><P
+>&#13;	    When the installation is complete, the system will reboot, and
+	    you will be guided to register with RHN.  Select the 
+	    <I
+CLASS="emphasis"
+>existing account</I
+> option, using 
+	    alanwesthagen as the username and aerlrfpk as the password.
+	    Let the wizard guide you through the registration.
+	  </P
+></LI
+></OL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN33"
+></A
+>Copyright Notice</H2
+><P
+>&#13;      Copyright (c) 2004,  by the University of Washington.
+      This material may be distributed only subject to the terms and conditions 
+      set forth in the Open Publication License, V1.0 or later
+      (the latest version is presently available
+      <A
+HREF="http://www.opencontent.org/openpub/"
+TARGET="_top"
+>here</A
+>.
+    </P
+><P
+>&#13;    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

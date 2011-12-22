@@ -1,0 +1,83 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.131
+----------------------------------
+USER VISIBLE CHANGES
+The default value of "initial off" for the last (output) compartment
+is set to "off" (true).
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 490
+
+BY: Sachiko Honda
+
+WHEN: October 31, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.132
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+A job-queue server was added to the web service system.
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: November 2, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.133
+----------------------------------
+USER VISIBLE CHANGES
+RES/WRES/ETARES/WETARES, IRES/IWRES/IETARES/IWETARES, 
+PRES/PWRES/PETARES/PWETARES, and CRES/CWRES/CETARES/CWETARES 
+can appear on the right hand side of equations.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 369
+
+BY: Sachiko Honda
+
+WHEN: November 2, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.134
+----------------------------------
+USER VISIBLE CHANGES
+The T values are eliminated from the report.
+Output compartment is initially OFF for the output compartment.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 499, 490
+
+BY: Sachiko Honda
+
+WHEN: November 2, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.135
+----------------------------------
+USER VISIBLE CHANGES
+Data items labeled "DROP" or "SKIP" are eliminated from the data set.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 294
+
+BY: Sachiko Honda
+
+WHEN: November 2, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.136
+----------------------------------
+USER VISIBLE CHANGES
+PRED is computed for MDV=1 as well as MDV=0.
+RES is set to (DV-PRED) when MDV=0 and 0 when MDV=1.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 488, 507, 508
+
+BY: Sachiko Honda
+
+WHEN: November 3, 2005

@@ -1,0 +1,1412 @@
+<html><head>
+<title>Spk Nonparametric Population Analysis</title>
+<meta name="description" id="description" content="Spk Nonparametric Population Analysis">
+<meta name="keywords" id="keywords" content=" spk_non_par nonparametric population analysis ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_spk_non_par_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>population</option>
+<option>spk_non_par</option>
+</select>
+</td>
+<td><a href="twostagemethod.htm" target="_top">Prev</a>
+</td><td><a href="non_par_model.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>population-&gt;</option>
+<option>estimateB</option>
+<option>expectedHessian</option>
+<option>ExpectedHessianFuncOb</option>
+<option>ExpectedHessianValarrayFuncOb</option>
+<option>firstOrderOpt</option>
+<option>fitPopulation</option>
+<option>EqIndModel</option>
+<option>lambda</option>
+<option>lambda_alp</option>
+<option>lambda_b</option>
+<option>lambdaFuncOb</option>
+<option>lambdaDiff</option>
+<option>lambda2diff</option>
+<option>lTilde</option>
+<option>NaiveFoModel</option>
+<option>namespace_population_analysis</option>
+<option>Objective</option>
+<option>ppkaOpt</option>
+<option>popResiduals</option>
+<option>popStatistics</option>
+<option>popStatistics_DerivExist</option>
+<option>popStatistics_DerivExist_AllElemActive</option>
+<option>twoStageMethod</option>
+<option>spk_non_par</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>spk_non_par-&gt;</option>
+<option>non_par_model</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Syntax</option>
+<option>Notation</option>
+<option>---..M</option>
+<option>---..n</option>
+<option>---..J</option>
+<option>---..y^i</option>
+<option>---..B_j</option>
+<option>Problem Definition</option>
+<option>level</option>
+<option>---..level == 0</option>
+<option>---..level &gt;= 1</option>
+<option>---..level &gt;= 2</option>
+<option>---..level &gt;= 10</option>
+<option>model</option>
+<option>N</option>
+<option>y</option>
+<option>max_itr</option>
+<option>epsilon</option>
+<option>---..Notation</option>
+<option>---..Convergence Criteria</option>
+<option>---..Zero Weight Criteria</option>
+<option>---..Joining Criteria</option>
+<option>---..Sub-Convergence Criteria</option>
+<option>---..Relaxation Factor</option>
+<option>blow</option>
+<option>bup</option>
+<option>Bin</option>
+<option>Bout</option>
+<option>lamout</option>
+<option>Pout</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+
+<code>
+<span style='white-space: nowrap'>&nbsp;\newcommand{\B}[1]{{\bf&nbsp;#1}}</span></code>
+
+<code>
+<span style='white-space: nowrap'>&nbsp;\newcommand{\R}{{\bf&nbsp;R}}</span></code>
+
+<code>
+<span style='white-space: nowrap'>&nbsp;\newcommand{\T}{{\rm&nbsp;T}}</span></code>
+
+
+
+<center><b><big><big>Spk Nonparametric Population Analysis</big></big></b></center>
+<br>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<br>
+<code><font color="blue"><span style='white-space: nowrap'>void&nbsp;spk_non_par(</span></font></code><i><span style='white-space: nowrap'>level</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>N</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>max_itr</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>epsilon</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>blow</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>bup</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>Bin</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>Bout</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>lamout</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;</span></font></code><i><span style='white-space: nowrap'>Pout</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+
+<br>
+<br>
+<b><big><a name="Notation" id="Notation">Notation</a></big></b>
+
+
+<br>
+<br>
+<b><a name="Notation.M" id="Notation.M">M</a></b>
+<br>
+We use <code>
+<span style='white-space: nowrap'>&nbsp;M</span></code>
+ to denote the number of individuals in the
+population study.
+
+<br>
+<br>
+<b><a name="Notation.n" id="Notation.n">n</a></b>
+<br>
+We use <code>
+<span style='white-space: nowrap'>&nbsp;n</span></code>
+ to denote the number of random effects 
+per atomic point in the measure point.
+
+<br>
+<br>
+<b><a name="Notation.J" id="Notation.J">J</a></b>
+<br>
+We use <code>
+<span style='white-space: nowrap'>&nbsp;J</span></code>
+ to denote the number of atomic measure points
+in the optimization problem.
+There is an ambiguity in this value because it is different
+upon input and output from <code><font color="blue">spk_non_par</font></code>; see 
+<a href="spk_non_par.htm#Bin" target="_top"><span style='white-space: nowrap'>Bin</span></a>
+ and <a href="spk_non_par.htm#Bout" target="_top"><span style='white-space: nowrap'>Bout</span></a>
+ below.
+
+<br>
+<br>
+<b><a name="Notation.y^i" id="Notation.y^i">y^i</a></b>
+<br>
+We use <code>
+<span style='white-space: nowrap'>&nbsp;y^i</span></code>
+ to denote the 
+measurement vector corresponding to individual <code>
+<span style='white-space: nowrap'>&nbsp;i</span></code>
+.
+
+<br>
+<br>
+<b><a name="Notation.B_j" id="Notation.B_j">B_j</a></b>
+<br>
+We use <code>
+<span style='white-space: nowrap'>&nbsp;B_j</span></code>
+ for the <i>j</i>-th column of the matrix <i>B</i>.
+
+<br>
+<br>
+<b><big><a name="Problem Definition" id="Problem Definition">Problem Definition</a></big></b>
+<br>
+We define the discrete measure
+<code>
+<span style='white-space: nowrap'>&nbsp;\Lambda</span></code>
+ on <code>
+<span style='white-space: nowrap'>&nbsp;\R^n</span></code>
+ 
+and the non-parametric population objective function
+<code>
+<span style='white-space: nowrap'>&nbsp;F&nbsp;:&nbsp;\R^{n&nbsp;\times&nbsp;J}&nbsp;\times&nbsp;\R_+^J&nbsp;\rightarrow&nbsp;\R</span></code>
+ by
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcl}<br>
+\Lambda&nbsp;(&nbsp;b&nbsp;)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;\sum_{j=1}&nbsp;\lambda_j&nbsp;\delta&nbsp;(&nbsp;b&nbsp;-&nbsp;B_j&nbsp;)<br>
+\\<br>
+F(B,&nbsp;\lambda)&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;-&nbsp;\sum_{i=1}^M&nbsp;\log&nbsp;[&nbsp;\B{p}&nbsp;(&nbsp;y^i&nbsp;|&nbsp;\Lambda&nbsp;)&nbsp;]<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+where <code>
+<span style='white-space: nowrap'>&nbsp;\delta</span></code>
+ denotes the Dirac delta function on <code>
+<span style='white-space: nowrap'>&nbsp;\R^n</span></code>
+,
+<code>
+<span style='white-space: nowrap'>&nbsp;\R_+</span></code>
+ denotes the non-negative real numbers, and
+the probability of <code>
+<span style='white-space: nowrap'>&nbsp;y^i</span></code>
+ given <code>
+<span style='white-space: nowrap'>&nbsp;\Lambda</span></code>
+ is given by
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{rcl}<br>
+\B{p}&nbsp;(&nbsp;y^i&nbsp;|&nbsp;\Lambda&nbsp;)&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;<br>
+\sum_{j=1}&nbsp;\lambda_j&nbsp;\B{p}(&nbsp;y^i&nbsp;|&nbsp;B_j&nbsp;)<br>
+\\<br>
+\B{p}&nbsp;(&nbsp;y^i&nbsp;|&nbsp;b&nbsp;)&nbsp;&amp;&nbsp;=&nbsp;&amp;&nbsp;<br>
+\det&nbsp;\left[&nbsp;2&nbsp;\pi&nbsp;R&nbsp;(&nbsp;i,&nbsp;\alpha,&nbsp;b&nbsp;&nbsp;)&nbsp;\right]^{-1/2}&nbsp;<br>
+\exp&nbsp;\left\{&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;\frac{1}{2}&nbsp;\left[&nbsp;y^i&nbsp;-&nbsp;f(i,&nbsp;\alpha,&nbsp;b&nbsp;)&nbsp;\right]^\T&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R&nbsp;(&nbsp;i,&nbsp;\alpha,&nbsp;b&nbsp;&nbsp;)^{-1}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\left[&nbsp;y^i&nbsp;-&nbsp;f(i,&nbsp;\alpha,&nbsp;b&nbsp;)&nbsp;\right]<br>
+\right\}&nbsp;<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+<a href="non_par_model.htm#Notation.f(i,alpha,b)" target="_top"><span style='white-space: nowrap'>f(i,alpha,b)</span></a>
+ 
+is the mean of <code>
+<span style='white-space: nowrap'>&nbsp;y^i</span></code>
+, and 
+<a href="non_par_model.htm#Notation.R(i,alpha,b)" target="_top"><span style='white-space: nowrap'>R(i,alpha,b)</span></a>
+
+is the variance of <code>
+<span style='white-space: nowrap'>&nbsp;y^i</span></code>
+. 
+The <code><font color="blue">spk_non_par</font></code> routine determines a vector 
+<code>
+<span style='white-space: nowrap'>&nbsp;\lambda&nbsp;\in&nbsp;\R^J</span></code>
+
+and matrix <code>
+<span style='white-space: nowrap'>&nbsp;B&nbsp;\in&nbsp;\R^{n&nbsp;\times&nbsp;J}</span></code>
+ that solves the problem
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\begin{array}{ll}<br>
+{\rm&nbsp;minimize}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&nbsp;F(B,&nbsp;\lambda&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\;&nbsp;,&nbsp;\;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{\rm&nbsp;w.r.t.}&nbsp;\;&nbsp;\lambda&nbsp;\in&nbsp;\R_+^J&nbsp;\;&nbsp;,&nbsp;\;&nbsp;B&nbsp;\in&nbsp;\R^{n&nbsp;\times&nbsp;J}<br>
+\\<br>
+{\rm&nbsp;subject&nbsp;\;&nbsp;to}&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&nbsp;\sum_{j=1}^J&nbsp;\lambda_j&nbsp;=&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\;&nbsp;,&nbsp;\;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;blow&nbsp;\leq&nbsp;B_j&nbsp;\leq&nbsp;bup&nbsp;\;&nbsp;{\rm&nbsp;for}&nbsp;\;&nbsp;j&nbsp;=&nbsp;1&nbsp;,&nbsp;\ldots&nbsp;,&nbsp;J<br>
+\end{array}<br>
+\]&nbsp;</span></code>
+
+
+<br>
+<br>
+<b><big><a name="level" id="level">level</a></big></b>
+<br>
+The argument <i>level</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;</span></font></code><i><span style='white-space: nowrap'>level</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>It specifies the level of tracing to write to <code><font color="blue">std::cout</font></code>
+during the execution of <code><font color="blue">spk_non_par</font></code> as follows:
+
+<br>
+<br>
+<b><a name="level.level == 0" id="level.level == 0">level == 0</a></b>
+<br>
+No tracing is done
+
+<br>
+<br>
+<b><a name="level.level &gt;= 1" id="level.level &gt;= 1">level &gt;= 1</a></b>
+<br>
+The current iteration number <i>itr</i>,
+the value of the relaxation parameter <code><font color="blue">mu</font></code> and the
+convergence information <code><font color="blue">info</font></code> are printed at each iteration
+(the relaxation parameter and all the convergence information 
+should converge to zero).
+The convergence information has three components 
+in order as follows:
+<ol type="1"><li>
+<code>
+<span style='white-space: nowrap'>&nbsp;\left|&nbsp;1&nbsp;-&nbsp;\sum_{j=1}^n&nbsp;\lambda_j&nbsp;\right|</span></code>
+
+</li><li>
+
+<code>
+<span style='white-space: nowrap'>&nbsp;\max_j&nbsp;<br>
+|&nbsp;\gamma&nbsp;&nbsp;-&nbsp;\partial_{\lambda(j)}&nbsp;&nbsp;F(B,&nbsp;\lambda&nbsp;)&nbsp;|&nbsp;<br>
+</span></code>
+</li><li>
+<code>
+<span style='white-space: nowrap'>&nbsp;\max_{k,j}&nbsp;|&nbsp;F_B&nbsp;(B,&nbsp;\lambda)_{k,j}&nbsp;|&nbsp;</span></code>
+.
+</li></ol>
+
+where <code>
+<span style='white-space: nowrap'>&nbsp;\gamma&nbsp;\in&nbsp;\R</span></code>
+ is given by
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\gamma&nbsp;=<br>
+\left.<br>
+\sum_{j=1}^J&nbsp;\partial_{\lambda(j)}&nbsp;F(&nbsp;B&nbsp;,&nbsp;\lambda&nbsp;)&nbsp;\lambda_j^2<br>
+\right/<br>
+\sum_{j=1}^J&nbsp;\lambda_j^2<br>
+\]&nbsp;</span></code>
+
+
+
+<br>
+<br>
+<b><a name="level.level &gt;= 2" id="level.level &gt;= 2">level &gt;= 2</a></b>
+<br>
+The weights corresponding to each discrete measure point is printed
+(with the label <code><font color="blue">lambda</font></code>)
+at each iteration.
+In addition, the minimum distance from each discrete measure point
+to another discrete measurement point is printed
+with the label <code><font color="blue">distance</font></code>.
+
+
+<br>
+<br>
+<b><a name="level.level &gt;= 10" id="level.level &gt;= 10">level &gt;= 10</a></b>
+<br>
+If <i>level</i> is greater than or equal ten,
+<code><font color="blue"><span style='white-space: nowrap'>mod(</span></font></code><i><span style='white-space: nowrap'>level</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;10)</span></font></code> is used as a tracing level
+for <code><font color="blue">opt_measure</font></code> and 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>level</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;/&nbsp;10</span></font></code> is used as a tracing level for the
+corresponding call to 
+<code><font color="blue">QuasiNewton01Box</font></code>.
+
+<br>
+<br>
+<b><big><a name="model" id="model">model</a></big></b>
+<br>
+The argument <i>model</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SpkModel&lt;</span></font></code><i><span style='white-space: nowrap'>Scalar</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>where <i>Scalar</i> is the type <code><font color="blue">CppAD::AD&lt;double&gt;</font></code>.
+It specifies the individual and population model
+functions as per the <a href="non_par_model.htm" target="_top"><span style='white-space: nowrap'>non_par_model</span></a>
+ requirements.
+
+
+<br>
+<br>
+<b><big><a name="N" id="N">N</a></big></b>
+<br>
+The argument <i>N</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>N</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The value <code><font color="blue"></font></code><i><span style='white-space: nowrap'>N</span></i><code><font color="blue"><span style='white-space: nowrap'>.nr()</span></font></code> must be equal to <code>
+<span style='white-space: nowrap'>&nbsp;M</span></code>
+.
+The value <code><font color="blue"></font></code><i><span style='white-space: nowrap'>N</span></i><code><font color="blue"><span style='white-space: nowrap'>.nc()</span></font></code> must be equal one.
+For <code>
+<span style='white-space: nowrap'>&nbsp;i&nbsp;=&nbsp;0&nbsp;,&nbsp;\ldots&nbsp;,&nbsp;M-1</span></code>
+,
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*(</span></font></code><i><span style='white-space: nowrap'>N</span></i><code><font color="blue"><span style='white-space: nowrap'>.data()&nbsp;+&nbsp;</span></font></code><i><span style='white-space: nowrap'>i</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>is equal to
+<a href="non_par_model.htm#Notation.N[i]" target="_top"><span style='white-space: nowrap'>N[i]</span></a>
+
+the number of measurements corresponding to individual <i>i</i>
+in the <i>model</i>.
+
+
+<br>
+<br>
+<b><big><a name="y" id="y">y</a></big></b>
+<br>
+The argument <i>y</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The value <code><font color="blue"></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>.nr()</span></font></code> must be equal to
+<code>
+<span style='white-space: nowrap'>&nbsp;N[0]&nbsp;+&nbsp;\cdots&nbsp;+&nbsp;N[M-1]</span></code>
+.
+The value <code><font color="blue"></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>.nc()</span></font></code> must be equal one.
+For <code>
+<span style='white-space: nowrap'>&nbsp;i&nbsp;=&nbsp;0&nbsp;,&nbsp;\ldots&nbsp;,&nbsp;M-1</span></code>
+ and <code>
+<span style='white-space: nowrap'>&nbsp;j&nbsp;=&nbsp;0&nbsp;,&nbsp;\ldots&nbsp;,&nbsp;N[i]</span></code>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*(</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>.data()&nbsp;+&nbsp;</span></font></code><i><span style='white-space: nowrap'>N</span></i><code><font color="blue"><span style='white-space: nowrap'>[0]&nbsp;+&nbsp;...&nbsp;+&nbsp;</span></font></code><i><span style='white-space: nowrap'>N</span></i><code><font color="blue"><span style='white-space: nowrap'>[</span></font></code><i><span style='white-space: nowrap'>i</span></i><code><font color="blue"><span style='white-space: nowrap'>-1]&nbsp;+&nbsp;</span></font></code><i><span style='white-space: nowrap'>j</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>Is the <i>j</i>-th data value corresponding to individual <i>i</i>.
+
+<br>
+<br>
+<b><big><a name="max_itr" id="max_itr">max_itr</a></big></b>
+<br>
+The argument <i>max_itr</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>max_itr</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>and size <code>
+<span style='white-space: nowrap'>&nbsp;2&nbsp;\times&nbsp;1</span></code>
+.
+The value <code><font color="blue"><span style='white-space: nowrap'>*(</span></font></code><i><span style='white-space: nowrap'>max_itr</span></i><code><font color="blue"><span style='white-space: nowrap'>.data()+0)</span></font></code> is the maximum number
+of iterations allowed to satisfy the convergence
+criteria for <code><font color="blue">opt_measure</font></code>.
+The value <code><font color="blue"><span style='white-space: nowrap'>*(</span></font></code><i><span style='white-space: nowrap'>max_itr</span></i><code><font color="blue"><span style='white-space: nowrap'>.data()+1)</span></font></code> is the maximum number
+of iterations of allowed for each of the <code><font color="blue">relaxed</font></code> sub-problems.
+
+<br>
+<br>
+<b><big><a name="epsilon" id="epsilon">epsilon</a></big></b>
+<br>
+The argument <i>epsilon</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>epsilon</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>and size <code>
+<span style='white-space: nowrap'>&nbsp;5&nbsp;\times&nbsp;1</span></code>
+.
+It specifies the 
+<table><tr><td align='left'  valign='top'>
+
+<b>Description</b> 
+	</td><td align='left'  valign='top'>
+ <b>Name</b> 
+	</td><td align='left'  valign='top'>
+ <b>Suggest Value</b> 
+</td></tr><tr><td align='left'  valign='top'>
+
+<a href="spk_non_par.htm#epsilon.Convergence Criteria" target="_top"><span style='white-space: nowrap'>convergence&nbsp;criteria</span></a>
+
+	</td><td align='left'  valign='top'>
+ <code>
+<span style='white-space: nowrap'>&nbsp;\varepsilon_0&nbsp;=&nbsp;</span></code>
+ <code><font color="blue"><span style='white-space: nowrap'>*(</span></font></code><i><span style='white-space: nowrap'>epsilon</span></i><code><font color="blue"><span style='white-space: nowrap'>.data()&nbsp;+&nbsp;0)</span></font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'>&nbsp;&nbsp;</span></code> <code>
+<span style='white-space: nowrap'>&nbsp;10^{-4}</span></code>
+
+</td></tr><tr><td align='left'  valign='top'>
+
+<a href="spk_non_par.htm#epsilon.Zero Weight Criteria" target="_top"><span style='white-space: nowrap'>zero&nbsp;weight&nbsp;criteria</span></a>
+
+</td><td align='left'  valign='top'>
+ <code>
+<span style='white-space: nowrap'>&nbsp;&nbsp;\varepsilon_1&nbsp;=&nbsp;</span></code>
+ <code><font color="blue"><span style='white-space: nowrap'>*(</span></font></code><i><span style='white-space: nowrap'>epsilon</span></i><code><font color="blue"><span style='white-space: nowrap'>.data()&nbsp;+&nbsp;1)</span></font></code> 
+</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'>&nbsp;&nbsp;</span></code> <code>
+<span style='white-space: nowrap'>&nbsp;10^{-4}</span></code>
+
+</td></tr><tr><td align='left'  valign='top'>
+
+<a href="spk_non_par.htm#epsilon.Joining Criteria" target="_top"><span style='white-space: nowrap'>joining&nbsp;criteria</span></a>
+
+	</td><td align='left'  valign='top'>
+ <code>
+<span style='white-space: nowrap'>&nbsp;&nbsp;\varepsilon_2&nbsp;=&nbsp;</span></code>
+ <code><font color="blue"><span style='white-space: nowrap'>*(</span></font></code><i><span style='white-space: nowrap'>epsilon</span></i><code><font color="blue"><span style='white-space: nowrap'>.data()&nbsp;+&nbsp;2)</span></font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'>&nbsp;&nbsp;</span></code> <code>
+<span style='white-space: nowrap'>&nbsp;10^{-4}</span></code>
+
+</td></tr><tr><td align='left'  valign='top'>
+
+<a href="spk_non_par.htm#epsilon.Sub-Convergence Criteria" target="_top"><span style='white-space: nowrap'>sub-convergence&nbsp;criteria</span></a>
+
+	</td><td align='left'  valign='top'>
+ <code>
+<span style='white-space: nowrap'>&nbsp;\varepsilon_3&nbsp;=&nbsp;</span></code>
+ <code><font color="blue"><span style='white-space: nowrap'>*(</span></font></code><i><span style='white-space: nowrap'>epsilon</span></i><code><font color="blue"><span style='white-space: nowrap'>.data()&nbsp;+&nbsp;3)</span></font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'>&nbsp;&nbsp;</span></code> <code>
+<span style='white-space: nowrap'>&nbsp;10^{-13}</span></code>
+
+</td></tr><tr><td align='left'  valign='top'>
+
+<a href="spk_non_par.htm#epsilon.Relaxation Factor" target="_top"><span style='white-space: nowrap'>relaxation&nbsp;factor</span></a>
+
+	</td><td align='left'  valign='top'>
+ <code>
+<span style='white-space: nowrap'>&nbsp;\varepsilon_4&nbsp;=&nbsp;</span></code>
+ <code><font color="blue"><span style='white-space: nowrap'>*(</span></font></code><i><span style='white-space: nowrap'>epsilon</span></i><code><font color="blue"><span style='white-space: nowrap'>.data()&nbsp;+&nbsp;4)</span></font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'>&nbsp;&nbsp;</span></code> <code>
+<span style='white-space: nowrap'>&nbsp;2^{-2}</span></code>
+
+</td></tr>
+</table>
+<br>
+<b><a name="epsilon.Notation" id="epsilon.Notation">Notation</a></b>
+<br>
+We define the scaled projected gradient of <code>
+<span style='white-space: nowrap'>&nbsp;F</span></code>
+
+with respect to <code>
+<span style='white-space: nowrap'>&nbsp;B</span></code>
+,
+<code>
+<span style='white-space: nowrap'>&nbsp;F_B&nbsp;(B&nbsp;,&nbsp;\lambda&nbsp;)&nbsp;\in&nbsp;\R^{n&nbsp;\times&nbsp;J}&nbsp;</span></code>
+ by
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+F_B&nbsp;(&nbsp;B&nbsp;,&nbsp;\lambda&nbsp;)_{k,j}&nbsp;=&nbsp;\left\{&nbsp;\begin{array}{ll}<br>
+(&nbsp;bup_k&nbsp;-&nbsp;B_{k,j}&nbsp;)&nbsp;\partial_{B(k,j)}&nbsp;F(B,&nbsp;\lambda)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&nbsp;{\rm&nbsp;if}&nbsp;\;&nbsp;\partial_{B(k,j)}&nbsp;F(B,&nbsp;\lambda)&nbsp;\geq&nbsp;0<br>
+\\<br>
+(&nbsp;B_{k,j}&nbsp;-&nbsp;blow_k&nbsp;)&nbsp;\partial_{B(k,j)}&nbsp;F(B,&nbsp;\lambda)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;&nbsp;{\rm&nbsp;if}&nbsp;\;&nbsp;\partial_{B(k,j)}&nbsp;F(B,&nbsp;\lambda)&nbsp;\leq&nbsp;0<br>
+\end{array}&nbsp;\right.<br>
+\]&nbsp;</span></code>
+
+We define <code>
+<span style='white-space: nowrap'>&nbsp;\gamma&nbsp;\in&nbsp;\R</span></code>
+ by
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\gamma&nbsp;=<br>
+\left.<br>
+\sum_{j=1}^J&nbsp;\partial_{\lambda(j)}&nbsp;F(&nbsp;B&nbsp;,&nbsp;\lambda&nbsp;)&nbsp;\lambda_j^2<br>
+\right/<br>
+\sum_{j=1}^J&nbsp;\lambda_j^2<br>
+\]&nbsp;</span></code>
+
+We define the scaled infinity norm between <code>
+<span style='white-space: nowrap'>&nbsp;B_j</span></code>
+ and <code>
+<span style='white-space: nowrap'>&nbsp;B_q</span></code>
+ by
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+\|&nbsp;B_j&nbsp;-&nbsp;B_q&nbsp;\|_\infty&nbsp;=<br>
+\max_k&nbsp;\frac{&nbsp;|&nbsp;B_{k,j}&nbsp;-&nbsp;B_{k,q}&nbsp;|&nbsp;}&nbsp;{&nbsp;bup_k&nbsp;-&nbsp;blow_k&nbsp;}<br>
+\]&nbsp;</span></code>
+
+
+<br>
+<br>
+<b><a name="epsilon.Convergence Criteria" id="epsilon.Convergence Criteria">Convergence Criteria</a></b>
+<br>
+The output values for <code>
+<span style='white-space: nowrap'>&nbsp;B</span></code>
+ and <code>
+<span style='white-space: nowrap'>&nbsp;\lambda</span></code>
+ satisfy the
+following approximate first order conditions for a minimum:
+<ol type="1"><li>
+for <code>
+<span style='white-space: nowrap'>&nbsp;j&nbsp;=&nbsp;1&nbsp;,&nbsp;\ldots&nbsp;,&nbsp;J</span></code>
+, <code>
+<span style='white-space: nowrap'>&nbsp;k&nbsp;=&nbsp;1&nbsp;,&nbsp;\ldots&nbsp;,&nbsp;n</span></code>
+,
+<code>
+<span style='white-space: nowrap'>&nbsp;blow_k&nbsp;\leq&nbsp;B_{k,&nbsp;j}&nbsp;\leq&nbsp;bup_k</span></code>
+.
+</li><li>
+
+<code>
+<span style='white-space: nowrap'>&nbsp;\varepsilon_0&nbsp;\geq&nbsp;|&nbsp;1&nbsp;-&nbsp;\sum_{j=1}^J&nbsp;\lambda_j&nbsp;|</span></code>
+ 
+</li><li>
+
+for <code>
+<span style='white-space: nowrap'>&nbsp;j&nbsp;=&nbsp;1&nbsp;,&nbsp;\ldots&nbsp;,&nbsp;J</span></code>
+, 
+<code>
+<span style='white-space: nowrap'>&nbsp;\varepsilon_0&nbsp;\geq&nbsp;&nbsp;<br>
+|&nbsp;\gamma&nbsp;&nbsp;-&nbsp;\partial_{\lambda(j)}&nbsp;&nbsp;F(B,&nbsp;\lambda&nbsp;)&nbsp;|&nbsp;\lambda_j<br>
+</span></code>
+</li><li>
+for <code>
+<span style='white-space: nowrap'>&nbsp;j&nbsp;=&nbsp;1&nbsp;,&nbsp;\ldots&nbsp;,&nbsp;J</span></code>
+, <code>
+<span style='white-space: nowrap'>&nbsp;k&nbsp;=&nbsp;1&nbsp;,&nbsp;\ldots&nbsp;,&nbsp;n</span></code>
+,
+<code>
+<span style='white-space: nowrap'>&nbsp;<br>
+\varepsilon_0&nbsp;\geq&nbsp;|&nbsp;F_B&nbsp;(B,&nbsp;\lambda)_{k,j}&nbsp;|&nbsp;<br>
+</span></code>
+.
+</li></ol>
+
+
+<br>
+<br>
+<b><a name="epsilon.Zero Weight Criteria" id="epsilon.Zero Weight Criteria">Zero Weight Criteria</a></b>
+<br>
+If at the end of an iteration
+<code>
+<span style='white-space: nowrap'>&nbsp;\lambda_j&nbsp;\leq&nbsp;\varepsilon_1&nbsp;\|&nbsp;\lambda&nbsp;\|_\infty</span></code>
+,
+the <i>j</i>-th discrete measure point is removed.
+
+<br>
+<br>
+<b><a name="epsilon.Joining Criteria" id="epsilon.Joining Criteria">Joining Criteria</a></b>
+<br>
+If there are two columns of <code>
+<span style='white-space: nowrap'>&nbsp;B</span></code>
+ such that
+<code>
+<span style='white-space: nowrap'>&nbsp;\[<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\varepsilon_2&nbsp;\geq&nbsp;\|&nbsp;B_j&nbsp;-&nbsp;B_q&nbsp;\|_\infty&nbsp;<br>
+\]&nbsp;</span></code>
+
+the two columns are joined, 
+the weights are added and
+<code>
+<span style='white-space: nowrap'>&nbsp;J</span></code>
+ is reduced by one
+(<code>
+<span style='white-space: nowrap'>&nbsp;J</span></code>
+ is the column dimension of <i>B</i> and
+the row dimension of <i>lambda</i>).
+
+<br>
+<br>
+<b><a name="epsilon.Sub-Convergence Criteria" id="epsilon.Sub-Convergence Criteria">Sub-Convergence Criteria</a></b>
+<br>
+The sub-problem, which determines the optimal weight vector 
+<code>
+<span style='white-space: nowrap'>&nbsp;\lambda</span></code>
+ is considered converged when the maximum residual
+in any of the Karush Kuhn Tucker conditions is less than
+<code>
+<span style='white-space: nowrap'>&nbsp;\varepsilon_3</span></code>
+; i.e.
+the likelihood of each individuals measurement vector
+for each discrete measurement point.
+
+<br>
+<br>
+<b><a name="epsilon.Relaxation Factor" id="epsilon.Relaxation Factor">Relaxation Factor</a></b>
+<br>
+The amount the sub-problem relaxation factor is 
+multiplied by at each iteration.
+
+<br>
+<br>
+<b><big><a name="blow" id="blow">blow</a></big></b>
+<br>
+The argument <i>blow</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>blow</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The value <code><font color="blue"></font></code><i><span style='white-space: nowrap'>blow</span></i><code><font color="blue"><span style='white-space: nowrap'>.nr()</span></font></code> must be equal to <code>
+<span style='white-space: nowrap'>&nbsp;n</span></code>
+.
+The value <code><font color="blue"></font></code><i><span style='white-space: nowrap'>blow</span></i><code><font color="blue"><span style='white-space: nowrap'>.nc()</span></font></code> must be equal one.
+It specifies a lower limit for the random effects.
+
+
+<br>
+<br>
+<b><big><a name="bup" id="bup">bup</a></big></b>
+<br>
+The argument <i>bup</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>bup</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The value <code><font color="blue"></font></code><i><span style='white-space: nowrap'>bup</span></i><code><font color="blue"><span style='white-space: nowrap'>.nr()</span></font></code> must be equal to <code>
+<span style='white-space: nowrap'>&nbsp;n</span></code>
+.
+The value <code><font color="blue"></font></code><i><span style='white-space: nowrap'>bup</span></i><code><font color="blue"><span style='white-space: nowrap'>.nc()</span></font></code> must be equal one.
+It specifies an upper limit for the random effects.
+
+<br>
+<br>
+<b><big><a name="Bin" id="Bin">Bin</a></big></b>
+<br>
+The argument <i>Bin</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>Bin</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>Each column of <i>Bin</i> represents an initial guess for the location 
+of an atomic measure points <code>
+<span style='white-space: nowrap'>&nbsp;\{&nbsp;B_j&nbsp;\}</span></code>
+.
+The value <code><font color="blue"></font></code><i><span style='white-space: nowrap'>Bin</span></i><code><font color="blue"><span style='white-space: nowrap'>.nc()</span></font></code> defines the initial value of <code>
+<span style='white-space: nowrap'>&nbsp;J</span></code>
+; 
+i.e., the initial number of atomic points in the non-parametric measure
+for the random effects.
+It must be greater than or equal <code>
+<span style='white-space: nowrap'>&nbsp;M</span></code>
+.
+The value <code><font color="blue"></font></code><i><span style='white-space: nowrap'>Bin</span></i><code><font color="blue"><span style='white-space: nowrap'>.nr()</span></font></code> must be <code>
+<span style='white-space: nowrap'>&nbsp;n</span></code>
+.
+For <code>
+<span style='white-space: nowrap'>&nbsp;k&nbsp;=&nbsp;0&nbsp;,&nbsp;\ldots&nbsp;,&nbsp;n</span></code>
+ and <code>
+<span style='white-space: nowrap'>&nbsp;j&nbsp;=&nbsp;0&nbsp;,&nbsp;\ldots&nbsp;,&nbsp;J</span></code>
+
+(initial value for <code>
+<span style='white-space: nowrap'>&nbsp;J</span></code>
+)
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*(</span></font></code><i><span style='white-space: nowrap'>Bin</span></i><code><font color="blue"><span style='white-space: nowrap'>.data()&nbsp;+&nbsp;</span></font></code><i><span style='white-space: nowrap'>k</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;+&nbsp;</span></font></code><i><span style='white-space: nowrap'>j</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;*&nbsp;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>is the <i>k</i>-th component of the <i>j</i>-th atomic measure point.
+
+<br>
+<br>
+<b><big><a name="Bout" id="Bout">Bout</a></big></b>
+<br>
+The argument <i>Bout</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>Bout</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The input element values and dimension of <i>Bout</i> does not matter.
+Upon return from <code><font color="blue">spk_non_par</font></code>,
+<i>Bout</i> contains the location of the atomic measure points 
+corresponding to the solution of the optimization problem.
+The value <code><font color="blue"></font></code><i><span style='white-space: nowrap'>Bout</span></i><code><font color="blue"><span style='white-space: nowrap'>.nc()</span></font></code> defines the final value of <code>
+<span style='white-space: nowrap'>&nbsp;J</span></code>
+;
+i.e., the final number of atomic points in the non-parametric measure.
+The value <code><font color="blue"></font></code><i><span style='white-space: nowrap'>Bout</span></i><code><font color="blue"><span style='white-space: nowrap'>.nr()</span></font></code> must equal to <code>
+<span style='white-space: nowrap'>&nbsp;n</span></code>
+.
+For <code>
+<span style='white-space: nowrap'>&nbsp;k&nbsp;=&nbsp;0&nbsp;,&nbsp;\ldots&nbsp;,&nbsp;n</span></code>
+ and <code>
+<span style='white-space: nowrap'>&nbsp;j&nbsp;=&nbsp;0&nbsp;,&nbsp;\ldots&nbsp;,&nbsp;J</span></code>
+
+(final value for <code>
+<span style='white-space: nowrap'>&nbsp;J</span></code>
+)
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*(</span></font></code><i><span style='white-space: nowrap'>Bout</span></i><code><font color="blue"><span style='white-space: nowrap'>.data()&nbsp;+&nbsp;</span></font></code><i><span style='white-space: nowrap'>k</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;+&nbsp;</span></font></code><i><span style='white-space: nowrap'>j</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;*&nbsp;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>is the <i>k</i>-th component of the <i>j</i>-th atomic measure point.
+
+<br>
+<br>
+<b><big><a name="lamout" id="lamout">lamout</a></big></b>
+<br>
+The argument <i>lamout</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>lamout</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The input element values and dimension of <i>lamout</i> does not matter.
+Upon return from <code><font color="blue">spk_non_par</font></code>, <i>lamout</i> is a column vector
+and it <i>j</i>-th element is the weight corresponding to the
+<i>j</i>-th column of <i>Bout</i>.
+The value <code><font color="blue"></font></code><i><span style='white-space: nowrap'>lamout</span></i><code><font color="blue"><span style='white-space: nowrap'>.nr()</span></font></code> is equal to the final value of <code>
+<span style='white-space: nowrap'>&nbsp;J</span></code>
+
+i.e., <code><font color="blue"></font></code><i><span style='white-space: nowrap'>Bout</span></i><code><font color="blue"><span style='white-space: nowrap'>.nc()</span></font></code>.
+
+<br>
+<br>
+<b><big><a name="Pout" id="Pout">Pout</a></big></b>
+<br>
+The argument <i>Pout</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>Pout</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The input element values and dimension of <i>Pout</i> does not matter.
+Upon return from <code><font color="blue">spk_non_par</font></code>, 
+the <code>
+<span style='white-space: nowrap'>&nbsp;(i,&nbsp;j)</span></code>
+ element of <i>Pout</i>
+is the probability density for 
+<code>
+<span style='white-space: nowrap'>&nbsp;y^i</span></code>
+ given the random effects value <code>
+<span style='white-space: nowrap'>&nbsp;b</span></code>
+ 
+is equal to the <i>j</i>-th column of <i>Bout</i>; i.e. 
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*(</span></font></code><i><span style='white-space: nowrap'>Pout</span></i><code><font color="blue"><span style='white-space: nowrap'>.data()&nbsp;+&nbsp;</span></font></code><i><span style='white-space: nowrap'>i</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;+&nbsp;</span></font></code><i><span style='white-space: nowrap'>j</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;*&nbsp;</span></font></code><i><span style='white-space: nowrap'>M</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>is equal to <code>
+<span style='white-space: nowrap'>&nbsp;\B{p}&nbsp;(&nbsp;y^i&nbsp;|&nbsp;b&nbsp;=&nbsp;B_j&nbsp;)</span></code>
+,
+where <code>
+<span style='white-space: nowrap'>&nbsp;B_j</span></code>
+ is the <i>j</i>-th column of <i>Bout</i>.
+
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+
+<code><font color="blue">
+<br>
+<span style='white-space: nowrap'>/*<br>
+%************************************************************************<br>
+%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;From:&nbsp;&nbsp;&nbsp;Resource&nbsp;Facility&nbsp;for&nbsp;Population&nbsp;Kinetics&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Department&nbsp;of&nbsp;Bioengineering&nbsp;Box&nbsp;352255&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;University&nbsp;of&nbsp;Washington&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Seattle,&nbsp;WA&nbsp;98195-2255&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;Copyright&nbsp;(C)&nbsp;2002,&nbsp;University&nbsp;of&nbsp;Washington,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;Resource&nbsp;Facility&nbsp;for&nbsp;Population&nbsp;Kinetics.&nbsp;All&nbsp;Rights&nbsp;Reserved.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;This&nbsp;software&nbsp;was&nbsp;developed&nbsp;with&nbsp;support&nbsp;from&nbsp;NIH&nbsp;grant&nbsp;RR-12609.&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;Please&nbsp;cite&nbsp;this&nbsp;grant&nbsp;in&nbsp;any&nbsp;publication&nbsp;for&nbsp;which&nbsp;this&nbsp;software&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;is&nbsp;used&nbsp;and&nbsp;send&nbsp;a&nbsp;notification&nbsp;to&nbsp;the&nbsp;address&nbsp;given&nbsp;above.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;Check&nbsp;for&nbsp;updates&nbsp;and&nbsp;notices&nbsp;at:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;http://www.rfpk.washington.edu&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*<br>
+%************************************************************************<br>
+<br>
+*/<br>
+/*************************************************************************<br>
+&nbsp;*<br>
+&nbsp;*&nbsp;File:&nbsp;spk_non_par_test.cpp<br>
+&nbsp;*<br>
+&nbsp;*<br>
+&nbsp;*&nbsp;Unit&nbsp;test&nbsp;for&nbsp;the&nbsp;function&nbsp;spk_non_par.<br>
+&nbsp;*<br>
+&nbsp;*&nbsp;Author:&nbsp;Brad&nbsp;Bell<br>
+&nbsp;*<br>
+&nbsp;*************************************************************************/<br>
+/*<br>
+Spk&nbsp;Non-parametric&nbsp;Example&nbsp;and&nbsp;Test&nbsp;Case<br>
+<br>
+sigma&nbsp;:&nbsp;standard&nbsp;deviation&nbsp;of&nbsp;the&nbsp;measurement&nbsp;noise<br>
+q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;number&nbsp;of&nbsp;measurements&nbsp;for&nbsp;each&nbsp;individual<br>
+M&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;number&nbsp;of&nbsp;individuals&nbsp;in&nbsp;the&nbsp;population&nbsp;study<br>
+m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;number&nbsp;of&nbsp;fixed&nbsp;effects<br>
+n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;number&nbsp;of&nbsp;random&nbsp;effects&nbsp;in&nbsp;model<br>
+J&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;number&nbsp;of&nbsp;discrete&nbsp;measure&nbsp;points<br>
+bSim&nbsp;&nbsp;:&nbsp;simulated&nbsp;true&nbsp;value&nbsp;of&nbsp;the&nbsp;random&nbsp;effects&nbsp;for&nbsp;each&nbsp;subject<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;i&nbsp;=&nbsp;0&nbsp;,&nbsp;...&nbsp;,&nbsp;M-1,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bSim(i,:)&nbsp;is&nbsp;uniformly&nbsp;distributed&nbsp;on&nbsp;[-.5,&nbsp;.5].<br>
+eSim&nbsp;&nbsp;:&nbsp;simulate&nbsp;value&nbsp;for&nbsp;measurement&nbsp;noise&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;i&nbsp;=&nbsp;0&nbsp;,&nbsp;...&nbsp;,&nbsp;M-1&nbsp;and&nbsp;k&nbsp;=&nbsp;0&nbsp;,&nbsp;...&nbsp;,&nbsp;q-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eSim(i,&nbsp;k)&nbsp;is&nbsp;N(0,&nbsp;sigma^2&nbsp;)&nbsp;distributed.<br>
+tSim&nbsp;&nbsp;:&nbsp;time&nbsp;corresponding&nbsp;to&nbsp;each&nbsp;simulated&nbsp;measurement&nbsp;value<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;for&nbsp;k&nbsp;=&nbsp;0&nbsp;,&nbsp;...&nbsp;,&nbsp;q-1,&nbsp;tSim(k)&nbsp;=&nbsp;(k&nbsp;+&nbsp;1)&nbsp;/&nbsp;q<br>
+ySim&nbsp;&nbsp;:&nbsp;simulate&nbsp;measurement&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;i&nbsp;=&nbsp;0&nbsp;,&nbsp;...&nbsp;,&nbsp;M-1&nbsp;and&nbsp;k&nbsp;=&nbsp;0&nbsp;,&nbsp;...&nbsp;,&nbsp;q-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ySim(i,&nbsp;k)&nbsp;=&nbsp;e(i,&nbsp;k)&nbsp;+&nbsp;bSim(i,&nbsp;0)&nbsp;+&nbsp;bSim(i,&nbsp;1)&nbsp;*&nbsp;tSim(k)&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;...&nbsp;+&nbsp;bSim(i,&nbsp;q-1)&nbsp;*&nbsp;tSim(k)^(q-1)<br>
+*/<br>
+//&nbsp;*************************************************************************<br>
+#&nbsp;include&nbsp;&lt;cmath&gt;<br>
+#&nbsp;include&nbsp;&lt;string&gt;<br>
+#&nbsp;include&nbsp;&lt;CppAD/CppAD.h&gt;<br>
+#&nbsp;include&nbsp;&lt;gsl/gsl_rng.h&gt;<br>
+#&nbsp;include&nbsp;&lt;gsl/gsl_randist.h&gt;<br>
+#&nbsp;include&nbsp;&lt;cppunit/TestSuite.h&gt;<br>
+#&nbsp;include&nbsp;&lt;cppunit/TestCaller.h&gt;<br>
+<br>
+#&nbsp;include&nbsp;&quot;../../../spk/SpkModel.h&quot;<br>
+#&nbsp;include&nbsp;&quot;../../../spk/spk_non_par.h&quot;<br>
+#&nbsp;include&nbsp;&quot;../../../spk/WarningsManager.h&quot;<br>
+<br>
+#&nbsp;include&nbsp;&quot;spk_non_par_test.h&quot;<br>
+//&nbsp;*************************************************************************<br>
+namespace&nbsp;{&nbsp;//&nbsp;[Begin:&nbsp;unnamed&nbsp;namespace]<br>
+<br>
+//&nbsp;-------------------------------------------------------------------------<br>
+template&nbsp;&lt;class&nbsp;Scalar&gt;<br>
+class&nbsp;polynomial_model&nbsp;:&nbsp;public&nbsp;SpkModel&lt;Scalar&gt;<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;typedef&nbsp;std::valarray&lt;double&gt;&nbsp;&nbsp;&nbsp;vector;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;typedef&nbsp;std::valarray&lt;Scalar&nbsp;&gt;&nbsp;Svector;<br>
+private:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;constants<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;size_t&nbsp;q_;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;size_t&nbsp;m_;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;size_t&nbsp;M_;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;size_t&nbsp;n_;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;double&nbsp;sigma_;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;bool&nbsp;&nbsp;&nbsp;fit_variance_;&nbsp;&nbsp;&nbsp;//&nbsp;This&nbsp;determines&nbsp;if&nbsp;the&nbsp;variance&nbsp;parameter&nbsp;is&nbsp;fit&nbsp;or&nbsp;not.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;current&nbsp;state&nbsp;of&nbsp;the&nbsp;model<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;&nbsp;&nbsp;i_;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Svector&nbsp;alpha_;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Svector&nbsp;b_;<br>
+public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;polynomial_model(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sigma&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;M&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;fit_variance&nbsp;)&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;sigma_(sigma),&nbsp;q_(q),&nbsp;m_(m),&nbsp;M_(M),&nbsp;n_(n),&nbsp;t_(q)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;alpha_(m),&nbsp;b_(n),&nbsp;fit_variance_(fit_variance)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;k;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(&nbsp;k&nbsp;=&nbsp;0;&nbsp;k&nbsp;&lt;&nbsp;q_;&nbsp;k++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;t_[k]&nbsp;=&nbsp;(k&nbsp;+&nbsp;1.)&nbsp;/&nbsp;double(q);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;};&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~polynomial_model(void)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{};<br>
+private:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSetPopPar(const&nbsp;Svector&nbsp;&amp;alpha)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;assert(alpha.size()&nbsp;==&nbsp;m_);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alpha_&nbsp;=&nbsp;alpha;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSelectIndividual(int&nbsp;i)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;(&nbsp;0&nbsp;&lt;=&nbsp;i&nbsp;)&nbsp;&amp;&nbsp;(&nbsp;i&nbsp;&lt;&nbsp;M_&nbsp;)&nbsp;);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i_&nbsp;=&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSetIndPar(const&nbsp;&nbsp;Svector&nbsp;&amp;b)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;assert(b.size()&nbsp;==&nbsp;n_);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b_&nbsp;=&nbsp;b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doIndParVariance(Svector&nbsp;&amp;D_out)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;D_out.size()&nbsp;==&nbsp;n_&nbsp;*&nbsp;n_&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;not&nbsp;needed&nbsp;?<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataMean(Svector&nbsp;&amp;f_out)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;f_out.size()&nbsp;==&nbsp;q_&nbsp;);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;j,&nbsp;k,&nbsp;n_amplitude;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;fit_variance_&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;n_amplitude&nbsp;=&nbsp;n_&nbsp;-&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;n_amplitude&nbsp;=&nbsp;n_;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(k&nbsp;=&nbsp;0;&nbsp;k&nbsp;&lt;&nbsp;q_;&nbsp;k++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;&nbsp;&nbsp;tpow&nbsp;=&nbsp;1.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Scalar&nbsp;&nbsp;&nbsp;sum&nbsp;&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;n_amplitude;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;sum&nbsp;+=&nbsp;b_[j]&nbsp;*&nbsp;&nbsp;tpow;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;tpow&nbsp;*=&nbsp;t_[k];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_out[&nbsp;k&nbsp;]&nbsp;=&nbsp;sum;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataVariance(Svector&nbsp;&amp;R_out)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;R_out.size()&nbsp;==&nbsp;q_&nbsp;*&nbsp;q_&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;k1,&nbsp;k2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(k1&nbsp;=&nbsp;0;&nbsp;k1&nbsp;&lt;&nbsp;q_;&nbsp;k1++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;for(k2&nbsp;=&nbsp;0;&nbsp;k2&nbsp;&lt;&nbsp;q_;&nbsp;k2++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_out[&nbsp;k1&nbsp;*&nbsp;q_&nbsp;+&nbsp;k2&nbsp;]&nbsp;=&nbsp;0.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;If&nbsp;the&nbsp;variance&nbsp;parameter&nbsp;is&nbsp;being&nbsp;fit,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;then&nbsp;use&nbsp;it&nbsp;to&nbsp;calculate&nbsp;the&nbsp;variance.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(fit_variance_)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_out[k1*q_&nbsp;+&nbsp;k1]&nbsp;=&nbsp;exp(&nbsp;b_[n_-1]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_out[k1*q_&nbsp;+&nbsp;k1]&nbsp;=&nbsp;sigma_&nbsp;*&nbsp;sigma_;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;functions&nbsp;that&nbsp;should&nbsp;not&nbsp;be&nbsp;pure&nbsp;virtual&nbsp;but&nbsp;should&nbsp;rather&nbsp;have<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;a&nbsp;default&nbsp;definition&nbsp;that&nbsp;throws&nbsp;an&nbsp;exception<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataMean_indPar(std::valarray&lt;double&gt;&nbsp;&amp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;assert(0);&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataVariance_indPar(std::valarray&lt;double&gt;&nbsp;&amp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;assert(0);&nbsp;}<br>
+};<br>
+//&nbsp;-------------------------------------------------------------------------<br>
+enum&nbsp;distribution&nbsp;{&nbsp;UNIFORM_01,&nbsp;GAUSSIAN_01&nbsp;};&nbsp;<br>
+double&nbsp;simulate(distribution&nbsp;d)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;static&nbsp;gsl_rng&nbsp;*rng&nbsp;&nbsp;&nbsp;=&nbsp;0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;rng&nbsp;==&nbsp;0&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;gsl_rng_type&nbsp;*T&nbsp;&nbsp;=&nbsp;gsl_rng_default;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rng&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;gsl_rng_alloc(T);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unsigned&nbsp;long&nbsp;int&nbsp;seed&nbsp;=&nbsp;1234;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;gsl_rng_set(rng,&nbsp;seed);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;rng&nbsp;!=&nbsp;0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;return_value;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;switch(d)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;UNIFORM_01:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return_value&nbsp;=&nbsp;gsl_ran_flat(rng,&nbsp;0.,&nbsp;1.);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;case&nbsp;GAUSSIAN_01:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return_value&nbsp;=&nbsp;gsl_ran_gaussian(rng,&nbsp;1.);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;break;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;default:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;return_value;<br>
+}<br>
+//&nbsp;-------------------------------------------------------------------------<br>
+void&nbsp;p_y_given_b(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;polynomial_model&lt;double&gt;&nbsp;&amp;model&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;pout&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;typedef&nbsp;std::valarray&lt;double&gt;&nbsp;vector;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;&nbsp;=&nbsp;B.nr();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;J&nbsp;&nbsp;=&nbsp;B.nc();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;M&nbsp;&nbsp;=&nbsp;N.nr();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;pout.nr()&nbsp;==&nbsp;M&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;pout.nc()&nbsp;==&nbsp;J&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;pi&nbsp;=&nbsp;4.&nbsp;*&nbsp;std::atan(1.);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i,&nbsp;j,&nbsp;k,&nbsp;ell;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;residual,&nbsp;variance;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*p_ptr&nbsp;=&nbsp;pout.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*B_ptr&nbsp;=&nbsp;B.data();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;J;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;move&nbsp;data&nbsp;from&nbsp;B&nbsp;for&nbsp;this&nbsp;discrete&nbsp;measurement&nbsp;point<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&nbsp;b(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(k&nbsp;=&nbsp;0;&nbsp;k&nbsp;&lt;&nbsp;n;&nbsp;k++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b[k]&nbsp;=&nbsp;B_ptr[k&nbsp;+&nbsp;j&nbsp;*&nbsp;n];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*y_ptr&nbsp;=&nbsp;y.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;M;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;model.selectIndividual(i);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model.setIndPar(b);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;Ni&nbsp;=&nbsp;size_t(&nbsp;*(N.data()&nbsp;+&nbsp;i)&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&nbsp;f(Ni);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model.dataMean(f);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&nbsp;R(Ni&nbsp;*&nbsp;Ni);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model.dataVariance(R);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sum&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(k&nbsp;=&nbsp;0;&nbsp;k&nbsp;&lt;&nbsp;Ni;&nbsp;k++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;for(ell&nbsp;=&nbsp;0;&nbsp;ell&nbsp;&lt;&nbsp;Ni;&nbsp;ell++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;k&nbsp;!=&nbsp;ell&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(&nbsp;R[&nbsp;k&nbsp;*&nbsp;Ni&nbsp;+&nbsp;ell]&nbsp;==&nbsp;0.&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;residual&nbsp;=&nbsp;(*y_ptr++)&nbsp;-&nbsp;f[k];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;variance&nbsp;=&nbsp;R[&nbsp;k&nbsp;*&nbsp;Ni&nbsp;+&nbsp;k&nbsp;];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sum&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+=&nbsp;residual&nbsp;*&nbsp;residual&nbsp;/&nbsp;variance;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sum&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+=&nbsp;log(&nbsp;2&nbsp;*&nbsp;pi&nbsp;*&nbsp;variance);&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p_ptr[&nbsp;i&nbsp;+&nbsp;j&nbsp;*&nbsp;M&nbsp;]&nbsp;=&nbsp;exp(&nbsp;-&nbsp;sum&nbsp;/&nbsp;2.&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+}<br>
+double&nbsp;objective(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;polynomial_model&lt;double&gt;&nbsp;&amp;model&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;lam&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;typedef&nbsp;std::valarray&lt;double&gt;&nbsp;vector;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;&nbsp;=&nbsp;B.nr();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;J&nbsp;&nbsp;=&nbsp;B.nc();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;M&nbsp;&nbsp;=&nbsp;N.nr();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;p(M,&nbsp;J);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p_y_given_b(model,&nbsp;y,&nbsp;N,&nbsp;B,&nbsp;p);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i,&nbsp;j;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*lam_ptr&nbsp;=&nbsp;lam.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*p_ptr&nbsp;&nbsp;&nbsp;=&nbsp;p.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;objective&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;M;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sum&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;J;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sum&nbsp;+=&nbsp;lam_ptr[j]&nbsp;*&nbsp;p_ptr[&nbsp;i&nbsp;+&nbsp;j&nbsp;*&nbsp;M&nbsp;];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objective&nbsp;+=&nbsp;-&nbsp;log(&nbsp;sum&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;objective;<br>
+}<br>
+//--------------------------------------------------------------------<br>
+void&nbsp;one_fit(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sigma&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;M&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;J&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;fit_variance&nbsp;)<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;-------------------&nbsp;level&nbsp;----------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;mod(level,&nbsp;10)&nbsp;is&nbsp;level&nbsp;&nbsp;in&nbsp;spk_non_par<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;(level&nbsp;/&nbsp;10)&nbsp;is&nbsp;level&nbsp;in&nbsp;QuasiNewton01Box<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;level&nbsp;=&nbsp;00;&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;-------------------&nbsp;model&nbsp;---------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;sigma&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;measure&nbsp;noise&nbsp;standard&nbsp;deviation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;size_t&nbsp;q&nbsp;&nbsp;&nbsp;=&nbsp;number&nbsp;of&nbsp;measurements&nbsp;per&nbsp;individual<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;size_t&nbsp;m&nbsp;&nbsp;&nbsp;=&nbsp;number&nbsp;of&nbsp;fixed&nbsp;effects&nbsp;(not&nbsp;used)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;size_t&nbsp;M&nbsp;&nbsp;&nbsp;=&nbsp;number&nbsp;of&nbsp;individuals&nbsp;in&nbsp;the&nbsp;population<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;size_t&nbsp;n&nbsp;&nbsp;&nbsp;=&nbsp;number&nbsp;of&nbsp;random&nbsp;effects&nbsp;per&nbsp;individual<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;size_t&nbsp;J&nbsp;&nbsp;&nbsp;=&nbsp;number&nbsp;of&nbsp;discret&nbsp;measure&nbsp;points&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;define&nbsp;ADdouble,&nbsp;vector,&nbsp;and&nbsp;ADvector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;typedef&nbsp;CppAD::AD&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADdouble;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;typedef&nbsp;std::valarray&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;typedef&nbsp;std::valarray&lt;ADdouble&gt;&nbsp;ADvector;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;some&nbsp;temporary&nbsp;indices<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;i,&nbsp;j,&nbsp;k;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;polynomial_model&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model(sigma,&nbsp;q,&nbsp;m,&nbsp;M,&nbsp;n,&nbsp;fit_variance);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;polynomial_model&lt;&nbsp;ADdouble&nbsp;&gt;&nbsp;admodel(sigma,&nbsp;q,&nbsp;m,&nbsp;M,&nbsp;n,&nbsp;fit_variance);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;value&nbsp;for&nbsp;alpha&nbsp;(not&nbsp;used)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ADvector&nbsp;adalpha(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;adalpha[0]&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;admodel.setPopPar(adalpha);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alpha(m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alpha[0]&nbsp;&nbsp;&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model.setPopPar(alpha);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;----------------------&nbsp;N&nbsp;-----------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;N(M,&nbsp;1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*ptr&nbsp;=&nbsp;N.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;M;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[i]&nbsp;=&nbsp;q;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;----------------------&nbsp;y&nbsp;------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;random&nbsp;effects&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&nbsp;b(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;data&nbsp;mean&nbsp;given&nbsp;random&nbsp;effects<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;vector&nbsp;f(q);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;simulate&nbsp;the&nbsp;data&nbsp;set<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;y(&nbsp;M&nbsp;*&nbsp;q,&nbsp;1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr&nbsp;=&nbsp;y.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;M;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;simulate&nbsp;data&nbsp;for&nbsp;this&nbsp;individual<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model.selectIndividual(i);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;simulate&nbsp;true&nbsp;random&nbsp;effects&nbsp;for&nbsp;this&nbsp;subject<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(k&nbsp;=&nbsp;0;&nbsp;k&nbsp;&lt;&nbsp;n;&nbsp;k++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b[k]&nbsp;=&nbsp;simulate(GAUSSIAN_01);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model.setIndPar(b);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;data&nbsp;mean&nbsp;plus&nbsp;noise<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model.dataMean(f);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(k&nbsp;=&nbsp;0;&nbsp;k&nbsp;&lt;&nbsp;q;&nbsp;k++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;mean&nbsp;zero&nbsp;variance&nbsp;one&nbsp;Gaussian<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*ptr++&nbsp;=&nbsp;f[k]&nbsp;+&nbsp;sigma&nbsp;*&nbsp;simulate(GAUSSIAN_01);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;---------------------&nbsp;max_itr&nbsp;---------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;max_itr(2,&nbsp;1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr&nbsp;=&nbsp;max_itr.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[0]&nbsp;=&nbsp;100.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[1]&nbsp;=&nbsp;100.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;---------------------&nbsp;epsilon&nbsp;---------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;epsilon(5,&nbsp;1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr&nbsp;=&nbsp;epsilon.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;fit_variance&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[0]&nbsp;=&nbsp;1e-3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;ptr[0]&nbsp;=&nbsp;1e-4;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[1]&nbsp;=&nbsp;1e-4;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[2]&nbsp;=&nbsp;1e-4;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[3]&nbsp;=&nbsp;1e-13;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[4]&nbsp;=&nbsp;1./4.;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;-----------------------&nbsp;blow&nbsp;----------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;blow(n,&nbsp;1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr&nbsp;=&nbsp;blow.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;n;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[i]&nbsp;=&nbsp;-.5;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;If&nbsp;the&nbsp;variance&nbsp;parameter&nbsp;is&nbsp;being&nbsp;fit,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;set&nbsp;its&nbsp;lower&nbsp;limit&nbsp;differently<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(fit_variance)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[n&nbsp;-&nbsp;1]&nbsp;=&nbsp;log(1e-4);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;-----------------------&nbsp;bup&nbsp;-----------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;bup(n,&nbsp;1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr&nbsp;=&nbsp;bup.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;n;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[i]&nbsp;=&nbsp;+.5;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;If&nbsp;the&nbsp;variance&nbsp;parameter&nbsp;is&nbsp;being&nbsp;fit,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;set&nbsp;its&nbsp;upper&nbsp;limit&nbsp;differently<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(fit_variance)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[n&nbsp;-&nbsp;1]&nbsp;=&nbsp;log(1e+4);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;-----------------------&nbsp;Bin&nbsp;-----------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;Bin(n,&nbsp;J);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr&nbsp;=&nbsp;Bin.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;J;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;n;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;uniform&nbsp;distribution&nbsp;on&nbsp;[-.5,&nbsp;+.5]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;(include&nbsp;the&nbsp;variance&nbsp;parameter)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[j&nbsp;*&nbsp;n&nbsp;+&nbsp;i]&nbsp;=&nbsp;simulate(UNIFORM_01)&nbsp;-&nbsp;.5;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;-----------------------&nbsp;Bout&nbsp;----------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;Bout;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;----------------------&nbsp;lamout&nbsp;---------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;lamout;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;-----------------------&nbsp;pout&nbsp;----------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;pout;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;------------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;spk_non_par(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;level&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;admodel&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max_itr&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;epsilon&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;blow&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bup&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bin&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bout&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lamout&nbsp;&nbsp;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pout&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;catch(&nbsp;const&nbsp;SpkException&amp;&nbsp;e&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;CPPUNIT_ASSERT_MESSAGE(&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;polynomial_fit_test:&nbsp;failed&nbsp;for&nbsp;a&nbsp;known&nbsp;reason.&quot;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;false&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;catch(&nbsp;...&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;CPPUNIT_ASSERT_MESSAGE(&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;polynomial_fit_test:&nbsp;failed&nbsp;for&nbsp;an&nbsp;unknown&nbsp;reason.&quot;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;false&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;value&nbsp;of&nbsp;J&nbsp;returned&nbsp;by&nbsp;spk_non_par<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;J&nbsp;=&nbsp;Bout.nc();&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPUNIT_ASSERT_MESSAGE(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;polynomial_fit_test:&nbsp;dimension&nbsp;error.&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bout.nr()&nbsp;&nbsp;&nbsp;==&nbsp;n&nbsp;&amp;&amp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lamout.nr()&nbsp;==&nbsp;J&nbsp;&amp;&amp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lamout.nc()&nbsp;==&nbsp;1&nbsp;&amp;&amp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pout.nr()&nbsp;&nbsp;&nbsp;==&nbsp;M&nbsp;&amp;&amp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pout.nc()&nbsp;&nbsp;&nbsp;==&nbsp;J<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;check_pout(M,&nbsp;J);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;p_y_given_b(model,&nbsp;y,&nbsp;N,&nbsp;Bout,&nbsp;check_pout);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*check&nbsp;=&nbsp;check_pout.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;pout.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;M;&nbsp;i++)&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;J;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;CppAD::NearEqual(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[i+j*M],&nbsp;check[i+j*M],&nbsp;1e-10,&nbsp;1e-10<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPUNIT_ASSERT_MESSAGE(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;polynomial_fit_test:&nbsp;error&nbsp;in&nbsp;pout.&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;check&nbsp;Bout<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr&nbsp;=&nbsp;Bout.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;step&nbsp;=&nbsp;1e-2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;obj&nbsp;&nbsp;=&nbsp;objective(model,&nbsp;y,&nbsp;N,&nbsp;Bout,&nbsp;lamout);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;eps&nbsp;&nbsp;=&nbsp;*(epsilon.data()&nbsp;+&nbsp;0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;J;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;for(k&nbsp;=&nbsp;0;&nbsp;k&nbsp;&lt;&nbsp;n;&nbsp;k++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;bkj&nbsp;=&nbsp;ptr[k+j*n];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;*(blow.data()&nbsp;+&nbsp;k)&nbsp;&lt;=&nbsp;bkj;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;bkj&nbsp;&lt;=&nbsp;*(bup.data()&nbsp;+&nbsp;k);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[k+j*n]&nbsp;=&nbsp;bkj&nbsp;-&nbsp;step;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;ptr[k+j*n]&nbsp;&gt;=&nbsp;*(blow.data()&nbsp;+&nbsp;k)&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;obj_m&nbsp;=&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objective(model,&nbsp;y,&nbsp;N,&nbsp;Bout,&nbsp;lamout);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;obj_m&nbsp;&gt;=&nbsp;obj&nbsp;-&nbsp;eps;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[k+j*n]&nbsp;=&nbsp;bkj&nbsp;+&nbsp;step;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;ptr[k+j*n]&nbsp;&lt;=&nbsp;*(bup.data()&nbsp;+&nbsp;k)&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;obj_p&nbsp;=&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;objective(model,&nbsp;y,&nbsp;N,&nbsp;Bout,&nbsp;lamout);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;obj_p&nbsp;&gt;=&nbsp;obj&nbsp;-&nbsp;eps;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[k+j*n]&nbsp;=&nbsp;bkj;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPUNIT_ASSERT_MESSAGE(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;polynomial_fit_test:&nbsp;Bout&nbsp;is&nbsp;not&nbsp;optimal.&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Check&nbsp;lamout<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr&nbsp;=&nbsp;lamout.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;jmax&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sum&nbsp;&nbsp;=&nbsp;0.;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;J;&nbsp;j++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;sum&nbsp;+=&nbsp;ptr[j];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;ptr[j]&nbsp;&gt;&nbsp;ptr[jmax]&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jmax&nbsp;=&nbsp;j;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&amp;=&nbsp;CppAD::NearEqual(sum,&nbsp;1.,&nbsp;eps,&nbsp;eps);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;lam_max&nbsp;=&nbsp;ptr[jmax];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;step&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;lam_max&nbsp;*&nbsp;1e-2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(j&nbsp;=&nbsp;0;&nbsp;j&nbsp;&lt;&nbsp;J;&nbsp;j++)&nbsp;if(&nbsp;j&nbsp;!=&nbsp;jmax&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;lam_j&nbsp;=&nbsp;ptr[j];&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;0.&nbsp;&lt;=&nbsp;lam_j;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;lam_j&nbsp;&lt;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[j]&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;lam_j&nbsp;-&nbsp;step;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[jmax]&nbsp;=&nbsp;lam_max&nbsp;+&nbsp;step;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;0.&nbsp;&lt;=&nbsp;ptr[j]&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;obj_m&nbsp;=&nbsp;objective(model,&nbsp;y,&nbsp;N,&nbsp;Bout,&nbsp;lamout);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;obj_m&nbsp;&gt;=&nbsp;obj&nbsp;-&nbsp;eps;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[j]&nbsp;=&nbsp;lam_j&nbsp;+&nbsp;step;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[jmax]&nbsp;=&nbsp;lam_max&nbsp;-&nbsp;step;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;ptr[j]&nbsp;&lt;=&nbsp;1.&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;obj_p&nbsp;=&nbsp;objective(model,&nbsp;y,&nbsp;N,&nbsp;Bout,&nbsp;lamout);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;=&nbsp;obj_p&nbsp;&gt;=&nbsp;obj&nbsp;-&nbsp;eps;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[j]&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;lam_j;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ptr[jmax]&nbsp;=&nbsp;lam_max;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CPPUNIT_ASSERT_MESSAGE(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;polynomial_fit_test:&nbsp;lamout&nbsp;is&nbsp;not&nbsp;optimal.&quot;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return;<br>
+}<br>
+<br>
+}&nbsp;//&nbsp;[End:&nbsp;unnamed&nbsp;namespace]<br>
+//&nbsp;*************************************************************************<br>
+<br>
+<br>
+//&nbsp;--------------&nbsp;CppUnit&nbsp;framework&nbsp;functions&nbsp;------------------------------<br>
+<br>
+void&nbsp;spk_non_par_test::setUp()<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initializations<br>
+}<br>
+void&nbsp;spk_non_par_test::tearDown()<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;clean&nbsp;up<br>
+}<br>
+CppUnit::Test*&nbsp;spk_non_par_test::suite()<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppUnit::TestSuite;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;CppUnit::TestCaller;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;TestSuite&nbsp;*suiteOfTests&nbsp;=&nbsp;new&nbsp;TestSuite(&quot;spk_non_par_test&quot;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;suiteOfTests-&gt;addTest(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new&nbsp;TestCaller&lt;spk_non_par_test&gt;(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;polynomial_fit_test&quot;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;spk_non_par_test::polynomial_fit_test<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;suiteOfTests-&gt;addTest(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;new&nbsp;TestCaller&lt;spk_non_par_test&gt;(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&quot;polynomial_and_variance_fit_test&quot;,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;spk_non_par_test::polynomial_and_variance_fit_test<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;suiteOfTests;<br>
+}<br>
+<br>
+//--------------------------------------------------------------------<br>
+void&nbsp;spk_non_par_test::polynomial_fit_test(void)<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;can&nbsp;change&nbsp;these&nbsp;values&nbsp;or&nbsp;better&nbsp;yet&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;run&nbsp;different&nbsp;combinations&nbsp;of&nbsp;these&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sigma&nbsp;=&nbsp;.5;&nbsp;//&nbsp;measure&nbsp;noise&nbsp;standard&nbsp;deviation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;fixed&nbsp;effects&nbsp;(not&nbsp;used)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;2;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;random&nbsp;effects&nbsp;per&nbsp;individual<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;4;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;measurements&nbsp;per&nbsp;individual<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;M&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;5;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;individuals&nbsp;in&nbsp;the&nbsp;population<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;J&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;10;&nbsp;//&nbsp;number&nbsp;of&nbsp;discret&nbsp;measure&nbsp;points&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;fit_variance&nbsp;=&nbsp;false;&nbsp;//&nbsp;variance&nbsp;is&nbsp;a&nbsp;fixed&nbsp;effect<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;one_fit(sigma,&nbsp;q,&nbsp;m,&nbsp;M,&nbsp;n,&nbsp;J,&nbsp;fit_variance);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Uncomment&nbsp;these&nbsp;statements&nbsp;to&nbsp;see&nbsp;the&nbsp;warnings&nbsp;that&nbsp;are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;generated&nbsp;for&nbsp;this&nbsp;test&nbsp;because&nbsp;its&nbsp;measure&nbsp;points&nbsp;are<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;constrained&nbsp;by&nbsp;their&nbsp;bounds.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/*<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;string&nbsp;warnings;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;WarningsManager::getAllWarnings(&nbsp;warnings&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;########################################&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;warnings;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;########################################&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*/<br>
+<br>
+}<br>
+<br>
+//--------------------------------------------------------------------<br>
+void&nbsp;spk_non_par_test::polynomial_and_variance_fit_test(void)<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;can&nbsp;change&nbsp;these&nbsp;values&nbsp;or&nbsp;better&nbsp;yet&nbsp;run&nbsp;different&nbsp;combinations&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;of&nbsp;these&nbsp;values<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;sigma&nbsp;=&nbsp;.5;&nbsp;//&nbsp;measure&nbsp;noise&nbsp;standard&nbsp;deviation<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;m&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;fixed&nbsp;effects&nbsp;(not&nbsp;used)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;n&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;3;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;random&nbsp;effects&nbsp;per&nbsp;individual<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;q&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;4;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;measurements&nbsp;per&nbsp;individual<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;M&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;5;&nbsp;&nbsp;//&nbsp;number&nbsp;of&nbsp;individuals&nbsp;in&nbsp;the&nbsp;population<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size_t&nbsp;J&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;10;&nbsp;//&nbsp;number&nbsp;of&nbsp;discret&nbsp;measure&nbsp;points&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;fit_variance&nbsp;=&nbsp;true;&nbsp;//&nbsp;variance&nbsp;is&nbsp;a&nbsp;random&nbsp;effect<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;one_fit(sigma,&nbsp;q,&nbsp;m,&nbsp;M,&nbsp;n,&nbsp;J,&nbsp;fit_variance);<br>
+}<br>
+</span></font></code>
+<hr>Input File: ../../spk/spk_non_par.cpp
+
+</body>
+</html>

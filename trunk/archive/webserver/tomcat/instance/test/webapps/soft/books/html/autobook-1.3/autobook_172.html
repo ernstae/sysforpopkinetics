@@ -1,0 +1,232 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Portable Library Design</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Portable Library Design">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Portable Library Design">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC172"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_171.html#SEC171" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: libltdl Dynamic Module" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_173.html#SEC173" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: dlpreopen Loading" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_173.html#SEC173" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: dlpreopen Loading" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_164.html#SEC164" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Using GNU libltdl" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_178.html#SEC178" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Advanced GNU Automake Usage" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 18.3 Portable Library Design </H2>
+<!--docid::SEC172::-->
+<P>
+
+When partitioning the functionality of your project into libraries, and
+particularly loadable modules, it easy to inadvertantly rely on modern
+shared library features such as <EM>back-linking</EM> or <EM>dependent
+library loading</EM>.  If you do accidentally use any of these features, you
+probably won't find out about it until someone first tries to use your
+project on an older or less featureful host.
+</P><P>
+
+I have already used the <SAMP>`-module'</SAMP> and <SAMP>`-avoid-version'</SAMP>
+libtool linking options when compiling the libltdl module in the
+last section, the others are useful to know also.  All of these are used
+with the <SAMP>`link'</SAMP> mode of <CODE>libtool</CODE> (<SAMP>`libtool
+--mode=link'</SAMP>): 
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`-module'</SAMP>
+<DD>This option tells <CODE>libtool</CODE> that the target is a dynamically
+loadable module (as opposed to a conventional shared library) and as
+such need not have the <SAMP>`lib'</SAMP> prefix.
+<P>
+
+<DT><SAMP>`-avoid-version'</SAMP>
+<DD>When linking a dynamic module, this option can be used instead of the
+<SAMP>`-version-info'</SAMP> option, so that the module is not subject to the
+usual shared library version number suffixes.
+<P>
+
+<DT><SAMP>`-no-undefined'</SAMP>
+<DD>This is an extremely important option when you are aiming for maximum
+portability.  It declares that all of the symbols required by the target
+are resolved at link time.  Some shared library architectures do not
+allow undefined symbols by default (Tru64 Unix), and others do not allow
+them at all (AIX).  By using this switch, and ensuring that all
+symbols really are resolved at link time, your libraries will work on
+even these platforms.  See section <A HREF="autobook_88.html#SEC88">11.2.1 Creating Libtool Libraries with Automake</A>.
+<P>
+
+<DT><SAMP>`-export-dynamic'</SAMP>
+<DD>Almost the opposite of <SAMP>`-no-undefined'</SAMP>, this option will compile
+the target so that the symbols it exports can be used to satisfy
+unresolved symbols in subsequently loaded modules.  Not all shared
+library architectures support this feature, and many that do support it,
+do so by default regardless of whether this option is supplied.  If you
+rely on this feature, then you should use this option, in the knowledge
+that you project will not work correctly on architectures that have no
+support for the feature.  For maximum portability, you should neither
+rely on this feature nor use the <SAMP>`-export-dynamic'</SAMP> option -- but,
+on the occasions you do need the feature, this option is necessary to
+ensure that the linker is called correctly.
+</DL>
+<P>
+
+When you have the option to do so, I recommend that you design your
+project so that each of the libraries and modules is self contained,
+except for minimal number of dependent libraries, arranged in a
+directional graph shaped like a tree.  That is, by relying on
+back-linking, or mutual or cyclic dependencies you reduce the
+portability of your project.
+In the diagrams below, an arrow indicates that the compilation object
+relies on symbols from the objects that it points to:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>       main            .---&#62; main                main
+         |             |       |                   |
+    .----+----,        |  .----+----,         .----+----,
+    v         v        |  v         v         v         v
+   liba      libb      liba        libb      liba&#60;-----libb
+    |                     |                   |         ^
+    v                     v                   v         |
+   libc                  libc                libc-------'
+
+     Tree: good        Backlinking: bad       Cyclic: bad
+</pre></td></tr></table></P><P>
+
+<A NAME="dlpreopen Loading"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

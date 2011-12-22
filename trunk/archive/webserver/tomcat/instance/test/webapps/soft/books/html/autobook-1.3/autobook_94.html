@@ -1,0 +1,350 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Using Libtool Libraries</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Using Libtool Libraries">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Using Libtool Libraries">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC94"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_93.html#SEC93" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: A Large GNU Autotools Project" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_95.html#SEC95" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Removing --foreign" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_93.html#SEC93" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: A Large GNU Autotools Project" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_93.html#SEC93" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: A Large GNU Autotools Project" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_99.html#SEC99" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Rolling Distribution Tarballs" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 12.1 Using Libtool Libraries </H2>
+<!--docid::SEC94::-->
+<P>
+
+As you have seen, It is very easy to convert <CODE>automake</CODE> built
+static libraries to <CODE>automake</CODE> built Libtool libraries. In order
+to build <SAMP>`libsic'</SAMP> as a Libtool library, I have changed the name of
+the library from <TT>`libsic.a'</TT> (the <EM>old archive</EM> name in Libtool
+terminology) to <TT>`libsic.la'</TT> (the <EM>pseudo-library</EM>), and must
+use the <CODE>LTLIBRARIES</CODE> Automake primary:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>lib_LTLIBRARIES         = libsic.la
+libsic_la_LIBADD        = $(top_builddir)/replace/libreplace.la
+libsic_la_SOURCES       = builtin.c error.c eval.c list.c sic.c \
+                        syntax.c xmalloc.c xstrdup.c xstrerror.c
+
+</pre></td></tr></table>Notice the <SAMP>`la'</SAMP> in <CODE>libsic_la_SOURCES</CODE> is new too.
+</P><P>
+
+It is similarly easy to take advantage of Libtool <EM>convenience</EM>
+libraries.  For the purposes of Sic, <TT>`libreplace'</TT> is an ideal
+candidate for this treatment -- I can create the library as a separate
+entity from selected sources in their own directory, and add those
+objects to <TT>`libsic'</TT>.  This technique ensures that the installed
+library has all of the support functions it needs without having to
+link <TT>`libreplace'</TT> as a separate object.
+</P><P>
+
+In <TT>`replace/Makefile.am'</TT>, I have again changed the name of the
+library from<BR> <TT>`libreplace.a'</TT> to <TT>`libreplace.la'</TT>, and changed
+the automake primary from <SAMP>`LIBRARIES'</SAMP> to <SAMP>`LTLIBRARIES'</SAMP>.
+Unfortunately, those changes alone are insufficient.  Libtool libraries
+are compiled from Libtool objects (which have the <SAMP>`.lo'</SAMP> suffix), so
+I cannot use <SAMP>`LIBOBJS'</SAMP> which is a list of <SAMP>`.o'</SAMP> suffixed
+objects<A NAME="DOCF22" HREF="autobook_fot.html#FOOT22">(22)</A>.
+See section <A HREF="autobook_86.html#SEC86">11.1.2 Extra Macros for Libtool</A>, for more details.  Here is
+<TT>`replace/Makefile.am'</TT>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>MAINTAINERCLEANFILES    = Makefile.in
+
+noinst_LTLIBRARIES      = libreplace.la
+libreplace_la_SOURCES   = 
+libreplace_la_LIBADD    = @LTLIBOBJS@
+
+</pre></td></tr></table></P><P>
+
+And not forgetting to set and use the <SAMP>`LTLIBOBJS'</SAMP> configure
+substitution (see section <A HREF="autobook_86.html#SEC86">11.1.2 Extra Macros for Libtool</A>):
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>Xsed="sed -e s/^X//"
+LTLIBOBJS=echo X"$LIBOBJS" | \
+    [$Xsed -e s,\.[^.]* ,.lo ,g;s,\.[^.]*$,.lo,']
+AC_SUBST(LTLIBOBJS)
+
+</pre></td></tr></table></P><P>
+
+As a consequence of using <CODE>libtool</CODE> to build the project
+libraries, the increasing number of configuration files being added to
+the <TT>`config'</TT> directory will grow to include <TT>`ltconfig'</TT> and
+<TT>`ltmain.sh'</TT>.  These files will be used on the installer's machine
+when Sic is configured, so it is important to distribute them.  The
+naive way to do it is to give the <TT>`config'</TT> directory a
+<TT>`Makefile.am'</TT> of its own;  however, it is not too difficult to
+distribute these files from the top <TT>`Makefile.am'</TT>, and it saves
+clutter, as you can see here:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>AUX_DIST                = $(ac_aux_dir)/config.guess \
+                        $(ac_aux_dir)/config.sub \
+                        $(ac_aux_dir)/install-sh \
+                        $(ac_aux_dir)/ltconfig \
+                        $(ac_aux_dir)/ltmain.sh \
+                        $(ac_aux_dir)/mdate-sh \
+                        $(ac_aux_dir)/missing \
+                        $(ac_aux_dir)/mkinstalldirs
+AUX_DIST_EXTRA          = $(ac_aux_dir)/readline.m4 \
+                        $(ac_aux_dir)/sys_errlist.m4 \
+                        $(ac_aux_dir)/sys_siglist.m4
+EXTRA_DIST                = bootstrap
+
+MAINTAINERCLEANFILES         = Makefile.in aclocal.m4 configure config-h.in \
+                        stamp-h.in $(AUX_DIST)
+
+dist-hook:
+        (cd $(distdir) &#38;&#38; mkdir $(ac_aux_dir))
+        for file in $(AUX_DIST) $(AUX_DIST_EXTRA); do \
+          cp $$file $(distdir)/$$file; \
+        done
+
+</pre></td></tr></table></P><P>
+
+The <SAMP>`dist-hook'</SAMP> rule is used to make sure the <TT>`config'</TT>
+directory and the files it contains are correctly added to the
+distribution by the <SAMP>`make dist'</SAMP> rules, see section <A HREF="autobook_100.html#SEC100">13.1 Introduction to Distributions</A>.
+</P><P>
+
+I have been careful to use the <CODE>configure</CODE> script's location for
+<CODE>ac_aux_dir</CODE>, so that it is defined (and can be changed) in only
+one place.  This is achieved by adding the following macro to
+<TT>`configure.in'</TT>: 
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>AC_SUBST(ac_aux_dir)
+</pre></td></tr></table></P><P>
+
+There is no need to explicity set a macro in the <TT>`Makefile.am'</TT>,
+because Automake automatically creates macros for every value that you
+<SAMP>`AC_SUBST'</SAMP> from <TT>`configure.in'</TT>.
+</P><P>
+
+I have also added the <CODE>AC_PROG_LIBTOOL</CODE> macro to
+<TT>`configure.in'</TT> in place of <CODE>AC_PROG_RANLIB</CODE> as described in
+<A HREF="autobook_83.html#SEC83">11. Using GNU Libtool with <TT>`configure.in'</TT> and <TT>`Makefile.am'</TT></A>.
+</P><P>
+
+Now I can upgrade the configury to use <CODE>libtool</CODE> -- the greater
+part of this is running the <CODE>libtoolize</CODE> script that comes with
+the Libtool distribution.   The <CODE>bootstrap</CODE> script then needs to
+be updated to run <CODE>libtoolize</CODE> at the correct juncture:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#! /bin/sh
+
+set -x
+aclocal -I config
+libtoolize --force --copy
+autoheader
+automake --add-missing --copy
+autoconf
+
+</pre></td></tr></table></P><P>
+
+Now I can re-bootstrap the entire project so that it can make use of
+<CODE>libtool</CODE>: 
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ ./bootstrap
++ aclocal -I config
++ libtoolize --force --copy
+Putting files in AC_CONFIG_AUX_DIR, config.
++ autoheader
++ automake --add-missing --copy
+automake: configure.in: installing config/install-sh
+automake: configure.in: installing config/mkinstalldirs
+automake: configure.in: installing config/missing
++ autoconf
+</pre></td></tr></table></P><P>
+
+The new macros are evident by the new output seen when the newly
+regenerated <CODE>configure</CODE> script is executed:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ ./configure --with-readline
+...
+checking host system type... i586-pc-linux-gnu
+checking build system type... i586-pc-linux-gnu
+checking for ld used by GCC... /usr/bin/ld
+checking if the linker (/usr/bin/ld) is GNU ld... yes
+checking for /usr/bin/ld option to reload object files... -r
+checking for BSD-compatible nm... /usr/bin/nm -B
+checking whether ln -s works... yes
+checking how to recognise dependent libraries... pass_all
+checking for object suffix... o
+checking for executable suffix... no
+checking for ranlib... ranlib
+checking for strip... strip
+...
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... yes
+creating libtool
+...
+$ make
+...
+gcc -g -O2 -o .libs/sic sic.o sic_builtin.o sic_repl.o sic_syntax.o \
+../sic/.libs/libsic.so -lreadline -Wl,--rpath -Wl,/usr/local/lib
+creating sic
+...
+$ src/sic
+] libtool --mode=execute ldd src/sic
+    libsic.so.0 =&#62; /tmp/sic/sic/.libs/libsic.so.0 (0x40014000)
+    libreadline.so.4 =&#62; /lib/libreadline.so.4 (0x4001e000)
+    libc.so.6 =&#62; /lib/libc.so.6 (0x40043000)
+    libncurses.so.5 =&#62; /lib/libncurses.so.5 (0x40121000)
+    /lib/ld-linux.so.2 =&#62; /lib/ld-linux.so.2 (0x40000000)
+] exit
+$
+</pre></td></tr></table></P><P>
+
+As you can see, <CODE>sic</CODE> is now linked against a shared library
+build of <TT>`libsic'</TT>, but not directly against the convenience
+library, <TT>`libreplace'</TT>.
+</P><P>
+
+<A NAME="Removing --foreign"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

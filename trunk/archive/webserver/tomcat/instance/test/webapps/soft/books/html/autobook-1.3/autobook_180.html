@@ -1,0 +1,216 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Language support</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Language support">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Language support">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC180"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_179.html#SEC179" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Automake Conditionals" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_181.html#SEC181" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Automatic dependency tracking" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_181.html#SEC181" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Automatic dependency tracking" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_178.html#SEC178" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Advanced GNU Automake Usage" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_182.html#SEC182" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: A Complex GNU Autotools Project" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 19.2 Language support </H2>
+<!--docid::SEC180::-->
+<P>
+
+Automake comes with built-in knowledge of the most common compiled
+languages: C, C++, Objective C, Yacc, Lex, assembly, and Fortran.
+However, programs are sometimes written in an unusual language, or in a
+custom language that is translated into something more common.  Automake
+lets you handle these cases in a natural way.
+</P><P>
+
+Automake's notion of a `language' is tied to the suffix appended to
+each source file written in that language.  You must inform Automake of
+each new suffix you introduce.  This is done by listing them in the
+<SAMP>`SUFFIXES'</SAMP> macro.  For instance, suppose you are writing part of
+your program in the language <SAMP>`M'</SAMP>, which is compiled to object code
+by a program named <CODE>mc</CODE>.  The typical suffix for an <SAMP>`M'</SAMP>
+source file is <SAMP>`.m'</SAMP>.  In your <TT>`Makefile.am'</TT> you would write:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>SUFFIXES = .m
+</pre></td></tr></table></P><P>
+
+This differs from ordinary <CODE>make</CODE> usage, where you would use the
+special <CODE>.SUFFIX</CODE> target to list suffixes.
+</P><P>
+
+Now you need to tell Automake (and <CODE>make</CODE>) how to compile a
+<TT>`.m'</TT> file to a <TT>`.o'</TT> file.  You do this by writing an ordinary
+<CODE>make</CODE> suffix rule:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>MC = mc
+.m.o:
+        $(MC) $(MCFLAGS) $(AM_MCFLAGS) -c $&#60;
+</pre></td></tr></table></P><P>
+
+Note that we introduced the <SAMP>`MC'</SAMP>, <SAMP>`MCFLAGS'</SAMP>, and
+<SAMP>`AM_MCFLAGS'</SAMP> variables.  While not required, this is good style in
+case you want to override any of these later (for instance from the
+command line).
+</P><P>
+
+Automake understands enough about suffix rules to recognize that
+<TT>`.m'</TT> files can be treated just like any file it already
+understands, so now you can write:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>bin_PROGRAMS = myprogram
+myprogram_SOURCES = foo.c something.m
+</pre></td></tr></table></P><P>
+
+Note that Automake does not really understand chained suffix rules;
+however, frequently the right thing will happen anyway.  For instance,
+if you have a <CODE>.m.c</CODE> rule, Automake will naively assume that
+<SAMP>`.m'</SAMP> files should be turned into <SAMP>`.o'</SAMP> files -- and then it
+will proceed to rely on <CODE>make</CODE> to do the real work.  In this
+example, if the translation takes three steps--from <SAMP>`.m'</SAMP> to
+<SAMP>`.x'</SAMP>, then from <SAMP>`.x'</SAMP> to <SAMP>`.c'</SAMP>, and finally to
+<SAMP>`.o'</SAMP>---then Automake's simplistic approach will break.
+Fortunately, these cases are very rare.
+</P><P>
+
+<A NAME="Automatic dependency tracking"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

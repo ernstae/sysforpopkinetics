@@ -1,0 +1,17 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.246
+----------------------------------
+USER VISIBLE CHANGES
+
+None.
+
+OTHER CHANGES
+
+Set the identifiability flag equal to false for population estimation jobs.
+
+RELATED BUG REPORTS:  995
+
+BY:  Mitch Watrous
+
+WHEN:  September 17, 2008
+

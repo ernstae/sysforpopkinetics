@@ -1,0 +1,87 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.113
+----------------------------------
+USER VISIBLE CHANGES
+The values of individualized residuals are now properly aligned with
+the rest of the data.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 408
+
+BY: Sachiko Honda
+
+WHEN: October 7, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.114
+----------------------------------
+USER VISIBLE CHANGES
+Apostrophes and double quartation marks present in error messages
+appear normally.
+
+OTHER CHANGES
+Both SpkCompilerError::operator<< and SpkError::operator<< are modified.
+
+RELATED BUG REPORTS: 451
+
+BY: Sachiko Honda
+
+WHEN: October 7, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.115
+----------------------------------
+USER VISIBLE CHANGES
+The AMT data item is inserted into the data set when it is missing.
+The data column is filled with 0.0.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: Octorber 10, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.116
+----------------------------------
+USER VISIBLE CHANGES
+The AMT data item is inserted into the data set when it is missing.
+The data item values are set to 0.0.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 
+
+BY: Sachiko Honda
+
+WHEN: October 11, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.117
+----------------------------------
+USER VISIBLE CHANGES
+Errors are reported in a graceful manner when post-optimality routines 
+fail.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 181
+
+BY: Sachiko Honda
+
+WHEN: October 11, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.118
+----------------------------------
+USER VISIBLE CHANGES
+
+Improved error messaging and detection of invalid numerical values.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  178, 335, 348, 402, 429, 454, 458
+
+BY:  Mitch Watrous
+
+WHEN:  October 11, 2005

@@ -1,0 +1,393 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<!-- Created on December, 25  2002 by texi2html 1.65 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU make: Conditionals</TITLE>
+
+<META NAME="description" CONTENT="GNU make: Conditionals">
+<META NAME="keywords" CONTENT="GNU make: Conditionals">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.65">
+
+</HEAD>
+
+<BODY LANG="en" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC79"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_6.html#SEC78"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_7.html#SEC80"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_6.html#SEC65"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_8.html#SEC83"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> 7. Conditional Parts of Makefiles </H1>
+<!--docid::SEC79::-->
+<P>
+
+<A NAME="IDX276"></A>
+A <EM>conditional</EM> causes part of a makefile to be obeyed or ignored
+depending on the values of variables.  Conditionals can compare the
+value of one variable to another, or the value of a variable to
+a constant string.  Conditionals control what <CODE>make</CODE> actually
+"sees" in the makefile, so they <EM>cannot</EM> be used to control shell
+commands at the time of execution.</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_7.html#SEC80">7.1 Example of a Conditional</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Example of a conditional</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_7.html#SEC81">7.2 Syntax of Conditionals</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">The syntax of conditionals.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_7.html#SEC82">7.3 Conditionals that Test Flags</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Conditionals that test flags.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Conditional Example"></A>
+<HR SIZE="6">
+<A NAME="SEC80"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_7.html#SEC79"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_7.html#SEC81"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_7.html#SEC79"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_7.html#SEC79"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_8.html#SEC83"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 7.1 Example of a Conditional </H2>
+<!--docid::SEC80::-->
+<P>
+
+The following example of a conditional tells <CODE>make</CODE> to use one set
+of libraries if the <CODE>CC</CODE> variable is `<SAMP>gcc</SAMP>', and a different
+set of libraries otherwise.  It works by controlling which of two
+command lines will be used as the command for a rule.  The result is
+that `<SAMP>CC=gcc</SAMP>' as an argument to <CODE>make</CODE> changes not only which
+compiler is used but also which libraries are linked.
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>libs_for_gcc = -lgnu
+normal_libs =
+
+foo: $(objects)
+ifeq ($(CC),gcc)
+        $(CC) -o foo $(objects) $(libs_for_gcc)
+else
+        $(CC) -o foo $(objects) $(normal_libs)
+endif
+</pre></td></tr></table></P><P>
+
+This conditional uses three directives: one <CODE>ifeq</CODE>, one <CODE>else</CODE>
+and one <CODE>endif</CODE>.
+</P><P>
+
+The <CODE>ifeq</CODE> directive begins the conditional, and specifies the
+condition.  It contains two arguments, separated by a comma and surrounded
+by parentheses.  Variable substitution is performed on both arguments and
+then they are compared.  The lines of the makefile following the
+<CODE>ifeq</CODE> are obeyed if the two arguments match; otherwise they are
+ignored.
+</P><P>
+
+The <CODE>else</CODE> directive causes the following lines to be obeyed if the
+previous conditional failed.  In the example above, this means that the
+second alternative linking command is used whenever the first alternative
+is not used.  It is optional to have an <CODE>else</CODE> in a conditional.
+</P><P>
+
+The <CODE>endif</CODE> directive ends the conditional.  Every conditional must
+end with an <CODE>endif</CODE>.  Unconditional makefile text follows.
+</P><P>
+
+As this example illustrates, conditionals work at the textual level:
+the lines of the conditional are treated as part of the makefile, or
+ignored, according to the condition.  This is why the larger syntactic
+units of the makefile, such as rules, may cross the beginning or the
+end of the conditional.
+</P><P>
+
+When the variable <CODE>CC</CODE> has the value `<SAMP>gcc</SAMP>', the above example has
+this effect:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>foo: $(objects)
+        $(CC) -o foo $(objects) $(libs_for_gcc)
+</pre></td></tr></table></P><P>
+
+When the variable <CODE>CC</CODE> has any other value, the effect is this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>foo: $(objects)
+        $(CC) -o foo $(objects) $(normal_libs)
+</pre></td></tr></table></P><P>
+
+Equivalent results can be obtained in another way by conditionalizing a
+variable assignment and then using the variable unconditionally:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>libs_for_gcc = -lgnu
+normal_libs =
+
+ifeq ($(CC),gcc)
+  libs=$(libs_for_gcc)
+else
+  libs=$(normal_libs)
+endif
+
+foo: $(objects)
+        $(CC) -o foo $(objects) $(libs)
+</pre></td></tr></table></P><P>
+
+<A NAME="Conditional Syntax"></A>
+<HR SIZE="6">
+<A NAME="SEC81"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_7.html#SEC80"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_7.html#SEC82"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_7.html#SEC79"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_7.html#SEC79"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_8.html#SEC83"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 7.2 Syntax of Conditionals </H2>
+<!--docid::SEC81::-->
+<P>
+
+The syntax of a simple conditional with no <CODE>else</CODE> is as follows:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre><VAR>conditional-directive</VAR>
+<VAR>text-if-true</VAR>
+endif
+</pre></td></tr></table></P><P>
+
+The <VAR>text-if-true</VAR> may be any lines of text, to be considered as part
+of the makefile if the condition is true.  If the condition is false, no
+text is used instead.
+</P><P>
+
+The syntax of a complex conditional is as follows:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre><VAR>conditional-directive</VAR>
+<VAR>text-if-true</VAR>
+else
+<VAR>text-if-false</VAR>
+endif
+</pre></td></tr></table></P><P>
+
+If the condition is true, <VAR>text-if-true</VAR> is used; otherwise,
+<VAR>text-if-false</VAR> is used instead.  The <VAR>text-if-false</VAR> can be any
+number of lines of text.
+</P><P>
+
+The syntax of the <VAR>conditional-directive</VAR> is the same whether the
+conditional is simple or complex.  There are four different directives that
+test different conditions.  Here is a table of them:
+</P><P>
+
+<DL COMPACT>
+<DT><CODE>ifeq (<VAR>arg1</VAR>, <VAR>arg2</VAR>)</CODE>
+<DD><DT><CODE>ifeq '<VAR>arg1</VAR>' '<VAR>arg2</VAR>'</CODE>
+<DD><DT><CODE>ifeq "<VAR>arg1</VAR>" "<VAR>arg2</VAR>"</CODE>
+<DD><DT><CODE>ifeq "<VAR>arg1</VAR>" '<VAR>arg2</VAR>'</CODE>
+<DD><DT><CODE>ifeq '<VAR>arg1</VAR>' "<VAR>arg2</VAR>"</CODE>
+<DD>Expand all variable references in <VAR>arg1</VAR> and <VAR>arg2</VAR> and
+compare them.  If they are identical, the <VAR>text-if-true</VAR> is
+effective; otherwise, the <VAR>text-if-false</VAR>, if any, is effective.
+<P>
+
+Often you want to test if a variable has a non-empty value.  When the
+value results from complex expansions of variables and functions,
+expansions you would consider empty may actually contain whitespace
+characters and thus are not seen as empty.  However, you can use the
+<CODE>strip</CODE> function (see section <A HREF="make_8.html#SEC85">8.2 Functions for String Substitution and Analysis</A>) to avoid interpreting
+whitespace as a non-empty value.  For example:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>ifeq ($(strip $(foo)),)
+<VAR>text-if-empty</VAR>
+endif
+</pre></td></tr></table></P><P>
+
+will evaluate <VAR>text-if-empty</VAR> even if the expansion of
+<CODE>$(foo)</CODE> contains whitespace characters.
+</P><P>
+
+<DT><CODE>ifneq (<VAR>arg1</VAR>, <VAR>arg2</VAR>)</CODE>
+<DD><DT><CODE>ifneq '<VAR>arg1</VAR>' '<VAR>arg2</VAR>'</CODE>
+<DD><DT><CODE>ifneq "<VAR>arg1</VAR>" "<VAR>arg2</VAR>"</CODE>
+<DD><DT><CODE>ifneq "<VAR>arg1</VAR>" '<VAR>arg2</VAR>'</CODE>
+<DD><DT><CODE>ifneq '<VAR>arg1</VAR>' "<VAR>arg2</VAR>"</CODE>
+<DD>Expand all variable references in <VAR>arg1</VAR> and <VAR>arg2</VAR> and
+compare them.  If they are different, the <VAR>text-if-true</VAR> is
+effective; otherwise, the <VAR>text-if-false</VAR>, if any, is effective.
+<P>
+
+<DT><CODE>ifdef <VAR>variable-name</VAR></CODE>
+<DD>If the variable <VAR>variable-name</VAR> has a non-empty value, the
+<VAR>text-if-true</VAR> is effective; otherwise, the <VAR>text-if-false</VAR>,
+if any, is effective.  Variables that have never been defined have an
+empty value.  The variable <VAR>variable-name</VAR> is itself expanded, so
+it could be a variable or function that expands to the name of a
+variable.
+<P>
+
+Note that <CODE>ifdef</CODE> only tests whether a variable has a value.  It
+does not expand the variable to see if that value is nonempty.
+Consequently, tests using <CODE>ifdef</CODE> return true for all definitions
+except those like <CODE>foo =</CODE>.  To test for an empty value, use
+<CODE>ifeq ($(foo),)</CODE>.  For example,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>bar =
+foo = $(bar)
+ifdef foo
+frobozz = yes
+else
+frobozz = no
+endif
+</pre></td></tr></table></P><P>
+
+sets `<SAMP>frobozz</SAMP>' to `<SAMP>yes</SAMP>', while:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>foo =
+ifdef foo
+frobozz = yes
+else
+frobozz = no
+endif
+</pre></td></tr></table></P><P>
+
+sets `<SAMP>frobozz</SAMP>' to `<SAMP>no</SAMP>'.
+</P><P>
+
+<DT><CODE>ifndef <VAR>variable-name</VAR></CODE>
+<DD>If the variable <VAR>variable-name</VAR> has an empty value, the
+<VAR>text-if-true</VAR> is effective; otherwise, the <VAR>text-if-false</VAR>,
+if any, is effective.
+</DL>
+<P>
+
+Extra spaces are allowed and ignored at the beginning of the conditional
+directive line, but a tab is not allowed.  (If the line begins with a tab,
+it will be considered a command for a rule.)  Aside from this, extra spaces
+or tabs may be inserted with no effect anywhere except within the directive
+name or within an argument.  A comment starting with `<SAMP>#</SAMP>' may appear at
+the end of the line.
+</P><P>
+
+The other two directives that play a part in a conditional are <CODE>else</CODE>
+and <CODE>endif</CODE>.  Each of these directives is written as one word, with no
+arguments.  Extra spaces are allowed and ignored at the beginning of the
+line, and spaces or tabs at the end.  A comment starting with `<SAMP>#</SAMP>' may
+appear at the end of the line.
+</P><P>
+
+Conditionals affect which lines of the makefile <CODE>make</CODE> uses.  If
+the condition is true, <CODE>make</CODE> reads the lines of the
+<VAR>text-if-true</VAR> as part of the makefile; if the condition is false,
+<CODE>make</CODE> ignores those lines completely.  It follows that syntactic
+units of the makefile, such as rules, may safely be split across the
+beginning or the end of the conditional.</P><P>
+
+<CODE>make</CODE> evaluates conditionals when it reads a makefile.
+Consequently, you cannot use automatic variables in the tests of
+conditionals because they are not defined until commands are run
+(see section <A HREF="make_10.html#SEC111">Automatic Variables</A>).
+</P><P>
+
+To prevent intolerable confusion, it is not permitted to start a
+conditional in one makefile and end it in another.  However, you may
+write an <CODE>include</CODE> directive within a conditional, provided you do
+not attempt to terminate the conditional inside the included file.
+</P><P>
+
+<A NAME="Testing Flags"></A>
+<HR SIZE="6">
+<A NAME="SEC82"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_7.html#SEC81"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_8.html#SEC83"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_7.html#SEC79"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_7.html#SEC79"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_8.html#SEC83"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 7.3 Conditionals that Test Flags </H2>
+<!--docid::SEC82::-->
+<P>
+
+You can write a conditional that tests <CODE>make</CODE> command flags such as
+`<SAMP>-t</SAMP>' by using the variable <CODE>MAKEFLAGS</CODE> together with the
+<CODE>findstring</CODE> function
+(see section <A HREF="make_8.html#SEC85">Functions for String Substitution and Analysis</A>).
+This is useful when <CODE>touch</CODE> is not enough to make a file appear up
+to date.
+</P><P>
+
+The <CODE>findstring</CODE> function determines whether one string appears as a
+substring of another.  If you want to test for the `<SAMP>-t</SAMP>' flag,
+use `<SAMP>t</SAMP>' as the first string and the value of <CODE>MAKEFLAGS</CODE> as
+the other.
+</P><P>
+
+For example, here is how to arrange to use `<SAMP>ranlib -t</SAMP>' to finish
+marking an archive file up to date:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>archive.a: <small>...</small>
+ifneq (,$(findstring t,$(MAKEFLAGS)))
+        +touch archive.a
+        +ranlib -t archive.a
+else
+        ranlib archive.a
+endif
+</pre></td></tr></table></P><P>
+
+The `<SAMP>+</SAMP>' prefix marks those command lines as "recursive" so
+that they will be executed despite use of the `<SAMP>-t</SAMP>' flag.
+See section <A HREF="make_5.html#SEC58">Recursive Use of <CODE>make</CODE></A>.
+</P><P>
+
+<A NAME="Functions"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_7.html#SEC79"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_8.html#SEC83"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Jeff Bailey</I> on <I>December, 25  2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+</FONT>
+
+</BODY>
+</HTML>

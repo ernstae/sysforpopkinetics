@@ -1,0 +1,2467 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>CVS RFPK HOWTO</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>CVS RFPK HOWTO</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	CVS a widely used tool for managing revisions to documents
+	is now available to RFPK Team Members.
+	CVS is especially
+	useful when a number of authors or developers work 
+	on the same set of documents, especially when these 
+	collaborators are not always located in the same office
+	or the same campus.  This tutorial provides background
+	on revision control systems in general, and shows how
+	to get started with CVS, in particular.
+    </P
+><P
+>&#13;	The original version of CVS presents
+	a command-line interface to the user.  Much of this document
+	is a description of that interface.  A GUI interface, called
+	<I
+CLASS="emphasis"
+>cervisia</I
+>, is now also available, and
+	is covered in the last section of this tutorial.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>December 27, 2002</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.01</TD
+><TD
+ALIGN="LEFT"
+>January 17, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added revision history section.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.02</TD
+><TD
+ALIGN="LEFT"
+>February 21, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Copies of the CVS books are now on muir.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.03</TD
+><TD
+ALIGN="LEFT"
+>April 9, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added section on the cervisia GUI.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.04</TD
+><TD
+ALIGN="LEFT"
+>April 16, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added section on server administration.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.05</TD
+><TD
+ALIGN="LEFT"
+>July 30, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Use update -P in preference to update</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.06</TD
+><TD
+ALIGN="LEFT"
+>January 2, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Relative RHEL Version 3.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#intro"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN57"
+>CVS and other Revision Control Systems</A
+></DT
+><DT
+><A
+HREF="#AEN73"
+>Repositories</A
+></DT
+><DT
+><A
+HREF="#env"
+>Environment Variables for Repository Access</A
+></DT
+><DT
+><A
+HREF="#AEN113"
+>The Command Line Interface</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#co"
+>Getting a Working Copy</A
+></DT
+><DT
+><A
+HREF="#update-sect"
+>Getting Updates</A
+></DT
+><DT
+><A
+HREF="#AEN150"
+>Committing Your Work</A
+></DT
+><DT
+><A
+HREF="#AEN198"
+>What's the Difference?</A
+></DT
+><DT
+><A
+HREF="#add-sect"
+>Adding Files and Directories</A
+></DT
+><DT
+><A
+HREF="#AEN279"
+>Removing Files and Directories</A
+></DT
+><DT
+><A
+HREF="#AEN294"
+>Conclusion (command-line interface)</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN302"
+>The Cervisia GUI</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN315"
+>Repository Access</A
+></DT
+><DT
+><A
+HREF="#AEN321"
+>Setting Up Your Sandbox</A
+></DT
+><DT
+><A
+HREF="#AEN326"
+>Opening Your Sandbox</A
+></DT
+><DT
+><A
+HREF="#AEN338"
+>Cervisia Settings</A
+></DT
+><DT
+><A
+HREF="#AEN345"
+>CVS Commands</A
+></DT
+><DT
+><A
+HREF="#AEN349"
+>Conclusion (GUI interface section)</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN353"
+>Some Server Administration</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN356"
+>Creating A New Repository</A
+></DT
+><DT
+><A
+HREF="#AEN387"
+>Defining Modules</A
+></DT
+></DL
+></DD
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="intro"
+></A
+>Introduction</H2
+><P
+>&#13;    Brad Bell and Ranjan Dash have started a new project that will
+    include text documents as well as computer source code.  To manage
+    revisions to their documents, they have decided to use a system
+    known as CVS rather than Microsoft Visual SourceSafe, which is 
+    currently being used by the Software Team to manage revisions
+    to SPK.
+  </P
+><P
+>&#13;    CVS is a free, open source product used to manage revisions
+    for many important software projects, including Apache, Mozilla, 
+    and Linux.  It is especially useful when multiple authors, 
+    geographically dispersed, collaborate on the same documents.  
+    As configured at RFPK, CVS can be accessed with excellent 
+    security from anywhere that there is an Internet connection.
+  </P
+><P
+>&#13;    CVS is available to anyone in RFPK who has a need to manage 
+    revisions to their text documents.  This paper contains 
+    information specific to the RFPK installation of CVS.  Complete
+    information is available in two manuals, copies of which are
+    stored on the RFPK internal website.  These are
+    <A
+HREF="http://muir.rfpk.washington.edu:800/SoftwareBooks/cederqvist-1.11.2.html/cvs.html"
+TARGET="_top"
+>&#13;    <I
+CLASS="emphasis"
+>Version Management with CVS</I
+>
+    </A
+>, 
+    by Per Cederqvist and
+    <A
+HREF="http://muir.rfpk.washington.edu:800/SoftwareBooks/cvsbook.html"
+TARGET="_top"
+>&#13;    <I
+CLASS="emphasis"
+>The CVS Book</I
+>,
+    </A
+> <I
+CLASS="emphasis"
+>Open Source Development with CVS,</I
+>
+    by Karl Fogel.
+    If you have any questions, please feel free to contact 
+    Alan Westhagen (afw@u.washington.edu).
+  </P
+><P
+>&#13;    The CVS repository is on a Linux system, which has the Internet
+    domain name 
+    <SPAN
+CLASS="systemitem"
+>&#13;	whitechuck.rfpk.washington.edu
+    </SPAN
+>
+    .
+    In order to use the CVS repositories on this system, you
+    need to be installed as one of its users.  Please contact
+    Mike Macaulay (macaulay@apl.washington.edu) to add your
+    login to
+    <SPAN
+CLASS="systemitem"
+>&#13;       whitechuck
+    </SPAN
+>.
+  </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN57"
+></A
+>CVS and other Revision Control Systems</H2
+><P
+>CVS is an example of systems variously referred to as
+      <I
+CLASS="emphasis"
+>revision control</I
+> systems,
+      <I
+CLASS="emphasis"
+>source control</I
+> systems, or
+      <I
+CLASS="emphasis"
+>version control</I
+> systems.
+      Widely used revision control systems include SCCS, RCS,
+      Microsoft Visual SourceSafe (VSS) and CVS. 
+      All of these
+      systems were designed to work very much as 
+      does SCCS, the senior member of the group, which was developed
+      at Bell Labs in the 1970s.  Like SCCS, they all store
+      revisions as differences between the revised version and
+      the original, rather than as complete copies of each version, using
+      the algorithms originally incorporated in SCCS. 
+    </P
+><P
+>&#13;      In one important respect, CVS differs from the
+      others.  With all of the other systems, only one user
+      is allowed to work on a particular document at
+      any one time.  When a user wants to make changes to 
+      a text, she must first <I
+CLASS="emphasis"
+>check it out</I
+>,
+      which means that the revision control system gives
+      her the exclusive right to make changes until she 
+      subsequently <I
+CLASS="emphasis"
+>checks in</I
+> her modifications
+      and thus relinquishes exclusive control.  If someone else
+      has checked out the document that she wants to change,
+      she must wait until that person relinquishes it.  If she
+      is slow to make her changes, others must wait for
+      her.
+    </P
+><P
+>&#13;      CVS, too, was originally designed to incorporate the
+      exclusive checkout model.  This strategy was abandoned, however.
+      The change came about in response to a new set
+      of requirements that arose primarily as a result of the rapid expansion
+      of the Internet.  Previously, software 
+      development groups had almost always consisted of individuals
+      working in the same office or the same building.  In fact,
+      the leading software development methodologies required
+      this.  When you are in the same office, it is relatively
+      easy to negotiate directly with your co-workers about who
+      should have exclusive modification access to a particular
+      document.  When, conversely, you have people working on
+      different continents and in different time-zones and who
+      communicate asynchronously via email, it may take days
+      to get a co-worker to relinquish control.  Similarly, with 
+      frequent travel, it became a necessity for team members
+      to continue to work at hotels with unpredictable 
+      Internet connectivity, or even on airplanes
+      or in airports.  The exclusive checkout model had become
+      an impediment to productivity in the new global work place.
+    </P
+><P
+>&#13;      The break-through came with the reversal of the checkout 
+      model.  When a user checks out a project from CVS, she
+      gets a complete working copy on her own machine.  She is
+      free to make changes to any of the files in her working
+      copy.  If, for example, her working copy is on a laptop,
+      she can take her laptop off-line, travel to a conference
+      or to her vacation home and continue to work on her project,
+      secure in the knowledge that just because her 
+      computer is temporarily cut off from the Internet or just
+      because she can only devote a small part of the day
+      to the project, she is in no way impeding her collaborators.
+      When her computer comes back on line, whether by dial-up
+      connection, connection at an Internet cafe, or the connection
+      at her office, she can quickly have her working copy
+      updated with any changes her co-workers have made while
+      she was cut off from the network.
+    </P
+><P
+>&#13;      What happens if the user's changes conflict with changes
+      that have been committed by her collaborators in the
+      mean time?  This,
+      of course, is the situation that the exclusive checkout
+      model avoids.  With the CVS model, however,
+      it really is not a problem.  When the user
+      executes the CVS <B
+CLASS="command"
+>commit</B
+> command to incorporate her changes
+      in the repository,
+      CVS will refuse, informing
+      her that there are potential conflicts and that she
+      will need to perform an <B
+CLASS="command"
+>update</B
+>.
+      The update merges the current copy in the CVS repository
+      with her working copy, highlighting the differences.
+      She can then edit
+      her working copy to resolve any differences.  When
+      she once again runs the CVS <B
+CLASS="command"
+>commit</B
+>
+      command, her revised conflict-free revision will 
+      then be accepted, unless, of course, one of her 
+      colleagues has committed additional changes while
+      she was resolving the previous ones, in which case
+      the resolution process may require another iteration.
+    </P
+><P
+>&#13;      Occasionally having to enter into a conflict resolution
+      process is
+      the price users of CVS pay for the freedom to make revisions
+      whenever and wherever they can be made most effectively.
+      Especially given the importance of collaboration with 
+      partners at other institutions within the academic and
+      scientific world, CVS will be a valuable addition to
+      RFPK's set of resources.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN73"
+></A
+>Repositories</H2
+><P
+>&#13;      All of the documents under revision control are stored in a
+      <I
+CLASS="emphasis"
+>repository</I
+> on a server.  CVS permits
+      several repositories on a single server.  At present,
+      we have defined two.  One repository is for the work
+      being done by Ranjan and Brad.  The other is for certain
+      documents of the Software Team, including this tutorial.
+    </P
+><P
+>&#13;      The repository set up for Ranjan and Brad
+      has its root in the directory located at the
+      absolute path address
+      <TT
+CLASS="filename"
+>&#13;	/usr/local/cvs_repos/rfpk/r1
+      </TT
+> 
+      on a server with domain name
+      <SPAN
+CLASS="systemitem"
+>&#13;	whitechuck.rfpk.washington.edu
+      </SPAN
+>
+      The other repository on
+      <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>
+      has its root in the directory
+      <SPAN
+CLASS="systemitem"
+>&#13;	/usr/local/cvs_repos/rfpk/r2
+      </SPAN
+>
+      .
+    </P
+><P
+>&#13;      Within a repository, sets of documents are organized as
+      modules.  A module could comprise all  the source code for a 
+      computer application, or all the source code for a part
+      of the application.  It could be all the documents 
+      required for an academic paper, or all the chapters of
+      a book. 
+    </P
+><P
+>&#13;      Within the operating system of the computer,
+      the repository is a directory hierarchy.  A module name
+      can be associated with any directory in the hierarchy,
+      with a single file, or even with a list of files.
+      For example, the first module added to the 
+      <SPAN
+CLASS="systemitem"
+>r1</SPAN
+> repository
+      was the module called <I
+CLASS="emphasis"
+>muscle</I
+>,
+      so named because it holds a paper that Ranjan and
+      Brad are collaborating on which is about oxygen uptake
+      in muscles.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="env"
+></A
+>Environment Variables for Repository Access</H2
+><P
+>&#13;      At present, the only way to use CVS at RFPK
+      is from a Unix of 
+      Linux computer, or from the Cygwin environment on a 
+      Windows computer.  In either case, the initial setup 
+      is the same.
+    </P
+><P
+>&#13;      All access to CVS at RFPK is via
+      <I
+CLASS="emphasis"
+>ssh</I
+>, the secure shell.  When you 
+      issue a CVS command from the command line on your
+      workstation, the local copy of the <B
+CLASS="command"
+>cvs</B
+> program communicates
+      with the server via an encrypted channel that it
+      calls upon <B
+CLASS="command"
+>ssh</B
+> to provide.  The command is actually 
+      executed on the server, with data being piped through the
+      encrypted channel between the server and your workstation.
+      This is, arguably, the most secure arrangement possible on
+      the Internet. 
+    </P
+><P
+>&#13;      Because <B
+CLASS="command"
+>cvs</B
+> was originally designed to perform remote
+      execution using not <B
+CLASS="command"
+>ssh</B
+> but rather an insecure program
+      called <B
+CLASS="command"
+>rsh</B
+>, it is necessary to indicate
+      to <B
+CLASS="command"
+>cvs</B
+> that only <B
+CLASS="command"
+>ssh</B
+> should be used.  This can be accomplished
+      by setting and exporting the <TT
+CLASS="varname"
+>CVS_RSH</TT
+> 
+      environment variable.  Using the Bash shell, which is 
+      standard with Cygwin, most Linux systems and many Unix
+      systems, you would input the following commands
+      to the command-line interface:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;	CVS_RSH=ssh
+	export CVS_RSH
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      To avoid having to type these two lines every time you log
+      in to a Linux or Unix shell or start the Cygwin shell
+      window, you should add them to your
+      <TT
+CLASS="filename"
+>.bash_profile</TT
+> shell
+      initialization file.
+    </P
+><P
+>&#13;      Since the server supports several CVS repositories, you must 
+      tell CVS which repository you are working with.  Although
+      all <B
+CLASS="command"
+>cvs</B
+> commands allow you to identify the repository with
+      a command-line argument, it is usually more convenient to
+      define an environment variable.  The following lines should
+      be added to your 
+      <TT
+CLASS="filename"
+>.bash_profile</TT
+> shell
+      initialization file:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;        USER=<I
+CLASS="emphasis"
+>user</I
+>
+	CVSHOST=whitechuck.rfpk.washington.edu
+	CVSPATH=/usr/local/cvs_repos/rfpk/r1
+	CVSROOT=:ext:$USER@$CVSHOST:$CVSPATH
+        export CVSROOT
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      where <I
+CLASS="emphasis"
+>user</I
+> is your login user name on 
+      <SPAN
+CLASS="systemitem"
+>&#13;        whitechuck
+      </SPAN
+>.
+      <I
+CLASS="emphasis"
+>Note the r1 at the end of the line which
+      defines CVSPATH</I
+>.  This indicates that you
+      want to use the 
+      <SPAN
+CLASS="systemitem"
+>r1</SPAN
+>
+      repository rather than
+      <SPAN
+CLASS="systemitem"
+>r2</SPAN
+>
+      or some other repository.
+
+      Note: the RFPK Software Team uses the 
+      <SPAN
+CLASS="systemitem"
+>r2</SPAN
+> repository.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN113"
+></A
+>The Command Line Interface</H2
+><P
+>&#13;      At present, the only interface available for RFPK's Windows
+      users is the command-line interface.  Linux users have a choice
+      of the command-line interface and the <I
+CLASS="emphasis"
+>Cervisia</I
+>
+      GUI. The GUI is really just a wrapper around the command-line interface,
+      hence it is recommended that all users read the following section.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="co"
+></A
+>Getting a Working Copy</H3
+><P
+>&#13;	To make changes to existing documents or to add new documents
+	you first need to get a working copy of the repository or
+	at least the part of the repository that you want to change.
+	You accomplish this with the CVS <B
+CLASS="command"
+>checkout</B
+> command.
+      </P
+><P
+>&#13;	For example, you can checkout the entire
+	<SPAN
+CLASS="systemitem"
+>r1</SPAN
+>
+	repository with the following command:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cvs checkout r1
+	  cvs update -P
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	To checkout a particular module, in this case the
+	<I
+CLASS="emphasis"
+>muscle</I
+> module, you would use this
+	command:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cvs checkout muscle
+	  cvs update -P
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	When you issue a <B
+CLASS="command"
+>checkout</B
+> command, <B
+CLASS="command"
+>cvs</B
+> inserts a copy of 
+	the module in your current directory.  In the first example,
+	a directory named 
+	<TT
+CLASS="filename"
+>r1</TT
+>
+	would appear in your current directory.  In the second example,
+	a directory named
+	<TT
+CLASS="filename"
+>muscle</TT
+>
+	would appear.
+      </P
+><P
+>&#13;	The <B
+CLASS="command"
+>update -P</B
+> is not absolutely necessary,
+	but is recommended.  The <B
+CLASS="command"
+>-P</B
+> argument stands
+	for <I
+CLASS="emphasis"
+>prune</I
+>.  The effect is to prune empty
+	directories from your working copy of the source tree. Empty 
+	directories are retained forever in the repository because
+	they contain history even though all source code files have 
+	been removed.
+      </P
+><P
+>&#13;	Your working copy is a directory tree.  The root of that
+	tree is named for the repository or the module that you checked out.
+	Within the directories of this tree, you will find the
+	documents that are under version control.  You are free
+	to modify these documents, using your favorite text
+	editor. 
+      </P
+><P
+>&#13;	In each of the directories you will also find a subdirectory
+	named <TT
+CLASS="filename"
+>CVS</TT
+>,
+	which was placed there by <B
+CLASS="command"
+>cvs</B
+> as part of the checkout process.
+	<I
+CLASS="emphasis"
+>Do not modify the CVS directory or any of
+	  its contents.</I
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="update-sect"
+></A
+>Getting Updates</H3
+><P
+>&#13;	As you work on your modifications, your collaborators may have
+	been revising the documents of the same module you are working
+	on.  You can easily get your working copy updated with any
+	changes they have made.  
+      </P
+><P
+>&#13;	To use the CVS <B
+CLASS="command"
+>update</B
+> command, your current directory 
+	must be one of the directories of your working copy.  The
+	command will update files in that directory and in any
+	subdirectories.  It will not update files in parent 
+	directories.  Thus positioned, simply issue the command:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cvs update -P
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	If the files you are currently working on have been revised
+	since your last <B
+CLASS="command"
+>update</B
+> or <B
+CLASS="command"
+>checkout</B
+> command, the updating
+	process will change the affected files in your
+	working copy by inserting modifications from the repository,
+	and offsetting differences between your working copy
+	and the repository with
+	strings like &#60;&#60;&#60;&#60;&#60;&#60;&#60; or &#62;&#62;&#62;&#62;&#62;&#62;&#62;, depending on
+	whether the difference is in the the working copy or in the
+	repository.  When this happens, you need to edit your
+	working copy to resolve any conflicts and remove the 
+	&#60;&#60;&#60;&#60;&#60;&#60;&#60; and &#62;&#62;&#62;&#62;&#62;&#62;&#62; strings.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN150"
+></A
+>Committing Your Work</H3
+><P
+>&#13;	When you have reached a point when you would like to 
+	apply the modifications that you have made in your working
+	copy to the repository itself, you use the CVS <B
+CLASS="command"
+>commit</B
+>
+	command.  This command is similar to the 
+	<I
+CLASS="emphasis"
+>check-in</I
+> command in some other 
+	revision control systems, except that after <B
+CLASS="command"
+>commit</B
+>, 
+	all the files in your working copy are still checked out,
+	and you can immediately resume making additional modifications
+	to them.
+      </P
+><P
+>&#13;	Just as with <B
+CLASS="command"
+>update</B
+> and most other CVS commands, to use
+	the CVS <B
+CLASS="command"
+>commit</B
+> command your current directory must be
+	one of the directories of your working copy.  The command
+	will consider modifications to files in the current 
+	directory or in any of its subdirectories.  It will
+	not commit files in parent directories.  
+      </P
+><P
+>&#13;	To commit modifications to files in the current directory
+	and, recursively, any of the subdirectories, use the
+	command:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cvs commit
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	If you only want to commit changes to specific files, then
+	list them explicitly in the command:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cvs commit <I
+CLASS="emphasis"
+>file1 file2 ... filen</I
+>
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	You can provide comments about the purpose of your change
+	by using the <TT
+CLASS="option"
+>-m</TT
+> option to provide 
+	a revision message:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cvs commit -m "Fix for bug 13.224."
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	Revision messages go into a log which becomes part of the
+	revision history in the repository.
+      </P
+><P
+>&#13;	If you do not provide the <TT
+CLASS="option"
+>-m</TT
+> option, <B
+CLASS="command"
+>cvs</B
+> will 
+	start a text editor for you, so that you can type in
+	the revision message.  Depending on what system you
+	are running on, the default editor might be 
+	<B
+CLASS="command"
+>emacs</B
+> or
+	<B
+CLASS="command"
+>vi</B
+>.  This can be
+	confusing, especially if the default editor is one that
+	you are not used to.  To avoid getting the default
+	editor, all you have to do is add a pair of lines to your
+	<TT
+CLASS="filename"
+>.bash_profile</TT
+> 
+	shell configuration file.  Suppose that you prefer
+	<B
+CLASS="command"
+>emacs</B
+>:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;	  CVSEDITOR=emacs
+	  export CVSEDITOR
+	</PRE
+></TD
+></TR
+></TABLE
+>     
+      </P
+><P
+>&#13;	If someone else has made changes to the repository copy of
+	a file since you checked out or updated your working copy,
+	the <B
+CLASS="command"
+>commit</B
+> command will report errors and will fail
+	to incorporate your changes in the repository.  Here is
+	an example of the output that you might expect to 
+	see.  A user called <I
+CLASS="emphasis"
+>jones</I
+> has attempted
+	to commit a file called <I
+CLASS="emphasis"
+>Makefile</I
+>, and
+	the CVS <B
+CLASS="command"
+>commit</B
+> command has returned the following output:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cvs server: Up-to-date check failed for `Makefile'
+	  cvs [server aborted]: correct above errors first!
+	  cvs commit: saving log message in /tmp/cvs610c74f4.1
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	In the above example, <B
+CLASS="command"
+>commit</B
+> reports a 
+	failure in the <I
+CLASS="emphasis"
+>up-to-date check</I
+>
+	for a particular file, which simply means that 
+	a copy of this file has been committed since your
+	working copy was last checked out or updated.  To 
+	correct this error, proceed as follows:
+	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      Update your working copy of the file.  You could use
+	      the following command to update the particular file
+	      in question, which in this example is called 
+	      <TT
+CLASS="filename"
+>Makefile</TT
+>	    
+	      .
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		cvs update Makefile
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Edit the file, using your favorite text editor.  
+	      Differences between your working copy and the 
+	      repository will be identified with &#62;&#62;&#62;&#62;&#62;&#62;&#62; and
+	      &#60;&#60;&#60;&#60;&#60;&#60;&#60; strings, as explained above, in the
+	      <A
+HREF="#update-sect"
+>section</A
+>
+	      that describes the <B
+CLASS="command"
+>update</B
+> command.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Once you have removed any conflicts, as well
+	      as the markers that were inserted by the 
+	      <B
+CLASS="command"
+>update</B
+> command, execute the <B
+CLASS="command"
+>commit</B
+> command
+	      again:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		cvs commit Makefile
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	      This time, <B
+CLASS="command"
+>commit</B
+> should accept your changes,
+	      and record a new revision.
+	    </P
+></LI
+></OL
+>
+	
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN198"
+></A
+>What's the Difference?</H3
+><P
+>&#13;	The CVS <B
+CLASS="command"
+>diff</B
+> command will display the differences between
+	any files in your working copy and their counterparts in 
+	the repository, or between different revisions in the
+	repository.  The need to do this arises frequently,
+	for a number of reasons:
+	<P
+></P
+><UL
+><LI
+><P
+>&#13;	      You have made changes and you need a reminder or
+	      a record of what the differences are.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      You know, or suspect that someone else has committed
+	      changes to a file that you are currently working on,
+	      and you would like to know what these are before 
+	      attempting a <B
+CLASS="command"
+>commit</B
+> or an <B
+CLASS="command"
+>update</B
+>.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      You would like to know how a version from the past
+	      differs from your working copy, or how two versions
+	      from the past differ from each other.  This can
+	      be especially useful when the version from the
+	      past was released to the public. 
+	    </P
+></LI
+></UL
+>
+      </P
+><P
+>&#13;	The simplest form of the <B
+CLASS="command"
+>diff</B
+> command reports
+	all differences between files in the current directory
+	and, recursively, all subdirectories and their
+	counterparts in the repository:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cvs diff
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	Since the differences may be voluminous, you may want
+	to pipe the output into a pager command, such as
+	<B
+CLASS="command"
+>more</B
+> or 
+	<B
+CLASS="command"
+>less</B
+>:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cvs diff | more
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	Another way to handle voluminous output is to store
+	it as a file:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cvs diff &#62; <I
+CLASS="emphasis"
+>file</I
+>
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	Yet another option is to send the output to a printing
+	agent such as <B
+CLASS="command"
+>lpr</B
+>:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cvs diff | lpr
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	To find the differences between specific files in your
+	working copy and their counterparts in the repository,
+	you enumerate the files in the command:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cvs diff <I
+CLASS="emphasis"
+>file1 file1 ... filen</I
+>
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	If you are interested in difference between your current
+	working copy and a version released in the past, you
+	use the <TT
+CLASS="option"
+>-r</TT
+> option letter to introduce the tag
+	associated with the version:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cvs diff -r <I
+CLASS="emphasis"
+>some-tag</I
+>
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	To see the differences between two versions, you can
+	specify two <TT
+CLASS="option"
+>-r</TT
+> options:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cvs diff -r <I
+CLASS="emphasis"
+>tag1</I
+> -r <I
+CLASS="emphasis"
+>tag2</I
+>
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	There are several options which affect the format of the
+	output from the <B
+CLASS="command"
+>diff</B
+> command.  The <TT
+CLASS="option"
+>-b</TT
+>
+	option ignores the difference in the amount of whitespace
+	between files.  The <TT
+CLASS="option"
+>-B</TT
+> option ignores
+	differences due to the insertion or deletion of blank lines.
+      </P
+><P
+>&#13;	The normal output from the CVS <B
+CLASS="command"
+>diff</B
+> command simply shows
+	lines that are in one file but not in the other and 
+	<I
+CLASS="emphasis"
+>vice versa</I
+>.
+	It does not show lines present in both
+	files which surround these difference.  The 
+	<TT
+CLASS="option"
+>-c</TT
+> option provides three lines of 
+	<I
+CLASS="emphasis"
+>context</I
+> before and after each set
+	of lines which differ.  This can be useful in helping
+	you to determine exactly where the differences are 
+	located within their respective files.  It is also 
+	a necessity, if you want to store the differences to 
+	a file for later use with a patch program, such as the
+	Unix <B
+CLASS="command"
+>patch</B
+> command.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="add-sect"
+></A
+>Adding Files and Directories</H3
+><P
+>&#13;	Suppose that we would like to add to the repository a 
+	document similar to the tutorial that you are reading.
+	Suppose further, that within our working copy there
+	is a directory named 
+	<TT
+CLASS="filename"
+>howto</TT
+>
+	which contains a directory for each document of this
+	type, and that this latter directory contains the individual
+	documents.  For example, this tutorial consists of a directory
+	and two files:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  howto/CVS-rfpk-HOWTO
+	  howto/CVS-rfpk-HOWTO/CVS-rfpk-HOWTO.xml
+	  howto/CVS-rfpk-HOWTO/Makefile
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	Now suppose that the document that we wish to add will
+	be a tutorial about installing SPK.  In this example
+	the text of the document will be called
+	<TT
+CLASS="filename"
+>SPKinstall-rfpk-HOWTO.xml</TT
+>.
+	There will also be a description file for the 
+	<B
+CLASS="command"
+>make</B
+> utility which
+	will be named 
+	<TT
+CLASS="filename"
+>Makefile</TT
+>.  In order
+	to keep all files associated with this document together,
+	we will place these two files in a directory that
+	we will name
+	<TT
+CLASS="filename"
+>&#13;	  SPKinstall-rfpk-HOWTO
+	</TT
+>.
+      </P
+><P
+>&#13;	To create this new document, we proceed as follows:
+	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      Create a directory and the two files using the normal
+	      tools installed on our system.  For example, under
+	      Unix/Linux, or in a Cygwin environment installed
+	      under Windows, we could do the following:
+	      <P
+></P
+><OL
+TYPE="a"
+><LI
+><P
+>&#13;		    Within our working copy, go to the
+		    <TT
+CLASS="filename"
+>&#13;		      howto
+		    </TT
+> 
+		    directory by using the
+		    <TT
+CLASS="option"
+>cd</TT
+> command.  
+		    <TT
+CLASS="filename"
+>&#13;		      howto
+		    </TT
+> 
+		    is the directory in which we will create our new 
+		    document.
+		  </P
+></LI
+><LI
+><P
+>&#13;		    Create the new directory in our working copy,
+		    and then have <B
+CLASS="command"
+>cvs</B
+> add it to the repository:
+		    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		      mkdir SPKinstall-rfpk-HOWTO
+		      cvs add SPKinstall-rfpk-HOWTO
+		    </PRE
+></TD
+></TR
+></TABLE
+>
+		  </P
+></LI
+><LI
+><P
+>&#13;		    Next go to the new directory 
+		    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		      cd SPKinstall-rfpk-HOWTO
+		    </PRE
+></TD
+></TR
+></TABLE
+>
+		    and use our favorite text editor to create the
+		    initial versions of the files 
+		    <TT
+CLASS="filename"
+>&#13;		      SPKinstall-rfpk-HOWTO.xml
+		    </TT
+>
+		    and
+		    <TT
+CLASS="filename"
+>Makefile</TT
+>.
+		  </P
+></LI
+><LI
+><P
+>&#13;		    Finally, have <B
+CLASS="command"
+>cvs</B
+> add the new files to the
+		    repository structure and then commit our
+		    initial versions:
+		    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		      cvs add SPKinstall-rfpk-HOWTO.xml Makefile
+		      cvs commit
+		    </PRE
+></TD
+></TR
+></TABLE
+>
+		  </P
+></LI
+></OL
+>
+	    </P
+></LI
+></OL
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN279"
+></A
+>Removing Files and Directories</H3
+><P
+>&#13;	Files and directories can be removed using the CVS <B
+CLASS="command"
+>remove</B
+>
+	command which is very much the reverse of the CVS <B
+CLASS="command"
+>add</B
+>
+	command.  Suppose, for example, we decide that we no
+	longer have a use for the file called 
+	<TT
+CLASS="filename"
+>Makefile</TT
+>
+	that we added to the repository in the example in the
+	<A
+HREF="#add-sect"
+>section</A
+> above. 
+	We can remove the file as follows:
+	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      Go to the directory in our working copy which contains
+	      the file in question and remove it.  For example, 
+	      under Unix, Linux or Cygwin, we would use the
+	      following command to remove the file:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		rm Makefile
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Still in the directory from which the file was removed,
+	      have <B
+CLASS="command"
+>cvs</B
+> complete the work:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		cvs remove
+		cvs commit
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+></OL
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN294"
+></A
+>Conclusion (command-line interface)</H3
+><P
+>&#13;	The commands describe above should be enough to get
+	you started.  In the books that are free for downloading
+	via the URLs listed in the
+	<A
+HREF="#intro"
+>introduction</A
+>,
+	there are additional commands and a great deal of useful
+	information.
+      </P
+><P
+>&#13;	Perhaps the most powerful CVS command not covered
+	in this tutorial is the
+	<B
+CLASS="command"
+>tag</B
+>
+	command, which can be used to place an identification
+	tag on all files which comprise a particular
+	version or release of a product.  This tag
+	can subsequently be used to reference that 
+	release with the <B
+CLASS="command"
+>diff</B
+> command, in order to 
+	analyze differences between it and another
+	release or between it and the current version.
+	A version tag can be used with <B
+CLASS="command"
+>checkout</B
+>
+	so that the version can be easily reconstituted.
+	A version tag can also be the basis for creating
+	a separate branch for a released version of
+	a product, in which bug fixes can be developed
+	and tested without interfering with current
+	development.
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN302"
+></A
+>The Cervisia GUI</H2
+><P
+>&#13;      <I
+CLASS="emphasis"
+>Cervisia</I
+> is a GUI wrapper around the 
+      command-line version of CVS.
+      It is part of the support for KDE software
+      development that is now a standard part of the RedHat Linux
+      distribution.  You can easily determine whether the package
+      was installed on your system with the following
+      <I
+CLASS="emphasis"
+>rpm</I
+> query:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	rpm -qa | grep cervisia
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      If it is not on your system, you can install it from the
+      RedHat distribution cdroms or download it from the web.
+    </P
+><P
+>&#13;      Once the cervisia rpm has been installed, you will probably
+      find a launcher for it in the RedHat menus under 
+      <B
+CLASS="guimenuitem"
+>Extras</B
+>-&#62;
+      <B
+CLASS="guimenuitem"
+>Programming</B
+>-&#62;
+      <B
+CLASS="guimenuitem"
+>Cervisia</B
+>.
+      You may want to add a launcher for cervisia to
+      your panel by right-clicking the 
+      <B
+CLASS="guimenuitem"
+>Cervisia</B
+> item
+      in the above menu sequence, then selecting:
+      <B
+CLASS="guimenuitem"
+>Add this launcher to panel</B
+>.
+    </P
+><P
+>&#13;      If you have read the previous section on the command-line interface,
+      you will find cervisia to be rather self-explanatory. The following
+      subsections should help get you started.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN315"
+></A
+>Repository Access</H3
+><P
+>&#13;	In order for <I
+CLASS="emphasis"
+>cervisia</I
+> to be able to find
+	the repository, set up your environment variables just as you
+	would if you were using the command-line interface.  You will 
+	find a full description of this process in the section titled
+	<I
+CLASS="emphasis"
+>Environment Variables for Repository Access</I
+>,
+ 	<A
+HREF="#env"
+> above</A
+>,      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN321"
+></A
+>Setting Up Your Sandbox</H3
+><P
+>&#13;	In order to get a local copy of the repository, using the 
+	command-line interface is recommended.  This process is
+	covered in the section 
+	<I
+CLASS="emphasis"
+>Getting a Working Copy</I
+>,
+	<A
+HREF="#co"
+> above</A
+>,
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN326"
+></A
+>Opening Your Sandbox</H3
+><P
+>&#13;	Now start up <I
+CLASS="emphasis"
+>cervisia</I
+>. Click the item
+	<B
+CLASS="guimenuitem"
+>File</B
+>-&#62;
+	<B
+CLASS="guimenuitem"
+>Open Sandbox</B
+>.
+	A file access window will appear. Within this window,
+	navigate to the directory with the same name as your repository
+	(eg.<TT
+CLASS="filename"
+>r2</TT
+>)
+	and double-click.  If you now
+	click the <B
+CLASS="guibutton"
+>OK</B
+>
+	button, you will open the entire repository. If you are
+	not interested in the entire repository, but just a portion
+	farther down in the hierarchy, continue to navigate down
+	to the portion you want to open, double-click on that
+	directory name, then press 
+	<B
+CLASS="guibutton"
+>OK</B
+>.
+      </P
+><P
+>	
+	The next time you open your sandbox, you can select
+	your sandbox from the menu list
+	<B
+CLASS="guimenuitem"
+>File</B
+>-&#62;
+	<B
+CLASS="guimenuitem"
+>Recent Sandboxes</B
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN338"
+></A
+>Cervisia Settings</H3
+><P
+>&#13;	There are two options in the
+	<B
+CLASS="guimenuitem"
+>File</B
+>-&#62;
+	<B
+CLASS="guimenuitem"
+>Settings</B
+>
+	menu which are recommended, because they mirror the
+	default behavior of the command-line interface and
+	thus are consistent with most documentation about
+	CVS.  The recommended options are
+	<B
+CLASS="guimenuitem"
+>Update Recursively</B
+> and
+	<B
+CLASS="guimenuitem"
+>Commit and Remove
+	 Recursively</B
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN345"
+></A
+>CVS Commands</H3
+><P
+>&#13;	All of the most frequently used commands are available in 
+	<I
+CLASS="emphasis"
+>cervisia</I
+> menus. You typically select
+	a file or directory, then select the command from a menu.
+	The screen is split. The actual output of the 
+	CVS command, as you would see it if
+	your were using the command-line interface, is copied
+	to a scrolling window, so that you can monitor the results
+	of your action.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN349"
+></A
+>Conclusion (GUI interface section)</H3
+><P
+>&#13;	The <I
+CLASS="emphasis"
+>cervisia</I
+> GUI is a useful tool,
+	especially for those who strongly dislike command-line
+	interfaces. It is, however, a wrapper around the 
+	command-line version of CVS,
+	and it is impossible to understand without some 
+	understanding of the way in which that version 
+	works and of its output. Nearly all documentation 
+	about CVS describes the behavior
+	of the command-line interface.
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN353"
+></A
+>Some Server Administration</H2
+><P
+>&#13;      Most of the administration of a CVS repository can be
+      carried out by ordinary users from their remote systems.
+      This section is reserved for tasks that are best 
+      performed by someone who has root access to the server.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN356"
+></A
+>Creating A New Repository</H3
+><P
+>	
+	To create a repository, you need root privilege on
+	the server. 
+      </P
+><P
+>&#13;	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      Log in to the server and get root privilege by 
+	      using the <B
+CLASS="command"
+>su</B
+> command.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Using the <B
+CLASS="command"
+>cd</B
+> command,
+	      go to the directory that will be the root directory
+	      of your repository.  If the directory does not exist,
+	      create it at this time and then go to it.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Initialize the repository:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		cvs -d $(pwd) init
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+><LI
+><P
+>&#13;	      If you have not done so, create a group of users of
+	      this repository. In this example, lets assume that
+	      the group name is <I
+CLASS="emphasis"
+>dvl</I
+>.
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		/usr/sbin/groupadd -r dvl
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	      All of the users of this group must be ordinary
+	      users of the server.  Suppose that the users are
+	      tom, dick and harry.  Add them to the group as follows
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		/usr/bin/gpasswd -a tom dvl
+		/usr/bin/gpasswd -a dick dvl
+		/usr/bin/gpasswd -a harry dvl
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	      The repository directory and all subdirectories must
+	      have the given group (<I
+CLASS="emphasis"
+>dvl</I
+> in this
+	      example) as its group.  In addition, the group must have
+	      read and write privileges in the directory, and the
+	      <I
+CLASS="emphasis"
+>setgid bit</I
+> must be set so that 
+	      any directories or files created in the directory
+	      will have <I
+CLASS="emphasis"
+>dvl</I
+> for group:
+	      Assume that we are still positioned in the directory:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		chgrp -R dvl .
+		chmod 2775 .
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	      If there are any directories under this directory,
+	      go through the hierarchy recursively and repeat the
+	      above <B
+CLASS="command"
+>chmod</B
+>
+	      command line on them. <I
+CLASS="emphasis"
+>Do not</I
+>
+	      use the recursive <I
+CLASS="emphasis"
+>-R</I
+> option,
+	      because you do not want to turn on the 
+	      <I
+CLASS="emphasis"
+>setgid bit</I
+> for ordinary files.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Finally, mark the repository as a <I
+CLASS="emphasis"
+>module</I
+>,
+	      so that it can be easily accessed by the CVS 
+	      <I
+CLASS="emphasis"
+>checkout</I
+> command.  This step does
+	      not require root privilege and does not have to be
+	      performed while logged in to the server.  It is explained
+	      in the next section.
+	    </P
+></LI
+></OL
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN387"
+></A
+>Defining Modules</H3
+><P
+>&#13;	A <I
+CLASS="emphasis"
+>module</I
+> in CVS is a type of alias for
+	a path within a repository.  The repository itself should
+	be defined as a module, so that it can be retrieved by name
+	with the CVS <B
+CLASS="command"
+>checkout</B
+>
+	command.  Within the repository hierarchy, it is often
+	convenient to define subdirectories which are themselves
+	the root directories of projects as modules.
+      </P
+><P
+>&#13;	You will perform the following steps as an ordinary user on
+	a client machine.  For this to work, however, you must also
+	be installed as a user on the server and must be a member
+	of the repository's group on that machine. Your environment
+	variables must be set up as described
+	<A
+HREF="#env"
+> above</A
+>.
+      </P
+><P
+>&#13;	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      Checkout a copy of the CVSROOT directory from the
+	      root node of the repository, and then go to it:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		cvs checkout CVSROOT/modules
+		cd CVSROOT
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Using your favorite editor, edit the 
+	      <TT
+CLASS="filename"
+>modules</TT
+>
+	      file in this directory. Suppose that the
+	      repository is named 
+	      <I
+CLASS="emphasis"
+>myrepos</I
+>.  You would insert
+	      the following line in the file:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		myrepos .
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+><P
+>&#13;	      To designate the subdirectory, for example
+	      <TT
+CLASS="filename"
+>&#13;		src/c/project-1
+	      </TT
+>,
+	      you would insert the line
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		project-1 src/c/project-1
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+><P
+>&#13;	      Since the module names are aliases, the module name does
+	      not have to be the same as the directory name. In the
+	      above example, we could have named the module
+	      <I
+CLASS="emphasis"
+>integrator</I
+> as follows:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		integrator src/c/project-1
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+><LI
+><P
+>&#13;	      After saving the modules file and leaving your editor,
+	      commit the changes and release the your copy of the
+	      CVSROOT directory:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		cvs commit modules
+		cd ..
+		cvs release -d CVSROOT
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+></OL
+>
+      </P
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

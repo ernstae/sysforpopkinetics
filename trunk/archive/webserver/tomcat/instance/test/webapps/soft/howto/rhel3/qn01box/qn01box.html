@@ -1,0 +1,311 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>QN01Box</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>QN01Box</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;      This document demonstrates how to install/update QN01Box
+      as part of SPK test environment.
+      </P
+><P
+>&#13;        This document is written for members of
+        the RFPK Software Team and associates and is specific to the
+        computer systems and network installed in the RFPK Laboratory
+        of the Department of Bioengineering of the University of Washington.  RFPK is the Resource for
+        Population Kinetics.  Its work is supported, in part, by grant
+        P41 EB-001975 of the National Institutes of Health (NIH) of
+        the U.S.  Department of Health and Human Services.
+      </P
+><P
+>&#13;        <A
+HREF="#AEN18"
+>Copyright</A
+> (c) 2005, by the University of Washington.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>Oct 21, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: bmb</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+></TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN15"
+></A
+></DT
+><DT
+><A
+HREF="#AEN18"
+>Copyright Notice</A
+></DT
+><DT
+><A
+HREF="#AEN23"
+>Installation</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN15"
+></A
+></H2
+><P
+>&#13;    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN18"
+></A
+>Copyright Notice</H2
+><P
+>&#13;      Copyright (c) 2005,  by the University of Washington.
+      This material may be distributed only subject to the terms and conditions 
+      set forth in the Open Publication License, V1.0 or later
+      (the latest version is presently available
+      <A
+HREF="http://www.opencontent.org/openpub/"
+TARGET="_top"
+>here</A
+>.
+    </P
+><P
+>&#13;    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN23"
+></A
+>Installation</H2
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>copy most recent version of
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;           whitechuck:/opt/downlaod/qn01box-yy-mm-dd.tar.gz
+          </PRE
+></TD
+></TR
+></TABLE
+>
+          to /tmp on the installation machine.  Here and below 
+          yy is the year, mm is the month, and dd is the day 
+          (each as two decimal digits) corresponding to the version of QN01Box.
+        </P
+></LI
+><LI
+><P
+>&#13;        Extraction
+        <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;        cd /tmp
+        tar -xvzf qn01box-yy-mm-dd.tar.gz
+        </PRE
+></TD
+></TR
+></TABLE
+>
+        This will extract files into a new directory 
+        whose name is qn01box-yy-mm-dd.
+        </P
+></LI
+><LI
+><P
+>&#13;        Configure
+        <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;        cd qn01box-yy-mm-dd
+        ./configure \
+           --prefix=/usr/local \
+           POSTFIX_DIR=spktest \
+           CPPAD_PREFIX_DIR=/usr/local \
+           CPPAD_POSTFIX_DIR=spktest \
+           COMPILE_FLAGS="compiler_flags"
+        </PRE
+></TD
+></TR
+></TABLE
+>
+        where the optimized value for
+        compiler_flags is "-DNDEBUG -O3 -Wall"
+        and the debug value for
+        compiler_flags is "-g -Wall".
+        </P
+></LI
+><LI
+><P
+>&#13;        Make
+        <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;        make
+        </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+><LI
+><P
+>&#13;        Test
+        <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;        Test/RunTest
+        </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+><LI
+><P
+>&#13;        Final Installation
+        <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;        su
+        make install
+        </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+></OL
+></DIV
+></DIV
+></BODY
+></HTML
+>

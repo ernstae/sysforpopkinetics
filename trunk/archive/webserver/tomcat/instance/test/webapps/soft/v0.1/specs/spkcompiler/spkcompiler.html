@@ -1,0 +1,152 @@
+SPK Compiler2.1December 13, 2005shTwo levels of compilation2.0April 21, 2005shOverall update1.1April 30, 2004shExpression language, IndData1.0August 11, 2003shInitial version.
+The purpose of this documentation is to give you an overall view 
+of SPK Compiler system.
+      Introduction
+       SPK Compiler, spkcompiler, is a command line application
+       that takes two input files as arguments: an 
+       
+       SpkSourceML document and an 
+       SpkDataML
+       document.  
+       The 
+       SpkSourceML document contains control parameters and model definitions.
+       The SpkDataML
+       document contains a data set.
+       The system analyzes the two input files and generates a number of C++ source 
+       code files that are, as together, built as an SPK job application.
+     
+     +---------------+    
+     |               |                
+     |  SpkSourceML  |  fed to    /------------------\             &#60;SPK Job Application&#62;
+     |   document    |-----------&#62;|                  |
+     |               |            |                  |             +--------------+
+     +---------------+            |                  |  generates  |              |-+
+                                  |   SPK Compiler   |------------&#62;|  C++ source  | |-+
+     +---------------+            |                  |             |              | | |
+     |               |  fed to    |                  |             +--------------+ | |
+     |   SpkDataML   |-----------&#62;|                  |               +--------------+ |
+     |   document    |            \------------------/                 +--------------+
+     |               |              |             |                           .
+     +---------------+              | uses        | uses                       .
+                                   \|/           \|/                            .
+                                    +             +
+                /------------------------\    =================
+                |                        |    |               |
+                |  Expression Language   |    |   DOM Parser  |
+                |        Compiler        |    |  (XERCES C++) |
+                |                        |    |               |
+                \------------------------/    =================
+
+     Usage of spkcompiler
+        Usage: spkcompiler SOUCE_XML DATA_XML
+
+        SOURCE_XML - the file name of an SpkSourceML document instance
+        DATA_XML   - the file name an SpkDataML document instance
+        
+        Note: spkcompiler is installed 
+        in either /usr/local/bin/spktest or /usr/local/bin/spkprod.
+        The preceding directory is for the test environment and
+        the latter one is for the production environment.
+        Two Levels of CompilationSPK Compiler is composed of two layers of compilation
+     facilities.  The outer one analyzes the input XML files and
+     calls for the inner one which is specialized to analyze
+     user's expression language, and then generates C++ source code.
+     
+     The system maintains a symbol table and other internal
+     data structures.
+     The symbol table
+     collects information about
+     symbols that are found in the input XML files,
+     user's model definitions, user's reserved words
+     and system reserved keywords.  Other structures
+     are maintained to hold any other information that
+     may not fit well into the symbol table's structure or
+     different representations of the same data found in
+     the symbol table for convenience.
+     
+     The process is clearly staged into two:
+        Data Collection Stage
+             In the first phase of compilation, the system focuses solely
+             on collecting and assembling information in the symbol table
+             and other internal data structures from the input.
+	     During this stage, the internal data structures including
+             the symbol table are read-write.  The XML parse trees
+             may also be altered during this stage.
+             Code Generation Stage
+             In the second phase, the system uses the collected information 
+             and produce a number of C++ source code files and a Makefile. 
+             All information should have been collected by now.  
+             So, the XML parse trees should have no use in this stage. 
+             The internal data structures including the symbol table
+             are treated as read-only in this stage.
+	     
+     Outer: Analyzing XML Input Files and Generating C++
+        
+        The outer compiler performs overall semantic analysis of
+        the SpkSourceML and SpkDataML documents and generates C++ 
+        source code files.  It uses 
+        Xerces-C++ DOM facility for lexical analysis and 
+        as the parse tree generator.  We use DOM (i.e. tree generator)
+        because information necessary to determine a piece of code
+        may be scattered around in multiple places.  There are
+        times also that directly inserting/removing information
+        into or from the input structure simplifies the rest of
+        the process.  For example, if a data set (represented
+        by an SpkDataML document) were missing items that 
+        are assumed to have certain default values, inserting
+        the missing item with the default value
+        in the earlier in the process allows
+        the rest of the process to proceed without checking its
+        existence.
+        Within the SpkSourceML document
+        is user's code that are written in 
+        their specific expression language (ex. NONMEM Abbribiated Code).
+        When the outer compiler reaches these code,
+        it passes them to the inner compiler for further analysis.
+        
+        When all necessary information are gathered, the outer
+        layer moves to the code-generation stage.
+        For detailed discussion of generated code, see 
+        Generated C++ Code.
+        Inner: Analyzing Expressions
+        When the outer compiler reaches the user expression language,
+        it passes them to the inner compiler, Expression Lanuage Compiler,
+        for further analysis.  For example, NONMEM users use 
+        NONMEM Abbribiated Code that follows the syntax of FORTRAN to
+        define models.
+        
+        The purpose of this portion of compilation process is to gather
+        enough information about symbols appearing in the expressions
+        so that the system can ultimately generate a complete
+        C++ application.  This can be tricky because symbols may 
+        appear without formal declaration.  Certain characterics
+        such as data type (ex. double for numerical variables)
+        are applied per user-type basis.
+        
+        Currently we have expression language compilers specialized for:
+           NONMEM Abbribiated Code 
+                 
+        
+        The lexical analyzers for expression languages are developed using
+        FLEX,
+        a GNU implementation of LEX.
+        The parsers are developed using
+        BISON,
+        a GNU implementation of YACC.
+        API SpecificationsAPI Specifications are available at
+           SPK Compiler API.
+        Generated C++ Code
+     SPK Compiler generates a number of C++ source code files and a Makefile.
+     For further discussion, consult 
+     SPK Compiler Output (C++).
+     Related Documents
+        SpkDataML (Data Set)
+        
+        SpkSourceML (Control Parameters + Models)
+        
+           SpkReportML (Job Output)
+        
+        SPK Compiler Output (C++)
+        
+        SPK Compiler API Documentation
+        

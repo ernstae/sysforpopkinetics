@@ -1,0 +1,13 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.203
+----------------------------------
+RELATED BUG REPORTS: 
+	- 473 (pow function returns NaN)
+		fix: CppAd 20070517 addresses these concerns
+
+	- 683 (non parametric files not installed to spktest)
+		fix: new non_par library install procedure.
+
+BY:  Andrew Ernst / Brad Bell
+
+WHEN: 2007-05-17

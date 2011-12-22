@@ -1,0 +1,34 @@
+<html><head>
+<title>Covariance::cov &amp; (pure virtual) doCov</title>
+<meta name="description" id="description" content="Covariance::cov &amp; (pure virtual) doCov">
+<meta name="keywords" id="keywords" content=" cov docov Model Covariance "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="covariance_cov.htm" target="_top">section</a>, <a href="covariance_cov_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+The public interface <code><font color="blue"><span style='white-space: nowrap'>void&nbsp;cov(&nbsp;DoubleMatrix&amp;&nbsp;\ret\&nbsp;)&nbsp;const</span></font></code>
+evaluates the user defined <code><font color="blue"><span style='white-space: nowrap'>virtual&nbsp;doCov(&nbsp;DoubleMatrix&amp;&nbsp;\ret\&nbsp;)&nbsp;const</span></font></code>
+at the current evaluation points.
+
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>ret</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>is a symmetric positive definite matrix resulted from evaluating <code><font color="blue">doCov()</font></code>.
+
+<hr>Input File: ../../spk/Covariance.cpp
+
+</body>
+</html>

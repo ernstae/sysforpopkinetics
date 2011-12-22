@@ -1,0 +1,17 @@
+RELEASE NOTES FOR VERSION 0.1.247
+----------------------------------
+USER VISIBLE CHANGES
+
+Fixed bug in population estimation driver.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:
+
+None.
+
+BY:  Mitch Watrous
+
+WHEN:  September 23, 2008

@@ -1,0 +1,832 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Cygwin Installation for Developers</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Cygwin Installation for Developers</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	This tutorial briefly discusses the use of the 
+	Cygwin environment by the RFPK Software Team and
+	then describes a procedure for obtaining and
+	installing it.
+    </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>January 17, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN12"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN22"
+>Downloading and Installation</A
+></DT
+><DT
+><A
+HREF="#AEN127"
+>Post Installation</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN12"
+></A
+>Introduction</H2
+><P
+>&#13;      Cygwin is a Unix-like environment that runs within a Microsoft
+      Windows system.  It is free, open source software.
+      Cygwin consists primarily of shell commands and
+      applications from the GNU/Linux environment.  Because it 
+      supports the complete GNU suite of software development tools,
+      including compilers for C, C++ and Fortran, many applications 
+      for the Linux environment can simply be transferred to 
+      Cygwin in source code form, compiled, linked and run. 
+      Because Cygwin supports 
+      <B
+CLASS="command"
+>sh</B
+>,
+      <B
+CLASS="command"
+>perl</B
+>,
+      <B
+CLASS="command"
+>python</B
+>
+      and the 
+      <B
+CLASS="command"
+>cron</B
+> batch scheduling system, it is
+      an excellent environment for batch production on
+      a windows system.
+      Most applications developed to run 
+      in the Cygwin environment can be transferred to Linux or Unix
+      with almost no changes.
+    </P
+><P
+>&#13;      The first major application for the Cygwin environment by 
+      the RFPK Software Team is a platform for testing SPK.
+      Key portions of this application are written in the
+      <B
+CLASS="command"
+>perl</B
+> and
+      <B
+CLASS="command"
+>sh</B
+> scripting languages.  This tutorial
+      describes the process of installing Cygwin on a Windows 
+      machine for developing or running this or similar applications.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN22"
+></A
+>Downloading and Installation</H2
+><P
+>&#13;      The software can be downloaded for free over the Internet, from
+      the
+      <A
+HREF="http://www.cygwin.com/"
+TARGET="_top"
+>&#13;	<I
+CLASS="emphasis"
+>Cygwin</I
+>
+      </A
+>
+      web site.
+    </P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	  On the Cygwin home page, press the
+	  <B
+CLASS="command"
+><TT
+CLASS="guilabel"
+><B
+>Install Now</B
+></TT
+></B
+> icon.
+	</P
+><P
+>&#13;	  A window will appear, asking you to provide the path to
+	  a directory into which to download 
+	  <TT
+CLASS="filename"
+>setup.exe</TT
+>, the
+	  Cygwin downloading and installation wizard.  The
+	  path of a temporary directory is recommended.
+	</P
+></LI
+><LI
+><P
+>&#13;	  Execute the Cygwin <B
+CLASS="command"
+>setup</B
+>
+	  program.  You can use the Windows filesystem explorer to
+	  find the file you just downloaded, then double-click its
+	  icon.
+	</P
+></LI
+><LI
+><P
+>&#13;	  The wizard will ask you to provide some information.
+	  <P
+></P
+><OL
+TYPE="a"
+><LI
+><P
+>&#13;		Choose a download source. Select 
+		<B
+CLASS="command"
+><B
+CLASS="guimenuitem"
+>&#13;		  Install from Internet
+		</B
+></B
+>.
+	      </P
+></LI
+><LI
+><P
+>&#13;		Select Root Install Directory.
+		Provide the name of a directory that will be large enough
+		to contain your Cygwin environment.  You may need quite
+		a bit of space, depending on what optional components
+		you select in the steps that follow.  For example, the
+		Cygwin installation on the author's workstation
+		occupies about one gigabyte of space, and is contained
+		in the directory 
+		<TT
+CLASS="filename"
+>f:\cygwin</TT
+>
+		.
+	      </P
+></LI
+><LI
+><P
+>&#13;		Select Local Package Directory.  Provide the path
+		of a directory with temporary storage for the 
+		downloaded files used in the installation process.
+	      </P
+></LI
+><LI
+><P
+>&#13;		Select Your Internet Connection.  The choice
+		  <B
+CLASS="command"
+><B
+CLASS="guimenuitem"
+>&#13;		    Direct Connection
+		  </B
+></B
+>  
+		seems to work fine at RFPK.
+	      </P
+></LI
+><LI
+><P
+>&#13;		Choose A Download Site.  A list of mirror sites
+		is provided.  Pick one that seems like it would
+		be relatively close and might have good bandwidth.
+		Universities are a good choice.
+	      </P
+></LI
+><LI
+><P
+>&#13;		Select Packages.  A list of all available packages
+		is displayed in a scrollable window as a multi-level
+		hierarchy.  The top level category is named
+		  <B
+CLASS="command"
+><B
+CLASS="guimenuitem"
+>&#13;		    All
+		  </B
+></B
+>.
+		This top category name, and all of the subcategory names,
+		are followed by a directive which, initially, is
+		  <B
+CLASS="command"
+><B
+CLASS="guimenuitem"
+>&#13;		    Default
+		  </B
+></B
+>.
+		By clicking repeatedly on a directive, you can change
+		it from
+		  <B
+CLASS="command"
+><B
+CLASS="guimenuitem"
+>&#13;		    Default
+		  </B
+></B
+> to
+		  <B
+CLASS="command"
+><B
+CLASS="guimenuitem"
+>&#13;		    Install
+		  </B
+></B
+> to
+		  <B
+CLASS="command"
+><B
+CLASS="guimenuitem"
+>&#13;		    Reinstall
+		  </B
+></B
+> and finally to
+		  <B
+CLASS="command"
+><B
+CLASS="guimenuitem"
+>&#13;		    Uninstall
+		  </B
+></B
+> before the sequence repeats itself.
+	      </P
+><P
+>&#13;		If you want everything, all you have to do is change
+		the directive for 
+		  <B
+CLASS="command"
+><B
+CLASS="guimenuitem"
+>&#13;		    All
+		  </B
+></B
+> to
+		  <B
+CLASS="command"
+><B
+CLASS="guimenuitem"
+>&#13;		    Install
+		  </B
+></B
+> and then press the
+                  <B
+CLASS="command"
+><B
+CLASS="guibutton"
+>&#13;		    Next
+		  </B
+></B
+> button to start the download.
+ 	      </P
+><P
+>&#13;		If you want less than everything, you will need to 
+		go to the individual categories and specify what 
+		you want in addition to the defaults.  In general,
+		a software developer will want at least the following:
+		<DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Devel</B
+></DT
+><DD
+><P
+>&#13;			cvs
+		      </P
+></DD
+><DD
+><P
+>&#13;			expat
+		      </P
+></DD
+><DD
+><P
+>&#13;			expat
+		      </P
+></DD
+><DD
+><P
+>&#13;			gcc
+		      </P
+></DD
+><DD
+><P
+>&#13;			gdb
+		      </P
+></DD
+><DD
+><P
+>&#13;			make
+		      </P
+></DD
+><DD
+><P
+>&#13;			rcs
+		      </P
+></DD
+><DT
+><B
+>Doc</B
+></DT
+><DD
+><P
+>&#13;			cygwin-doc
+		      </P
+></DD
+><DD
+><P
+>&#13;			expat
+		      </P
+></DD
+><DD
+><P
+>&#13;			perl-manpages
+		      </P
+></DD
+><DT
+><B
+>Editors</B
+></DT
+><DD
+><P
+>&#13;			vim
+		      </P
+></DD
+><DT
+><B
+>Interpreters</B
+></DT
+><DD
+><P
+>&#13;			perl
+		      </P
+></DD
+><DD
+><P
+>&#13;			python
+		      </P
+></DD
+><DT
+><B
+>Net</B
+></DT
+><DD
+><P
+>&#13;			openssh
+		      </P
+></DD
+></DL
+></DIV
+>
+	      </P
+><P
+>&#13;		Note that in the above list, the 
+		  <B
+CLASS="command"
+><B
+CLASS="guimenuitem"
+>&#13;		    Editors
+		  </B
+></B
+>
+		category does not include 
+		  <B
+CLASS="command"
+><B
+CLASS="guimenuitem"
+>&#13;		    emacs
+		  </B
+></B
+>
+		.  This tutorial recommends downloading the gui version of
+		<B
+CLASS="command"
+>emacs</B
+> directly from
+		Gnu rather than using the version available from Cygwin.
+	      </P
+></LI
+></OL
+>
+	</P
+></LI
+><LI
+><P
+>&#13;	  Proceed with the downloading.  If, for some reason, the
+	  connection fails in the middle of this process, you can
+	  restart it with the same mirror or a different mirror and
+	  the process is supposed to resume where it left off.
+	</P
+></LI
+><LI
+><P
+>&#13;	  Follow the wizard to completion.  Allow it to create
+	  shortcuts on the desktop and in the 
+	  <B
+CLASS="guimenuitem"
+>Start</B
+> menu.
+	</P
+></LI
+></OL
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN127"
+></A
+>Post Installation</H2
+><P
+>&#13;      After the installation completes, start up a terminal 
+      window by double-clicking the icon on the desktop.  You 
+      should be started in your Cygwin home directory.  To 
+      verify this, enter the following command after the 
+      shell prompt:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	pwd
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      The response should be
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	/home/<I
+CLASS="emphasis"
+>your-user-name</I
+>
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      The default shell for Cygwin is
+      <B
+CLASS="command"
+>sh</B
+>,
+      the Bash shell, which is a 
+      version of the original Bourne shell enhanced in
+      several ways, including the addition of command-line
+      history and editing.  For portability, it is
+      important to always write shell scripts for
+      <B
+CLASS="command"
+>sh</B
+> rather than for
+      <B
+CLASS="command"
+>csh</B
+>,
+      <B
+CLASS="command"
+>tcsh</B
+>,
+      <B
+CLASS="command"
+>ksh</B
+>,
+      or any other shell.  It is recommended that RFPK developers
+      use <B
+CLASS="command"
+>sh</B
+> for all editing.
+      including command-line editing, in order to eliminate
+      confusion and because the current version has incorporated
+      nearly all of the useful features that were pioneered by
+      one or another of the above-named alternatives.
+    </P
+><P
+>&#13;      The Bash shell uses several configuration files, that it
+      will read when it starts up, if they are located in your
+      home directory.  A brief description of these files
+      follows.
+      <DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>.bash_profile</B
+></DT
+><DD
+><P
+>&#13;	      <A
+NAME="login"
+></A
+>
+	      Bash reads this file when you "log in."  With
+	      Cygwin, you are, in effect, logging
+	      in when you double-click the 
+	      <TT
+CLASS="guilabel"
+><B
+>Cygwin</B
+></TT
+> icon
+	      on the desktop or in the 
+	      <B
+CLASS="guimenuitem"
+>Start</B
+> menu.
+	    </P
+><P
+>&#13;	      The primary use of this file is to define environment
+	      variables.  For example, the 
+	      <TT
+CLASS="varname"
+>PAGER</TT
+> environment variable tells
+	      programs which paging command to use.  The default
+	      is usually the <B
+CLASS="command"
+>more</B
+>
+	      command.  Most people find, however, that the
+	      <B
+CLASS="command"
+>less</B
+> command is superior.
+	      You can instruct <B
+CLASS="command"
+>sh</B
+>
+	      and other programs that query the 
+	      <TT
+CLASS="varname"
+>PAGER</TT
+> variable
+	      to use <B
+CLASS="command"
+>less</B
+> by
+	      placing the following commands in your
+	      <TT
+CLASS="filename"
+>.bash_profile</TT
+>
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		PAGER=less
+		export PAGER
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+><P
+>&#13;	      Note that you should not depend on your
+	      <TT
+CLASS="filename"
+>.bash_profile</TT
+>
+	      being read prior to execution of a shell script,
+	      because the shell script might not be run from 
+	      a log-in shell.  For example, there is no login
+	      shell for scripts run by 
+	      <B
+CLASS="command"
+>cron</B
+>.
+	    </P
+></DD
+><DT
+><B
+>.inputrc</B
+></DT
+><DD
+><P
+>&#13;	      This file is used to specify that you would like to
+	      have the command-line editing feature enabled and
+	      which mode of editing, either 
+	      <B
+CLASS="command"
+>vi</B
+> or
+	      <B
+CLASS="command"
+>emacs</B
+> you prefer.
+	      For example, the following entry will provide
+	      command-line editing that behaves like
+	      <B
+CLASS="command"
+>vi</B
+>:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		set editing-mode vi
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></DD
+><DT
+><B
+>.bashrc</B
+></DT
+><DD
+><P
+>&#13;	      Bash reads this file whenever it is started interactively.
+	      This occurs when you log in, as explained 
+	      <A
+HREF="#login"
+>above</A
+>, or when an 
+	      additional bash shell is spawned by a shell that is
+	      already running interactively.
+	    </P
+><P
+>&#13;	      The primary use of this file is to define aliases.
+	      For example, the printer interface command,
+	      <B
+CLASS="command"
+>lpr</B
+>,
+	      may need a number of arguments to specify exactly
+	      which printer to use.  If you always use the
+	      same printer, you can redefine
+	      <B
+CLASS="command"
+>lpr</B
+> with the
+	      following alias:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;		alias lpr='lpr -P'\''Xerox DocuPrint N32 PS'\'''
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+><P
+>&#13;	      Note that you should not depend on your
+	      <TT
+CLASS="filename"
+>.bashrc</TT
+>
+	      file being read prior to execution of a shell script,
+	      because the shell script might not be run from 
+	      an interactive shell.  For example, there is no
+	      interactive shell for scripts run by 
+	      <B
+CLASS="command"
+>cron</B
+>.
+	    </P
+></DD
+></DL
+></DIV
+>
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

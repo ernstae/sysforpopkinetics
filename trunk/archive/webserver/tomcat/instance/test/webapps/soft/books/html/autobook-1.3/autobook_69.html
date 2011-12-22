@@ -1,0 +1,256 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Creating libtool</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Creating libtool">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Creating libtool">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC69"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_68.html#SEC68" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Introducing GNU Libtool" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_70.html#SEC70" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: The Libtool Library" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_68.html#SEC68" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Introducing GNU Libtool" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_68.html#SEC68" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Introducing GNU Libtool" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_83.html#SEC83" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Using GNU Libtool" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 10.1 Creating <CODE>libtool</CODE> </H2>
+<!--docid::SEC69::-->
+<P>
+
+When you install a distribution of Libtool on your development machine,
+a host specific <CODE>libtool</CODE> program is installed.  The examples in
+the rest of this chapter use this installed instance of
+<CODE>libtool</CODE>.
+</P><P>
+
+When you start to use Libtool in the build process of your own projects,
+you shouldn't require that <CODE>libtool</CODE> be installed on the user's
+machine, particularly since they may have a different <CODE>libtool</CODE>
+version to the one used to develop your project.  Instead, distribute
+some of the files installed by the Libtool distribution along with your
+project, and custom build a <CODE>libtool</CODE> script on the user's
+machine before invoking <CODE>./libtool</CODE> to build any objects.  If
+you use Autoconf and Automake, these details are taken care of
+automatically (see section <A HREF="autobook_83.html#SEC83">Using GNU Libtool with configure.in and Makefile.am</A>).  Otherwise you should copy the following
+files from your own Libtool installation into the source tree of your
+own project:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ ls /usr/local/share/libtool
+config.guess   config.sub   libltdl   ltconfig   ltmain.in
+$ cp /usr/local/share/libtool/config.* /usr/local/share/libtool/lt* .
+$ ls
+config.guess   config.sub   ltconfig   ltmain.in
+</FONT></pre></td></tr></table></P><P>
+
+You must then arrange for your project build process to create an
+instance of <CODE>libtool</CODE> on the user's machine, so that it is
+dependent on their target system and not your development machine.  The
+creation process requires the four files you just added to your project.
+Let's create a <CODE>libtool</CODE> instance by hand, so that you can see
+what is involved:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ ./config.guess
+hppa1.1-hp-hpux10.20
+$ ./ltconfig --disable-static --with-gcc ./ltmain.sh hppa1.1-hp-hpux10.20
+checking host system type... hppa1.1-hp-hpux10.20
+checking build system type... hppa1.1-hp-hpux10.20
+checking whether ln -s works... yes
+checking for ranlib... ranlib
+checking for BSD-compatible nm... /usr/bin/nm -p
+checking for strip... strip
+checking for gcc... gcc
+checking whether we are using GNU C... yes
+checking for objdir... .libs
+checking for object suffix... o
+checking for executable suffix... no
+checking for gcc option to produce PIC... -fPIC
+checking if gcc PIC flag -fPIC works... yes
+checking if gcc static flag -static works... yes
+checking if gcc supports -c -o file.o... yes
+checking if gcc supports -c -o file.lo... yes
+checking if gcc supports -fno-rtti -fno-exceptions ... no
+checking for ld used by GCC... /opt/gcc-lib/hp821/2.7.0/ld
+checking if the linker (/opt/gcc-lib/hp821/2.7.0/ld) is GNU ld... no
+checking whether the linker (/opt/gcc-lib/hp821/2.7.0/ld) supports \
+shared libraries... yes
+checking how to hardcode library paths into programs... relink
+checking whether stripping libraries is possible... yes
+checking for /opt/gcc-lib/hp821/2.7.0/ld option to reload object \
+files... -r
+checking dynamic linker characteristics... hpux10.20 dld.sl
+checking command to parse /usr/bin/nm -p output... ok
+checking if libtool supports shared libraries... yes
+checking whether to build shared libraries... yes
+checking whether to build static libraries... yes
+creating libtool
+$ ls
+config.guess   config.sub   ltconfig
+config.log     libtool      ltmain.sh
+$ ./libtool --version
+ltmain.sh (GNU libtool) 1.3c (1.629 1999/11/02 12:33:04)
+</FONT></pre></td></tr></table></P><P>
+
+The examples in this chapter are all performed on a HP-UX system,
+but the principles depicted are representative of any of the platforms
+to which Libtool has been ported (see section <A HREF="autobook_275.html#SEC275">B. PLATFORMS</A>).
+</P><P>
+
+Often you don't need to specify any options, and if you omit the
+configuration triplet (see section <A HREF="autobook_17.html#SEC17">3.4 Configuration Names</A>),
+<CODE>ltconfig</CODE> will run <CODE>config.guess</CODE> itself.  There are
+several options you can specify which affect the generated
+<CODE>libtool</CODE>, See section `Invoking ltconfig' in <CITE>The Libtool Manual</CITE>.  Unless your project has special 
+requirements, you can usually use the simplified:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ ./ltconfig ./ltmain.sh
+</FONT></pre></td></tr></table></P><P>
+
+With the current release of Libtool, you must be careful that <SAMP>`$CC'</SAMP>
+is set to the same value when you call <CODE>ltconfig</CODE> as when you
+invoke the <CODE>libtool</CODE> it generates, otherwise <CODE>libtool</CODE>
+will use the compiler specified in <SAMP>`$CC'</SAMP> currently, but with the
+semantics probed by <CODE>ltconfig</CODE> for the compiler specified in
+<SAMP>`$CC'</SAMP> at the time <EM>it</EM> was executed.
+</P><P>
+
+<A NAME="The Libtool Library"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

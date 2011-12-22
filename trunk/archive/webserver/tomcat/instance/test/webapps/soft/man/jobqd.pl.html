@@ -1,0 +1,84 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>jobqd.pl -- the Job-queue Daemon</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#abstract">ABSTRACT</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#returns">RETURNS</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>jobqd.pl -- the Job-queue Daemon</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p>jobqd.pl database dbhost dbuser dbpasswd shost sport</p>
+<p>
+</p>
+<hr />
+<h1><a name="abstract">ABSTRACT</a></h1>
+<p>The Job-queue Daemon runs continuously on the Job-queue server. It
+first makes it into a deamon and creates a log file.  Then it starts 
+the Job-queue Server which written in java.</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>The program expects the following arguments:</p>
+<pre>
+    $dbhost
+        The host on which the SPK database resides
+    $database
+        The name of the SPK database
+    $dbuser
+        A database username which has read/write access to the 
+        job table
+    $dbpasswd
+        The password associated with the username
+    $mode
+        The test mode indicator being &quot;test&quot; for test mode and &quot;prod&quot; for production mode
+    $startjob
+        The starting job_id that the job-queue server uses to initilize itself with the 
+        database</pre>
+<p>The first thing that jobq.pl does after starting up is to call
+Proc::Daemon::Init to make it into a daemon, by shedding its 
+inheirited environment and becoming a direct child of the system
+init process.</p>
+<p>It then opens the system log so that it has a place to record progress
+and error messages.</p>
+<p>It attempts to create a lock-file if one does not already exist. The
+method that is used assures that the process of query and creation
+is atomic.  If the lock-file already exists, the program writes an
+error message to the system log and terminates, because only one 
+copy of jobqd.pl can be allowed run at any given time.</p>
+<p>Next, it starts the job-queue server using the daemon process.</p>
+<p>
+</p>
+<hr />
+<h1><a name="returns">RETURNS</a></h1>
+<p>Nothing, because it has no parent (other than init) to which an exit
+code might be returned.  The program does, however, write event messages
+to the system log.</p>
+
+</body>
+
+</html>

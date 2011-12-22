@@ -1,0 +1,271 @@
+<html><head>
+<title>File class</title>
+<meta name="description" id="description" content="File class">
+<meta name="keywords" id="keywords" content=" File ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_file_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>general</option>
+<option>File</option>
+</select>
+</td>
+<td><a href="elementwiseor.htm" target="_top">Prev</a>
+</td><td><a href="fperrorchecker.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>general-&gt;</option>
+<option>ABA_x</option>
+<option>ABA_xVA</option>
+<option>addition</option>
+<option>AkronBtimesC</option>
+<option>AkronBtimesCRef</option>
+<option>AkronBtimesCVA</option>
+<option>AkronItimesC</option>
+<option>AkronItimesCVA</option>
+<option>allTrue</option>
+<option>allZero</option>
+<option>backDiv</option>
+<option>BlockAlloc</option>
+<option>blockDiagonalDerivative</option>
+<option>centdiff</option>
+<option>centdiffVA</option>
+<option>cholesky</option>
+<option>countTrues</option>
+<option>CovarianceClasses</option>
+<option>elsq</option>
+<option>elsqVA</option>
+<option>elsqFuncOb</option>
+<option>elsq_x</option>
+<option>elsq_xVA</option>
+<option>elsq_xDiag</option>
+<option>elsq_xBlockDiag</option>
+<option>DBL_EPS_EQUAL_MULT</option>
+<option>det</option>
+<option>detVA</option>
+<option>divByScalar</option>
+<option>DMclass</option>
+<option>elementwiseAnd</option>
+<option>elementwiseOr</option>
+<option>File</option>
+<option>FpErrorChecker</option>
+<option>ModelFunction</option>
+<option>ModelDerivative</option>
+<option>getCol</option>
+<option>getMulCols</option>
+<option>getMulRows</option>
+<option>getRow</option>
+<option>getSubblock</option>
+<option>identityNum</option>
+<option>identityVA</option>
+<option>IkronBtimesC</option>
+<option>IkronBtimesCVA</option>
+<option>inverse</option>
+<option>inverseVA</option>
+<option>inxToMax</option>
+<option>isDblEpsEqual</option>
+<option>isDmatEpsEqual</option>
+<option>isGreaterThanOrEqualTo</option>
+<option>isLessThanOrEqualTo</option>
+<option>isSymmetric</option>
+<option>matabs</option>
+<option>matmaxScalar</option>
+<option>matmaxMatrices</option>
+<option>matminScalar</option>
+<option>matminMatrices</option>
+<option>mulByScalar</option>
+<option>multiply</option>
+<option>norm</option>
+<option>Optimizer</option>
+<option>pi</option>
+<option>placeRows</option>
+<option>printInMatrix</option>
+<option>quasinewtonanybox</option>
+<option>replaceIth</option>
+<option>replaceJth</option>
+<option>replaceSubblockDoubleMatrix</option>
+<option>replaceSubblockValarray</option>
+<option>rvec</option>
+<option>rvecVA</option>
+<option>rvecInverse</option>
+<option>SpkError</option>
+<option>SpkException</option>
+<option>SpkValarray</option>
+<option>subtraction</option>
+<option>symmetrize</option>
+<option>symmetrizeVA</option>
+<option>System</option>
+<option>transpose</option>
+<option>transposeRef</option>
+<option>transposeVA</option>
+<option>transposeDerivative</option>
+<option>transposeDerivativeVA</option>
+<option>transposeRowBlocks</option>
+<option>transposeRowBlocksVA</option>
+<option>UTranTimesSymKronSymTimesU</option>
+<option>UTranTimesSymKronSymTimesU_x</option>
+<option>WarningsManager_constructor</option>
+<option>WarningsManager_addWarning</option>
+<option>WarningsManager_addWarningList</option>
+<option>WarningsManager_clearAllWarnings</option>
+<option>WarningsManager_anyWarnings</option>
+<option>WarningsManager_getWarningList</option>
+<option>WarningsManager_getAllWarnings</option>
+</select>
+</td>
+<td>File</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Constructors</option>
+<option>Public Members</option>
+<option>Operator Overloads</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>File class</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype:</b>   </td><td align='left'  valign='top'>
+  
+<code><font color="blue"><span style='white-space: nowrap'>File::File()<br>
+</span></font></code><code><font color="blue"><span style='white-space: nowrap'>File::File(const&nbsp;string&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>path</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;string&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>filename</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code><code><font color="blue"><span style='white-space: nowrap'>File::File(const&nbsp;string&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>path</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>filename</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code><code><font color="blue"><span style='white-space: nowrap'>File::File(const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>path</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;string&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>filename</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code><code><font color="blue"><span style='white-space: nowrap'>File::File(const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>path</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>filename</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code></td></tr>
+</table>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+
+<code><font color="blue"><br>
+File</font></code> provides a convenient way of maintaining and accessing the path and name of a file.
+The class does not validate the name or path.
+In this way, user can use <code><font color="blue">File</font></code> object as a mere place holder for
+accessing these strings (path and filename) in ways as you like.  
+Either or both strings can be empty as well.
+
+<br>
+<br>
+<b><big><a name="Constructors" id="Constructors">Constructors</a></big></b>
+
+
+<br>
+<code><font color="blue"><span style='white-space: nowrap'>File::File()<br>
+</span></font></code>is the default constructor.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><code><font color="blue"><span style='white-space: nowrap'>File::File(const&nbsp;string&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>path</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;string&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>filename</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code><code><font color="blue"><span style='white-space: nowrap'>File::File(const&nbsp;string&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>path</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>filename</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code><code><font color="blue"><span style='white-space: nowrap'>File::File(const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>path</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;string&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>filename</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code><code><font color="blue"><span style='white-space: nowrap'>File::File(const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>path</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>filename</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+<br>
+</span></font></code><i>path</i> specifies the path to <i>filename</i> that may or may not be
+terminated by a path delimiter such as back-slush (\) for Windows_.  You can
+obtain your local operation system's path delimiter by using a method in 
+<a href="system.htm" target="_top">System Utilities Class</a> (in <code><font color="blue">System</font></code> class).
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If <i>path</i> is not terminated by a delimiter,
+then the system always adds a delimiter to the tail automatically.
+The file specified by <i>filename</i> does not have to exist physically.  It can
+be, for example, empty (&quot;&quot;) or wildcard (*.*, *, 80abc*...).
+
+
+<br>
+<br>
+<b><big><a name="Public Members" id="Public Members">Public Members</a></big></b>
+
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+public&nbsp;void&nbsp;setPath(const&nbsp;string&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>str</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>sets (or replace) the file path with <i>str</i>.  If <i>str</i> is terminated by a path delimiter,
+it will be removed.  The path does not have to be necessarily valid.  
+In other words, user can specify anything here such as empty (&quot;&quot;).
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+public&nbsp;void&nbsp;setName(const&nbsp;string&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>str</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>sets (or replace) the file name with <i>str</i>.  The file name does not have to be necessarily valid.  
+In other words, user can specify anything here such as empty (&quot;&quot;) and wildcard (*.*, *, abc*...).
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+public&nbsp;const&nbsp;string&nbsp;getPath()&nbsp;const<br>
+</span></font></code>returns the path to a file always terminated by a path delimiter (even if user did not provide it
+with).
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+public&nbsp;const&nbsp;string&nbsp;getName()&nbsp;const<br>
+</span></font></code>returns <i>filename</i> exactly as given at the time of construction.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+public&nbsp;const&nbsp;string&nbsp;getFullname()&nbsp;const<br>
+</span></font></code>returns a string concatenating the values returned by <code><font color="blue">getPath()</font></code> (terminated by a path delimiter)
+ and <code><font color="blue">getName()</font></code>, in the preserved order.
+
+<br>
+<br>
+<b><big><a name="Operator Overloads" id="Operator Overloads">Operator Overloads</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+File&amp;&nbsp;File::operator=(const&nbsp;File&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>right</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>copies information from <i>right</i> into <code><font color="blue">this</font></code>.  Self-assignment is prohibited.
+If such operation is attempted, the system terminates.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+bool&nbsp;File::operator&nbsp;!=(const&nbsp;File&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>right</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>returns true if either or both the path or/and filename does not exactly match 
+(as strings) between <code><font color="blue">this</font></code> and <i>right</i>; false otherwise.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+friend&nbsp;public&nbsp;ostream&amp;&nbsp;operator&lt;&lt;(ostream&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>stream</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;File&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>file</span></i><code><font color="blue"><span style='white-space: nowrap'>)&nbsp;const<br>
+</span></font></code>returns a reference to an ostream object that contains the value returned by <code><font color="blue">getFullname()</font></code>.
+
+
+<hr>Input File: ../../spk/File.cpp
+
+</body>
+</html>

@@ -1,0 +1,307 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Library Versioning</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Library Versioning">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Library Versioning">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC91"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_90.html#SEC90" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Using libtoolize" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_92.html#SEC92" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Convenience Libraries" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_92.html#SEC92" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Convenience Libraries" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_83.html#SEC83" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Using GNU Libtool" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_93.html#SEC93" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: A Large GNU Autotools Project" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 11.4 Library Versioning </H2>
+<!--docid::SEC91::-->
+<P>
+
+It is important to note from the outset that the version number of your
+project is a very different thing to the version number of any libraries 
+shipped with your project.  It is a common error for maintainers to try
+to force their libraries to have the same version number as the current
+release version of the package as a whole.  At best, they will break
+binary compatibility unnecessarily, so that their users won't gain the
+benefits of the changes in their latest revision without relinking all
+applications that use it.  At worst, they will allow the runtime
+linker to load binary incompatible libraries, causing applications to
+crash.
+</P><P>
+
+Far better, the Libtool versioning system will build native shared
+libraries with the correct <EM>native</EM> library version numbers.
+Although different architectures use various numbering schemes,
+Libtool abstracts these away behind the system described here.
+The various native library version numbering schemes are designed so
+that when an executable is started, the runtime loader can, where
+appropriate, choose a more recent installed library version than the one
+with which the executable was actually built.  This allows you to fix
+bugs in your library, and having  built it with the correct Libtool
+version number, have those fixes propogate into any executables that
+were built with the old buggy version.  This can only work if the
+runtime loader can tell whether it can load the new library into the old
+executable and expect them to work together.  The library version
+numbers give this information to the runtime loader, so it is very
+important to set them correctly.
+</P><P>
+
+The version scheme used by Libtool tracks <EM>interfaces</EM>,
+where an interface is the set of exported entry points into the library.
+All Libtool libraries start with <SAMP>`-version-info'</SAMP> set to
+<SAMP>`0:0:0'</SAMP> -- this will be the default version number if you don't
+explicitly set it on the Libtool link command line.  The meaning of
+these numbers (from left to right) is as follows:
+</P><P>
+
+<DL COMPACT>
+<DT><VAR>current</VAR>
+<DD>The number of the current interface exported by the library.  A
+<VAR>current</VAR> value of <SAMP>`0'</SAMP>, means that you are calling the
+interface exported by this library <EM>interface 0</EM>.
+<P>
+
+<DT><VAR>revision</VAR>
+<DD>The implementation number of the most recent interface exported by this
+library.  In this case, a <VAR>revision</VAR> value of <SAMP>`0'</SAMP> means that
+this is the first implementation of the interface.
+<P>
+
+If the next release of this library exports the same interface, but has
+a different implementation (perhaps some bugs have been fixed), the
+<VAR>revision</VAR> number will be higher, but <VAR>current</VAR> number will be 
+the same.  In that case, when given a choice, the library with the
+highest <VAR>revision</VAR> will always be used by the runtime loader.
+</P><P>
+
+<DT><VAR>age</VAR>
+<DD>The number of previous additional interfaces supported by this library.
+If <VAR>age</VAR> were <SAMP>`2'</SAMP>, then this library can be linked into
+executables which were built with a release of this library that
+exported the current interface number, <VAR>current</VAR>, or any of the
+previous two interfaces.
+<P>
+
+By definition <VAR>age</VAR> must be less than or equal to <VAR>current</VAR>.
+At the outset, only the first ever interface is implemented, so
+<VAR>age</VAR> can only be <SAMP>`0'</SAMP>.
+</DL>
+<P>
+
+For later releases of a library, the <SAMP>`-version-info'</SAMP> argument
+needs to be set correctly depending on any interface changes you have
+made. This is quite straightforward when you understand what the three
+numbers mean:
+</P><P>
+
+<OL>
+<LI>
+If you have changed any of the sources for this library, the
+<VAR>revision</VAR> number must be incremented.  <STRONG>This is a new
+revision of the current interface</STRONG>.
+<P>
+
+<LI>
+If the interface has changed, then <VAR>current</VAR> must be incremented,
+and <VAR>revision</VAR> reset to <SAMP>`0'</SAMP>.  <STRONG>This is the first revision 
+of a new interface</STRONG>.
+<P>
+
+<LI>
+If the new interface is a superset of the previous interface (that is,
+if the previous interface has not been broken by the changes in this new 
+release), then <VAR>age</VAR> must be incremented.  <STRONG>This release
+is backwards compatible with the previous release</STRONG>.
+<P>
+
+<LI>
+If the new interface has removed elements with respect to the previous
+interface, then you have broken backward compatibility and <VAR>age</VAR>
+must be reset to <SAMP>`0'</SAMP>.  <STRONG>This release has a new, but backwards
+incompatible interface</STRONG>.
+</OL>
+<P>
+
+<BLOCKQUOTE>
+For example, if the next release of the library included some new
+commands for an existing socket protocol, you would use
+<CODE>-version-info 1:0:1</CODE>.  <STRONG>This is the first revision of a
+new interface.  This release is backwards compatible with the previous
+release</STRONG>.
+<P>
+
+Later, you implement a faster way of handling part of the algorithm at
+the core of the library, and release it with <CODE>-version-info
+1:1:1</CODE>. <STRONG>This is a new revision of the current interface</STRONG>.
+</P><P>
+
+Unfortunately the speed of your new implementation can only be fully
+exploited by changing the API to access the structures at a lower
+level, which breaks compatibility with the previous interface, so you
+release it as <CODE>-version-info 2:0:0</CODE>.  <STRONG>This release has a
+new, but backwards incompatible interface</STRONG>.
+</BLOCKQUOTE>
+<P>
+
+When deciding which numbers to change in the <CODE>-version-info</CODE>
+argument for a new release, you must remember that an interface change
+is not limited to the API of the library.  The notion of an
+interface must include any method by which a user (code or human) can
+interact with the library: adding new builtin commands to a shell
+library; the format used in an output file; the handshake protocol
+required for a client connecting over a socket, and so on.
+</P><P>
+
+Additionally, If you use a development model which has both a stable and
+an unstable tree being developed in parallel, for example, and you don't
+mind forcing your users to relink all of the applications which use one
+of your Libtool libraries every time you make a release, then
+<CODE>libtool</CODE> provides the <SAMP>`-release'</SAMP> flag to encode the
+project version number in the name of the library, See section <A HREF="autobook_88.html#SEC88">11.2.1 Creating Libtool Libraries with Automake</A>. This can save you library
+compatibility problems later if you need to, say, make a patch release
+of an older revision of your library, but the library version number
+that you should use has already been taken by another earlier release.
+In this case, you could be fairly certain that library releases from the
+unstable branch will not be binary compatible with the stable releases,
+so you could make all the stable releases with <SAMP>`-release 1.0'</SAMP> and
+begin the first unstable release with <SAMP>`-release 1.1'</SAMP>.
+</P><P>
+
+<A NAME="Convenience Libraries"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

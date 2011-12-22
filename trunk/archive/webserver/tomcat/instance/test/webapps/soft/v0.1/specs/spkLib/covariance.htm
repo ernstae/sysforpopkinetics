@@ -1,0 +1,288 @@
+<html><head>
+<title>Covariance Class</title>
+<meta name="description" id="description" content="Covariance Class">
+<meta name="keywords" id="keywords" content=" Covariance Class Base ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_covariance_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>general</option>
+<option>CovarianceClasses</option>
+<option>Covariance</option>
+</select>
+</td>
+<td><a href="covarianceclasses.htm" target="_top">Prev</a>
+</td><td><a href="covariance_default_constructor.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>general-&gt;</option>
+<option>ABA_x</option>
+<option>ABA_xVA</option>
+<option>addition</option>
+<option>AkronBtimesC</option>
+<option>AkronBtimesCRef</option>
+<option>AkronBtimesCVA</option>
+<option>AkronItimesC</option>
+<option>AkronItimesCVA</option>
+<option>allTrue</option>
+<option>allZero</option>
+<option>backDiv</option>
+<option>BlockAlloc</option>
+<option>blockDiagonalDerivative</option>
+<option>centdiff</option>
+<option>centdiffVA</option>
+<option>cholesky</option>
+<option>countTrues</option>
+<option>CovarianceClasses</option>
+<option>elsq</option>
+<option>elsqVA</option>
+<option>elsqFuncOb</option>
+<option>elsq_x</option>
+<option>elsq_xVA</option>
+<option>elsq_xDiag</option>
+<option>elsq_xBlockDiag</option>
+<option>DBL_EPS_EQUAL_MULT</option>
+<option>det</option>
+<option>detVA</option>
+<option>divByScalar</option>
+<option>DMclass</option>
+<option>elementwiseAnd</option>
+<option>elementwiseOr</option>
+<option>File</option>
+<option>FpErrorChecker</option>
+<option>ModelFunction</option>
+<option>ModelDerivative</option>
+<option>getCol</option>
+<option>getMulCols</option>
+<option>getMulRows</option>
+<option>getRow</option>
+<option>getSubblock</option>
+<option>identityNum</option>
+<option>identityVA</option>
+<option>IkronBtimesC</option>
+<option>IkronBtimesCVA</option>
+<option>inverse</option>
+<option>inverseVA</option>
+<option>inxToMax</option>
+<option>isDblEpsEqual</option>
+<option>isDmatEpsEqual</option>
+<option>isGreaterThanOrEqualTo</option>
+<option>isLessThanOrEqualTo</option>
+<option>isSymmetric</option>
+<option>matabs</option>
+<option>matmaxScalar</option>
+<option>matmaxMatrices</option>
+<option>matminScalar</option>
+<option>matminMatrices</option>
+<option>mulByScalar</option>
+<option>multiply</option>
+<option>norm</option>
+<option>Optimizer</option>
+<option>pi</option>
+<option>placeRows</option>
+<option>printInMatrix</option>
+<option>quasinewtonanybox</option>
+<option>replaceIth</option>
+<option>replaceJth</option>
+<option>replaceSubblockDoubleMatrix</option>
+<option>replaceSubblockValarray</option>
+<option>rvec</option>
+<option>rvecVA</option>
+<option>rvecInverse</option>
+<option>SpkError</option>
+<option>SpkException</option>
+<option>SpkValarray</option>
+<option>subtraction</option>
+<option>symmetrize</option>
+<option>symmetrizeVA</option>
+<option>System</option>
+<option>transpose</option>
+<option>transposeRef</option>
+<option>transposeVA</option>
+<option>transposeDerivative</option>
+<option>transposeDerivativeVA</option>
+<option>transposeRowBlocks</option>
+<option>transposeRowBlocksVA</option>
+<option>UTranTimesSymKronSymTimesU</option>
+<option>UTranTimesSymKronSymTimesU_x</option>
+<option>WarningsManager_constructor</option>
+<option>WarningsManager_addWarning</option>
+<option>WarningsManager_addWarningList</option>
+<option>WarningsManager_clearAllWarnings</option>
+<option>WarningsManager_anyWarnings</option>
+<option>WarningsManager_getWarningList</option>
+<option>WarningsManager_getAllWarnings</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>CovarianceClasses-&gt;</option>
+<option>Covariance</option>
+<option>FullCovariance</option>
+<option>FullDataCovariance</option>
+<option>FullIndParCovariance</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down0(this)'>
+<option>Covariance-&gt;</option>
+<option>Covariance_default_constructor</option>
+<option>Covariance_copy_constructor</option>
+<option>Covariance_assignment_operator</option>
+<option>Covariance_default_destructor</option>
+<option>Covariance_selectCovIndividual</option>
+<option>Covariance_setCovPopPar</option>
+<option>Covariance_setCovIndPar</option>
+<option>Covariance_logdet</option>
+<option>Covariance_weightedSumOfSquares</option>
+<option>Covariance_cov</option>
+<option>Covariance_cov_popPar</option>
+<option>Covariance_cov_indPar</option>
+<option>Covariance_inv</option>
+<option>Covariance_inv_popPar</option>
+<option>Covariance_inv_indPar</option>
+</select>
+</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Note</option>
+<option>Contents</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Covariance Class</big></big></b></center>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This is the very top level abstract base class for all covariance matrix classes.
+This class defines the functions and data members that manage the status of
+the cache, but these functions do not actually perform the caching.  
+This class declaration also contains virtual functions to the mathematical
+functions that must be defined in its subclasses.
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Objects of this class are used to calculate and cache the following
+quantities for a covariance matrix:
+<table><tr><td align='left'  valign='top'>
+  
+(1.) the covariance matrix, </td></tr><tr><td align='left'  valign='top'>
+
+(2.) the inverse of the covariance matrix, </td></tr><tr><td align='left'  valign='top'>
+
+(3.) the log determinant of the covariance matrix, and </td></tr><tr><td align='left'  valign='top'>
+
+(4.) the weighted sum of squares of an arbitrary vector. </td></tr><tr><td align='left'  valign='top'>
+
+</td></tr>
+</table>
+In addition, objects of this class are used to evaluate the 
+derivatives of these quantities with respect to the population
+and the individual parameters.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The following diagram shows the Covariance class hierarchy:
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Covariance&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;(&nbsp;This&nbsp;exists&nbsp;for&nbsp;caching&nbsp;mechanism&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Abstract)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/|\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/|\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;math&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;states<br>
+&nbsp;&nbsp;&nbsp;-----------------------&nbsp;&nbsp;&nbsp;&nbsp;-------------------------<br>
+&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FullCovariance&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;|&nbsp;&nbsp;Data/IndParCovariance&nbsp;&nbsp;|&nbsp;(This&nbsp;contains&nbsp;pointers&nbsp;to&nbsp;functions&nbsp;declared&nbsp;in&nbsp;the&nbsp;left&nbsp;hand&nbsp;side)<br>
+&nbsp;&nbsp;&nbsp;-----------------------&nbsp;&nbsp;&nbsp;&nbsp;-------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Abstract)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Abstract)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/|\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/|\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex.|&nbsp;&nbsp;&nbsp;&nbsp;FullDataCovariance&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Abstract)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/|\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ex.|&nbsp;&nbsp;UserFullDataCovariance&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(concrete)<br>
+</span></code>This class defines the functions and data members that manage the status of
+the cache, but these functions do not actually perform the caching.  
+This class declaration also contains virtual functions to the mathematical
+functions that must be defined in its subclasses.
+
+<br>
+<br>
+<b><big><a name="Note" id="Note">Note</a></big></b>
+<br>
+This class declares pure virtual functions that calculate the
+above mathematical quantities and their derivatives.  
+These functions must be defined in concrete subclasses of this class 
+before any <code><font color="blue">Covariance</font></code> objects may be instantiated.
+
+<br>
+<br>
+<b><big><a name="Contents" id="Contents">Contents</a></big></b>
+<br>
+<div><a href="covariance_default_constructor.htm" target="_top">Default&nbsp;Constructor</a><br>
+<a href="covariance_copy_constructor.htm" target="_top">Copy&nbsp;Constructor</a><br>
+<a href="covariance_assignment_operator.htm" target="_top">Assignment&nbsp;Operator</a><br>
+<a href="covariance_default_destructor.htm" target="_top">Default&nbsp;Destructor</a><br>
+<a href="covariance_selectcovindividual.htm" target="_top">Covariance::selectCovIndividual</a><br>
+<a href="covariance_setcovpoppar.htm" target="_top">Covariance::setCovPopPar</a><br>
+<a href="covariance_setcovindpar.htm" target="_top">Covariance::setCovIndPar</a><br>
+<a href="covariance_logdet.htm" target="_top">Covariance::logdet</a><br>
+<a href="covariance_weightedsumofsquares.htm" target="_top">Covariance::weightedSumOfSquares</a><br>
+<a href="covariance_cov.htm" target="_top">Covariance::cov&nbsp;&amp;&nbsp;(pure&nbsp;virtual)&nbsp;doCov</a><br>
+<a href="covariance_cov_poppar.htm" target="_top">Covariance::cov_popPar&nbsp;&amp;&nbsp;(pure&nbsp;virtual)&nbsp;doCov_popPar</a><br>
+<a href="covariance_cov_indpar.htm" target="_top">Covariance::cov_indPar&nbsp;&amp;&nbsp;(pure&nbsp;virtual)&nbsp;doCov_indPar</a><br>
+<a href="covariance_inv.htm" target="_top">Covariance::inv&nbsp;&amp;&nbsp;(pure&nbsp;virtual)&nbsp;doInv</a><br>
+<a href="covariance_inv_poppar.htm" target="_top">Covariance::inv_popPar&nbsp;&amp;&nbsp;(pure&nbsp;virtual)&nbsp;doInv_popPar</a><br>
+<a href="covariance_inv_indpar.htm" target="_top">Covariance::inv_indPar&nbsp;&amp;&nbsp;(pure&nbsp;virtual)&nbsp;doInv_indPar</a><br>
+</div>
+<hr>Input File: ../../spk/Covariance.h
+
+</body>
+</html>

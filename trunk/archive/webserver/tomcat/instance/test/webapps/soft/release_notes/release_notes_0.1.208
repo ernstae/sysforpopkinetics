@@ -1,0 +1,46 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.206
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+
+Modified compiler to return an error message when the number of individuals
+in the data file does not match the expected number.
+
+RELATED BUG REPORTS:  714
+
+BY:  Mitch Watrous
+
+WHEN:  July 17, 2007
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.207
+----------------------------------
+USER VISIBLE CHANGES
+
+SPK will now detect when a compartment number greater than the maximum number
+is used in a data record.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:  715
+
+BY:  Mitch Watrous
+
+WHEN:  July 17, 2007
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.208
+----------------------------------
+USER VISIBLE CHANGES
+
+Added faster version of First Order method.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  None.
+
+BY:  Mitch Watrous
+
+WHEN:  August 24, 2007

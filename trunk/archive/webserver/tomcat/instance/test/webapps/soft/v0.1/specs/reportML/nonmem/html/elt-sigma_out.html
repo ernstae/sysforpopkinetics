@@ -1,0 +1,51 @@
+<html><body><p><a href=dtd-overview.html>Overview</a> <a href=dtd-tree.html>Tree</a> <a href=dtd-index.html>Index</a> <a href=dtd-notations.html>Notations</a> <a href=dtd-entities.html>Entities</a> </p><h1>Element &lt;sigma_out&gt;</h1><p>A minimal representation of NONMEM Omega matrix when </p><p>
+optimization completes (ie. converges) successfully.  
+If fails, this entry contains the value from the last successfully completed iteration.
+
+For full (ie. "block") matrix, <a href=elt-sigma_out.html>sigma_out</a> lists the 
+<font color='red'>lower</font> triangle elements in the 
+<font color='red'>row-major</font> order. 
+ For diagonal, <a href=elt-sigma_out.html>sigma_out</a> lists only the diagonal elements 
+from the upper left corner. 
+ For block diagonal, each <a href=elt-sigma_out.html>sigma_out</a> block is listed individually 
+using full or diagonal specifications as appropriate.
+
+Given a 3 by 3 matrix, A:
+<pre>
+/                   \
+|  a11   a12   a13  |
+|  a21   a22   a23  |
+|  a31   a32   a33  |
+\                   / 
+</pre>
+
+If A were <font color='red'>full</font> (ie. block) 
+symmetric, <a href=elt-sigma_out.html>sigma_out</a> specifies as follows:
+<pre>
+    &lt;sigma_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+       &lt;value&gt;a31&lt;/value&gt;&lt;value&gt;a32&lt;/value&gt;&lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma_out&gt;
+</pre>
+If A were <font color='red'>diagonal</font>, <a href=elt-sigma_out.html>sigma_out</a> specifies as follows:
+<pre>
+    &lt;sigma_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+                         &lt;value&gt;a22&lt;/value&gt;
+                                           &lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma_out&gt;
+</pre>
+If A were <font color='red'>block diagonal</font>
+ symmetric with a 2x2 full block and a 1x1 diagonal block, 
+<a href=elt-sigma_out.html>sigma_out</a> specifies as two blocks as follows:
+<pre>
+    &lt;sigma_out&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+    &lt;/sigma_out&gt;
+    &lt;sigma_out&gt;
+       &lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma_out&gt;
+</pre>
+</p><h2>Attributes</h2><dl><dt>dimension REQUIRED </dt><dd><p>The dimension of the Simga matrix. </p></dd><dt>struct REQUIRED </dt><dd><p>The structure of the Sigma matrix: "block" or "diagonal". </p></dd></dl><h2>Content</h2><p>(<a href=elt-value.html>value</a>)+</p><h2>Parents</h2><p><a href=elt-pop_opt_result.html>pop_opt_result</a> </p></body></html>

@@ -1,0 +1,39 @@
+<html><head>
+<title>Covariance::inv_popPar &amp; (pure virtual) doInv_popPar</title>
+<meta name="description" id="description" content="Covariance::inv_popPar &amp; (pure virtual) doInv_popPar">
+<meta name="keywords" id="keywords" content=" inv_poppar doinv_poppar Derivative of Inverse Covariance Population Parameter "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="covariance_inv_poppar.htm" target="_top">section</a>, <a href="covariance_inv_poppar_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+The public interface <code><font color="blue"><span style='white-space: nowrap'>void&nbsp;covInv_popPar(&nbsp;DoubleMatrix&amp;&nbsp;\ret\&nbsp;)&nbsp;const</span></font></code>
+evaluates the user defined <code><font color="blue"><span style='white-space: nowrap'>virtual&nbsp;doCovInv_popPar(&nbsp;DoubleMatrix&amp;&nbsp;\ret\&nbsp;)&nbsp;const</span></font></code>
+at the current evaluation points.
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>ret</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>is n by nPopPar matrix resulted from evaluating <code><font color="blue">doCovInv_popPar()</font></code>,
+where n is the product of #rows and #cols of a matrix resulted from evaluating <code><font color="blue">doCovInv()</font></code>
+and nPopPar is the size of the population parameter vector.
+j-th column of matrix, <i>ret</i>, contains the inverse of the derivative of the covariance with respect to  
+j-th element of the population parameter vector, in the column-major order.
+Each column, or the derivative with respect to j-th, must be a symmetric positive definite matrix.
+
+
+<hr>Input File: ../../spk/Covariance.cpp
+
+</body>
+</html>

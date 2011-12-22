@@ -1,0 +1,271 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Creating Shared Libraries with libtool</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Creating Shared Libraries with libtool">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Creating Shared Libraries with libtool">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC72"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_71.html#SEC71" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Position Independent Code" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_73.html#SEC73" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Creating Static Libraries with libtool" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_73.html#SEC73" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Creating Static Libraries with libtool" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_70.html#SEC70" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: The Libtool Library" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_75.html#SEC75" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Linking an Executable" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 10.2.2 Creating Shared Libraries </H3>
+<!--docid::SEC72::-->
+<P>
+
+<A NAME="IDX9"></A>
+From Libtool's point of view, the term `shared library' is somewhat of
+a misnomer.  Since Libtool is intended to abstract away the details of
+library building, it doesn't matter whether Libtool is building a shared
+library or a static archive.  Of course, Libtool will always try to
+build a shared library by default on the platforms to which it has been
+ported (see section <A HREF="autobook_275.html#SEC275">B. PLATFORMS</A>), but will equally fall back to building a
+static archive if the host architecture does not support shared
+libraries, or if the project developer deliberately configures Libtool
+to always build static archives only.  These libraries are more properly
+called `<EM>Libtool libraries</EM>'; the underlying native library will
+usually be a shared library, except as described above.
+</P><P>
+
+To create a Libtool library on my HP-UX host, or indeed anywhere
+else that <CODE>libtool</CODE> works, run the following commands:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ rm hello.o libhello.a
+$ libtool gcc -c hello.c
+mkdir .libs
+gcc -c  -fPIC -DPIC hello.c -o .libs/hello.lo
+gcc -c hello.c -o hello.o &#62;/dev/null 2&#62;&#38;1
+mv -f .libs/hello.lo hello.lo
+$ ls
+hello.c   hello.lo   hello.o
+$ libtool gcc -rpath /usr/local/lib -o libhello.la hello.lo
+rm -fr .libs/libhello.la .libs/libhello.* .libs/libhello.*
+/opt/gcc-lib/hp821/2.7.0/ld -b +h libhello.sl.0 +b /usr/local/lib \
+-o .libs/libhello.sl.0.0  hello.lo
+(cd .libs &#38;&#38; rm -f libhello.sl.0 &#38;&#38; ln -s libhello.sl.0.0 libhello.sl.0)
+(cd .libs &#38;&#38; rm -f libhello.sl &#38;&#38; ln -s libhello.sl.0.0 libhello.sl)
+ar cru .libs/libhello.a  hello.o
+ranlib .libs/libhello.a
+creating libhello.la
+(cd .libs &#38;&#38; rm -f libhello.la &#38;&#38; ln -s ../libhello.la libhello.la)
+$ ls
+hello.c   hello.lo   hello.o   libhello.la
+</FONT></pre></td></tr></table></P><P>
+
+<A NAME="IDX10"></A>
+This example illustrates several features of <CODE>libtool</CODE>.  Compare
+the command line syntax with the previous example (see section <A HREF="autobook_70.html#SEC70">10.2 The Libtool Library</A>).  They are both very similar.  Notice, however, that when
+compiling the <TT>`hello.c'</TT> source file, <CODE>libtool</CODE> creates
+<EM>two</EM> objects.  The first, <TT>`hello.lo'</TT>, is the <EM>Libtool
+object</EM> which we use for Libtool libraries, and the second,
+<TT>`hello.o'</TT> is a standard object.  On HP-UX, <CODE>libtool</CODE>
+knows that Libtool objects should be compiled with <EM>position
+independent code</EM>, hence the extra switches when creating the first
+object.
+<BLOCKQUOTE>
+When you run <CODE>libtool</CODE> from the command line, you must also
+specify a compiler for it to call.  Similarly when you create a
+<CODE>libtool</CODE> script with <CODE>ltconfig</CODE>, a compiler is chosen
+and interrogated to discover what characteristics it has.
+See section <A HREF="autobook_69.html#SEC69">10.1 Creating <CODE>libtool</CODE></A>.
+<P>
+
+Prior to release 1.4 of Libtool, <CODE>ltconfig</CODE> probed the build
+machine for a suitable compiler, by searching first for <CODE>gcc</CODE>
+and then <CODE>cc</CODE>.  The functionality of <CODE>ltconfig</CODE> is being
+migrated into the <SAMP>`AC_PROG_LIBTOOL'</SAMP> macro, such that there will be
+no <CODE>ltconfig</CODE> script in Libtool release 1.5.  The current
+release is part way between the two.  In all cases, you can specify a
+particular compiler by setting the <SAMP>`CC'</SAMP> environment variable.
+</P><P>
+
+It is important to continue to use the same compiler when you run
+<CODE>libtool</CODE> as the compiler that was used when you created the
+<CODE>libtool</CODE> script.  If you create the script with <SAMP>`CC'</SAMP> set
+to <CODE>gcc</CODE>, and subsequently try to compile using, say:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ libtool c89 -rpath /usr/local/lib -c hello.c
+</FONT></pre></td></tr></table></P><P>
+
+<CODE>libtool</CODE> will try to call <CODE>c89</CODE> using the options it
+discovered for <CODE>gcc</CODE>.  Needless to say, that doesn't work!
+</BLOCKQUOTE>
+<P>
+
+The link command specifies a Libtool library target, <TT>`libhello.la'</TT>,
+compiled from a single Libtool object, <TT>`hello.lo'</TT>.  Even so,
+<CODE>libtool</CODE> knows how to build both static and shared archives on
+HP-UX -- underneath the <CODE>libtool</CODE> abstraction both are
+created. <CODE>libtool</CODE> also understands the particulars of library
+linking on  HP-UX: the static archive, <TT>`libhello.a'</TT>, is
+<I>blessed</I>; the system (and compiler) dependent compiler and linker
+flags, versioning scheme and <CODE>.sl</CODE> extension are utilised for the
+shared archive, <TT>`libhello.sl'</TT>.  On another host, all of these
+details may be completely different, yet with exactly the same
+invocation, <CODE>libtool</CODE> will call the native tools with the
+appropriate options to achieve the same result.  Try it on your own
+machines to see any differences.
+</P><P>
+
+It is the <SAMP>`-rpath'</SAMP> switch that tells <CODE>libtool</CODE> that you
+want to build a Libtool library (with both the shared and static
+components where possible).  If you omit the <SAMP>`-rpath'</SAMP> switch,
+<CODE>libtool</CODE> will build a convenience library instead,
+see <A HREF="autobook_74.html#SEC74">Creating convenience Libraries</A>.  The <SAMP>`-rpath'</SAMP> switch is doubly
+important, because it tells <CODE>libtool</CODE> that you intend to install
+<TT>`libhello.la'</TT> in <TT>`/usr/local/lib'</TT>.  This allows
+<CODE>libtool</CODE> to finalize the library correctly after installation
+on the architectures that need it, see <A HREF="autobook_80.html#SEC80">10.6 Installing a Library</A>.
+</P><P>
+
+Finally, notice that only the Libtool library, <TT>`libhello.la'</TT>,
+is visible after a successful link.  The various files which form the
+local implementation details of the Libtool library are in a hidden
+subdirectory, but in order for the abstraction to work cleanly you
+shouldn't need to worry about these too much.
+</P><P>
+
+<A NAME="Creating Static Libraries with libtool"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

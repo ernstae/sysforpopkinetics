@@ -1,0 +1,952 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Administration of the Annual Reporting System</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Administration of the Annual Reporting System</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	RFPK uses software known as the <I
+CLASS="emphasis"
+>Automated NCRR Annual
+	Report Package</I
+> for preparing its annual report for the
+	NIH.  This document describes the installation and maintenance 
+	of this package.
+      </P
+><P
+>&#13;	The information in this document is targeted primarily toward
+	the RFPK Software Team and associates and is specific to the
+	computer systems and network installed in the RFPK Laboratory
+	of the Department of Bioengineering of the University of Washington.  RFPK is the Resource for
+	Population Kinetics.  Its work is supported, in part, by grant
+	P41 EB-001975 of the National Institutes of Health (NIH) of
+	the U.S.  Department of Health and Human Services.
+      </P
+><P
+>&#13;	<A
+HREF="#AEN158"
+>Copyright</A
+> (c) 2004, by the University of Washington.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>December 29, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN16"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN22"
+>Security</A
+></DT
+><DT
+><A
+HREF="#AEN33"
+>Installation</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN36"
+>Creating a Database and an Administrative User</A
+></DT
+><DT
+><A
+HREF="#AEN43"
+>Populating the Database</A
+></DT
+><DT
+><A
+HREF="#AEN50"
+>Installing General Perl Modules</A
+></DT
+><DT
+><A
+HREF="#AEN62"
+>Installing the Package's Own Perl Modules</A
+></DT
+><DT
+><A
+HREF="#AEN79"
+>Installing the Static Web Content</A
+></DT
+><DT
+><A
+HREF="#AEN93"
+>Installing the CGI Scripts</A
+></DT
+><DT
+><A
+HREF="#AEN107"
+>Verifying the Installation</A
+></DT
+><DT
+><A
+HREF="#AEN116"
+>Configuring the Firewall</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN121"
+>Backup</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN123"
+>Backup Strategy</A
+></DT
+><DT
+><A
+HREF="#AEN137"
+>Configuring Backup</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN158"
+>Copyright Notice</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN16"
+></A
+>Introduction</H2
+><P
+>&#13;      RFPK uses software known as the
+      <I
+CLASS="emphasis"
+>Automated NCRR Annual Report Package</I
+>
+      for preparing its annual report for the NIH.
+      This software was obtained from Michael Riffle, of the Department
+      of Biochemistry, who may have been its author. The version of the
+      package that we have seems to have been developed or configured 
+      for the Yeast Resource Center (YRC). The acronym <I
+CLASS="emphasis"
+>YRC</I
+>
+      appears as the database name and in several path names of the configuration.
+      In this document the software will generally be referred to 
+      simply as the <I
+CLASS="emphasis"
+>package</I
+>.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN22"
+></A
+>Security</H2
+><P
+>&#13;      The package is a web application built around a MySQL database.  It
+      appears to have been designed so that various researchers could use 
+      it to maintain information about their own projects.  Because they
+      would interact with the package via the public internet, a security
+      scheme was implemented, which included the concept of session and the use
+      of the secure socket layer (SSL).  With the original security 
+      architecture intact, it would have required a fair amount of work
+      to port the system to current versions of the Apache web server
+      and the MySQL relational database management system.  Since Paolo
+      Vicini is the only user of the package at RFPK, it was decided
+      to disable the SSL features.  The security issue, nevertheless,
+      had to be addressed, due to the fact that Paolo's workstation
+      resides on the public internet. The solution chosen was to rely on the
+      firewall to bar access to all IP addresses except that of Paolo's
+      workstation.
+    </P
+><P
+>&#13;      The domain name of the firewall is <TT
+CLASS="filename"
+>spk.rfpk.washington.edu</TT
+>.
+      The package can be securely accessed from outside the firewall by using
+      two of the firewall's features:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    Port forwarding.  Traffic to an IP port on
+	    <TT
+CLASS="filename"
+>spk.rfpk.washington.edu</TT
+>
+	    can be forwarded to the same or any other port on any
+	    host behind the firewall.  A port number must be chosen that is
+	    not already being forwarded to another machine.  For this package
+	    we use the port 8082 and have it forwarded to port 80 on the 
+	    server on which the package is installed.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    External access control.  A list of IP addresses that can access
+	    this port must be provided.  This list would include the IP address
+	    of Paolo Vicini's workstation.  If required, additional IP addresses
+	    could be added.
+	  </P
+></LI
+></UL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN33"
+></A
+>Installation</H2
+><P
+>&#13;      The package, including the web server part of the application, is
+      currently installed on the RFPK database server machine.  This section 
+      assumes that its is desired to install the entire package on 
+      another server or to reinstall it on the current machine.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN36"
+></A
+>Creating a Database and an Administrative User</H3
+><P
+>&#13;	It is assumed that MySQL is already installed on the machine on which
+	you will install the package.
+      </P
+><P
+>&#13;	At the command line prompt, issue the command
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;mysql -uroot -p
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	and enter the database root password when requested. 
+      </P
+><P
+>&#13;	At the MySQL command prompt enter the following SQL statements:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;use mysql;
+create database YRC;
+grant all on YRC.* to admin@localhost identified by '4SPKdb%';
+quit;
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN43"
+></A
+>Populating the Database</H3
+><P
+>&#13;	It is assumed that you have available a database backup called
+	<TT
+CLASS="filename"
+>YRC.sql</TT
+>, previously created using 
+	the <I
+CLASS="emphasis"
+>mysqldump</I
+> program.  This file will now
+	be used to populate the database just created.
+      </P
+><P
+>&#13;	At the command prompt, input the following command
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;mysql -uadmin -p YRC &#60; YRC.sql
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	and enter the administrative password when requested.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN50"
+></A
+>Installing General Perl Modules</H3
+><P
+>&#13;	The package, written in perl, depends on certain perl modules.
+	<P
+></P
+><UL
+><LI
+><P
+>&#13;	      Digest::MD5
+	    </P
+></LI
+><LI
+><P
+>&#13;	      RTF::Writer
+	    </P
+></LI
+><LI
+><P
+>&#13;	      DBD::mysql
+	    </P
+></LI
+></UL
+>
+	They may already be installed on the server. If not, obtain them
+	from CPAN.
+      </P
+><P
+>&#13;	One way to determine if a module is present is to discover whether
+	or not its man pages have been installed.  For example, the command
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;man RTF::Writer
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	will output the manual page for RTF::Writer to the screen, if that 
+	module is installed.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN62"
+></A
+>Installing the Package's Own Perl Modules</H3
+><P
+>&#13;	The packages own perl modules are located in the <TT
+CLASS="filename"
+>r2</TT
+>
+	repository, starting at the directory
+	<TT
+CLASS="filename"
+>r2/src/apps/annual_report/YRC</TT
+>. To install the modules,
+	they most be made executable and copied to the <TT
+CLASS="filename"
+>site_perl</TT
+>
+	library.  Here is the procedure to follow:
+	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      If it does not already exist, get a CVS workspace in your home
+	      directory on the server.  The procedure for doing this is described
+	      in the 
+	      <A
+HREF="../cvs/cvs.html"
+TARGET="_top"
+>&#13;		CVS RFPK HOWTO
+	      </A
+>.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Change directory to
+	      <TT
+CLASS="filename"
+>r2/src/apps/annual_report/YRC</TT
+>.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Use the <I
+CLASS="emphasis"
+>install</I
+>
+	      script that is located in the directory to 
+	      complete the installation:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;chmod +x install
+su
+./install
+exit
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+></OL
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN79"
+></A
+>Installing the Static Web Content</H3
+><P
+>&#13;	The static web content of the package consists of <TT
+CLASS="filename"
+>.html</TT
+>
+	files, images and stylesheets.  These files are located in the <TT
+CLASS="filename"
+>r2</TT
+>
+	repository in the directory
+	<TT
+CLASS="filename"
+>r2/src/apps/annual_report/HTML</TT
+>.  They must be
+	copied to the web server content directory.  Here is the procedure to follow:
+	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      Change directory to 
+	      <TT
+CLASS="filename"
+>r2/src/apps/annual_report/HTML</TT
+>.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Use the <I
+CLASS="emphasis"
+>install</I
+> script 
+	      that is located in the directory
+	      to complete the installation:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;chmod +x install
+su
+./install
+exit
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+></OL
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN93"
+></A
+>Installing the CGI Scripts</H3
+><P
+>&#13;	The package uses CGI scripts to create web pages on dynamically.
+	These files are located in the <TT
+CLASS="filename"
+>r2</TT
+> repository
+	in the directory <TT
+CLASS="filename"
+>r2/src/apps/annual_report/CGI</TT
+>.
+	They must be copied to the web server <TT
+CLASS="filename"
+>cgi-bin</TT
+>
+	directory. Here is the procedure to follow:
+	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      Change directory to 
+	      <TT
+CLASS="filename"
+>r2/src/apps/annual_report/CGI</TT
+>.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Use the <I
+CLASS="emphasis"
+>install</I
+> script 
+	      that is located in the directory
+	      to complete the installation:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;chmod +x install
+su
+./install
+exit
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+></OL
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN107"
+></A
+>Verifying the Installation</H3
+><P
+>&#13;	You should now be able to run the package. 
+      </P
+><P
+>&#13;	If the server on which you have installed the package has a 
+	graphical desktop installed, log in to the desktop and start
+	the browser.  Then go to the following URL:
+      </P
+><P
+>&#13;	<TT
+CLASS="filename"
+>&#13;	  http://localhost/cgi-bin/YRC/projects/searchProjects.cgi
+	</TT
+>
+      </P
+><P
+>&#13;	If the server does not have a graphical desktop, you should be
+	able to access it from another computer.  If, for example,
+	the server is behind the firewall and has an IP address of
+	<TT
+CLASS="filename"
+>192.168.1.8</TT
+>, the URL would be:
+      </P
+><P
+>&#13;	  http://192.168.1.8/cgi-bin/YRC/projects/searchProjects.cgi
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN116"
+></A
+>Configuring the Firewall</H3
+><P
+>&#13;	As explained 
+	<A
+HREF="#AEN22"
+>above</A
+>, you need to
+	configure the firewall to forward traffic directed to port 8082
+	on the firewall to port 80 on the report server.  You should
+	also attach to this forwarding action an access list including,
+	at least, the IP address of Paolo Vicini's workstation.  When that is
+	done, verify that it works by accessing the application from
+	Paolo's workstation using the the following URL:
+      </P
+><P
+>&#13;	http://spk.rfpk.washington.edu:8082/cgi-bin/YRC/projects/searchProjects.cgi      
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN121"
+></A
+>Backup</H2
+><DIV
+CLASS="sect2"
+><H3
+CLASS="sect2"
+><A
+NAME="AEN123"
+></A
+>Backup Strategy</H3
+><P
+>&#13;	At present, the package is installed entirely on whitechuck, which is
+	backed up to tape on a weekly basis.  This is a <I
+CLASS="emphasis"
+>raw</I
+>
+	backup, in that everything is simply copied to the tape.  Much of the
+	information is in a binary form.  This information is certainly 
+	sufficient to restore the database in case of damage.  In order to
+	accomplish this, all of the files associated with MySQL could be copied
+	from tape to disk, using the <I
+CLASS="emphasis"
+>restore</I
+> function of
+	the <I
+CLASS="emphasis"
+>xbru</I
+> utility, which is part of the tape backup
+	system installed on whitechuck.
+      </P
+><P
+>&#13;	Restoring from the backup tape should only be used as a last resort,
+	however, for the following reasons:
+	<P
+></P
+><UL
+><LI
+><P
+>&#13;	      The tape backup is taken only once a week.  Information 
+	      added to the database between the time of the last backup and
+	      the time of the database failure is lost.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Care must be taken to restore only the files associated with
+	      the YRC database and not with the SPK databases.  This is
+	      a risky undertaking.  If not done properly, transactions might
+	      be lost from the SPK databases.
+	    </P
+></LI
+></UL
+>
+      </P
+><P
+>&#13;	A nightly symbolic backup is also taken.  A script that uses
+	<I
+CLASS="emphasis"
+>mysqldump</I
+> is used.  It is run on a 
+	workstation in the home directory of the workstation's principal
+	user (currently jambutty, used by alan).  This way, the dump 
+	goes onto a hard disk on a machine separate from the server.  
+	The user's home directory is also backed up to whitechuck each
+	work day night, providing another copy.  On whitechuck, these
+	home directory backups are retained for a certain period, providing
+	the ability to revert the database several days, if needed.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN137"
+></A
+>Configuring Backup</H3
+><P
+>&#13;	This section describes the way that nightly backup was configured on
+	jambutty.  The same procedure could be followed to backup to another
+	workstation.
+	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      <I
+CLASS="emphasis"
+>Install a read-only database user.</I
+>
+	      At the command prompt, start <I
+CLASS="emphasis"
+>mysql</I
+>
+	      as the root database user by issuing the following command:
+	      <B
+CLASS="command"
+>mysql -hdbserver -uroot -p</B
+>.  Then enter
+	      these SQL commands:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;use mysql;
+grant select on YRC.* to reader@"%" identified by "reader";
+grant lock tables on YRC.* to reader@"%" identified by "reader";
+quit;
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <I
+CLASS="emphasis"
+>Install a backup script.</I
+> Using your favorite 
+	      editor, create the following script called 
+	      <TT
+CLASS="filename"
+>~/bin/shell/backup-YRC</TT
+>
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;#!/bin/sh
+
+cd $HOME
+mysqldump -ureader -preader -hdbserver --opt YRC &#62; YRC-backup
+
+exit 0;
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	      Make the script executable by enter the command
+	      <B
+CLASS="command"
+>chmod +x ~/bin/shell/backup-YRC</B
+> at the
+	      command prompt.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <I
+CLASS="emphasis"
+>Add a command to your private crontab.</I
+>
+	      At the command prompt, issue the command
+	      <B
+CLASS="command"
+>crontab -e</B
+>.  This will bring up a text
+	      editor window showing the current crontab.  Add the following
+	      line:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;20 2 * * 0-6 ~/bin/shell/backup-YRC
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	      then save the file and exit.
+	    </P
+></LI
+></OL
+>
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN158"
+></A
+>Copyright Notice</H2
+><P
+>&#13;      Copyright (c) 2004, by the University of Washington.
+      This material may be distributed only subject to the terms and conditions 
+      set forth in the Open Publication License, V1.0 or later
+      (the latest version is presently available
+      <A
+HREF="http://www.opencontent.org/openpub/"
+TARGET="_top"
+>here</A
+>.
+    </P
+><P
+>&#13;    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

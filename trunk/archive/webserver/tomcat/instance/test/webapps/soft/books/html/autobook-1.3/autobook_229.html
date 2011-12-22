@@ -1,0 +1,232 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Macro interface</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Macro interface">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Macro interface">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC229"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_228.html#SEC228" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Naming macros" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_230.html#SEC230" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Implementation specifics" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_230.html#SEC230" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Implementation specifics" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_224.html#SEC224" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Guidelines for writing macros" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_230.html#SEC230" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Implementation specifics" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 23.3.5 Macro interface </H3>
+<!--docid::SEC229::-->
+<P>
+
+When designing your macro, it is worth spending some time deciding on
+what your macro's interface--the macro's name and argument list--will
+be.  Often, it will be possible to extract general purpose
+functionality into a generic macro and to write a second macro which is
+a client of the generic one.  Like planning the prototype for a C
+function, this is usually a straightforward process of deciding what
+arguments are required by the macro to perform its function.  However,
+there are a couple of further considerations and they are discussed
+below.
+</P><P>
+
+M4 macros refer to their arguments by number with a syntax such
+as <CODE>$1</CODE>.  It is typically more difficult to read an M4 macro
+definition and understand what each argument's designation is than in a
+C function body, where the formal argument is referred to by its name.
+Therefore, it's a good idea to include a standard comment block above
+each macro that documents the macro and gives an indication of what each
+argument is for.  Here is an example from the Autoconf source code:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre># AC_CHECK_FILE(FILE, [ACTION-IF-FOUND], [ACTION-IF-NOT-FOUND])
+# -------------------------------------------------------------
+#
+# Check for the existence of FILE.
+</pre></td></tr></table></P><P>
+
+To remain general purpose, the existing Autoconf macros follow the
+convention of keeping side-effects outside the definition of the macro.
+Here, when a user invokes <SAMP>`AC_CHECK_FILE'</SAMP>, they must provide shell
+code to implement the side effect that they want to occur if the
+<SAMP>`FILE'</SAMP> is found or is not found.  Some macros implement a basic and
+desirable action like defining a symbol like <SAMP>`HAVE_UNISTD_H'</SAMP> if no
+user-defined actions are provided.  In general, your macros should
+provide an interface which is consistent with the interfaces provided by
+the core Autoconf macros.
+</P><P>
+
+M4 macros may have variable argument lists, so it is possible to
+implement macros which have defaults for arguments.  By testing each
+individual argument against the empty string with <SAMP>`ifelse'</SAMP>, it is
+possible for users to accept the default behavior for individual
+arguments by passing empty values:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>AC_CHECK_FILE([/etc/passwd], [],
+              [AC_MSG_ERROR([something is really wrong])])
+</pre></td></tr></table></P><P>
+
+One final point to consider when designing the interface for a macro is
+how to handle macros that are generic in nature and, say, wish to set a
+cache variable whose name is based on one of the arguments.  Consider
+the <SAMP>`AC_CHECK_HEADER'</SAMP> macro--it defines a symbol and makes an entry
+in the cache that reflects the result of the test it performs.
+<SAMP>`AC_CHECK_HEADER'</SAMP> takes an argument -- namely the name of a header
+file to look for.  This macro cannot just make a cache entry with a name
+like <CODE>ac_cv_check_header</CODE>, since it would only work once; any
+further uses of this macro in <TT>`configure.in'</TT> would cause an
+incorrect result to be drawn from the cache.  Instead, the name of the
+symbol that is defined and the name of the cache variable that is set
+need to be computed from one of the arguments: the name of the header
+file being sought.  What we really need is to define
+<CODE>HAVE_UNISTD_H</CODE> and set the cache variable
+<CODE>ac_cv_header_unistd_h</CODE>.  This can be achieved with some <CODE>sed</CODE>
+and <CODE>tr</CODE> magic in the macro which transforms the filename into
+uppercase characters for the call to <CODE>AC_DEFINE</CODE> and into lowercase
+for the cache variable name.  Unknown characters such as <SAMP>`.'</SAMP> need
+to be transformed into underscores.
+</P><P>
+
+Some existing macros also allow the user to pass in the name of a cache
+variable name so that the macro does not need to compute a name.  In
+general, this should be avoided, as it makes the macro harder to use and
+exposes details of the caching system to the user.
+</P><P>
+
+<A NAME="Implementation specifics"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

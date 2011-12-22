@@ -1,0 +1,511 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Registers</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Registers">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Registers">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC69"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_11.html#SEC68"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC70"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_11.html#SEC68"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_13.html#SEC77"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> I. Registers </H1>
+<!--docid::SEC69::-->
+<P>
+
+  Emacs <EM>registers</EM> are compartments where you can save text,
+rectangles, positions, and other things for later use.  Once you save
+text or a rectangle in a register, you can copy it into the buffer
+once, or many times; you can move point to a position saved in a
+register once, or many times.
+</P><P>
+
+<A NAME="IDX294"></A>
+  Each register has a name, which consists of a single character.
+A register can
+store a piece of text, a rectangle, a position, a window configuration,
+or a file name, but only one thing at any given time.  Whatever you
+store in a register remains there until you store something else in that
+register.  To see what a register <VAR>r</VAR> contains, use <KBD>M-x
+view-register</KBD>.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-x view-register <KBD>RET</KBD> <VAR>r</VAR></KBD>
+<DD>Display a description of what register <VAR>r</VAR> contains.
+</DL>
+<P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_12.html#SEC70">I.1 Saving Positions in Registers</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Saving positions in registers.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_12.html#SEC71">I.2 Saving Text in Registers</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Saving text in registers.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_12.html#SEC72">I.3 Saving Rectangles in Registers</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Saving rectangles in registers.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_12.html#SEC73">I.4 Saving Window Configurations in Registers</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Saving window configurations in registers.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_12.html#SEC75">I.6 Keeping File Names in Registers</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">File names in registers.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_12.html#SEC74">I.5 Keeping Numbers in Registers</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Numbers in registers.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_12.html#SEC76">I.7 Bookmarks</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Bookmarks are like registers, but persistent.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="RegPos"></A>
+<HR SIZE="6">
+<A NAME="SEC70"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC69"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC71"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC69"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC69"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_13.html#SEC77"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> I.1 Saving Positions in Registers </H2>
+<!--docid::SEC70::-->
+<P>
+
+  Saving a position records a place in a buffer so that you can move
+back there later.  Moving to a saved position switches to that buffer
+and moves point to that place in it.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-x r <KBD>SPC</KBD> <VAR>r</VAR></KBD>
+<DD>Save position of point in register <VAR>r</VAR> (<CODE>point-to-register</CODE>).
+<DT><KBD>C-x r j <VAR>r</VAR></KBD>
+<DD>Jump to the position saved in register <VAR>r</VAR> (<CODE>jump-to-register</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX295"></A>
+<A NAME="IDX296"></A>
+  To save the current position of point in a register, choose a name
+<VAR>r</VAR> and type <KBD>C-x r <KBD>SPC</KBD> <VAR>r</VAR></KBD>.  The register <VAR>r</VAR>
+retains the position thus saved until you store something else in that
+register.
+</P><P>
+
+<A NAME="IDX297"></A>
+<A NAME="IDX298"></A>
+  The command <KBD>C-x r j <VAR>r</VAR></KBD> moves point to the position recorded
+in register <VAR>r</VAR>.  The register is not affected; it continues to
+hold the same position.  You can jump to the saved position any number
+of times.
+</P><P>
+
+  If you use <KBD>C-x r j</KBD> to go to a saved position, but the buffer it
+was saved from has been killed, <KBD>C-x r j</KBD> tries to create the buffer
+again by visiting the same file.  Of course, this works only for buffers
+that were visiting files.
+</P><P>
+
+<A NAME="RegText"></A>
+<HR SIZE="6">
+<A NAME="SEC71"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC70"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC72"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC72"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC69"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_13.html#SEC77"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> I.2 Saving Text in Registers </H2>
+<!--docid::SEC71::-->
+<P>
+
+  When you want to insert a copy of the same piece of text several
+times, it may be inconvenient to yank it from the kill ring, since each
+subsequent kill moves that entry further down the ring.  An alternative
+is to store the text in a register and later retrieve it.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-x r s <VAR>r</VAR></KBD>
+<DD>Copy region into register <VAR>r</VAR> (<CODE>copy-to-register</CODE>).
+<DT><KBD>C-x r i <VAR>r</VAR></KBD>
+<DD>Insert text from register <VAR>r</VAR> (<CODE>insert-register</CODE>).
+<DT><KBD>M-x append-to-register <KBD>RET</KBD> <VAR>r</VAR></KBD>
+<DD>Append region to text in register <VAR>r</VAR>.
+<DT><KBD>M-x prepend-to-register <KBD>RET</KBD> <VAR>r</VAR></KBD>
+<DD>Prepend region to text in register <VAR>r</VAR>.
+</DL>
+<P>
+
+<A NAME="IDX299"></A>
+<A NAME="IDX300"></A>
+<A NAME="IDX301"></A>
+<A NAME="IDX302"></A>
+  <KBD>C-x r s <VAR>r</VAR></KBD> stores a copy of the text of the region into
+the register named <VAR>r</VAR>.  <KBD>C-u C-x r s <VAR>r</VAR></KBD>, the same
+command with a numeric argument, deletes the text from the buffer as
+well; you can think of this as "moving" the region text into the register.
+</P><P>
+
+<A NAME="IDX303"></A>
+<A NAME="IDX304"></A>
+  <KBD>M-x append-to-register <KBD>RET</KBD> <VAR>r</VAR></KBD> appends the copy of
+the text in the region to the text already stored in the register
+named <VAR>r</VAR>.  If invoked with a numeric argument, it deletes the
+region after appending it to the register.  A similar command
+<CODE>prepend-to-register</CODE> works the same, except that it
+<EM>prepends</EM> the region text to the text in the register, rather
+than <EM>appending</EM> it.
+</P><P>
+
+  <KBD>C-x r i <VAR>r</VAR></KBD> inserts in the buffer the text from register
+<VAR>r</VAR>.  Normally it leaves point before the text and places the mark
+after, but with a numeric argument (<KBD>C-u</KBD>) it puts point after the
+text and the mark before.
+</P><P>
+
+<A NAME="RegRect"></A>
+<HR SIZE="6">
+<A NAME="SEC72"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC71"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC73"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC73"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC69"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_13.html#SEC77"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> I.3 Saving Rectangles in Registers </H2>
+<!--docid::SEC72::-->
+<P>
+
+  A register can contain a rectangle instead of linear text.  The
+rectangle is represented as a list of strings.  See section <A HREF="emacs_11.html#SEC68">H.10 Rectangles</A>, for
+basic information on how to specify a rectangle in the buffer.
+</P><P>
+
+<DL COMPACT>
+<A NAME="IDX305"></A>
+<A NAME="IDX306"></A>
+<DT><KBD>C-x r r <VAR>r</VAR></KBD>
+<DD>Copy the region-rectangle into register <VAR>r</VAR>
+(<CODE>copy-rectangle-to-register</CODE>).  With numeric argument, delete it as
+well.
+<DT><KBD>C-x r i <VAR>r</VAR></KBD>
+<DD>Insert the rectangle stored in register <VAR>r</VAR> (if it contains a
+rectangle) (<CODE>insert-register</CODE>).
+</DL>
+<P>
+
+  The <KBD>C-x r i <VAR>r</VAR></KBD> command inserts a text string if the
+register contains one, and inserts a rectangle if the register contains
+one.
+</P><P>
+
+  See also the command <CODE>sort-columns</CODE>, which you can think of
+as sorting a rectangle.  See section <A HREF="emacs_32.html#SEC461">AC.21 Sorting Text</A>.
+</P><P>
+
+<A NAME="RegConfig"></A>
+<HR SIZE="6">
+<A NAME="SEC73"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC72"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC74"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC74"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC69"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_13.html#SEC77"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> I.4 Saving Window Configurations in Registers </H2>
+<!--docid::SEC73::-->
+<P>
+
+<A NAME="IDX307"></A>
+<A NAME="IDX308"></A>
+<A NAME="IDX309"></A>
+<A NAME="IDX310"></A>
+  You can save the window configuration of the selected frame in a
+register, or even the configuration of all windows in all frames, and
+restore the configuration later.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-x r w <VAR>r</VAR></KBD>
+<DD>Save the state of the selected frame's windows in register <VAR>r</VAR>
+(<CODE>window-configuration-to-register</CODE>).
+<DT><KBD>C-x r f <VAR>r</VAR></KBD>
+<DD>Save the state of all frames, including all their windows, in register
+<VAR>r</VAR> (<CODE>frame-configuration-to-register</CODE>).
+</DL>
+<P>
+
+  Use <KBD>C-x r j <VAR>r</VAR></KBD> to restore a window or frame configuration.
+This is the same command used to restore a cursor position.  When you
+restore a frame configuration, any existing frames not included in the
+configuration become invisible.  If you wish to delete these frames
+instead, use <KBD>C-u C-x r j <VAR>r</VAR></KBD>.
+</P><P>
+
+<A NAME="RegNumbers"></A>
+<HR SIZE="6">
+<A NAME="SEC74"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC73"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC75"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC75"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC69"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_13.html#SEC77"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> I.5 Keeping Numbers in Registers </H2>
+<!--docid::SEC74::-->
+<P>
+
+  There are commands to store a number in a register, to insert
+the number in the buffer in decimal, and to increment it.  These commands
+can be useful in keyboard macros (see section <A HREF="emacs_33.html#SEC487">AD.3 Keyboard Macros</A>).
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-u <VAR>number</VAR> C-x r n <VAR>r</VAR></KBD>
+<DD><A NAME="IDX311"></A>
+<A NAME="IDX312"></A>
+Store <VAR>number</VAR> into register <VAR>r</VAR> (<CODE>number-to-register</CODE>).
+<DT><KBD>C-u <VAR>number</VAR> C-x r + <VAR>r</VAR></KBD>
+<DD><A NAME="IDX313"></A>
+<A NAME="IDX314"></A>
+Increment the number in register <VAR>r</VAR> by <VAR>number</VAR>
+(<CODE>increment-register</CODE>).
+<DT><KBD>C-x r g <VAR>r</VAR></KBD>
+<DD>Insert the number from register <VAR>r</VAR> into the buffer.
+</DL>
+<P>
+
+  <KBD>C-x r g</KBD> is the same command used to insert any other sort of
+register contents into the buffer.  <KBD>C-x r +</KBD> with no numeric
+argument increments the register value by 1; <KBD>C-x r n</KBD> with no
+numeric argument stores zero in the register.
+</P><P>
+
+<A NAME="RegFiles"></A>
+<HR SIZE="6">
+<A NAME="SEC75"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC74"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC76"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC76"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC69"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_13.html#SEC77"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> I.6 Keeping File Names in Registers </H2>
+<!--docid::SEC75::-->
+<P>
+
+  If you visit certain file names frequently, you can visit them more
+conveniently if you put their names in registers.  Here's the Lisp code
+used to put a file name in a register:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>(set-register ?<VAR>r</VAR> '(file . <VAR>name</VAR>))
+</FONT></pre></td></tr></table></P><P>
+
+For example,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>(set-register ?z '(file . "/gd/gnu/emacs/19.0/src/ChangeLog"))
+</FONT></pre></td></tr></table></P><P>
+
+puts the file name shown in register <SAMP>`z'</SAMP>.
+</P><P>
+
+  To visit the file whose name is in register <VAR>r</VAR>, type <KBD>C-x r j
+<VAR>r</VAR></KBD>.  (This is the same command used to jump to a position or
+restore a frame configuration.)
+</P><P>
+
+<A NAME="Bookmarks"></A>
+<HR SIZE="6">
+<A NAME="SEC76"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC75"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_13.html#SEC77"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC69"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC69"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_13.html#SEC77"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> I.7 Bookmarks </H2>
+<!--docid::SEC76::-->
+<P>
+
+  <EM>Bookmarks</EM> are somewhat like registers in that they record
+positions you can jump to.  Unlike registers, they have long names, and
+they persist automatically from one Emacs session to the next.  The
+prototypical use of bookmarks is to record "where you were reading" in
+various files.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-x r m <KBD>RET</KBD></KBD>
+<DD>Set the bookmark for the visited file, at point.
+<P>
+
+<DT><KBD>C-x r m <VAR>bookmark</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX315"></A>
+Set the bookmark named <VAR>bookmark</VAR> at point (<CODE>bookmark-set</CODE>).
+<P>
+
+<DT><KBD>C-x r b <VAR>bookmark</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX316"></A>
+Jump to the bookmark named <VAR>bookmark</VAR> (<CODE>bookmark-jump</CODE>).
+<P>
+
+<DT><KBD>C-x r l</KBD>
+<DD><A NAME="IDX317"></A>
+List all bookmarks (<CODE>list-bookmarks</CODE>).
+<P>
+
+<DT><KBD>M-x bookmark-save</KBD>
+<DD><A NAME="IDX318"></A>
+Save all the current bookmark values in the default bookmark file.
+</DL>
+<P>
+
+<A NAME="IDX319"></A>
+<A NAME="IDX320"></A>
+<A NAME="IDX321"></A>
+<A NAME="IDX322"></A>
+  The prototypical use for bookmarks is to record one current position
+in each of several files.  So the command <KBD>C-x r m</KBD>, which sets a
+bookmark, uses the visited file name as the default for the bookmark
+name.  If you name each bookmark after the file it points to, then you
+can conveniently revisit any of those files with <KBD>C-x r b</KBD>, and move
+to the position of the bookmark at the same time.
+</P><P>
+
+<A NAME="IDX323"></A>
+  To display a list of all your bookmarks in a separate buffer, type
+<KBD>C-x r l</KBD> (<CODE>list-bookmarks</CODE>).  If you switch to that buffer,
+you can use it to edit your bookmark definitions or annotate the
+bookmarks.  Type <KBD>C-h m</KBD> in the bookmark buffer for more
+information about its special editing commands.
+</P><P>
+
+  When you kill Emacs, Emacs offers to save your bookmark values in your
+default bookmark file, <TT>`~/.emacs.bmk'</TT>, if you have changed any
+bookmark values.  You can also save the bookmarks at any time with the
+<KBD>M-x bookmark-save</KBD> command.  The bookmark commands load your
+default bookmark file automatically.  This saving and loading is how
+bookmarks persist from one Emacs session to the next.
+</P><P>
+
+<A NAME="IDX324"></A>
+  If you set the variable <CODE>bookmark-save-flag</CODE> to 1, then each
+command that sets a bookmark will also save your bookmarks; this way,
+you don't lose any bookmark values even if Emacs crashes.  (The value,
+if a number, says how many bookmark modifications should go by between
+saving.)
+</P><P>
+
+<A NAME="IDX325"></A>
+  Bookmark position values are saved with surrounding context, so that
+<CODE>bookmark-jump</CODE> can find the proper position even if the file is
+modified slightly.  The variable <CODE>bookmark-search-size</CODE> says how
+many characters of context to record on each side of the bookmark's
+position.
+</P><P>
+
+  Here are some additional commands for working with bookmarks:
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-x bookmark-load <KBD>RET</KBD> <VAR>filename</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX326"></A>
+Load a file named <VAR>filename</VAR> that contains a list of bookmark
+values.  You can use this command, as well as <CODE>bookmark-write</CODE>, to
+work with other files of bookmark values in addition to your default
+bookmark file.
+<P>
+
+<DT><KBD>M-x bookmark-write <KBD>RET</KBD> <VAR>filename</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX327"></A>
+Save all the current bookmark values in the file <VAR>filename</VAR>.
+<P>
+
+<DT><KBD>M-x bookmark-delete <KBD>RET</KBD> <VAR>bookmark</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX328"></A>
+Delete the bookmark named <VAR>bookmark</VAR>.
+<P>
+
+<DT><KBD>M-x bookmark-insert-location <KBD>RET</KBD> <VAR>bookmark</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX329"></A>
+Insert in the buffer the name of the file that bookmark <VAR>bookmark</VAR>
+points to.
+<P>
+
+<DT><KBD>M-x bookmark-insert <KBD>RET</KBD> <VAR>bookmark</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX330"></A>
+Insert in the buffer the <EM>contents</EM> of the file that bookmark
+<VAR>bookmark</VAR> points to.
+</DL>
+<A NAME="Display"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_12.html#SEC69"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_13.html#SEC77"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

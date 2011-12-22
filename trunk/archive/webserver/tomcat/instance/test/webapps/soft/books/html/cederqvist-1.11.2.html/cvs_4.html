@@ -1,0 +1,834 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html40/loose.dtd">
+<HTML>
+<!-- Created on April, 18 2002 by texi2html 1.66 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<HEAD>
+<TITLE>CVS--Concurrent Versions System v1.11.2: Revisions</TITLE>
+
+<META NAME="description" CONTENT="CVS--Concurrent Versions System v1.11.2: Revisions">
+<META NAME="keywords" CONTENT="CVS--Concurrent Versions System v1.11.2: Revisions">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.66">
+
+</HEAD>
+
+<BODY LANG="en" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC44"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC43"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC45"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_3.html#SEC38"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_5.html#SEC54"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> 4. Revisions </H1>
+<!--docid::SEC44::-->
+<P>
+
+For many uses of CVS, one doesn't need to worry
+too much about revision numbers; CVS assigns
+numbers such as <CODE>1.1</CODE>, <CODE>1.2</CODE>, and so on, and
+that is all one needs to know.  However, some people
+prefer to have more knowledge and control concerning
+how CVS assigns revision numbers.
+</P>
+<P>
+
+If one wants to keep track of a set of revisions
+involving more than one file, such as which revisions
+went into a particular release, one uses a <EM>tag</EM>,
+which is a symbolic revision which can be assigned to a
+numeric revision in each file.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_4.html#SEC45">4.1 Revision numbers</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">The meaning of a revision number</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_4.html#SEC46">4.2 Versions, revisions and releases</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Terminology used in this manual</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_4.html#SEC47">4.3 Assigning revisions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_4.html#SEC48">4.4 Tags--Symbolic revisions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_4.html#SEC49">4.5 Specifying what to tag from the working directory</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">The cvs tag command</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_4.html#SEC50">4.6 Specifying what to tag by date or revision</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">The cvs rtag command</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_4.html#SEC51">4.7 Deleting, moving, and renaming tags</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Adding, renaming, and deleting tags</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_4.html#SEC52">4.8 Tagging and adding and removing files</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Tags with adding and removing files</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Certain tags are persistent</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="Revision numbers"></A>
+<HR SIZE="6">
+<A NAME="SEC45"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC46"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_5.html#SEC54"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 4.1 Revision numbers </H2>
+<!--docid::SEC45::-->
+<P>
+
+Each version of a file has a unique <EM>revision
+number</EM>.  Revision numbers look like `<SAMP>1.1</SAMP>',
+`<SAMP>1.2</SAMP>', `<SAMP>1.3.2.2</SAMP>' or even `<SAMP>1.3.2.2.4.5</SAMP>'.
+A revision number always has an even number of
+period-separated decimal integers.  By default revision
+1.1 is the first revision of a file.  Each successive
+revision is given a new number by increasing the
+rightmost number by one.  The following figure displays
+a few revisions, with newer revisions to the right.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>       +-----+    +-----+    +-----+    +-----+    +-----+
+       ! 1.1 !----! 1.2 !----! 1.3 !----! 1.4 !----! 1.5 !
+       +-----+    +-----+    +-----+    +-----+    +-----+
+</pre></td></tr></table><P>
+
+It is also possible to end up with numbers containing
+more than one period, for example `<SAMP>1.3.2.2</SAMP>'.  Such
+revisions represent revisions on branches
+(see section <A HREF="cvs_5.html#SEC54">5. Branching and merging</A>); such revision numbers
+are explained in detail in <A HREF="cvs_5.html#SEC58">5.4 Branches and revisions</A>.
+</P>
+<P>
+
+<A NAME="Versions revisions releases"></A>
+<HR SIZE="6">
+<A NAME="SEC46"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC45"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC47"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_5.html#SEC54"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 4.2 Versions, revisions and releases </H2>
+<!--docid::SEC46::-->
+<P>
+
+A file can have several versions, as described above.
+Likewise, a software product can have several versions.
+A software product is often given a version number such
+as `<SAMP>4.1.1</SAMP>'.
+</P>
+<P>
+
+Versions in the first sense are called <EM>revisions</EM>
+in this document, and versions in the second sense are
+called <EM>releases</EM>.  To avoid confusion, the word
+<EM>version</EM> is almost never used in this document.
+</P>
+<P>
+
+<A NAME="Assigning revisions"></A>
+<HR SIZE="6">
+<A NAME="SEC47"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC46"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC48"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_5.html#SEC54"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 4.3 Assigning revisions </H2>
+<!--docid::SEC47::-->
+<P>
+
+By default, CVS will assign numeric revisions by
+leaving the first number the same and incrementing the
+second number.  For example, <CODE>1.1</CODE>, <CODE>1.2</CODE>,
+<CODE>1.3</CODE>, etc.
+</P>
+<P>
+
+When adding a new file, the second number will always
+be one and the first number will equal the highest
+first number of any file in that directory.  For
+example, the current directory contains files whose
+highest numbered revisions are <CODE>1.7</CODE>, <CODE>3.1</CODE>,
+and <CODE>4.12</CODE>, then an added file will be given the
+numeric revision <CODE>4.1</CODE>.
+</P>
+<P>
+
+Normally there is no reason to care
+about the revision numbers--it is easier to treat them
+as internal numbers that CVS maintains, and tags
+provide a better way to distinguish between things like
+release 1 versus release 2 of your product
+(see section <A HREF="cvs_4.html#SEC48">4.4 Tags--Symbolic revisions</A>).  However, if you want to set the
+numeric revisions, the `<SAMP>-r</SAMP>' option to <CODE>cvs
+commit</CODE> can do that.  The `<SAMP>-r</SAMP>' option implies the
+`<SAMP>-f</SAMP>' option, in the sense that it causes the
+files to be committed even if they are not modified.
+</P>
+<P>
+
+For example, to bring all your files up to
+revision 3.0 (including those that haven't changed),
+you might invoke:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs commit -r 3.0
+</pre></td></tr></table><P>
+
+Note that the number you specify with `<SAMP>-r</SAMP>' must be
+larger than any existing revision number.  That is, if
+revision 3.0 exists, you cannot `<SAMP>cvs commit
+-r 1.3</SAMP>'.  If you want to maintain several releases in
+parallel, you need to use a branch (see section <A HREF="cvs_5.html#SEC54">5. Branching and merging</A>).
+</P>
+<P>
+
+<A NAME="Tags"></A>
+<HR SIZE="6">
+<A NAME="SEC48"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC47"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC49"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_5.html#SEC54"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 4.4 Tags--Symbolic revisions </H2>
+<!--docid::SEC48::-->
+<P>
+
+The revision numbers live a life of their own.  They
+need not have anything at all to do with the release
+numbers of your software product.  Depending
+on how you use CVS the revision numbers might change several times
+between two releases.  As an example, some of the
+source files that make up RCS 5.6 have the following
+revision numbers:
+<A NAME="IDX114"></A>
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>ci.c            5.21
+co.c            5.9
+ident.c         5.3
+rcs.c           5.12
+rcsbase.h       5.11
+rcsdiff.c       5.10
+rcsedit.c       5.11
+rcsfcmp.c       5.9
+rcsgen.c        5.10
+rcslex.c        5.11
+rcsmap.c        5.2
+rcsutil.c       5.10
+</pre></td></tr></table><P>
+
+<A NAME="IDX115"></A>
+<A NAME="IDX116"></A>
+<A NAME="IDX117"></A>
+<A NAME="IDX118"></A>
+<A NAME="IDX119"></A>
+<A NAME="IDX120"></A>
+You can use the <CODE>tag</CODE> command to give a symbolic name to a
+certain revision of a file.  You can use the `<SAMP>-v</SAMP>' flag to the
+<CODE>status</CODE> command to see all tags that a file has, and
+which revision numbers they represent.  Tag names must
+start with an uppercase or lowercase letter and can
+contain uppercase and lowercase letters, digits,
+`<SAMP>-</SAMP>', and `<SAMP>_</SAMP>'.  The two tag names <CODE>BASE</CODE>
+and <CODE>HEAD</CODE> are reserved for use by CVS.  It
+is expected that future names which are special to
+CVS will be specially named, for example by
+starting with `<SAMP>.</SAMP>', rather than being named analogously to
+<CODE>BASE</CODE> and <CODE>HEAD</CODE>, to avoid conflicts with
+actual tag names.
+</P>
+<P>
+
+You'll want to choose some convention for naming tags,
+based on information such as the name of the program
+and the version number of the release.  For example,
+one might take the name of the program, immediately
+followed by the version number with `<SAMP>.</SAMP>' changed to
+`<SAMP>-</SAMP>', so that CVS 1.9 would be tagged with the name
+<CODE>cvs1-9</CODE>.  If you choose a consistent convention,
+then you won't constantly be guessing whether a tag is
+<CODE>cvs-1-9</CODE> or <CODE>cvs1_9</CODE> or what.  You might
+even want to consider enforcing your convention in the
+taginfo file (see section <A HREF="cvs_8.html#SEC78">8.3 User-defined logging</A>).
+</P>
+<P>
+
+<A NAME="IDX121"></A>
+<A NAME="IDX122"></A>
+The following example shows how you can add a tag to a
+file.  The commands must be issued inside your working
+directory.  That is, you should issue the
+command in the directory where `<TT>backend.c</TT>'
+resides.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs tag rel-0-4 backend.c
+T backend.c
+$ cvs status -v backend.c
+===================================================================
+File: backend.c         Status: Up-to-date
+
+    Version:            1.4     Tue Dec  1 14:39:01 1992
+    RCS Version:        1.4     /u/cvsroot/yoyodyne/tc/backend.c,v
+    Sticky Tag:         (none)
+    Sticky Date:        (none)
+    Sticky Options:     (none)
+
+    Existing Tags:
+        rel-0-4                     (revision: 1.4)
+
+</pre></td></tr></table><P>
+
+For a complete summary of the syntax of <CODE>cvs tag</CODE>,
+including the various options, see <A HREF="cvs_17.html#SEC155">B. Quick reference to CVS commands</A>.
+</P>
+<P>
+
+There is seldom reason to tag a file in isolation.  A more common use is
+to tag all the files that constitute a module with the same tag at
+strategic points in the development life-cycle, such as when a release
+is made.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs tag rel-1-0 .
+cvs tag: Tagging .
+T Makefile
+T backend.c
+T driver.c
+T frontend.c
+T parser.c
+</pre></td></tr></table><P>
+
+(When you give CVS a directory as argument, it generally applies the
+operation to all the files in that directory, and (recursively), to any
+subdirectories that it may contain.  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.)
+</P>
+<P>
+
+<A NAME="IDX123"></A>
+<A NAME="IDX124"></A>
+The <CODE>checkout</CODE> command has a flag, `<SAMP>-r</SAMP>', that lets you check out
+a certain revision of a module.  This flag makes it easy to
+retrieve the sources that make up release 1.0 of the module `<SAMP>tc</SAMP>' at
+any time in the future:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs checkout -r rel-1-0 tc
+</pre></td></tr></table><P>
+
+This is useful, for instance, if someone claims that there is a bug in
+that release, but you cannot find the bug in the current working copy.
+</P>
+<P>
+
+You can also check out a module as it was at any given date.
+See section <A HREF="cvs_16.html#SEC122">A.7.1 checkout options</A>.  When specifying `<SAMP>-r</SAMP>' to
+any of these commands, you will need beware of sticky
+tags; see <A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A>.
+</P>
+<P>
+
+When you tag more than one file with the same tag you
+can think about the tag as &quot;a curve drawn through a
+matrix of filename vs. revision number.&quot;  Say we have 5
+files with the following revisions:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>        file1   file2   file3   file4   file5
+
+        1.1     1.1     1.1     1.1  /--1.1*      &lt;-*-  TAG
+        1.2*-   1.2     1.2    -1.2*-
+        1.3  \- 1.3*-   1.3   / 1.3
+        1.4          \  1.4  /  1.4
+                      \-1.5*-   1.5
+                        1.6
+</pre></td></tr></table><P>
+
+At some time in the past, the <CODE>*</CODE> versions were tagged.
+You can think of the tag as a handle attached to the curve
+drawn through the tagged revisions.  When you pull on
+the handle, you get all the tagged revisions.  Another
+way to look at it is that you &quot;sight&quot; through a set of
+revisions that is &quot;flat&quot; along the tagged revisions,
+like this:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>        file1   file2   file3   file4   file5
+
+                        1.1
+                        1.2
+                1.1     1.3                       _
+        1.1     1.2     1.4     1.1              /
+        1.2*----1.3*----1.5*----1.2*----1.1     (--- &lt;--- Look here
+        1.3             1.6     1.3              \_
+        1.4                     1.4
+                                1.5
+</pre></td></tr></table><P>
+
+<A NAME="Tagging the working directory"></A>
+<HR SIZE="6">
+<A NAME="SEC49"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC48"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC50"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_5.html#SEC54"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 4.5 Specifying what to tag from the working directory </H2>
+<!--docid::SEC49::-->
+<P>
+
+<A NAME="IDX125"></A>
+The example in the previous section demonstrates one of
+the most common ways to choose which revisions to tag.
+Namely, running the <CODE>cvs tag</CODE> command without
+arguments causes CVS to select the revisions which
+are checked out in the current working directory.  For
+example, if the copy of `<TT>backend.c</TT>' in working
+directory was checked out from revision 1.4, then
+CVS will tag revision 1.4.  Note that the tag is
+applied immediately to revision 1.4 in the repository;
+tagging is not like modifying a file, or other
+operations in which one first modifies the working
+directory and then runs <CODE>cvs commit</CODE> to transfer
+that modification to the repository.
+</P>
+<P>
+
+One potentially surprising aspect of the fact that
+<CODE>cvs tag</CODE> operates on the repository is that you
+are tagging the checked-in revisions, which may differ
+from locally modified files in your working directory.
+If you want to avoid doing this by mistake, specify the
+`<SAMP>-c</SAMP>' option to <CODE>cvs tag</CODE>.  If there are any
+locally modified files, CVS will abort with an
+error before it tags any files:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs tag -c rel-0-4
+cvs tag: backend.c is locally modified
+cvs [tag aborted]: correct the above errors first!
+</pre></td></tr></table><P>
+
+<A NAME="Tagging by date/tag"></A>
+<HR SIZE="6">
+<A NAME="SEC50"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC49"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC51"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_5.html#SEC54"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 4.6 Specifying what to tag by date or revision </H2>
+<!--docid::SEC50::-->
+<P>
+
+The <CODE>cvs rtag</CODE> command tags the repository as of a
+certain date or time (or can be used to tag the latest
+revision).  <CODE>rtag</CODE> works directly on the
+repository contents (it requires no prior checkout and
+does not look for a working directory).
+</P>
+<P>
+
+The following options specify which date or revision to
+tag.  See <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>, for a complete
+description of them.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Tag the most recent revision no later than <VAR>date</VAR>.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Only useful with the `<SAMP>-D <VAR>date</VAR></SAMP>' or `<SAMP>-r <VAR>tag</VAR></SAMP>'
+flags.  If no matching revision is found, use the most
+recent revision (instead of ignoring the file).
+<P>
+
+</P>
+<DT><CODE>-r <VAR>tag</VAR></CODE>
+<DD>Only tag those files that contain existing tag <VAR>tag</VAR>.
+</DL>
+<P>
+
+The <CODE>cvs tag</CODE> command also allows one to specify
+files by revision or date, using the same `<SAMP>-r</SAMP>',
+`<SAMP>-D</SAMP>', and `<SAMP>-f</SAMP>' options.  However, this
+feature is probably not what you want.  The reason is
+that <CODE>cvs tag</CODE> chooses which files to tag based on
+the files that exist in the working directory, rather
+than the files which existed as of the given tag/date.
+Therefore, you are generally better off using <CODE>cvs
+rtag</CODE>.  The exceptions might be cases like:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs tag -r 1.4 backend.c
+</pre></td></tr></table><P>
+
+<A NAME="Modifying tags"></A>
+<HR SIZE="6">
+<A NAME="SEC51"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC50"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC52"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_5.html#SEC54"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 4.7 Deleting, moving, and renaming tags </H2>
+<!--docid::SEC51::-->
+<P>
+
+Normally one does not modify tags.  They exist in order
+to record the history of the repository and so deleting
+them or changing their meaning would, generally, not be
+what you want.
+</P>
+<P>
+
+However, there might be cases in which one uses a tag
+temporarily or accidentally puts one in the wrong
+place.  Therefore, one might delete, move, or rename a
+tag.
+</P>
+<P>
+
+<EM>Warning: the commands in this section are
+dangerous; they permanently discard historical
+information and it can be difficult or impossible to
+recover from errors.  If you are a CVS
+administrator, you may consider restricting these
+commands with taginfo (see section <A HREF="cvs_8.html#SEC78">8.3 User-defined logging</A>).</EM>
+</P>
+<P>
+
+<A NAME="IDX126"></A>
+<A NAME="IDX127"></A>
+<A NAME="IDX128"></A>
+<A NAME="IDX129"></A>
+<A NAME="IDX130"></A>
+<A NAME="IDX131"></A>
+To delete a tag, specify the `<SAMP>-d</SAMP>' option to either
+<CODE>cvs tag</CODE> or <CODE>cvs rtag</CODE>.  For example:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs rtag -d rel-0-4 tc
+</pre></td></tr></table><P>
+
+deletes the non-branch tag <CODE>rel-0-4</CODE> from the module <CODE>tc</CODE>.
+In the event that branch tags are encountered within the repository
+with the given name, a warning message will be issued and the branch 
+tag will not be deleted.  If you are absolutely certain you know what
+you are doing, the <CODE>-B</CODE> option may be specified to allow deletion
+of branch tags.  In that case, any non-branch tags encountered will
+trigger warnings and will not be deleted.
+</P>
+<P>
+
+<EM>Warning: Moving branch tags is very dangerous!  If you think you need the
+<CODE>-B</CODE> option, think again and ask your CVS administrator about it (if
+that isn't you).  There is almost certainly another way to accomplish what you
+want to accomplish.</EM>
+</P>
+<P>
+
+<A NAME="IDX132"></A>
+<A NAME="IDX133"></A>
+<A NAME="IDX134"></A>
+<A NAME="IDX135"></A>
+When we say <EM>move</EM> a tag, we mean to make the same
+name point to different revisions.  For example, the
+<CODE>stable</CODE> tag may currently point to revision 1.4
+of `<TT>backend.c</TT>' and perhaps we want to make it
+point to revision 1.6.  To move a non-branch tag, specify the
+`<SAMP>-F</SAMP>' option to either <CODE>cvs tag</CODE> or <CODE>cvs
+rtag</CODE>.  For example, the task just mentioned might be
+accomplished as:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs tag -r 1.6 -F stable backend.c
+</pre></td></tr></table><P>
+
+If any branch tags are encountered in the repository 
+with the given name, a warning is issued and the branch
+tag is not disturbed.  If you are absolutely certain you
+wish to move the branch tag, the <CODE>-B</CODE> option may be specified.
+In that case, non-branch tags encountered with the given
+name are ignored with a warning message.
+</P>
+<P>
+
+<EM>Warning: Moving branch tags is very dangerous!  If you think you need the
+<CODE>-B</CODE> option, think again and ask your CVS administrator about it (if
+that isn't you).  There is almost certainly another way to accomplish what you
+want to accomplish.</EM>
+</P>
+<P>
+
+<A NAME="IDX136"></A>
+<A NAME="IDX137"></A>
+When we say <EM>rename</EM> a tag, we mean to make a
+different name point to the same revisions as the old
+tag.  For example, one may have misspelled the tag name
+and want to correct it (hopefully before others are
+relying on the old spelling).  To rename a tag, first
+create a new tag using the `<SAMP>-r</SAMP>' option to
+<CODE>cvs rtag</CODE>, and then delete the old name.  (Caution:
+this method will not work with branch tags.) 
+This leaves the new tag on exactly the 
+same files as the old tag.  For example:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs rtag -r old-name-0-4 rel-0-4 tc
+cvs rtag -d old-name-0-4 tc
+</pre></td></tr></table><P>
+
+<A NAME="Tagging add/remove"></A>
+<HR SIZE="6">
+<A NAME="SEC52"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC51"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC53"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_5.html#SEC54"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 4.8 Tagging and adding and removing files </H2>
+<!--docid::SEC52::-->
+<P>
+
+The subject of exactly how tagging interacts with
+adding and removing files is somewhat obscure; for the
+most part CVS will keep track of whether files
+exist or not without too much fussing.  By default,
+tags are applied to only files which have a revision
+corresponding to what is being tagged.  Files which did
+not exist yet, or which were already removed, simply
+omit the tag, and CVS knows to treat the absence
+of a tag as meaning that the file didn't exist as of
+that tag.
+</P>
+<P>
+
+However, this can lose a small amount of information.
+For example, suppose a file was added and then removed.
+Then, if the tag is missing for that file, there is no
+way to know whether the tag refers to the time before
+the file was added, or the time after it was removed.
+If you specify the `<SAMP>-r</SAMP>' option to <CODE>cvs rtag</CODE>,
+then CVS tags the files which have been removed,
+and thereby avoids this problem.  For example, one
+might specify <CODE>-r HEAD</CODE> to tag the head.
+</P>
+<P>
+
+On the subject of adding and removing files, the
+<CODE>cvs rtag</CODE> command has a `<SAMP>-a</SAMP>' option which
+means to clear the tag from removed files that would
+not otherwise be tagged.  For example, one might
+specify this option in conjunction with `<SAMP>-F</SAMP>' when
+moving a tag.  If one moved a tag without `<SAMP>-a</SAMP>',
+then the tag in the removed files might still refer to
+the old revision, rather than reflecting the fact that
+the file had been removed.  I don't think this is
+necessary if `<SAMP>-r</SAMP>' is specified, as noted above.
+</P>
+<P>
+
+<A NAME="Sticky tags"></A>
+<HR SIZE="6">
+<A NAME="SEC53"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC52"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_5.html#SEC54"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_5.html#SEC54"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 4.9 Sticky tags </H2>
+<!--docid::SEC53::-->
+<P>
+
+Sometimes a working copy's revision has extra data
+associated with it, for example it might be on a branch
+(see section <A HREF="cvs_5.html#SEC54">5. Branching and merging</A>), or restricted to
+versions prior to a certain date by `<SAMP>checkout -D</SAMP>'
+or `<SAMP>update -D</SAMP>'.  Because this data persists --
+that is, it applies to subsequent commands in the
+working copy -- we refer to it as <EM>sticky</EM>.
+</P>
+<P>
+
+Most of the time, stickiness is an obscure aspect of
+CVS that you don't need to think about.  However,
+even if you don't want to use the feature, you may need
+to know <EM>something</EM> about sticky tags (for
+example, how to avoid them!).
+</P>
+<P>
+
+You can use the <CODE>status</CODE> command to see if any
+sticky tags or dates are set:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs status driver.c
+===================================================================
+File: driver.c          Status: Up-to-date
+
+    Version:            1.7.2.1 Sat Dec  5 19:35:03 1992
+    RCS Version:        1.7.2.1 /u/cvsroot/yoyodyne/tc/driver.c,v
+    Sticky Tag:         rel-1-0-patches (branch: 1.7.2)
+    Sticky Date:        (none)
+    Sticky Options:     (none)
+
+</pre></td></tr></table><P>
+
+<A NAME="IDX138"></A>
+<A NAME="IDX139"></A>
+<A NAME="IDX140"></A>
+The sticky tags will remain on your working files until
+you delete them with `<SAMP>cvs update -A</SAMP>'.  The
+`<SAMP>-A</SAMP>' option retrieves the version of the file from
+the head of the trunk, and forgets any sticky tags,
+dates, or options.
+</P>
+<P>
+
+<A NAME="IDX141"></A>
+The most common use of sticky tags is to identify which
+branch one is working on, as described in
+<A HREF="cvs_5.html#SEC57">5.3 Accessing branches</A>.  However, non-branch
+sticky tags have uses as well.  For example,
+suppose that you want to avoid updating your working
+directory, to isolate yourself from possibly
+destabilizing changes other people are making.  You
+can, of course, just refrain from running <CODE>cvs
+update</CODE>.  But if you want to avoid updating only a
+portion of a larger tree, then sticky tags can help.
+If you check out a certain revision (such as 1.4) it
+will become sticky.  Subsequent <CODE>cvs update</CODE>
+commands will
+not retrieve the latest revision until you reset the
+tag with <CODE>cvs update -A</CODE>.  Likewise, use of the
+`<SAMP>-D</SAMP>' option to <CODE>update</CODE> or <CODE>checkout</CODE>
+sets a <EM>sticky date</EM>, which, similarly, causes that
+date to be used for future retrievals.
+</P>
+<P>
+
+People often want to retrieve an old version of
+a file without setting a sticky tag.  This can
+be done with the `<SAMP>-p</SAMP>' option to <CODE>checkout</CODE> or
+<CODE>update</CODE>, which sends the contents of the file to
+standard output.  For example:
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs update -p -r 1.1 file1 &gt;file1
+===================================================================
+Checking out file1
+RCS:  /tmp/cvs-sanity/cvsroot/first-dir/Attic/file1,v
+VERS: 1.1
+***************
+$
+</pre></td></tr></table><P>
+
+However, this isn't the easiest way, if you are asking
+how to undo a previous checkin (in this example, put
+`<TT>file1</TT>' back to the way it was as of revision
+1.1).  In that case you are better off using the
+`<SAMP>-j</SAMP>' option to <CODE>update</CODE>; for further
+discussion see <A HREF="cvs_5.html#SEC62">5.8 Merging differences between any two revisions</A>.
+</P>
+<P>
+
+<A NAME="Branching and merging"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_4.html#SEC44"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_5.html#SEC54"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>
+<FONT SIZE="-1">
+This document was generated
+by <I>Derek Robert Price</I> on <I>April, 18 2002</I>
+using <A HREF="http://texi2html.cvshome.org"><I>texi2html</I></A>
+</FONT>
+
+</BODY>
+</HTML>

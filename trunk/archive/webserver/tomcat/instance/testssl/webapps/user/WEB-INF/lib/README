@@ -1,0 +1,11 @@
+.jar files go here
+
+Download library files from
+	      http://www.hansbergsten.com/jspbook3.zip 
+
+and copy files from ora/WEB-INF/lib/*.jar to this location
+
+
+Additionally, you must obtain the MySQL connector/J from 
+	      http://dev.mysql.com/downloads/connector/j/5.1.html
+

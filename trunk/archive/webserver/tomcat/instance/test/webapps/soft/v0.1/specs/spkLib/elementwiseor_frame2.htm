@@ -1,0 +1,94 @@
+<html><head>
+<title>Element-wise logical OR</title>
+<meta name="description" id="description" content="Element-wise logical OR">
+<meta name="keywords" id="keywords" content=" or elementwiseor matrix Or logical operation "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="elementwiseor.htm" target="_top">section</a>, <a href="elementwiseor_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Given <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> matrices <i>A</i> and <i>B</i>,
+Returns a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> matrix <i>C</i> such that
+c(i,j) = 1.0 if either a(i,j) or b(i,j) is 1.0 exactly; otherwise c(i,j) = 0.0,
+where i and j are the row index and the column index, respectively.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If the dimensions do not match, the program terminates.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&amp;</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> matrix.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&amp;</span></font></code><i><span style='white-space: nowrap'>B</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is another <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> matrix.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;elementwiseAnd.h&quot;<br>
+<br>
+&nbsp;&nbsp;void&nbsp;main(){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Two&nbsp;matrices&nbsp;must&nbsp;have&nbsp;the&nbsp;same&nbsp;dimensions&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatA(3,3);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;dmatB(3,3);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Initialize&nbsp;A&nbsp;to&nbsp;a&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dmatA.fill(0);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;and&nbsp;B&nbsp;to&nbsp;a&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;1&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;dmatB&nbsp;=&nbsp;identity(3);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Take&nbsp;||&nbsp;and&nbsp;print&nbsp;the&nbsp;resulting&nbsp;matrix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Note&nbsp;that&nbsp;any&nbsp;value&nbsp;greater&nbsp;than&nbsp;0&nbsp;is&nbsp;considered&nbsp;TRUE<br>
+&nbsp;&nbsp;&nbsp;&nbsp;or(dmatB,&nbsp;dmatA).print();<br>
+<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;0&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;1&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;0&nbsp;1&nbsp;]<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/elementwiseOr.cpp
+
+</body>
+</html>

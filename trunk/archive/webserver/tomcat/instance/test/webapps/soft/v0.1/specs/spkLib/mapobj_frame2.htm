@@ -1,0 +1,308 @@
+<html><head>
+<title>Map Bayesian Objective Function</title>
+<meta name="description" id="description" content="Map Bayesian Objective Function">
+<meta name="keywords" id="keywords" content=" mapobj map Bayesian objective function individual "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="mapobj.htm" target="_top">section</a>, <a href="mapobj_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Evaluates the map Bayesian objective function. To be specific,
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;&nbsp;-1<br>
+<i>MapObj</i>(<i>b</i>)&nbsp;=&nbsp;-&nbsp;logdet[&nbsp;2&nbsp;pi&nbsp;<i>R</i>(<i>b</i>)&nbsp;]&nbsp;+&nbsp;-&nbsp;[<i>y</i>&nbsp;-&nbsp;<i>f</i>(<i>b</i>)]&nbsp;<i>R</i>(<i>b</i>)&nbsp;[<i>y</i>&nbsp;-&nbsp;<i>f</i>(<i>b</i>)]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;-&nbsp;logdet[&nbsp;2&nbsp;pi&nbsp;<i>D</i>&nbsp;]&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;-&nbsp;[<i>bMean</i>&nbsp;-&nbsp;<i>b</i>]&nbsp;&nbsp;<i>D</i>&nbsp;&nbsp;[<i>bMean</i>&nbsp;-&nbsp;<i>b</i>]&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2<br>
+</span></code>Note that this objective function allows a nonzero mean value
+<code><span style='white-space: nowrap'><i>bMean</i></span></code> to be specified for the parameter <code><span style='white-space: nowrap'><i>b</i></span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>(The equation above uses
+<a href="glossary_frame1.htm#Individual Notation" target="frame1"><i><span style='white-space: nowrap'>individual&nbsp;notation</span></i></a>
+.)
+
+<br>
+<br>
+<b><big><a name="Reference" id="Reference">Reference</a></big></b>
+
+<i><br>
+Approximating The Maximum Likelihood Estimate For Models With Random Parameter
+</i>
+
+<br>
+<br>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+Upon a successful completion, the function sets
+the user-given output value place holders to point to the result values (ones that are requested).
+If a failure occurs during the evaluation, a SpkException object is
+thrown.  The state at which an exception is thrown is defined in
+<a href="glossary_frame1.htm#Exception Handling Policy" target="frame1"><i><span style='white-space: nowrap'>Exception&nbsp;Handling&nbsp;Policy</span></i></a>
+.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+  
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a reference to a SpkModel object that is a function of <code><span style='white-space: nowrap'><i>b</i></span></code> if <i>withD</i> is <code><span style='white-space: nowrap'><i>false</i></span></code>
+(refer <a href="glossary_frame1.htm#Model Functions Depend on only b" target="frame1"><i><span style='white-space: nowrap'>Model&nbsp;Functions&nbsp;Depend&nbsp;on&nbsp;only&nbsp;b</span></i></a>
+)
+or a function of <code><span style='white-space: nowrap'><i>alp</i></span></code> and <code><span style='white-space: nowrap'><i>b</i></span></code> if <i>withD</i> is <code><span style='white-space: nowrap'><i>true</i></span></code>
+(refer <a href="glossary_frame1.htm#Model Functions Depend on only b" target="frame1"><i><span style='white-space: nowrap'>Model&nbsp;Functions&nbsp;Depend&nbsp;on&nbsp;alp&nbsp;and&nbsp;b</span></i></a>
+).
+for details.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>n</i></span></code> dimensional column vector containing the measurement data vector.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><span style='white-space: nowrap'><i>m</i></span></code> dimensional column vector <i>b</i>
+specifies a value for the parameter vector.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pMapObjOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a pointer to a double-precision object or <code><font color="blue">NULL</font></code>.
+User must allocate memory to <i>pMapObjOut</i> when requesting the value of the 
+map Bayesian objective function.  If <code><font color="blue">NULL</font></code> is given, 
+the objective function will not be evaluated.
+If not <code><font color="blue">NULL</font></code>, <i>pMapObjOut</i> will point to a double-precision number 
+containing the value of the objective function if the evaluation completes successfully.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pMapObj_bOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a pointer to a <code><font color="blue">DoubleMatrix</font></code> or <code><font color="blue">NULL</font></code>.
+User must allocate memory to <i>pMapObj_bOut</i>, <code><span style='white-space: nowrap'>1&nbsp;<i>by</i>&nbsp;<i>nB</i></span></code> matrix object,
+when requesting the value of the 
+derivative of the map Bayesian objective function; i.e., <code><span style='white-space: nowrap'><i>mapObj</i>_<i>b</i>(<i>b</i>)</span></code>. 
+If <code><font color="blue">NULL</font></code> is specified for <i>pMapObj_bOut</i>, 
+the objective function will not be evaluated.
+If not <code><font color="blue">NULL</font></code>, <i>pMapObj_bOut</i> will point to a <code><span style='white-space: nowrap'>1&nbsp;<i>by</i>&nbsp;<i>m</i></span></code> matrix (row vector)  
+containing the value of the derivative of the objective function if the evaluation 
+completes successfully.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>withD</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>When <i>withD</i> is specified <code><span style='white-space: nowrap'><i>false</i></span></code>,
+the system assumes that the prior distribution is provided by the user.
+In such a case, <i>withD</i> is a function of <code><span style='white-space: nowrap'><i>alp</i></span></code> and <code><span style='white-space: nowrap'><i>b</i></span></code>
+(refer <a href="glossary_frame1.htm#Model Functions Depend on only b" target="frame1"><i><span style='white-space: nowrap'>Model&nbsp;Functions&nbsp;Depend&nbsp;on&nbsp;alp&nbsp;and&nbsp;b</span></i></a>
+).
+Otherwise, <i>model</i> is a function of only <code><span style='white-space: nowrap'><i>b</i></span></code>
+(refer <a href="glossary_frame1.htm#Model Functions Depend on only b" target="frame1"><i><span style='white-space: nowrap'>Model&nbsp;Functions&nbsp;Depend&nbsp;on&nbsp;only&nbsp;b</span></i></a>
+)
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>isFO</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>isFO</i> is <code><span style='white-space: nowrap'><i>false</i></span></code>, then the Modified First Order will be chosen for approximation.
+If <code><span style='white-space: nowrap'><i>true</i></span></code> is given, other approximations are assumed.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdvecN</span></i><code><font color="blue"><span style='white-space: nowrap'>(null&nbsp;by&nbsp;default)<br>
+</span></font></code>If <i>isFO</i> is specified as <code><span style='white-space: nowrap'><i>true</i></span></code>, <i>pdvecN</i> points to a DoubleMatrix 
+object that contains the column vector <code><span style='white-space: nowrap'><i>N</i></span></code>.  The <i>i</i>-th element of <code><span style='white-space: nowrap'><i>N</i></span></code>
+specifies the number of elements of <code><span style='white-space: nowrap'><i>y</i></span></code> that correspond to the <i>i</i>-th individual.
+If <i>isFO</i> is specified as <code><span style='white-space: nowrap'><i>false</i></span></code>, set <i>N</i> to null.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdvecBMean</span></i><code><font color="blue"><span style='white-space: nowrap'>(null&nbsp;by&nbsp;default)<br>
+</span></font></code>If the pointer <i>pdvecBMean</i> is not equal to null, then it points to a DoubleMatrix 
+object that contains the column vector <code><span style='white-space: nowrap'><i>bMean</i></span></code>.  The <i>j</i>-th element of <code><span style='white-space: nowrap'><i>bMean</i></span></code>
+specifies the mean value for the <i>j</i>-th element of <code><span style='white-space: nowrap'><i>b</i></span></code>.
+If the mean values for all of the elements of <code><span style='white-space: nowrap'><i>b</i></span></code> are equal to zero, 
+set <i>pdvecBMean</i> to null.
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+Suppose that
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;<i>b</i>(1)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;1&nbsp;&nbsp;0&nbsp;\<br>
+<i>R</i>(<i>b</i>)&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<i>D</i>&nbsp;&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>(1)&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;0&nbsp;&nbsp;1&nbsp;/<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<i>b</i>(2)&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;1&nbsp;\<br>
+<i>f</i>(<i>b</i>)&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<i>y</i>&nbsp;=&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<i>b</i>(2)&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;1&nbsp;/<br>
+</span></code>It follows that
+<code><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+<i>MapObj</i>(<i>b</i>)&nbsp;=&nbsp;(1/2)&nbsp;log{[2&nbsp;pi&nbsp;<i>b</i>(1)]^2}&nbsp;+&nbsp;[1&nbsp;-&nbsp;<i>b</i>(2)]^2&nbsp;/&nbsp;<i>b</i>(1)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;(1/2)&nbsp;log{[2&nbsp;pi]^2}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;(1/2)&nbsp;[<i>b</i>(1)^2&nbsp;+&nbsp;<i>b</i>(2)^2]<br>
+</span></code>The gradient of <code><span style='white-space: nowrap'><i>MapObj</i>(<i>b</i>)</span></code> is equal to
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;1&nbsp;/&nbsp;<i>b</i>(1)&nbsp;-&nbsp;[1&nbsp;-&nbsp;<i>b</i>(2)]^2&nbsp;/&nbsp;<i>b</i>(1)^2&nbsp;+&nbsp;<i>b</i>(1)&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;2&nbsp;[1&nbsp;-&nbsp;<i>b</i>(2)]&nbsp;/&nbsp;<i>b</i>(1)&nbsp;+&nbsp;<i>b</i>(2)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+</span></code>If all the components of <code><span style='white-space: nowrap'><i>b</i></span></code> are two,
+<code><span style='white-space: nowrap'><br>
+<i>MapObj</i>(<i>b</i>)&nbsp;&nbsp;&nbsp;=&nbsp;log(4&nbsp;pi)&nbsp;+&nbsp;log(2&nbsp;pi)&nbsp;+&nbsp;1&nbsp;/&nbsp;2&nbsp;+&nbsp;4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;log(8&nbsp;pi^2)&nbsp;+&nbsp;4.5<br>
+<br>
+<i>MapObj</i>_<i>b</i>(<i>b</i>)&nbsp;=&nbsp;[&nbsp;1&nbsp;/&nbsp;2&nbsp;-&nbsp;1&nbsp;/&nbsp;4&nbsp;+&nbsp;2&nbsp;,&nbsp;1&nbsp;+&nbsp;2&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[&nbsp;2.25&nbsp;,&nbsp;3&nbsp;]<br>
+</span></code>If you enter
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;cmath&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;mapObj.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;SpkModel.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;PI.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;SpkValarray.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;SPK_VA::valarray;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;UserModel&nbsp;:&nbsp;public&nbsp;SpkModel&lt;double&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;_b;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;_nY;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UserModel(&nbsp;int&nbsp;nY&nbsp;):&nbsp;_nY(nY)&nbsp;{};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~UserModel(){};<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;protected:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSetIndPar(const&nbsp;valarray&lt;double&gt;&amp;&nbsp;b)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_b&nbsp;=&nbsp;b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataMean(&nbsp;valarray&lt;double&gt;&amp;&nbsp;fOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;fOut&nbsp;=&nbsp;[&nbsp;b(2)&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;b(2)&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fOut.resize(&nbsp;_nY,&nbsp;_b[1]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataMean_indPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;f_bOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f_bOut&nbsp;=&nbsp;[&nbsp;0&nbsp;&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_bOut.resize(&nbsp;_nY&nbsp;*&nbsp;_b.size(),&nbsp;0.0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_bOut[2]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_bOut[3]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataVariance(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ROut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;ROut&nbsp;=&nbsp;[&nbsp;b(1)&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;b(1)&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ROut.resize(&nbsp;_nY&nbsp;*&nbsp;_nY,&nbsp;0.0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ROut[0]&nbsp;=&nbsp;_b[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ROut[3]&nbsp;=&nbsp;_b[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataVariance_indPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;R_bOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;R_bOut&nbsp;=&nbsp;[&nbsp;1&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_bOut.resize(&nbsp;_nY&nbsp;*&nbsp;_nY&nbsp;*&nbsp;_b.size(),&nbsp;0.0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_bOut[0]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_bOut[3]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doIndParVariance(&nbsp;valarray&lt;double&gt;&amp;&nbsp;DOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Return&nbsp;a&nbsp;matrix;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;1&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;0&nbsp;&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DOut.resize(&nbsp;_b.size()&nbsp;*&nbsp;_b.size(),&nbsp;0.0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DOut[0]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DOut[3]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;main(){<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;b&nbsp;=&nbsp;[&nbsp;2.0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2.0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;nB&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;b(nB,&nbsp;1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b.fill(2.0);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;y&nbsp;=&nbsp;[&nbsp;1.0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1.0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;nY&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;y(nY,&nbsp;1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y.fill(1.0);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mapObjOut;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;mapObj_bOut(&nbsp;1,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;withD&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;isFO&nbsp;&nbsp;=&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;*&nbsp;pdvecN&nbsp;=&nbsp;NULL;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;*&nbsp;pdvecBMean&nbsp;=&nbsp;NULL;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UserModel&nbsp;model(nY);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mapObj(&nbsp;model,&nbsp;y,&nbsp;b,&nbsp;&amp;mapObjOut,&nbsp;&amp;mapObj_bOut,&nbsp;withD,&nbsp;isFO,&nbsp;pdvecN,&nbsp;pdvecBMean&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;catch(&nbsp;...&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;abort();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;mapObjOut&nbsp;-&nbsp;log(8.0&nbsp;*&nbsp;PI^2.0))&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;mapObjOut&nbsp;-&nbsp;log(8.0*pow(PI,2.0))&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;mapObj_bOut&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&quot;;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;mapObj_bOut.print();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+</span>
+</font></code>
+The following results will be displayed:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+mapObjOut&nbsp;-&nbsp;log(8.0&nbsp;*&nbsp;PI^2.0))&nbsp;=&nbsp;4.5<br>
+<br>
+mapObj_bOut&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;[&nbsp;2.25&nbsp;3&nbsp;]<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/mapObj.cpp
+
+</body>
+</html>

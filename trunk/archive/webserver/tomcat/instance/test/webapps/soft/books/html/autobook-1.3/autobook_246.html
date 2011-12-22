@@ -1,0 +1,520 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Text vs Binary Modes</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Text vs Binary Modes">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Text vs Binary Modes">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC246"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_245.html#SEC245" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Writing A Cygwin Friendly Package" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_247.html#SEC247" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: File System Limitations" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_251.html#SEC251" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: DLLs with Libtool" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_245.html#SEC245" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Writing A Cygwin Friendly Package" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_251.html#SEC251" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: DLLs with Libtool" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 25.3.1 Text vs Binary Modes </H3>
+<!--docid::SEC246::-->
+<P>
+
+As discussed in <A HREF="autobook_127.html#SEC127">15.3.5.1 Text and Binary Files</A>, text and binary files are
+different on Windows.  Lines in a Windows text files end in a
+carriage return/line feed pair, but a C program reading the file in text
+mode will see a single line feed.
+</P><P>
+
+Cygwin has several ways to hide this dichotomy, and the solution(s) you
+choose will depend on how you plan to use your program.  I will outline
+the relative tradeoffs you make with each choice:
+</P><P>
+
+<DL COMPACT>
+<DT>mounting
+<DD><A NAME="IDX75"></A>
+Before installing an operating system to your hard drive, you must first
+organise the disk into <EM>partitions</EM>.  Under Windows, you might only
+have a single partition on the disk, which would be called
+<SAMP>`C:'</SAMP><A NAME="DOCF63" HREF="autobook_fot.html#FOOT63">(63)</A>.  Provided that some
+media is present, Windows allows you to access the contents of any drive
+letter -- that is you can access <SAMP>`A:'</SAMP> when there is a floppy disk in
+the drive, and <SAMP>`F:'</SAMP> provided you divided you available drives into
+sufficient partitions for that letter to be in use.  With Unix, things
+are somewhat different:  hard disks are still divided into partitions
+(typically several), but there is only a single filesystem <EM>mounted</EM>
+under the root directory.  You can use the <CODE>mount</CODE> command to
+hook a partition (or floppy drive or CD-ROM, etc.) into a
+subdirectory of the root filesystem:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ mount /dev/fd0 /mnt/floppy
+$ cd /mnt/floppy
+</pre></td></tr></table></P><P>
+
+Until the directory is <CODE>unmount</CODE>ed, the contents of the floppy
+disk will be available as part of the single Unix filesystem in the
+directory, <TT>`/mnt/floppy'</TT>.  This is in contrast with Windows'
+multiple root directories which can be accessed by changing filesystem
+root -- to access the contents of a floppy disk:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>C:\WINDOWS\&#62; A:
+A:&#62; DIR
+...
+</pre></td></tr></table></P><P>
+
+Cygwin has a mounting facility to allow Cygwin applications to see a
+single unified file system starting at the root directory, by
+<CODE>mount</CODE>ing drive letters to subdirectories.  When mounting a
+directory you can set a flag to determine whether the files in that
+partition should be treated the same whether they are TEXT or
+BINARY mode files.  Mounting a file system to treat TEXT files
+the same as BINARY files, means that Cygwin programs can behave in
+the same way as they might on Unix and treat all files as equal.
+Mounting a file system to treat TEXT files properly, will cause
+Cygwin programs to translate between Windows <FONT SIZE="-1">CR-LF</FONT> line end
+sequences and Unix <FONT SIZE="-1">CR</FONT> line endings, which plays havoc with
+file seeking, and many programs which make assumptions about the size of
+a <CODE>char</CODE> in a <CODE>FILE</CODE> stream.  However <SAMP>`binmode'</SAMP> is the
+default method because it is the only way to interoperate between
+Windows binaries and Cygwin binaries.  You can get a list of which drive
+letters are mounted to which directories, and the modes they are mounted
+with by running the <CODE>mount</CODE> command without arguments:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>BASH.EXE-2.04$ mount
+Device              Directory            Type        flags
+C:\cygwin           /                    user        binmode
+C:\cygwin\bin       /usr/bin             user        binmode
+C:\cygwin\lib       /usr/lib             user        binmode
+D:\home             /home                user        binmode
+</pre></td></tr></table></P><P>
+
+As you can see, the Cygwin <CODE>mount</CODE> command allows you to
+`mount' arbitrary Windows directories as well as simple drive letters
+into the single filesystem seen by Cygwin apllications.
+</P><P>
+
+<DT>binmode
+<DD><A NAME="IDX76"></A>
+The <CODE>CYGWIN</CODE> environment variable holds a space separated list of
+setup options which exert some minor control over the way the
+<TT>`cygwin1.dll'</TT> (or <TT>`cygwinb19.dll'</TT> etc.)  behaves.  One such
+option is the <SAMP>`binmode'</SAMP> setting; if <CODE>CYGWIN</CODE> contains the
+<SAMP>`binmode'</SAMP> option, files which are opened through <TT>`cygwin1.dll'</TT>
+without an explicit text or binary mode,
+will default to binary mode which is closest to how Unix behaves.
+<P>
+
+<DT>system calls
+<DD><A NAME="IDX77"></A>
+<A NAME="IDX78"></A>
+<A NAME="IDX79"></A>
+<A NAME="IDX80"></A>
+<TT>`cygwin1.dll'</TT>, GNU libc and other modern C <FONT SIZE="-1">API</FONT>
+implementations accept extra flags for <CODE>fopen</CODE> and <CODE>open</CODE> calls to
+determine in which mode a file is opened.  On Unix it makes no
+difference, and sadly most Unix programmers are not aware of this
+subtlety, so this tends to be the first thing that needs to be fixed when
+porting a Unix program to Cygwin.  The best way to use these calls
+portably is to use the following macros with a package's <TT>`configure.in'</TT>
+to be sure that the extra arguments are available:
+</DL>
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre># _AB_AC_FUNC_FOPEN(b | t, USE_FOPEN_BINARY | USE_FOPEN_TEXT)
+# -----------------------------------------------------------
+define([_AB_AC_FUNC_FOPEN],
+[AC_CACHE_CHECK([whether fopen accepts "$1" mode], [ab_cv_func_fopen_$1],
+[AC_TRY_RUN([#include &#60;stdio.h&#62;
+int
+main ()
+{
+   FILE *fp = fopen ("conftest.bin", "w$1");
+   fprintf (fp, "\n");
+   fclose (fp);
+   return 0;
+}],
+            [ab_cv_func_fopen_$1=yes],
+            [ab_cv_func_fopen_$1=no],
+            [ab_cv_func_fopen_$1=no])])
+if test x$ab_cv_func_fopen_$1 = xyes; then
+  AC_DEFINE([$2], 1,
+            [Define this if we can use the "$1" mode for fopen safely.])
+fi[]dnl
+])# _AB_AC_FUNC_FOPEN
+
+# AB_AC_FUNC_FOPEN_BINARY
+# -----------------------
+# Test whether fopen accepts a "" in the mode string for binary file
+# opening.  This makes no difference on most unices, but some OSes
+# convert every newline written to a file to two bytes (CR LF), and
+# every CR LF read from a file is silently converted to a newline.
+AC_DEFUN([AB_AC_FUNC_FOPEN_BINARY], [_AB_AC_FUNC_FOPEN(b, USE_FOPEN_BINARY)])
+
+# AB_AC_FUNC_FOPEN_TEXT
+# ---------------------
+# Test whether open accepts a "t" in the mode string for text file
+# opening.  This makes no difference on most unices, but other OSes
+# use it to assert that every newline written to a file writes two
+# bytes (CR LF), and every CR LF read from a file are silently
+# converted to a newline.
+AC_DEFUN([AB_AC_FUNC_FOPEN_TEXT],   [_AB_AC_FUNC_FOPEN(t, USE_FOPEN_TEXT)])
+
+
+# _AB_AC_FUNC_OPEN(O_BINARY|O_TEXT)
+# ---------------------------------
+AC_DEFUN([_AB_AC_FUNC_OPEN],
+[AC_CACHE_CHECK([whether fcntl.h defines $1], [ab_cv_header_fcntl_h_$1],
+[AC_EGREP_CPP([$1],
+              [#include &#60;sys/types.h&#62;
+#include &#60;sys/stat.h&#62;
+#include &#60;fcntl.h&#62;
+$1
+],
+              [ab_cv_header_fcntl_h_$1=no],
+              [ab_cv_header_fcntl_h_$1=yes])
+if test "x$ab_cv_header_fcntl_h_$1" = xno; then
+  AC_EGREP_CPP([_$1],
+               [#include &#60;sys/types.h&#62;
+#include &#60;sys/stat.h&#62;
+#include &#60;fcntl.h&#62;
+_$1
+],
+                [ab_cv_header_fcntl_h_$1=0],
+                [ab_cv_header_fcntl_h_$1=_$1])
+fi])
+if test "x$ab_cv_header_fcntl_h_$1" != xyes; then
+  AC_DEFINE_UNQUOTED([$1], [$ab_cv_header_fcntl_h_$1],
+    [Define this to a usable value if the system provides none])
+fi[]dnl
+])# _AB_AC_FUNC_OPEN
+
+
+# AB_AC_FUNC_OPEN_BINARY
+# ----------------------
+# Test whether open accepts O_BINARY in the mode string for binary
+# file opening.  This makes no difference on most unices, but some
+# OSes convert every newline written to a file to two bytes (CR LF),
+# and every CR LF read from a file is silently converted to a newline.
+#
+AC_DEFUN([AB_AC_FUNC_OPEN_BINARY], [_AB_AC_FUNC_OPEN([O_BINARY])])
+
+
+# AB_AC_FUNC_OPEN_TEXT
+# --------------------
+# Test whether open accepts O_TEXT in the mode string for text file
+# opening.  This makes no difference on most unices, but other OSes
+# use it to assert that every newline written to a file writes two
+# bytes (CR LF), and every CR LF read from a file are silently
+# converted to a newline.
+#
+AC_DEFUN([AB_AC_FUNC_OPEN_TEXT],   [_AB_AC_FUNC_OPEN([O_TEXT])])
+
+
+</pre></td></tr></table></P><P>
+
+Add the following preprocessor code to a common header file that will be
+included by any sources that use <CODE>fopen</CODE> calls:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#define fopen	rpl_fopen
+</pre></td></tr></table></P><P>
+
+Save the following function to a file, and link that into your program
+so that in combination with the preprocessor magic above, you can always
+specify text or binary mode to <CODE>open</CODE> and <CODE>fopen</CODE>, and let
+this code take care of removing the flags on machines which do not
+support them:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if HAVE_CONFIG_H
+#  include &#60;config.h&#62;
+#endif
+
+#include &#60;stdio.h&#62;
+
+/* Use the system size_t if it has one, or fallback to config.h */
+#if STDC_HEADERS || HAVE_STDDEF_H
+#  include &#60;stddef.h&#62;
+#endif
+#if HAVE_SYS_TYPES_H
+#  include &#60;sys/types.h&#62;
+#endif
+
+/* One of the following headers will have prototypes for malloc
+   and free on most systems.  If not, we don't add explicit
+   prototypes which may generate a compiler warning in some
+   cases -- explicit  prototypes would certainly cause
+   compilation to fail with a type clash on some platforms. */
+#if STDC_HEADERS || HAVE_STDLIB_H
+#  include &#60;stdlib.h&#62;
+#endif
+#if HAVE_MEMORY_H
+#  include &#60;memory.h&#62;
+#endif
+
+#if HAVE_STRING_H
+#  include &#60;string.h&#62;
+#else
+#  if HAVE_STRINGS_H
+#    include &#60;strings.h&#62;
+#  endif /* !HAVE_STRINGS_H */
+#endif /* !HAVE_STRING_H */
+
+#if ! HAVE_STRCHR
+
+/* BSD based systems have index() instead of strchr() */
+#  if HAVE_INDEX
+#    define strchr index
+#  else /* ! HAVE_INDEX */
+
+/* Very old C libraries have neither index() or strchr() */
+#    define strchr rpl_strchr
+
+static inline const char *strchr (const char *str, int ch);
+
+static inline const char *
+strchr (const char *str, int ch)
+{
+  const char *p = str;
+  while (p &#38;&#38; *p &#38;&#38; *p != (char) ch)
+    {
+      ++p;
+    }
+
+  return (*p == (char) ch) ? p : 0;
+}
+#  endif /* HAVE_INDEX */
+
+#endif /* HAVE_STRCHR */
+
+/* BSD based systems have bcopy() instead of strcpy() */
+#if ! HAVE_STRCPY
+# define strcpy(dest, src)        bcopy(src, dest, strlen(src) + 1)
+#endif
+
+/* Very old C libraries have no strdup(). */
+#if ! HAVE_STRDUP
+# define strdup(str)                strcpy(malloc(strlen(str) + 1), str)
+#endif
+
+char*
+rpl_fopen (const char *pathname, char *mode)
+{
+    char *result = NULL;
+    char *p = mode;
+
+    /* Scan to the end of mode until we find 'b' or 't'. */ 
+    while (*p &#38;&#38; *p != 'b' &#38;&#38; *p != 't')
+      {
+        ++p;
+      }
+
+    if (!*p)
+      {
+        fprintf(stderr,
+            "*WARNING* rpl_fopen called without mode 'b' or 't'\n");
+      }
+
+#if USE_FOPEN_BINARY &#38;&#38; USE_FOPEN_TEXT
+    result = fopen(pathname, mode);
+#else
+    {
+        char ignore[3]= "bt";
+        char *newmode = strdup(mode);
+        char *q       = newmode;
+
+        p = newmode;
+
+#  if ! USE_FOPEN_TEXT
+        strcpy(ignore, "b")
+#  endif
+#  if ! USE_FOPEN_BINARY
+        strcpy(ignore, "t")
+#  endif
+
+        /* Copy characters from mode to newmode missing out
+           b and/or t. */
+        while (*p)
+          {
+            while (strchr(ignore, *p))
+              {
+                ++p;
+              }
+            *q++ = *p++;
+          }
+        *q = '\0';
+
+        result = fopen(pathname, newmode);
+
+        free(newmode);
+    }
+#endif /* USE_FOPEN_BINARY &#38;&#38; USE_FOPEN_TEXT */
+
+    return result;
+}
+
+</pre></td></tr></table>    
+</P><P>
+
+The correct operation of the file above relies on several things having
+been checked by the <CODE>configure</CODE> script, so you will also need to
+ensure that the following macros are present in your <TT>`configure.in'</TT>
+before you use this code:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre># configure.in -- Process this file with autoconf to produce configure
+AC_INIT(rpl_fopen.c)
+
+AC_PROG_CC
+AC_HEADER_STDC
+AC_CHECK_HEADERS(string.h strings.h, break)
+AC_CHECK_HEADERS(stdlib.h stddef.h sys/types.h memory.h)
+
+AC_C_CONST
+AC_TYPE_SIZE_T
+
+AC_CHECK_FUNCS(strchr index strcpy strdup)
+AB_AC_FUNC_FOPEN_BINARY
+AB_AC_FUNC_FOPEN_TEXT
+
+</pre></td></tr></table></P><P>
+
+<A NAME="File System Limitations"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

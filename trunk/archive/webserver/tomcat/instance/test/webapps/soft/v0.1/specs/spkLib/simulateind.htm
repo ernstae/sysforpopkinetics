@@ -1,0 +1,338 @@
+<html><head>
+<title>Simulation of Measurements for a given Individual Model</title>
+<meta name="description" id="description" content="Simulation of Measurements for a given Individual Model">
+<meta name="keywords" id="keywords" content=" simulate population ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_simulateind_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>simulation</option>
+<option>simulateInd</option>
+</select>
+</td>
+<td><a href="simulatepop.htm" target="_top">Prev</a>
+</td><td><a href="randnormal.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>simulation-&gt;</option>
+<option>simulatePop</option>
+<option>simulateInd</option>
+<option>randNormal</option>
+</select>
+</td>
+<td>simulateInd</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Assumptions</option>
+<option>Notation</option>
+<option>Arguments</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+
+
+  <center><b><big><big>Simulation of Measurements for a given Individual Model</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype:</b> </td><td align='left'  valign='top'>
+ 
+  <code><font color="blue"><span style='white-space: nowrap'>void&nbsp;simulate(&nbsp;SPK_Model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;valarray&lt;double&gt;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>bIn</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>yOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>seed</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)</span></font></code> </td></tr><tr><td align='left'  valign='top'>
+
+  </td><td align='left'  valign='top'>
+
+  <code><font color="blue"><span style='white-space: nowrap'>void&nbsp;simulate(&nbsp;SPK_Model&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;valarray&lt;double&gt;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>bIn</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>yOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)</span></font></code> </td></tr><tr><td align='left'  valign='top'>
+
+  </td></tr>
+</table>
+<br>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+  </i>
+  </center><code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></code>
+  <b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Generates a set of measurements for the individual <i>model</i>.
+
+  <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></code>
+
+  The simulated measurements are controlled by the parameter
+  <i>b</i> and drown from the distribution:
+  <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;y[i]&nbsp;=&nbsp;f(b)&nbsp;+&nbsp;e<br>
+&nbsp;&nbsp;e&nbsp;~&nbsp;N(0,&nbsp;R(b))<br>
+<br>
+&nbsp;&nbsp;</span></code>
+  where R(b) is the model's R function, evaluating on the random effects in <i>b</i>.
+
+  The set of data created are placed in the matrix <i>yOut</i>.  The input values
+  of the matrix <i>yOut</i> does not matter, as it
+  will be changed and any previous information stored in it will be overwritten.
+
+  <br>
+<br>
+<b><big><a name="Assumptions" id="Assumptions">Assumptions</a></big></b>
+
+
+  <br>
+<br>
+<b><big><a name="Notation" id="Notation">Notation</a></big></b>
+<br>
+If A is a <code><font color="blue">DoubleMatrix</font></code> we use A[i] to denote the ith element of A.  Unless noted
+  otherwise, the indexing begins at zero.
+
+  <br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  A user implementation of the <code><font color="blue">SpkModel</font></code> class that is dependent on
+  <i>b</i>.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  The number of measurements to be simulated.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>bIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  The <code><font color="blue">valarray&lt;double&gt;</font></code> <i>bLow</i> contains the random effects.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>yOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  Simulated data is placed in the <code><font color="blue">valarray&lt;double&gt;</font></code> 
+  <i>yOut</i>.  The input size of <i>yOut</i> must be the same as <code><span style='white-space: nowrap'><i>n</i></span></code>.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>seed</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  (optional) The user can pass an  <code><font color="blue">integer</font></code>
+  if a different starting seed value for the random number 
+  generators is desired.
+
+
+  <br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program,
+  <code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;//&nbsp;In&nbsp;the&nbsp;following&nbsp;example,&nbsp;simulate()&nbsp;takes&nbsp;in&nbsp;parameters&nbsp;and&nbsp;calculates<br>
+&nbsp;&nbsp;//&nbsp;yOut&nbsp;and&nbsp;bAllOut.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&lt;spk/SpkValarray.h&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&lt;spk/identity.h&gt;<br>
+<br>
+&nbsp;&nbsp;#include&nbsp;&lt;spk/simulate.h&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&lt;spk/randNormal.h&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&lt;spk/allZero.h&gt;<br>
+<br>
+&nbsp;&nbsp;using&nbsp;std::string;<br>
+&nbsp;&nbsp;using&nbsp;SPK_VA::valarray;<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;class&nbsp;SimulateExampleIndModel&nbsp;:&nbsp;public&nbsp;SpkModel&lt;double&gt;<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;&nbsp;_b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;nB,&nbsp;nY;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SimulateExampleIndModel(&nbsp;int&nbsp;nBIn,&nbsp;int&nbsp;nYIn&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;nB(nBIn),&nbsp;nY(nYIn),&nbsp;_b(nBIn)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;~SimulateExampleIndModel(){}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;protected:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSetIndPar(const&nbsp;valarray&lt;double&gt;&amp;&nbsp;b)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_b&nbsp;=&nbsp;b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataMean(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;fOut&nbsp;)&nbsp;const&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Calculates<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f(b)&nbsp;=&nbsp;|&nbsp;&nbsp;b(1)&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fOut&nbsp;=&nbsp;_b[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataMean_indPar(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;f_bOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Calculates<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_b(b)&nbsp;=&nbsp;|&nbsp;&nbsp;1&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_bOut&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataVariance(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;ROut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Calculates<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R(b)&nbsp;=&nbsp;|&nbsp;&nbsp;1&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;1&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;1&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;1&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;1&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;1&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;1&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;1&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;1&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;1&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ROut&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ROut[&nbsp;slice(&nbsp;0,&nbsp;nY,&nbsp;nY+1&nbsp;)&nbsp;]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataVariance_indPar(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;R_bOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Calculates<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_b(b)&nbsp;=&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_bOut&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;};<br>
+<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;Function:&nbsp;main<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;int&nbsp;main()<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;data&nbsp;vector,&nbsp;y.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Number&nbsp;of&nbsp;measurements.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;nY&nbsp;=&nbsp;10;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;size&nbsp;of&nbsp;b&nbsp;vector<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;nB&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Measurement&nbsp;values,&nbsp;y.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;y(&nbsp;nY&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Seed<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;seed&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;random&nbsp;population&nbsp;parameters,&nbsp;b.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;b&nbsp;(&nbsp;0.0,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;user-provided&nbsp;model.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SimulateExampleIndModel&nbsp;model(&nbsp;nB,&nbsp;nY&nbsp;);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Simulate&nbsp;measurements&nbsp;for&nbsp;each&nbsp;individual.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;simulate(model,&nbsp;nY,&nbsp;b,&nbsp;y,&nbsp;1);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Print&nbsp;the&nbsp;results.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;yOut:&quot;&nbsp;&lt;&lt;&nbsp;y&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;}<br>
+<br>
+</span>
+</font></code>
+the matrices
+  <code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;<i>yOut</i>:{&nbsp;1.11227,&nbsp;0.608056,&nbsp;-0.712082,&nbsp;-1.71895,&nbsp;-0.400054,&nbsp;-2.27172,&nbsp;0.866331,&nbsp;-1.03258,&nbsp;-0.358203,&nbsp;-1.11381&nbsp;}<br>
+<br>
+&nbsp;&nbsp;</span></code>
+  will be printed.
+
+  
+<hr>Input File: ../../spk/simulate.cpp
+
+</body>
+</html>

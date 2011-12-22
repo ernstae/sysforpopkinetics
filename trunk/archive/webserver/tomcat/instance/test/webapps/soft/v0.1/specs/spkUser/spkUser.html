@@ -1,0 +1,256 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>SPK User</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+>SPK User</A
+></H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;This document defines the SPK users in terms of their privileges and responsibilities.
+The general SPK users are biological scientists.  There are two special users: user acount administator and librarian.  All other users are called ordinary users.  Some of the users are SPK testers and some of them are SPK developers.  A user can be both SPK tester and SPK developer.  A user can join a group.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>August 23, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: jiaji</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN12"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN15"
+>User account administrator</A
+></DT
+><DT
+><A
+HREF="#AEN20"
+>Librarian user</A
+></DT
+><DT
+><A
+HREF="#AEN24"
+>Ordinary user</A
+></DT
+><DT
+><A
+HREF="#AEN27"
+>SPK tester</A
+></DT
+><DT
+><A
+HREF="#AEN30"
+>SPK developer</A
+></DT
+><DT
+><A
+HREF="#AEN33"
+>Group users</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN12"
+>Introduction</A
+></H2
+><P
+>&#13;The general SPK users are biological scientists. There are two special users: user account administrator and librarian.  The SPK user accounts are managed through an web interface which is available solely to the user account administrator.  SPK provides a library of models, datasets and job examples to all users, which are handled solely by the librarian.  All other users are called ordinary users.  Some of the ordinary users are SPK testers and some of them are SPK developers. A user can be both SPK tester and SPK developer.  A user can join a group.  This specification defines the privileges and responsibilities of each type of the users. 
+     
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN15"
+>User account administrator</A
+></H2
+><P
+>&#13;There is a special user account with a fixed name 'useradmin'.  This user account is for the user account administrator of the 
+system.  There is only one such account in the system.  The user administrator manages all the user accounts through a web 
+inerface in the MySPK web site.  The user administrator has the privilege of entering all the uaer accounts in the system.  
+This special user is responsible of creating new user accounts, updating existing user accounts and searching for an existing 
+user account.  To enter a user account, login as useradmin, nevigate to the "All User List" page and select the user account.
+When the SPK service is temporarily unavailable, the user administrator may post a maintenance notice in the MySPK web site. 
+     </P
+><P
+>&#13;When the Model Design Agent is started in Test Mode, entering the useradmin's password with any user account's username into 
+the 'Logging In Dialog' enables the user to use the Model Design Agent to access the user's account.
+     </P
+><P
+>&#13;The password of this acount is set to 'useradmin' when this product is shipped.  It should be changed immediately when the
+user administrator enters the system for the first time.
+     </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN20"
+>Librarian user</A
+></H2
+><P
+>&#13;The librarian user is the special user who handles the libraries.  The username of this account is fixed as 'librarian'.   There is 
+only one such account in the system.  This special user has all the privileges as an ordinary user has except being an SPK tester.
+The librarian's responsiblility is to enter job examples to the database for other users to use.
+Each job example has an associated model version and an associated dataset version that are entered to the database as the job is
+entered.  To enter a job example, get the job's Input XML, open it in the MDA editor window and then click the Model Design Agent's 
+"Submit Job" button.  Unlike the useradmin, the librarian can not enter any other user's account. 
+    </P
+><P
+>&#13;The password of this acount is set to 'librarian' when this product is shipped.  It should be changed immediately when the
+librarian enters the system for the first time.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN24"
+>Ordinary user</A
+></H2
+><P
+>&#13;An ordinary user account may have any unique username except 'useradmin' and 'librarian'.  There may be many ordinary user accounts.
+An ordinary user can download a Model Design Agent and use it.  An ordinary user can also access all the information of the library 
+in read-only basis and all the information in his/her account. The SPK uses Bugzilla as its bug tracking system.  An ordinary user 
+has an acoount in that system and may access it through MySPK web site.  An ordinary user may share jobs with other users and stop 
+the sharing at any time.  The receiver of the file sharing may not share that job with any other user, but may stop the sharing at 
+any time.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN27"
+>SPK tester</A
+></H2
+><P
+>&#13;An SPK tester user account may be also an SPK developer user account.  There may be many SPK tester accounts.  The user of this account 
+can access in-development features of the Model Design Agent while other users can not such as certain methods and warning/error 
+information.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN30"
+>SPK developer</A
+></H2
+><P
+>&#13;An SPK developer user account may be also an SPK tester account.  There may be many SPK developer accounts.  The user of this account 
+can access in-development features of the Model Design Agent while other users can not such as certain methods and warning/error 
+information.  In the SPK test environment, SPK 
+developers can enter other ordinary user accounts with the account holders' permission to resolve software problems 
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN33"
+>Group users</A
+></H2
+><P
+>&#13;An ordinary SPK user can join a group.  Each user can join only one group.  A group can have any number of members.  Users in the 
+same group can use other group member's models, datasets and jobs, but can not modify them.  The group users can not either change 
+each other's job abstract or abort each other's job.  
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,268 @@
+<html><head>
+<title>Cholesky Factoring Of A Matrix (valarray version)</title>
+<meta name="description" id="description" content="Cholesky Factoring Of A Matrix (valarray version)">
+<meta name="keywords" id="keywords" content=" cholesky decomposition ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_cholesky_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>general</option>
+<option>cholesky</option>
+</select>
+</td>
+<td><a href="centdiffva.htm" target="_top">Prev</a>
+</td><td><a href="counttrues.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>general-&gt;</option>
+<option>ABA_x</option>
+<option>ABA_xVA</option>
+<option>addition</option>
+<option>AkronBtimesC</option>
+<option>AkronBtimesCRef</option>
+<option>AkronBtimesCVA</option>
+<option>AkronItimesC</option>
+<option>AkronItimesCVA</option>
+<option>allTrue</option>
+<option>allZero</option>
+<option>backDiv</option>
+<option>BlockAlloc</option>
+<option>blockDiagonalDerivative</option>
+<option>centdiff</option>
+<option>centdiffVA</option>
+<option>cholesky</option>
+<option>countTrues</option>
+<option>CovarianceClasses</option>
+<option>elsq</option>
+<option>elsqVA</option>
+<option>elsqFuncOb</option>
+<option>elsq_x</option>
+<option>elsq_xVA</option>
+<option>elsq_xDiag</option>
+<option>elsq_xBlockDiag</option>
+<option>DBL_EPS_EQUAL_MULT</option>
+<option>det</option>
+<option>detVA</option>
+<option>divByScalar</option>
+<option>DMclass</option>
+<option>elementwiseAnd</option>
+<option>elementwiseOr</option>
+<option>File</option>
+<option>FpErrorChecker</option>
+<option>ModelFunction</option>
+<option>ModelDerivative</option>
+<option>getCol</option>
+<option>getMulCols</option>
+<option>getMulRows</option>
+<option>getRow</option>
+<option>getSubblock</option>
+<option>identityNum</option>
+<option>identityVA</option>
+<option>IkronBtimesC</option>
+<option>IkronBtimesCVA</option>
+<option>inverse</option>
+<option>inverseVA</option>
+<option>inxToMax</option>
+<option>isDblEpsEqual</option>
+<option>isDmatEpsEqual</option>
+<option>isGreaterThanOrEqualTo</option>
+<option>isLessThanOrEqualTo</option>
+<option>isSymmetric</option>
+<option>matabs</option>
+<option>matmaxScalar</option>
+<option>matmaxMatrices</option>
+<option>matminScalar</option>
+<option>matminMatrices</option>
+<option>mulByScalar</option>
+<option>multiply</option>
+<option>norm</option>
+<option>Optimizer</option>
+<option>pi</option>
+<option>placeRows</option>
+<option>printInMatrix</option>
+<option>quasinewtonanybox</option>
+<option>replaceIth</option>
+<option>replaceJth</option>
+<option>replaceSubblockDoubleMatrix</option>
+<option>replaceSubblockValarray</option>
+<option>rvec</option>
+<option>rvecVA</option>
+<option>rvecInverse</option>
+<option>SpkError</option>
+<option>SpkException</option>
+<option>SpkValarray</option>
+<option>subtraction</option>
+<option>symmetrize</option>
+<option>symmetrizeVA</option>
+<option>System</option>
+<option>transpose</option>
+<option>transposeRef</option>
+<option>transposeVA</option>
+<option>transposeDerivative</option>
+<option>transposeDerivativeVA</option>
+<option>transposeRowBlocks</option>
+<option>transposeRowBlocksVA</option>
+<option>UTranTimesSymKronSymTimesU</option>
+<option>UTranTimesSymKronSymTimesU_x</option>
+<option>WarningsManager_constructor</option>
+<option>WarningsManager_addWarning</option>
+<option>WarningsManager_addWarningList</option>
+<option>WarningsManager_clearAllWarnings</option>
+<option>WarningsManager_anyWarnings</option>
+<option>WarningsManager_getWarningList</option>
+<option>WarningsManager_getAllWarnings</option>
+</select>
+</td>
+<td>cholesky</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Arguments</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Cholesky Factoring Of A Matrix (valarray version)</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype:</b>   </td><td align='left'  valign='top'>
+  
+<code><font color="blue"><span style='white-space: nowrap'>cholesky(&nbsp;int&nbsp;</span></font></code><i><span style='white-space: nowrap'>nCols</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>CholL</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)</span></font></code>
+</td></tr>
+</table>
+See also: 
+<br>
+<br>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><br>
+<b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Returns a <b>lower triangular</b> matrix <code><span style='white-space: nowrap'><i>C</i></span></code> that is a Cholesky factor for the matrix <code><span style='white-space: nowrap'><i>A</i></span></code>; i.e., 
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>C</i>&nbsp;&nbsp;<i>C</i>&nbsp;=&nbsp;<i>A</i><br>
+</span></code>where <code><span style='white-space: nowrap'><i>A</i></span></code> is a double-precision positive definite symmetric matrix. 
+The return value has the same type as <code><span style='white-space: nowrap'><i>A</i></span></code>. 
+
+The matrix <code><span style='white-space: nowrap'><i>A</i></span></code> is positive definite if 
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>x</i>&nbsp;&nbsp;<i>B</i>&nbsp;<i>x</i>&nbsp;&gt;&nbsp;0<br>
+</span></code>whenever <code><span style='white-space: nowrap'><i>x</i></span></code> is a nonzero column vector with row dimension equal to the column dimension of <code><span style='white-space: nowrap'><i>A</i></span></code>. 
+If the matrix <code><span style='white-space: nowrap'><i>A</i></span></code> is not positive definite, an <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>exception</span></a>
+ 
+with an <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+ object whose error code is set to <code><font color="blue">SpkError::SPK_NOT_POS_DEF_ERR</font></code>
+will be thrown. 
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>nCols</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>specifies the number of columns (or rows) in <code><span style='white-space: nowrap'><i>A</i></span></code>.  <i>nCols</i> must be greater
+than or equal to zero.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a valarray object holding an <code><span style='white-space: nowrap'><i>n</i>&nbsp;*&nbsp;<i>n</i></span></code> length array of type double.  The array contains
+the elements of <code><span style='white-space: nowrap'><i>A</i></span></code> in column major order.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>CholA</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a valarray object holding an <code><span style='white-space: nowrap'><i>n</i>&nbsp;*&nbsp;<i>n</i></span></code> length array of type double.  
+The lower triangle of <i>CholA</i> will be set to the cholesky factor for the matrix <code><span style='white-space: nowrap'><i>A</i></span></code>.
+If <code><span style='white-space: nowrap'><i>A</i></span></code> is not positive definite, this argument will not be altered.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;SpkValarray.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;cholesky.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;SPK_VA::valarray;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;n&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;a[]&nbsp;=&nbsp;{&nbsp;2,&nbsp;0,&nbsp;1,&nbsp;0,&nbsp;3,&nbsp;0,&nbsp;1,&nbsp;0,&nbsp;1&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;e[]&nbsp;=&nbsp;{&nbsp;1.41421,&nbsp;0,&nbsp;0.707107,&nbsp;0,&nbsp;1.73205,&nbsp;0,&nbsp;0,&nbsp;0,&nbsp;0.707107&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;A(&nbsp;a,&nbsp;n*n&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;AChol&nbsp;=&nbsp;cholesky(A,&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;expected(&nbsp;e,&nbsp;n*n&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;A:&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printInMatrix(A,n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;AChol&nbsp;(lower&nbsp;triangle):&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printInMatrix(AChol,n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;A:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;0&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;3&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;0&nbsp;1&nbsp;]<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;AChol&nbsp;(lower&nbsp;triangle):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1.41421&nbsp;0&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;1.73205&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0.707107&nbsp;0&nbsp;0.707107&nbsp;]<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/cholesky.cpp
+
+</body>
+</html>

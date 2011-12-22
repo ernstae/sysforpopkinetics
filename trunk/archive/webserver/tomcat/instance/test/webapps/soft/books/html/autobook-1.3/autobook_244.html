@@ -1,0 +1,228 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Installing GNU Autotools on Cygwin</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Installing GNU Autotools on Cygwin">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Installing GNU Autotools on Cygwin">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC244"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_243.html#SEC243" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Preliminaries" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_245.html#SEC245" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Writing A Cygwin Friendly Package" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_245.html#SEC245" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Writing A Cygwin Friendly Package" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_242.html#SEC242" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Integration with Cygnus Cygwin" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_258.html#SEC258" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Cross Compilation" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 25.2 Installing GNU Autotools on Cygwin </H2>
+<!--docid::SEC244::-->
+<P>
+
+<A NAME="IDX69"></A>
+With all of the above infrastructure in place, each of the GNU Autotools
+can be built natively and installed from source right out of the box.
+It is worth taking care with the installation directories, as there is
+no package management under Cygwin, and it is easy to let everything get
+thrown into a big pile in <TT>`/usr/local'</TT>, which makes it relatively
+difficult to upgrade and remove packages.
+</P><P>
+
+<A NAME="IDX70"></A>
+Support for Cygwin has been in Autoconf for several years, as far back
+as version 2.0 as best as I can tell.  Building it has never been a
+problem as long as GNU M4 and a Bourne Shell are available, it is
+the macros themselves which offer this support.  Of course, any Autoconf
+macros you write yourself must be designed carefully to not make any
+assumptions about being executed on Unix if the Cygwin compatibility is
+to remain.  A binary package of Autoconf for Cygwin version 1.1.1 is
+available from the CygUtils website<A NAME="DOCF62" HREF="autobook_fot.html#FOOT62">(62)</A>.
+</P><P>
+
+<A NAME="IDX71"></A>
+Automake joined the fray much later than the Cygwin support code was
+added to Autoconf, and has consequently always supported Cygwin.  Until
+the last release of Cygwin, the stumbling block has always been finding
+(or building) a Cygwin compatible Perl interpreter for Automake to use.
+Thanks to the work of Eric Fifer, Perl 5.6.0 builds right out of the box
+on Cygwin, removing this problem entirely.  Ready built packages of Perl
+and Automake are available from the CygUtils website.
+</P><P>
+
+<A NAME="IDX72"></A>
+The initial Libtool support for Windows was written by Ian Lance Taylor
+of Cygnus Solutions, when Cygwin was at release b18, See section <A HREF="autobook_12.html#SEC12">Microsoft Windows</A>.  More recent releases of
+Cygwin in general, and GCC in particular have much better
+facilities for building and linking with Windows DLLs, to the
+extent that with a little perseverance it is possible to build DLLs
+with GCC from C++ sources, and to have those DLLs interoperate with
+DLLs built with Windows development environments.  In time,
+automation of these facilities will make their way into Libtool.  The
+method that Libtool currently uses to build DLLs works with Cygwin
+releases at least as far back as b18, and at least as far forward as the
+version I am now using, Cygwin-1.1.1.  The same code will also build
+DLLs correctly with Mingw32.  There are certainly simpler ways to
+assemble a DLL, but Libtool aims to combine two goals which are
+somewhat in contention with Windows' treatment of DLLs; Libtool is
+aiming for maximum portability across the various flavours of
+DLL-using Windows build environments; not forgetting Libtool's
+raison d'&ecirc;tre
+which is to abstract the many and varied ways of building libraries on
+different targets behind a single unified interface.  To meet these two
+goals, Libtool must only use tools which exist across the range of
+versions it supports, and must at the same time try to make DLLs
+appear to have the same characteristics as a modern ELF shared
+library, such as the shared libraries under GNU/Linux.  This is no
+mean feat, and in fact Libtool still has some way to go in order to be
+able to do this convincingly.  It turns out that Windows DLLs lack
+many, many features that packages developed on Unix are likely to take
+for granted.  Emulation of these missing features are making their way
+into Libtool.  Although support for DLLs is improving steadily with
+every release, there are some severe technical problems with the Windows
+library architecture that will prevent Libtool from ever being able to
+build DLLs completely transparently.  The details are extremely
+technical and beyond the scope of this book.
+</P><P>
+
+As noted in <A HREF="autobook_274.html#SEC274">A.3 Installing the tools</A>, things will only work correctly
+if each of Autoconf, Automake and Libtool are installed with the same
+<SAMP>`--prefix'</SAMP> argument, since they all share a macro directory in
+<TT>`$prefix/share/aclocal'</TT>.
+</P><P>
+
+<A NAME="Writing A Cygwin Friendly Package"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

@@ -1,0 +1,241 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>regression_test.pl -- test a candidate before deployment</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#abstract">ABSTRACT</a></li>
+	<li><a href="#running">RUNNING</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#options_and_arguments">OPTIONS AND ARGUMENTS</a></li>
+	<li><a href="#configuration_file">CONFIGURATION FILE</a></li>
+	<ul>
+
+		<li><a href="#syntax">SYNTAX</a></li>
+	</ul>
+
+	<li><a href="#test_set">TEST SET</a></li>
+	<li><a href="#exit_status">EXIT STATUS</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>regression_test.pl -- test a candidate before deployment</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p>regression_test.pl [--help] [--man] [--pvm] [--parallel] [--dump-config] [--ignore-candidate] [--relative-error=r] [--absolute-error=a] [--norm-code=n] [--parameter-only] [--config-file=file]</p>
+<p>
+</p>
+<hr />
+<h1><a name="abstract">ABSTRACT</a></h1>
+<p><strong>regression_test.pl</strong> is an operations utility which is part of the
+process of moving an SPK system from test into production. It tests
+the current deployment candidate against a set of jobs with known
+outcomes, to insure that the candidate does not ``break'' features that
+previously worked.</p>
+<p>
+</p>
+<hr />
+<h1><a name="running">RUNNING</a></h1>
+<p>To run <strong>regression_test.pl</strong>, you must satisfy these conditions:</p>
+<dl>
+<dt>
+<dd>
+<p>Have exclusive use of the test environment.  This will have to be
+coordinated with the other developers and testers.</p>
+</dd>
+</li>
+<dt>
+<dd>
+<p>Have a terminal window or ssh window on whitechuck</p>
+</dd>
+</li>
+<dt>
+<dd>
+<p>Log in as root, so that root's <strong>.bash_profile</strong> is executed, which
+runs <strong>keychain</strong> and starts <strong>ssh_agent</strong>.  One way to achieve this is
+to log in as an ordinary user, then execute <strong>su -</strong> to upgrade.
+(Note that the <strong>-</strong> sign is necessary. Without it, root's 
+<strong>.bash_profile</strong> will not be executed.)</p>
+</dd>
+</li>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p><strong>regression_test.pl</strong> expects two sets of job_id numbers to be
+specified in input file.  One set references jobs which ran
+successfully in the production environment, and the other references
+jobs which were rejected by the SPK compiler due to syntax errors.
+These jobs are rerun in the test environment and then the results are
+checked against known results.</p>
+<p>
+</p>
+<hr />
+<h1><a name="options_and_arguments">OPTIONS AND ARGUMENTS</a></h1>
+<dl>
+<dt><strong><a name="item__2d_2dhelp"><strong>--help</strong></a></strong>
+
+<dd>
+<p>Print a brief help message and exit.</p>
+</dd>
+</li>
+<dt><strong><a name="item__2d_2dman"><strong>--man</strong></a></strong>
+
+<dd>
+<p>Print the manual page and exit.</p>
+</dd>
+</li>
+<dt><strong><a name="item__2d_2dpvm"><strong>--pvm</strong></a></strong>
+
+<dd>
+<p>Run in single-process mode on PVM.</p>
+</dd>
+</li>
+<dt><strong><a name="item__2d_2dparallel"><strong>--parallel</strong></a></strong>
+
+<dd>
+<p>Run in parallel-process mode on PVM.</p>
+</dd>
+</li>
+<dt><strong><a name="item__2d_2ddump_2dconfig"><strong>--dump-config</strong></a></strong>
+
+<dd>
+<p>Dump out the data structure parsed from the xml configuration file 
+and exit.</p>
+</dd>
+</li>
+<dt><strong><a name="item__2d_2dignore_2dcandidate"><strong>--ignore-candidate</strong></a></strong>
+
+<dd>
+<p>Useful if this program is used for system testing rather than regression
+testing.  In regression testing, when used as part of the deployment 
+process, the most recent deployment candidate is copied into the test
+environment.  With this option, that copy does not occur.</p>
+</dd>
+</li>
+<dt><strong><a name="item__2d_2drelative_2derror_3dr"><strong>--relative-error=r</strong></a></strong>
+
+<dd>
+<p>Specify the relative error.  Default is 1e-3.</p>
+</dd>
+</li>
+<dt><strong><a name="item__2d_2dabsolute_2derror_3da"><strong>--absolute-error=a</strong></a></strong>
+
+<dd>
+<p>Specify the absolute error.  Default is 1e-4.</p>
+</dd>
+</li>
+<dt><strong><a name="item__2d_2dnorm_2dcode_3dn"><strong>--norm-code=n</strong></a></strong>
+
+<dd>
+<p>Specify the norm code.  1: max|xi|; 2:sum|xi|; 3: sqrt(sum(xi*xi)); 4: passng any of 1,2,3.  Default is 3.</p>
+</dd>
+</li>
+<dt><strong><a name="item__2d_2dparameter_2donly"><strong>--parameter-only</strong></a></strong>
+
+<dd>
+<p>Specify checking parameter only.</p>
+</dd>
+</li>
+<dt><strong><a name="item__2d_2dconfig_2dfile_3dfile"><strong>--config-file=file</strong></a></strong>
+
+<dd>
+<p>Specify the name of the configuration file.  If this argument is not
+present, the configuration file name is assumed to be
+``regression_test.xml''.  See the CONFIGURATION section for the format
+of this file.</p>
+</dd>
+</li>
+</dl>
+<p>
+</p>
+<hr />
+<h1><a name="configuration_file">CONFIGURATION FILE</a></h1>
+<p>The configuration file is in xml format. Its default name is 
+``regression_test.xml'', but a file of another name can be used if
+that name is provided on the command-line as the value for the
+<strong>--config-file</strong> argument.</p>
+<p>
+</p>
+<h2><a name="syntax">SYNTAX</a></h2>
+<p>The configuration file has the following syntax:</p>
+<pre>
+    &lt;regression_test&gt;
+        &lt;cerr&gt;
+            &lt;job&gt; job_id number &lt;/job&gt;
+            &lt;job&gt; job_id number &lt;/job&gt;
+            ...
+            &lt;ignore&gt; regexp &lt;/ignore&gt;
+            &lt;ignore&gt; regexp &lt;/ignore&gt;
+            ...
+        &lt;/cerr&gt;
+        &lt;srun&gt;
+            &lt;job&gt; job_id number &lt;/job&gt;
+            &lt;job&gt; job_id number &lt;/job&gt;
+            ...
+            &lt;ignore&gt; regexp &lt;/ignore&gt;
+            &lt;ignore&gt; regexp &lt;/ignore&gt;
+            ...
+        &lt;/srun&gt;
+    &lt;/regression_test&gt;</pre>
+<p>
+</p>
+<hr />
+<h1><a name="test_set">TEST SET</a></h1>
+<p>The test set consists of working directories for a set of jobs.  The
+set is divided into two subsets.  One subset consists of jobs which
+failed in the SPK compilation phase and, hence, have ``cerr'' for
+end_code.  The other subset consists of jobs which were successful
+and, thus, have ``srun'' for end_code.</p>
+<p>The working directories of the ``cerr'' subset reside on aspkserver in
+the directory <strong>/usr/local/spk/ops/regression_test/cerr</strong>.  Each working
+directory has a name with the format <strong>spkcmptest-job-n</strong>, where <strong>n</strong>
+is a job_id.</p>
+<p>The working directories of the ``srun'' subset reside on cspkserver in
+the directory <strong>/usr/local/spk/ops/regression_test/srun</strong>.  Each working
+directory has a name with the format <strong>spkruntest-job-n</strong>, where <strong>n</strong>
+is a job_id.</p>
+<p>To add jobs to the test set,</p>
+<ol>
+<li>
+<p>Run the jobs in the test environment, following the procedure outlined in the
+<strong>SPK System Testing Guide</strong>.</p>
+</li>
+<li>
+<p>Depending on whether a job terminated with ``cerr'' or ``srun'', copy 
+its working directory to the appropriate directory on either aspkserver
+or cspkserver.</p>
+</li>
+<li>
+<p>Add the jobs to their appropriate subsets in the configuration file.</p>
+</li>
+</ol>
+<p>
+</p>
+<hr />
+<h1><a name="exit_status">EXIT STATUS</a></h1>
+<p>Returns 0 as exit status if the regression test was successful; otherwise
+a non-zero value is returned.</p>
+
+</body>
+
+</html>

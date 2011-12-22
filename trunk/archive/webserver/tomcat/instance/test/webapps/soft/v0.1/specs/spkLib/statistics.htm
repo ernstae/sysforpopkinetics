@@ -1,0 +1,200 @@
+<html><head>
+<title>Computing Statistics of Parameter Estimates</title>
+<meta name="description" id="description" content="Computing Statistics of Parameter Estimates">
+<meta name="keywords" id="keywords" content=" statistics coefficient of variation confidence interval covariance standard error correlation matrix parameters ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_statistics_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>statistical</option>
+<option>statistics</option>
+</select>
+</td>
+<td><a href="statistical.htm" target="_top">Prev</a>
+</td><td><a href="statisticsinactiveelem.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>statistical-&gt;</option>
+<option>statistics</option>
+<option>statisticsInactiveElem</option>
+<option>derParStatistics</option>
+<option>derParStatisticsFixedElem</option>
+<option>calcMean</option>
+<option>residuals</option>
+<option>wres</option>
+</select>
+</td>
+<td>statistics</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Return Value</option>
+<option>Arguments</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Computing Statistics of Parameter Estimates</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype:</b> </td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>void&nbsp;statistics(&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>xCov</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>degFree</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>seOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>corOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>cvOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>ciOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+</span></font></code></td></tr>
+</table>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This function computes the standard error vector, correlation
+matrix, coefficient of variation vector, and confidence interval 
+vector of x based on a given covariance matrix.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The standard error vector is calculated by taking the square roots 
+of the diagonal elements of the covariance matrix.
+The correlation matrix is calculated by dividing each element of 
+the covariance matrix by the standard errors that correspond to its 
+row and column.
+The coefficients of variation are calculated as
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>CV</i>&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;|&nbsp;<i>x</i>&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;*&nbsp;100&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)<br>
+<br>
+</span></code>where CV is the coefficient of variation and SE is the standard error.  
+The 95% confidence intervals are calculated as
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;<i>x</i>&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;<i>t</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;&nbsp;<i>x</i>&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;<i>t</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)<br>
+<br>
+</span></code>where
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>t</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i><br>
+<br>
+</span></code>is the critical value for the <code><span style='white-space: nowrap'><i>t</i></span></code> distribution with 
+<code><span style='white-space: nowrap'><i>degFree</i></span></code> number of degrees of freedom for which the 
+area under the <code><span style='white-space: nowrap'><i>t</i></span></code> curve is <code><span style='white-space: nowrap'>1&nbsp;-&nbsp;0.025</span></code>.
+
+<br>
+<br>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+Upon a successful completion, the function sets
+the given output value place holders to point to the result values.
+  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If an error is detected or failure occurs during the evaluation, a SpkException 
+object is thrown.  The state at which an exception is thrown is defined in
+<a href="glossary.htm#Exception Handling Policy" target="_top"><span style='white-space: nowrap'>Exception&nbsp;Handling&nbsp;Policy</span></a>
+.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is an n dimensional parameter vector.  It is used to compute
+the coefficient of variance and the confidence interval.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>xCov</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a covariance of x (n by n).
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>degFree</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is the degree of freedom used to compute the confidence interval. 
+It is defined as degFree = m - n, where n is the length of parameter vector,
+in this case, x, and m is the number of fitted data points.
+The value must be greater than zero, although
+it will not be referenced at all if ciOut is set to NULL.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>seOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>will point to an n dimensional vector containing the standard error for x if
+the pointer points to an n dimensional valarray.  
+If it points to NULL, the corresponding computation will be skipped entirely.
+If it points to a valarray sized other than n, the resulting behavior is undetermined.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>corOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>will point to an n * n dimensional vector containing the correlation matrix 
+in the column major order if the pointer points to an n * n valarray.
+If it points to NULL, the corresponding computation will be skipped entirely.
+If it points to a valarray sized other than n * n, the resulting behavior is undetermined.
+
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>cvOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>will point to an n dimensional vector containing the coefficient of variance if
+the pointer points to an n dimensional valarray.  If NULL is given, it will stay NULL.
+If it points to NULL, the corresponding computation will be skipped entirely.
+If it points to a valarray sized other than n, the resulting behavior is undetermined.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>ciOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>will point to an n * 2 dimensional vector containing the 95% confidence interval if
+the pointer points to an n * 2 dimensional valarray.  If NULL is given, it will stay NULL.
+If it points to NULL, the corresponding computation will be skipped entirely.
+If it points to a valarray sized other than n * 2, the resulting behavior is undetermined.
+
+
+<hr>Input File: ../../spk/statistics.cpp
+
+</body>
+</html>

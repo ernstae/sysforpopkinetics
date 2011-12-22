@@ -1,0 +1,436 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: K&#38;R Compilers</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: K&#38;R Compilers">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: K&#38;R Compilers">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC51"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_50.html#SEC50" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Fallback Function Implementations" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_52.html#SEC52" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: A Simple Shell Builders Library" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><IMG SRC="inactive.png" BORDER="0" ALT="FastBack: " ALIGN="MIDDLE" NAME="inactive"></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_45.html#SEC45" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: GNU Autotools in Practice" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_52.html#SEC52" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: A Simple Shell Builders Library" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 9.1.6 K&#38;R Compilers </H3>
+<!--docid::SEC51::-->
+<P>
+
+K&#38;R C is the name now used to describe the original C language specified
+by Brian Kernighan and Dennis Ritchie (hence, `<EM>K&#38;R</EM>').  I have
+yet to see a C compiler that doesn't support code written in the K&#38;R
+style, yet it has fallen very much into disuse in favor of the newer
+ANSI C standard.  Although it is increasingly common for vendors to
+<EM>unbundle</EM> their ANSI C compiler, the GCC
+project<A NAME="DOCF11" HREF="autobook_fot.html#FOOT11">(11)</A> is available for all of the architectures I have ever 
+used.
+</P><P>
+
+There are four differences between the two C standards:
+</P><P>
+
+<OL>
+<LI>
+ANSI C expects full type specification in function prototypes, such
+as you might supply in a library header file:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>extern int functionname (const char *parameter1, size_t parameter 2);
+</pre></td></tr></table></P><P>
+
+The nearest equivalent in K&#38;R style C is a forward declaration, which
+allows you to use a function before its corresponding definition:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>extern int functionname ();
+</pre></td></tr></table></P><P>
+
+As you can imagine, K&#38;R has very bad type safety, and does not perform
+any checks that only function arguments of the correct type are used.
+</P><P>
+
+<LI>
+The function headers of each function definition are written
+differently.  Where you might see the following written in ANSI C:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>int
+functionname (const char *parameter1, size_t parameter2)
+{
+  ...
+}
+</pre></td></tr></table></P><P>
+
+K&#38;R expects the parameter type declarations separately, like this:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>int
+functionname (parameter1, parameter2)
+     const char *parameter1;
+     size_t parameter2;
+{
+  ...
+}
+</pre></td></tr></table></P><P>
+
+<LI>
+There is no concept of an untyped pointer in K&#38;R C.  Where you might be
+used to seeing <SAMP>`void *'</SAMP> pointers in ANSI code, you are forced
+to overload the meaning of <SAMP>`char *'</SAMP> for K&#38;R compilers.
+<P>
+
+<LI>
+Variadic functions are handled with a different API in K&#38;R C,
+imported with <SAMP>`#include &#60;varargs.h&#62;'</SAMP>.  A K&#38;R variadic function
+definition looks like this:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>int
+functionname (va_alist)
+     va_dcl
+{
+  va_list ap;
+  char *arg;
+
+  va_start (ap);
+  ...
+  arg = va_arg (ap, char *);
+  ...
+  va_end (ap);
+
+  return arg ? strlen (arg) : 0;
+}
+</pre></td></tr></table></P><P>
+
+ANSI C provides a similar API, imported with <SAMP>`#include
+&#60;stdarg.h&#62;'</SAMP>, though it cannot express  a variadic function with no named
+arguments such as the one above.  In practice, this isn't a problem
+since you always need at least one parameter, either to specify the
+total number of arguments somehow, or else to mark the end of the
+argument list.  An ANSI variadic function definition looks like
+this:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>int
+functionname (char *format, ...)
+{
+  va_list ap;
+  char *arg;
+
+  va_start (ap, format);
+  ...
+  arg = va_arg (ap, char *);
+  ...
+  va_end (ap);
+
+  return format ? strlen (format) : 0;
+}
+</pre></td></tr></table></OL>
+<P>
+
+Except in very rare cases where you are writing a low level project
+(GCC for example), you probably don't need to worry about K&#38;R
+compilers too much.  However, supporting them can be very easy, and if
+you are so inclined, can be handled either by employing the
+<CODE>ansi2knr</CODE> program supplied with Automake, or by careful use of
+the preprocessor.
+</P><P>
+
+Using <CODE>ansi2knr</CODE> in your project is described in some detail in
+section `Automatic de-ANSI-fication' in <CITE>The Automake Manual</CITE>, but
+boils down to the following:
+</P><P>
+
+<UL>
+<LI>
+Add this macro to your <TT>`configure.in'</TT> file:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>AM_C_PROTOTYPES
+</pre></td></tr></table></P><P>
+
+<LI>
+Rewrite the contents of <SAMP>`LIBOBJS'</SAMP> and/or  <SAMP>`LTLIBOBJS'</SAMP> in
+the following fashion:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre># This is necessary so that .o files in LIBOBJS are also built via
+# the ANSI2KNR-filtering rules.
+Xsed='sed -e "s/^X//"'
+LIBOBJS=`echo X"$LIBOBJS"|\
+	[$Xsed -e 's/\.[^.]* /.\$U&#38; /g;s/\.[^.]*$/.\$U&#38;/']`
+</pre></td></tr></table></UL>
+<P>
+
+Personally, I dislike this method, since every source file is filtered
+and rewritten with ANSI function prototypes and declarations
+converted to K&#38;R style adding a fair overhead in additional files in
+your build tree, and in compilation time.  This would be reasonable were
+the abstraction sufficient to allow you to forget about K&#38;R entirely, 
+but <CODE>ansi2knr</CODE> is a simple program, and does not address any of
+the other differences between compilers that I raised above, and it
+cannot handle macros in your function prototypes of definitions.  If you
+decide to use <CODE>ansi2knr</CODE> in your project, you must make the
+decision before you write any code, and be aware of its limitations as
+you develop.
+</P><P>
+
+For my own projects, I prefer to use a set of preprocessor macros along
+with a few stylistic conventions so that all of the differences between
+K&#38;R and ANSI compilers are actually addressed, and so that the
+unfortunate few who have no access to an ANSI compiler (and who
+cannot use GCC for some reason) needn't suffer the overheads of
+<CODE>ansi2knr</CODE>.
+</P><P>
+
+The four differences in style listed at the beginning of this subsection
+are addressed as follows:
+</P><P>
+
+<OL>
+<LI>
+The function protoype argument lists are declared inside a <CODE>PARAMS</CODE>
+macro invocation so that K&#38;R compilers will still be able to compile the
+source tree.  <CODE>PARAMS</CODE> removes ANSI argument lists from
+function prototypes for <FONT SIZE="-1">K&#38;R</FONT> compilers.  Some developers
+continue to use <CODE>__P</CODE> for this purpose, but strictly speaking,
+macros starting with <SAMP>`_'</SAMP> (and especially <SAMP>`__'</SAMP>) are reserved
+for the compiler and the system headers, so using <SAMP>`PARAMS'</SAMP>, as
+follows, is safer:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if __STDC__
+#  ifndef NOPROTOS
+#    define PARAMS(args)      args
+#  endif
+#endif
+#ifndef PARAMS
+#  define PARAMS(args)        ()
+#endif
+</pre></td></tr></table></P><P>
+
+This macro is then used for all function declarations like this:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>extern int functionname PARAMS((const char *parameter));
+</pre></td></tr></table></P><P>
+
+<LI>
+With the <CODE>PARAMS</CODE> macro is used for all function declarations,
+ANSI compilers are given all the type information they require to
+do full compile time type checking.  The function definitions
+proper must then be declared in K&#38;R style so that K&#38;R compilers don't
+choke on ANSI syntax.  There is a small amount of overhead in
+writing code this way, however:   The ANSI compile time type
+checking can only work in conjunction with K&#38;R function definitions if
+it first sees an ANSI function prototype.  This forces you to
+develop the good habit of prototyping <EM>every single</EM> function in
+your project.  Even the <CODE>static</CODE> ones.
+<P>
+
+<LI>
+The easiest way to work around the lack of <CODE>void *</CODE> pointers, is to
+define a new type that  is conditionally set to <CODE>void *</CODE> for
+ANSI compilers, or <CODE>char *</CODE> for <FONT SIZE="-1">K&#38;R</FONT> compilers.  You
+should add the following to a common header file:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if __STDC__
+typedef void *void_ptr;
+#else /* !__STDC__ */
+typedef char *void_ptr;
+#endif /* __STDC__ */
+</pre></td></tr></table></P><P>
+
+<LI>
+The difference between the two variadic function APIs pose a
+stickier problem, and the solution is ugly.  But it <EM>does</EM> work.
+FIrst you must check for the headers in <TT>`configure.in'</TT>:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>AC_CHECK_HEADERS(stdarg.h varargs.h, break)
+</pre></td></tr></table></P><P>
+
+Having done this, add the following code to a common header file:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if HAVE_STDARG_H
+#  include &#60;stdarg.h&#62;
+#  define VA_START(a, f)        va_start(a, f)
+#else
+#  if HAVE_VARARGS_H
+#    include &#60;varargs.h&#62;
+#    define VA_START(a, f)      va_start(a)
+#  endif
+#endif
+#ifndef VA_START
+  error no variadic api
+#endif
+</pre></td></tr></table></P><P>
+
+You must now supply each variadic function with both a K&#38;R and an
+ANSI definition, like this:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>int
+#if HAVE_STDARG_H
+functionname (const char *format, ...)
+#else
+functionname (format, va_alist)
+     const char *format;
+     va_dcl
+#endif
+{
+  va_alist ap;
+  char *arg;
+
+  VA_START (ap, format);
+  ...
+  arg = va_arg (ap, char *);
+  ...
+  va_end (ap);
+
+  return arg : strlen (arg) ? 0;
+}
+</pre></td></tr></table></OL>
+<P>
+
+<A NAME="A Simple Shell Builders Library"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

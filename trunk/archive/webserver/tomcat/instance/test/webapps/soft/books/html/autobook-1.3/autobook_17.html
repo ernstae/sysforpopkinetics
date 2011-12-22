@@ -1,0 +1,260 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Configuration Names</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Configuration Names">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Configuration Names">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC17"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_16.html#SEC16" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: The most useful Makefile targets" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_18.html#SEC18" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Introducing Makefiles" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_13.html#SEC13" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Invoking configure" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_13.html#SEC13" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Invoking configure" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_18.html#SEC18" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Introducing Makefiles" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 3.4 Configuration Names </H2>
+<!--docid::SEC17::-->
+The GNU Autotools name all types of computer systems using a
+<EM>configuration name</EM>.  This is a name for the system in a
+standardized format.
+<P>
+
+Some example configuration names are <SAMP>`sparc-sun-solaris2.7'</SAMP>,
+<SAMP>`i586-pc-linux-gnu'</SAMP>, or <SAMP>`i386-pc-cygwin'</SAMP>.
+</P><P>
+
+All configuration names used to have three parts, and in some
+documentation they are still called <EM>configuration triplets</EM>.  A
+three part configuration name is
+<VAR>cpu</VAR>-<VAR>manufacturer</VAR>-<VAR>operating_system</VAR>.  Currently
+configuration names are permitted to have four parts on systems which
+distinguish the kernel and the operating system, such as GNU/Linux.  In
+these cases, the configuration name is
+<VAR>cpu</VAR>-<VAR>manufacturer</VAR>-<VAR>kernel</VAR>-<VAR>operating_system</VAR>.
+</P><P>
+
+When using a configuration name in an option to a tool such as
+<CODE>configure</CODE>, it is normally not necessary to specify an entire
+name.  In particular, the middle field (<VAR>manufacturer</VAR>, described
+below) is often omitted, leading to strings such as <SAMP>`i386-linux'</SAMP> or
+<SAMP>`sparc-sunos'</SAMP>.  The shell script <TT>`config.sub'</TT> is used to
+translate these shortened strings into the canonical form.
+</P><P>
+
+On most Unix variants, the shell script <TT>`config.guess'</TT> will print
+the correct configuration name for the system it is run on.  It does
+this by running the standard <SAMP>`uname'</SAMP> program, and by examining
+other characteristics of the system.  On some systems,
+<TT>`config.guess'</TT> requires a working C compiler or an assembler.
+</P><P>
+
+Because <TT>`config.guess'</TT> can normally determine the configuration
+name for a machine, it is only necessary for a user or developer to
+specify a configuration name in unusual cases, such as when building a
+cross-compiler.
+</P><P>
+
+Here is a description of each field in a configuration name:
+</P><P>
+
+<DL COMPACT>
+<DT><VAR>cpu</VAR>
+<DD>The type of processor used on the system.  This is typically something
+like <SAMP>`i386'</SAMP> or <SAMP>`sparc'</SAMP>.  More specific variants are used as
+well, such as <SAMP>`mipsel'</SAMP> to indicate a little endian MIPS processor.
+<P>
+
+<DT><VAR>manufacturer</VAR>
+<DD>A somewhat freeform field which indicates the manufacturer of the
+system.  This is often simply <SAMP>`unknown'</SAMP>.  Other common strings are
+<SAMP>`pc'</SAMP> for an IBM PC compatible system, or the name of a workstation
+vendor, such as <SAMP>`sun'</SAMP>.
+<P>
+
+<DT><VAR>operating_system</VAR>
+<DD>The name of the operating system which is run on the system.  This will
+be something like <SAMP>`solaris2.5'</SAMP> or <SAMP>`winnt4.0'</SAMP>.  There is no
+particular restriction on the version number, and strings like
+<SAMP>`aix4.1.4.0'</SAMP> are seen.
+<P>
+
+Configuration names may be used to describe all sorts of systems,
+including embedded systems which do not run any operating system.  In
+this case, the field is normally used to indicate the object file
+format, such as <SAMP>`elf'</SAMP> or <SAMP>`coff'</SAMP>.
+</P><P>
+
+<DT><VAR>kernel</VAR>
+<DD>This is used mainly for GNU/Linux systems.  A typical GNU/Linux
+configuration name is <SAMP>`i586-pc-linux-gnulibc1'</SAMP>.  In this case the
+kernel, <SAMP>`linux'</SAMP>, is separated from the operating system,
+<SAMP>`gnulibc1'</SAMP>.
+</DL>
+<P>
+
+<TT>`configure'</TT> allows fine control over the format of binary files. It
+is not necessary to build a package for a given kind of machine on that
+machine natively--instead, a cross-compiler can be used.  Moreover, if
+the package you are trying to build is itself capable of operating in a
+cross configuration, then the build system need not be the same kind of
+machine used to host the cross-configured package once the package is
+built! Consider some examples:
+</P><P>
+
+<DL COMPACT>
+<DT>Compiling a simple package for a GNU/Linux system.
+<DD><VAR>host</VAR> = <VAR>build</VAR> = <VAR>target</VAR> = <SAMP>`i586-pc-linux-gnu'</SAMP>
+<P>
+
+<DT>Cross-compiling a package on a GNU/Linux system that is intended to
+<DD>run on an IBM AIX machine:
+<VAR>build</VAR> = <SAMP>`i586-pc-linux-gnu'</SAMP>, <VAR>host</VAR> = <VAR>target</VAR> =
+<SAMP>`rs6000-ibm-aix3.2'</SAMP>
+<P>
+
+<DT>Building a Solaris-hosted MIPS-ECOFF cross-compiler on a GNU/Linux
+<DD>system.
+<VAR>build</VAR> = <SAMP>`i586-pc-linux-gnu'</SAMP>, <VAR>host</VAR> = 
+<SAMP>`sparc-sun-solaris2.4'</SAMP>, <VAR>target</VAR> = <SAMP>`mips-idt-ecoff'</SAMP>
+</DL>
+<P>
+
+<A NAME="Introducing Makefiles"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

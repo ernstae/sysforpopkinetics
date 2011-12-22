@@ -1,0 +1,14 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.218
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Modified run-time daemon to limit the number of concurrent compilations to the number of processors on the computer.
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: January 18, 2008
+

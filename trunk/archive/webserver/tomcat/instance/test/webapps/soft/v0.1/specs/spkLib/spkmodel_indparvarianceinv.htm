@@ -1,0 +1,179 @@
+<html><head>
+<title>Model for the Inverse of Variance of Individual Parameter</title>
+<meta name="description" id="description" content="Model for the Inverse of Variance of Individual Parameter">
+<meta name="keywords" id="keywords" content=" Spkmodel doindparvarianceinv( Spk_va::valarray&lt;scalar&gt; ampersand ) indparvarianceinv( User-provided Model inverse of variance individual parameter ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_spkmodel_indparvarianceinv_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>SpkModel</option>
+<option>SpkModel_indParVarianceInv</option>
+</select>
+</td>
+<td><a href="spkmodel_indparvariance_poppar.htm" target="_top">Prev</a>
+</td><td><a href="spkmodel_indparvarianceinv_poppar.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>SpkModel-&gt;</option>
+<option>SpkModel_default_constructor</option>
+<option>SpkModel_copy_constructor</option>
+<option>SpkModel_assignment_operator</option>
+<option>SpkModel_default_destructor</option>
+<option>SpkModel_selectIndividual</option>
+<option>SpkModel_setPopPar</option>
+<option>SpkModel_setIndPar</option>
+<option>SpkModel_dataMean</option>
+<option>SpkModel_dataMean_indPar</option>
+<option>SpkModel_dataMean_popPar</option>
+<option>SpkModel_dataVariance</option>
+<option>SpkModel_dataVariance_indPar</option>
+<option>SpkModel_dataVariance_popPar</option>
+<option>SpkModel_dataVarianceInv</option>
+<option>SPkModel_dataVarianceInv_indPar</option>
+<option>SpkModel_dataVarianceInv_popPar</option>
+<option>SpkModel_indParVariance</option>
+<option>SpkModel_indParVariance_popPar</option>
+<option>SpkModel_indParVarianceInv</option>
+<option>SpkModel_indParVarianceInv_popPar</option>
+<option>SpkModel_dataCovariance</option>
+<option>SpkModel_indParCovariance</option>
+<option>SpkModel_invalidateIndParCovarianceCache</option>
+</select>
+</td>
+<td>SpkModel_indParVarianceInv</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Reference</option>
+<option>Arguments</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>Model for the Inverse of Variance of Individual Parameter</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Virtual Private Interface:</b>   </td></tr><tr><td align='left'  valign='top'>
+  
+<code><font color="blue"><span style='white-space: nowrap'>private:&nbsp;template&lt;class&nbsp;Scalar&gt;&nbsp;virtual&nbsp;void&nbsp;SpkModel&lt;Scalar&gt;::doIndParVarianceInv(&nbsp;SPK_VA::valarray&lt;Scalar&gt;&nbsp;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>ret</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)&nbsp;const</span></font></code>  </td></tr><tr><td align='left'  valign='top'>
+
+<b>Public Interface:</b> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>public:&nbsp;template&lt;class&nbsp;Scalar&gt;&nbsp;void&nbsp;SpkModel&lt;Scalar&gt;::indParVarianceInv(&nbsp;SPK_VA::valarray&lt;Scalar&gt;&nbsp;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>ret</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)&nbsp;const</span></font></code>       </td></tr><tr><td align='left'  valign='top'>
+
+</td></tr>
+</table>
+<table><tr><td align='left'  valign='top'>
+<b>See also:</b> </td><td align='left'  valign='top'>
+
+<a href="spkmodel_indparvarianceinv_poppar.htm" target="_top"><span style='white-space: nowrap'>indParVarianceInv_popPar()</span></a>
+ </td></tr><tr><td align='left'  valign='top'>
+ 
+</td></tr>
+</table>
+<br>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Required for the population analysis.  Optional for individual analysis.  
+A default implementation is provided.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><code><font color="blue">SpkModel&lt;Scalar&gt;::doIndParVarianceInv()</font></code> calculates the inverse of the variance of
+individual parameter at a currently set population parameter
+(see <a href="spkmodel_setpoppar.htm" target="_top"><span style='white-space: nowrap'>setPopPar</span></a>
+).  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The evaluation result of <code><font color="blue">doIndParVarianceInv()</font></code>
+shall be placed in <i>ret</i> and the function returns nothing.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><code><font color="blue"><span style='white-space: nowrap'>doIndParVarianceInv()</span></font></code> shall be only called via its corresponding
+public interface, <code><font color="blue"><span style='white-space: nowrap'>indParVarianceInv()</span></font></code>.  The public interface
+shall be called only by the SPK library components unless when it is being unit-tested,
+or SPK cannot guarantee any of the computational results.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The public interface, <code><font color="blue">indParVarianceInv()</font></code> catches any exception thrown by the private interface,
+<code><font color="blue">doIndParVarianceInv()</font></code>, implemented by the user.
+If the exception is an instance of <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+, 
+an additional <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+ object will be appended to the list of errors
+maintained within the object.  The new SpkError object will have error code set
+to <code><font color="blue">SpkError::SPK_MODEL_DATA_VARIANCE_ERR</font></code>.
+
+<br>
+<br>
+<b><big><a name="Reference" id="Reference">Reference</a></big></b>
+<br>
+B. M. Bell, <i>Approximating The Marginal Likelihood Estimate 
+For Models With Random Parameters</i>, Applied Mathematics and Computation, 
+Accepted 1999. 
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+ret<br>
+</span></font></code>shall, upon a successful completion of evaluation,
+contain a resulting vector of size <code><span style='white-space: nowrap'><i>nIndPar</i>&nbsp;*&nbsp;<i>nIndPar</i></span></code>, where <code><span style='white-space: nowrap'><i>nIndPar</i></span></code> is the
+number of individual parameter.  The vector contains a column-ordered
+matrix of dimensions, <code><span style='white-space: nowrap'><i>nIndPar</i>&nbsp;<i>by</i>&nbsp;<i>nIndPar</i></span></code>, that is
+symmetric and positive definite.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+See <a href="spkmodel.htm#Example" target="_top"><span style='white-space: nowrap'>Example</span></a>
+
+
+
+<hr>Input File: ../../spk/SpkModel.cpp
+
+</body>
+</html>

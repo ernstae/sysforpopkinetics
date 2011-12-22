@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.214
+----------------------------------
+USER VISIBLE CHANGES
+
+Added checking for data records with contradictory MDV and EVID values.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  797
+
+BY:  Mitch Watrous
+
+WHEN:  October 26, 2007

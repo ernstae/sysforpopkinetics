@@ -1,0 +1,41 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.83
+----------------------------------
+USER VISIBLE CHANGES
+Continue trying computing the rest of statistics even
+when the computation of residuals fails.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Auguest 1, 2005
+
+WHEN: Sachiko Honda
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.84
+----------------------------------
+USER VISIBLE CHANGES
+Syntax errors found in the model definition are
+returned to the user via MDA.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 239
+
+BY: Sachiko Honda
+
+WHEN: Auguest 2, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.85
+----------------------------------
+USER VISIBLE CHANGES
+SIN() and COS() can take a variable or a floating point constant value.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 287
+
+BY: Sachiko Honda
+
+WHEN: Auguest 2, 2005

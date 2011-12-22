@@ -1,0 +1,49 @@
+<html><head>
+<title>Copy Constructor</title>
+<meta name="description" id="description" content="Copy Constructor">
+<meta name="keywords" id="keywords" content=" matrix Doublematrix copy constructor "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="doublematrixconstructor1.htm" target="_top">section</a>, <a href="doublematrixconstructor1_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Copy Constructor. Constructs    // return a pointer to a double precision vector of length
+    // nr * nc containing the elements of the matrix
+	// return null if the matrix is empty a copy of a matrix with the same dimensions 
+and the same data elements as the matrix passed in as an argument.  
+Note that when the copy constructor is called in the case of a matrix 
+being passed into a function by value without const, its data pointer
+<i>ptr</i> previously returned by data() becomes invalid.  Therefore, 
+it is recommended that calling 
+data() to return the pointer immediately before it is used.
+
+<br>
+<br>
+<b><big><a name="UnitTest Plans" id="UnitTest Plans">UnitTest Plans</a></big></b>
+
+<table><tr><td align='left'  valign='top'>
+
+Check if the numbers of rows and columns match to the original.
+</td></tr><tr><td align='left'  valign='top'>
+
+Make sure this object points to a correct location in memory even after destroying the original.
+</td></tr><tr><td align='left'  valign='top'>
+
+Check things work for a 0x0, 0x1, 0xn, 1x0, 1xn, nxn matrix.
+</td></tr><tr><td align='left'  valign='top'>
+
+</td></tr>
+</table>
+
+<hr>Input File: ../../spk/DoubleMatrix.cpp
+
+</body>
+</html>

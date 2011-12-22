@@ -1,0 +1,78 @@
+<html><head>
+<title>Get absolute values as another matrix</title>
+<meta name="description" id="description" content="Get absolute values as another matrix">
+<meta name="keywords" id="keywords" content=" matrix absolute value abs matabs "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="matabs.htm" target="_top">section</a>, <a href="matabs_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Given a <code><span style='white-space: nowrap'><i>m</i></span></code> by <code><span style='white-space: nowrap'><i>n</i></span></code> matrix <i>A</i>, 
+<code><font color="blue"><span style='white-space: nowrap'>matabs(</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code> returns another  
+<code><span style='white-space: nowrap'><i>m</i></span></code> by <code><span style='white-space: nowrap'><i>n</i></span></code> matrix <i>B</i>, 
+such that <code><span style='white-space: nowrap'>(<i>b</i>(<i>i</i>,<i>j</i>)&nbsp;<i>in</i>&nbsp;<i>B</i>)&nbsp;=&nbsp;(|<i>a</i>(<i>i</i>,<i>j</i>)|&nbsp;<i>in</i>&nbsp;<i>A</i>)</span></code>, 
+where <code><span style='white-space: nowrap'><i>m</i>&nbsp;&gt;&nbsp;<i>i</i>&nbsp;<u>&gt;</u>&nbsp;0</span></code> and <code><span style='white-space: nowrap'><i>n</i>&nbsp;&gt;&nbsp;<i>j</i>&nbsp;<u>&gt;</u>&nbsp;0</span></code>.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link and run the following program, 
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#include&nbsp;&lt;iostream&gt;<br>
+#include&nbsp;&quot;matabs.h&quot;<br>
+<br>
+void&nbsp;main(){<br>
+<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dmatA(3,2),&nbsp;dmatB(3,2);<br>
+&nbsp;&nbsp;double&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*pdA&nbsp;=&nbsp;dmatA.data();<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Setting&nbsp;A&nbsp;to&nbsp;a&nbsp;matrix:<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;1&nbsp;&nbsp;-4&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;-2&nbsp;&nbsp;&nbsp;5&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;3&nbsp;&nbsp;-6&nbsp;]<br>
+&nbsp;&nbsp;for(&nbsp;int&nbsp;i=0;&nbsp;i&lt;dmatA.nr()*dmatA.nc();&nbsp;i++&nbsp;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pdA[i]&nbsp;=&nbsp;(i+1)*(i%2&nbsp;==&nbsp;0.0?&nbsp;1.0:&nbsp;-1.0);<br>
+&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;dmatB&nbsp;=&nbsp;matabs(dmatA);<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Original&nbsp;matrix&nbsp;A&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;dmatA.print();<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Absolute&nbsp;version&nbsp;of&nbsp;A&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;dmatB.print();<br>
+<br>
+</span>
+</font></code>
+a following matrix is displayed.
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+Original&nbsp;matrix&nbsp;A<br>
+&nbsp;&nbsp;[&nbsp;&nbsp;1&nbsp;&nbsp;-4&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;-2&nbsp;&nbsp;&nbsp;5&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;&nbsp;3&nbsp;&nbsp;-6&nbsp;]<br>
+Absolute&nbsp;version&nbsp;of&nbsp;A<br>
+&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;4&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;2&nbsp;&nbsp;5&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;3&nbsp;&nbsp;6&nbsp;]<br>
+&nbsp;&nbsp;<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/matabs.cpp
+
+</body>
+</html>

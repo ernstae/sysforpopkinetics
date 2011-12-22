@@ -1,0 +1,21 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.165
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+The run-time daemon was changed to compress the report before inserting it 
+into the job table of the database.
+
+The Perl database API was changed to update the cpp_source field of the 
+job table of the database to null when the job is ended.
+
+The job queue server was also changed to update the cpp_source field of the 
+job table of the database to null when the job is aborted. 
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: March 21, 2006
+

@@ -1,0 +1,750 @@
+<html><head><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head><body>
+<div align='right'><a href="popstatisticscalcindobjder.htm" target="_top">this</a></div>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description">Description</a></big></b>
+<br>
+This function computes covariance matrix, standard error vector, and correlation 
+matrix of estimated population parameters.
+Spk allows the user to choose the form for the covariance matrix of the 
+population parameter estimates to be one of the following three formulations:
+<code><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>formulation</i>&nbsp;&quot;<i>E</i>&quot;:&nbsp;&nbsp;<i>R</i>&nbsp;&nbsp;<i>S</i>&nbsp;<i>R</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>formulation</i>&nbsp;&quot;<i>R</i>&quot;:&nbsp;&nbsp;<i>R</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>formulation</i>&nbsp;&quot;<i>S</i>&quot;:&nbsp;&nbsp;<i>S</i><br>
+<br>
+</span></code>These formulations are given in NONMEM documentation.  In Spk notation,
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>R</i>&nbsp;=&nbsp;(&nbsp;<i>LTilde</i>_<i>alp</i>_<i>alp</i>&nbsp;+&nbsp;<i>LTilde</i>_<i>alp</i>_<i>alp</i>&nbsp;&nbsp;)&nbsp;/&nbsp;2<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>S</i>&nbsp;=&nbsp;<i>Sum</i>{&nbsp;[(<i>LTilde</i>_<i>i</i>&nbsp;)_<i>alp</i>]&nbsp;[(<i>LTilde</i>_<i>i</i>)_<i>alp</i>]&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+</span></code>where <code><span style='white-space: nowrap'><i>LTilde</i>_<i>alp</i>_<i>alp</i></span></code> is an approximation for the second order 
+derivatives of the population objective with respect to population 
+parameter alp and <code><span style='white-space: nowrap'>(<i>LTilde</i>_<i>i</i>)_<i>alp</i></span></code> is the first order derivative 
+of individual i objective with respect to population parameter alp.  
+Note that R is defined in this way to insure that it is symmetric
+even for cases where the approximation <code><span style='white-space: nowrap'><i>LTilde</i>_<i>alp</i>_<i>alp</i></span></code> is not.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The standard error vector and the correlation matrix are calculated from
+the values of the covariance matrix by their mathematical definitions, 
+respectively. The coefficient of variation is calculated as:
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>CV</i>&nbsp;=&nbsp;<i>SE</i>&nbsp;/&nbsp;|&nbsp;<i>b</i>&nbsp;|&nbsp;*&nbsp;100&nbsp;<br>
+<br>
+</span></code>where CV stands for the coefficient of variation, SE stands for the standard 
+error and b stands for the value of the population parameter estimate.
+The confidence interval is calculated from the values of the standard error 
+of the population parameter estimate using its mathematical definition.
+<br>
+<br>
+<b><big><a name="Return Value">Return Value</a></big></b>
+<br>
+Upon a successful completion, the function sets
+the given output value place holders to point to the result value.
+  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If an error is detected or failure occurs during the evaluation, a SpkException 
+object is thrown.  The state at which an exception is thrown is defined in
+<a href="glossary_frame1.htm#Exception Handling Policy" target="frame1"><i><span style='white-space: nowrap'>Exception&nbsp;Handling&nbsp;Policy</span></i></a>
+.
+
+<br>
+<br>
+<b><big><a name="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>popModel</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This function expects <i>model</i> to be a function of
+all three parameters: <code><span style='white-space: nowrap'><i>alp</i></span></code>, <code><span style='white-space: nowrap'><i>b</i></span></code> and <code><span style='white-space: nowrap'><i>i</i></span></code>.
+Refer <a href="glossary_frame1.htm#Model Functions Depend on i - alp - b" target="frame1"><i><span style='white-space: nowrap'>Model&nbsp;Functions&nbsp;<br>
+Depend&nbsp;on&nbsp;i&nbsp;-&nbsp;alp&nbsp;-&nbsp;b</span></i></a>
+ for details.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>objective</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This enumerated type variable specifies which parametric population objective 
+function will be minimized:  the modified Laplace, the modified 
+Expected Hessian, or the modified First Order.
+The permissible values for <i>objective</i> are defined in 
+the <a href="objective.htm" target="_top"><span style='white-space: nowrap'>Objective</span></a>
+ enumerated type definition.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nMeasurementsAll</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;int&gt;</font></code> <i>nMeasurementsAll</i> corresponds to 
+the array <code><span style='white-space: nowrap'><i>N</i></span></code>.  The <code><span style='white-space: nowrap'><i>i</i></span></code>th element of <code><span style='white-space: nowrap'><i>N</i></span></code>
+specifies the number of elements of <code><span style='white-space: nowrap'><i>y</i></span></code> that
+correspond to the <code><span style='white-space: nowrap'><i>i</i></span></code>th individual.
+Note that the size of <i>nMeasurementsAll</i> specifies the number of 
+individuals in the population, <code><span style='white-space: nowrap'><i>M</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>measurementsAll</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>measurementsAll</i> contains the vector
+<code><span style='white-space: nowrap'><i>y</i></span></code>, which specifies the data for all the individuals.
+The vector <code><span style='white-space: nowrap'><i>y</i></span></code> has
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>N</i>(1)&nbsp;+&nbsp;<i>N</i>(2)&nbsp;+&nbsp;...&nbsp;+&nbsp;<i>N</i>(<i>M</i>)<br>
+</span></code>elements where <code><span style='white-space: nowrap'><i>M</i></span></code> is the number of individuals.  
+The data vector corresponding to the first individual is
+<code><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>y</i>_1&nbsp;=&nbsp;[&nbsp;<i>y</i>(1)&nbsp;,&nbsp;<i>y</i>(2)&nbsp;,&nbsp;...&nbsp;,&nbsp;<i>y</i>(<i>N</i>(1))&nbsp;]<br>
+</span></code>Elements <code><span style='white-space: nowrap'><i>y</i>(<i>N</i>(1)&nbsp;+&nbsp;1)</span></code> through <code><span style='white-space: nowrap'><i>y</i>(<i>N</i>(1)&nbsp;+&nbsp;<i>N</i>(2))</span></code> 
+correspond to the second individual and so on.
+(Note that <code><span style='white-space: nowrap'><i>y</i>_1</span></code> refers to the first subvector of <code><span style='white-space: nowrap'><i>y</i></span></code> while
+<code><span style='white-space: nowrap'><i>y</i>(1)</span></code> refers to the first element of the valarray <code><span style='white-space: nowrap'><i>y</i></span></code>.)
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popPar</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>popPar</i> contains the vector 
+<code><span style='white-space: nowrap'><i>alp</i></span></code>, which specifies the estimates of the population parameters.  
+The returned covariance matrix <i>popParCovOut</i> will be evaluated at 
+these values.  
+The <i>popPar</i> should be obtained by calling SPK function 
+<a href="fitpopulation.htm" target="_top"><span style='white-space: nowrap'>fitPopulation</span></a>
+.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popObj_popPar_popPar</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>popObj_popPar_popPar</i> contains 
+the matrix <code><span style='white-space: nowrap'><i>LTilde</i>_<i>alp</i>_<i>alp</i></span></code>, in column major order, which specifies 
+an approximation for the second derivative of the population objective 
+function with respect to population parameter evaluated at <i>popPar</i>.  
+Note that the size of <i>popObj_popPar_popPar</i> should be equal to the 
+square of the length of the population parameter vector <code><span style='white-space: nowrap'><i>alp</i></span></code>.  
+The <i>popObj_popPar_popPar</i> should be obtained by calling SPK function 
+<a href="fitpopulation.htm" target="_top"><span style='white-space: nowrap'>fitPopulation</span></a>
+. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParAll</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indParAll</i> contains the matrix 
+<code><span style='white-space: nowrap'><i>bAll</i></span></code> in column major order.  The size of <i>indParAll</i> is
+equal to the product of the length of the individual parameter vector 
+<code><span style='white-space: nowrap'><i>b</i></span></code> and the number of individuals in the population. 
+The <code><span style='white-space: nowrap'><i>i</i></span></code>th column of <code><span style='white-space: nowrap'><i>bAll</i></span></code>, <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code>, specifies the estimates
+of the individual parameters for the <code><span style='white-space: nowrap'><i>i</i></span></code>th individual.
+If <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code> is any column of <code><span style='white-space: nowrap'><i>bAll</i></span></code>,
+it is assumed that <code><span style='white-space: nowrap'><i>bLow</i>&nbsp;<u>&lt;</u>&nbsp;<i>b</i>_<i>i</i>&nbsp;<u>&lt;</u>&nbsp;<i>bUp</i></span></code>.
+Note that the column dimension of <code><span style='white-space: nowrap'><i>bAll</i></span></code> is equal to the number of 
+individuals in the population, <code><span style='white-space: nowrap'><i>M</i></span></code>.
+and the number of rows in <i>indParIn</i> is equal to the 
+length of the individual parameter vector <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code>.  
+The <i>indParAll</i> should be obtained by calling SPK function 
+<a href="fitpopulation.htm" target="_top"><span style='white-space: nowrap'>fitPopulation</span></a>
+. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParLow</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indParLow</i> contains the vector
+<code><span style='white-space: nowrap'><i>bLow</i></span></code>, which specifies the lower limit for the individual parameters 
+for all the individuals.  The size of <i>indParLow</i> is equal to the 
+length of the individual parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParUp</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indParUp</i> contains the vector 
+<code><span style='white-space: nowrap'><i>bUp</i></span></code>, which specifies the upper limit for the individual parameters 
+for all the individuals.  The size of <i>indParUp</i> is equal to the 
+length of the individual parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParStep</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indParStep</i> contains the vector 
+<code><span style='white-space: nowrap'><i>bStep</i></span></code>, which specifies the step size used for approximating
+the derivatives with respect to the individual parameters.
+The size of <i>indParStep</i> is equal to the length of 
+the individual parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>formulation</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">int</font></code> <i>formulation</i> specifies which formulation of the 
+covariance of the population parameter estimates is selected.  See Description 
+section for details.  Only formulation &quot;R&quot; is available for FIRST_ORDER objective.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popParCovOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>popParCovOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>popParCovOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the square of the length of the population parameter vector 
+<code><span style='white-space: nowrap'><i>alp</i></span></code>.  If <i>popParCovOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>popParCovOut</i> will contain the covariance matrix
+of the population parameter estimates, in column major order, that is evaluated 
+at <code><span style='white-space: nowrap'><i>alp</i></span></code>.  Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by 
+<i>popParCovOut</i>.  
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popParSEOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>popParSEOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>popParSEOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the population parameter vector 
+<code><span style='white-space: nowrap'><i>alp</i></span></code>.  If <i>popParSEOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>popParSEOut</i> will contain the standard error vector
+of the population parameter estimates, in column major order, that is evaluated 
+at <code><span style='white-space: nowrap'><i>alp</i></span></code>.  Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by 
+<i>popParSEOut</i>.  
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popParCovOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>popParCorOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>popParCorOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the square of the length of the population parameter vector 
+<code><span style='white-space: nowrap'><i>alp</i></span></code>.  If <i>popParCorOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>popParCorOut</i> will contain the correlation matrix 
+of the population parameter estimates, in column major order, that is evaluated 
+at <code><span style='white-space: nowrap'><i>alp</i></span></code>.  Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by 
+<i>popParCorOut</i>. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popParCVOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>popParCVOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>popParCVOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the population parameter vector 
+<code><span style='white-space: nowrap'><i>alp</i></span></code>.  If <i>popParCVOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>popParCVOut</i> will contain the standard error vector
+of the population parameter estimates, in column major order, that is evaluated 
+at <i>popPar</i>.  Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by 
+<i>popParCVOut</i>.  
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popParCIOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>popParCIOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>popParCIOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the two times of the length of the population parameter vector 
+<code><span style='white-space: nowrap'><i>alp</i></span></code>.  If <i>popParCIOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed 
+to by <i>popParCIOut</i> will contain the 95% confidence interval values 
+of the population parameter estimates, in column major order, that is evaluated 
+at <i>popPar</i>.  There are two columns in the object.  The first column 
+contains the lower limit, and the second column contains the upper limit of 
+the confidence interval of the population parameter estimates.  Otherwise, 
+this function will not attempt to change the contents of the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>popParCIOut</i>.  
+Note that in the calculation of the confidence interval, if the degree of freedom 
+(total number of data - number of population parameters) is greater than 120, 
+it is treated as infinite.
+
+<br>
+<br>
+<b><big><a name="Example">Example</a></big></b>
+<br>
+The following demonstrates running popStatistics().
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#include&nbsp;&lt;iostream&gt;<br>
+#include&nbsp;&lt;cmath&gt;<br>
+#include&nbsp;&quot;randNormal.h&quot;<br>
+#include&nbsp;&quot;SpkModel.h&quot;<br>
+#include&nbsp;&quot;lTilde.h&quot;<br>
+#include&nbsp;&quot;inverse.h&quot;<br>
+#include&nbsp;&quot;multiply.h&quot;<br>
+#include&nbsp;&quot;popStatistics.h&quot;<br>
+#include&nbsp;&quot;printInMatrix.h&quot;<br>
+#include&nbsp;&quot;fitPopulation.h&quot;<br>
+#include&nbsp;&quot;SpkValarray.h&quot;<br>
+<br>
+using&nbsp;namespace&nbsp;std;<br>
+<br>
+class&nbsp;UserModelPopStatisticsExampleTest&nbsp;:&nbsp;public&nbsp;SpkModel<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;_a,&nbsp;_b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;_nA;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;_nB;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;_nYi;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;_i;<br>
+public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;UserModelPopStatisticsExampleTest(int&nbsp;nA,&nbsp;int&nbsp;nB,&nbsp;int&nbsp;nYi)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;:_nA(nA),&nbsp;_nB(nB),&nbsp;_nYi(nYi)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{};&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;~UserModelPopStatisticsExampleTest(){};<br>
+private:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSelectIndividual(int&nbsp;inx)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_i&nbsp;=&nbsp;inx;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSetPopPar(const&nbsp;valarray&lt;double&gt;&amp;&nbsp;aval)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_a&nbsp;=&nbsp;aval;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSetIndPar(const&nbsp;valarray&lt;double&gt;&amp;&nbsp;bval)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_b&nbsp;=&nbsp;bval;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doIndParVariance(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;D&nbsp;=&nbsp;[&nbsp;alp[1]&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(_nYi);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;_a[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doIndParVariance_popPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;D_alp&nbsp;=&nbsp;[&nbsp;0&nbsp;&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(_nYi&nbsp;*&nbsp;_nA);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[1]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doIndParVarianceInv(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Dinv&nbsp;=&nbsp;[&nbsp;1.0&nbsp;/&nbsp;alp[1]&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;assert(_a[1]&nbsp;!=&nbsp;0.0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(_nB&nbsp;*&nbsp;_nB);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;(&nbsp;1.0&nbsp;/&nbsp;_a[1]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doIndParVarianceInv_popPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Dinv_alp&nbsp;=&nbsp;[&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;-alp[1]^(-2)&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(_nB&nbsp;*&nbsp;_nA);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[1]&nbsp;=&nbsp;-1.0&nbsp;/&nbsp;(_a[1]*_a[1]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataMean(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f&nbsp;=&nbsp;[&nbsp;alp[0]+b[0]&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(_nYi);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;(&nbsp;_a[0]&nbsp;+&nbsp;_b[0]&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataMean_popPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f_alp&nbsp;=&nbsp;[&nbsp;1&nbsp;&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(_nYi&nbsp;*&nbsp;_nA);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[1]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataMean_indPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f_b&nbsp;=&nbsp;[&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(_nYi&nbsp;*&nbsp;_nB);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataVariance(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;R&nbsp;=&nbsp;[&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(_nB*_nB);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataVariance_popPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;R_alp&nbsp;=&nbsp;[&nbsp;0&nbsp;&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(_nB&nbsp;*&nbsp;_nA);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[1]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataVariance_indPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;R_b&nbsp;=&nbsp;[&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(_nB&nbsp;*_nB);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataVarianceInv(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Rinv&nbsp;=&nbsp;[&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(_nB&nbsp;*&nbsp;_nB);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataVarianceInv_popPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Rinv_alp&nbsp;=&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(_nB&nbsp;*&nbsp;_nA);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[1]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataVarianceInv_indPar(&nbsp;valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Rinv_b&nbsp;=&nbsp;[&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(_nB&nbsp;*&nbsp;_nB&nbsp;*&nbsp;_nB);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;&nbsp;&nbsp;<br>
+<br>
+};<br>
+<br>
+int&nbsp;main()<br>
+{<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Preliminaries.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;int&nbsp;i;<br>
+<br>
+&nbsp;&nbsp;//preTestPrinting(&nbsp;&quot;Specification&nbsp;Example&quot;&nbsp;);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Objective<br>
+&nbsp;&nbsp;enum&nbsp;Objective&nbsp;whichObjective&nbsp;=&nbsp;MODIFIED_LAPLACE;<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Number&nbsp;of&nbsp;individuals.<br>
+&nbsp;&nbsp;const&nbsp;int&nbsp;nInd&nbsp;=&nbsp;10;<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Number&nbsp;of&nbsp;measurements&nbsp;per&nbsp;individual&nbsp;(same&nbsp;for&nbsp;all)<br>
+&nbsp;&nbsp;const&nbsp;int&nbsp;nYi&nbsp;=&nbsp;1;<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Number&nbsp;of&nbsp;measurements&nbsp;in&nbsp;total<br>
+&nbsp;&nbsp;const&nbsp;int&nbsp;nY&nbsp;=&nbsp;nInd&nbsp;*&nbsp;nYi;<br>
+<br>
+&nbsp;&nbsp;const&nbsp;int&nbsp;nAlp&nbsp;=&nbsp;2;<br>
+<br>
+&nbsp;&nbsp;const&nbsp;int&nbsp;nB&nbsp;=&nbsp;1;<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;user-provided&nbsp;model.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;UserModelPopStatisticsExampleTest&nbsp;model(&nbsp;nAlp,&nbsp;nB,&nbsp;nYi&nbsp;);<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;that&nbsp;define&nbsp;the&nbsp;problem.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Mean&nbsp;and&nbsp;variance&nbsp;of&nbsp;the&nbsp;true&nbsp;transfer&nbsp;rate,&nbsp;betaTrue.<br>
+&nbsp;&nbsp;double&nbsp;meanBetaTrue&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;double&nbsp;varBetaTrue&nbsp;&nbsp;=&nbsp;5.0;<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;data&nbsp;vector,&nbsp;y.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Measurement&nbsp;values,&nbsp;y.<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;Y(&nbsp;nY&nbsp;);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Number&nbsp;of&nbsp;measurements&nbsp;for&nbsp;each&nbsp;individual.&nbsp;<br>
+&nbsp;&nbsp;valarray&lt;int&gt;&nbsp;N(&nbsp;1.,&nbsp;nInd&nbsp;);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;These&nbsp;will&nbsp;hold&nbsp;the&nbsp;generated&nbsp;values&nbsp;for&nbsp;the&nbsp;true&nbsp;measurement&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;noise,&nbsp;eTrue,&nbsp;and&nbsp;the&nbsp;true&nbsp;random&nbsp;population&nbsp;parameters,&nbsp;bTrue.<br>
+&nbsp;&nbsp;double&nbsp;eTrue;<br>
+&nbsp;&nbsp;double&nbsp;bTrue;<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Mean,&nbsp;variance,&nbsp;and&nbsp;standard&nbsp;deviation&nbsp;of&nbsp;eTrue&nbsp;and&nbsp;bTrue.<br>
+&nbsp;&nbsp;double&nbsp;meanETrue&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;double&nbsp;varETrue&nbsp;&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;double&nbsp;sdETrue&nbsp;&nbsp;&nbsp;=&nbsp;sqrt(&nbsp;varETrue&nbsp;);<br>
+&nbsp;&nbsp;double&nbsp;meanBTrue&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;double&nbsp;varBTrue&nbsp;&nbsp;=&nbsp;varBetaTrue;<br>
+&nbsp;&nbsp;double&nbsp;sdBTrue&nbsp;&nbsp;&nbsp;=&nbsp;sqrt(&nbsp;varBTrue&nbsp;);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Compute&nbsp;the&nbsp;measurements&nbsp;for&nbsp;each&nbsp;individual.<br>
+&nbsp;&nbsp;Integer&nbsp;seed&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;g05cbc(seed);<br>
+&nbsp;&nbsp;for&nbsp;(&nbsp;i&nbsp;=&nbsp;0;&nbsp;i&nbsp;&lt;&nbsp;nInd;&nbsp;i++&nbsp;)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;eTrue&nbsp;=&nbsp;randomNormal(&nbsp;meanETrue,&nbsp;sdETrue&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bTrue&nbsp;=&nbsp;randomNormal(&nbsp;meanBTrue,&nbsp;sdBTrue&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Y[&nbsp;i&nbsp;]&nbsp;=&nbsp;meanBetaTrue&nbsp;+&nbsp;bTrue&nbsp;+&nbsp;eTrue;<br>
+&nbsp;&nbsp;}<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;fixed&nbsp;population&nbsp;parameter,&nbsp;alp.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;alpTrue(&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;alpLow&nbsp;(&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;alpUp&nbsp;&nbsp;(&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;alpIn&nbsp;&nbsp;(&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;alpOut&nbsp;(&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;alpStep(&nbsp;nAlp&nbsp;);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Set&nbsp;the&nbsp;values&nbsp;associated&nbsp;with&nbsp;alp(1).<br>
+&nbsp;&nbsp;alpTrue[&nbsp;0&nbsp;]&nbsp;=&nbsp;meanBetaTrue;<br>
+&nbsp;&nbsp;alpLow&nbsp;[&nbsp;0&nbsp;]&nbsp;=&nbsp;-10.0;<br>
+&nbsp;&nbsp;alpUp&nbsp;&nbsp;[&nbsp;0&nbsp;]&nbsp;=&nbsp;10.0;<br>
+&nbsp;&nbsp;alpIn&nbsp;&nbsp;[&nbsp;0&nbsp;]&nbsp;=&nbsp;-1.0;<br>
+&nbsp;&nbsp;alpStep[&nbsp;0&nbsp;]&nbsp;=&nbsp;1.0e-2;<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Set&nbsp;the&nbsp;values&nbsp;associated&nbsp;with&nbsp;alp(2).<br>
+&nbsp;&nbsp;alpTrue[&nbsp;1&nbsp;]&nbsp;=&nbsp;varBetaTrue;<br>
+&nbsp;&nbsp;alpLow&nbsp;[&nbsp;1&nbsp;]&nbsp;=&nbsp;1.0e-3;<br>
+&nbsp;&nbsp;alpUp&nbsp;&nbsp;[&nbsp;1&nbsp;]&nbsp;=&nbsp;100.0;<br>
+&nbsp;&nbsp;alpIn&nbsp;&nbsp;[&nbsp;1&nbsp;]&nbsp;=&nbsp;0.5;<br>
+&nbsp;&nbsp;alpStep[&nbsp;1&nbsp;]&nbsp;=&nbsp;1.0e-2;<br>
+&nbsp;&nbsp;<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;random&nbsp;population&nbsp;parameters,&nbsp;b.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;bLow&nbsp;(&nbsp;-1.5e+1,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;bUp&nbsp;&nbsp;(&nbsp;+1.0e+1,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;bStep(&nbsp;&nbsp;1.0e-2,&nbsp;nB&nbsp;);<br>
+<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;bIn&nbsp;(&nbsp;1.,&nbsp;nB&nbsp;*&nbsp;nInd&nbsp;);<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;bOut(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nB&nbsp;*&nbsp;nInd&nbsp;);<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;population&nbsp;objective&nbsp;function.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;double&nbsp;dLTildeOut;<br>
+<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;lTilde_alpOut&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;lTilde_alp_alpOut(&nbsp;nAlp&nbsp;*&nbsp;nAlp&nbsp;);<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Remaining&nbsp;inputs&nbsp;to&nbsp;fitPopulation.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Set&nbsp;the&nbsp;values&nbsp;associated&nbsp;with&nbsp;the&nbsp;individual&nbsp;objective&nbsp;function.<br>
+&nbsp;&nbsp;Optimizer&nbsp;indOptimizer(&nbsp;1.0e-6,&nbsp;40,&nbsp;0&nbsp;);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Set&nbsp;the&nbsp;values&nbsp;associated&nbsp;with&nbsp;the&nbsp;population&nbsp;objective&nbsp;function.<br>
+&nbsp;&nbsp;Optimizer&nbsp;popOptimizer(&nbsp;1.0e-6,&nbsp;40,&nbsp;0&nbsp;);<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Set&nbsp;the&nbsp;parallel&nbsp;controls&nbsp;object<br>
+&nbsp;&nbsp;DirBasedParallelControls&nbsp;parallelControls(&nbsp;false,&nbsp;0,&nbsp;0&nbsp;);<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Optimize&nbsp;the&nbsp;population&nbsp;objective&nbsp;function.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;bool&nbsp;ok;<br>
+&nbsp;&nbsp;try{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fitPopulation(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;whichObjective,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;popOptimizer,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alpLow,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alpUp,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alpIn,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alpStep,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;alpOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indOptimizer,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bLow,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bUp,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bIn,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bStep,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;bOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;dLTildeOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;lTilde_alpOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;lTilde_alp_alpOut,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;parallelControls&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;catch(...)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cerr&nbsp;&lt;&lt;&nbsp;&quot;fitPopulation&nbsp;failed&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;=======================&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;objective&nbsp;=&nbsp;MODIFIED_LAPLACE&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;LTilde&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;dLTildeOut&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;popPar&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;printInMatrix(&nbsp;alpOut,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;lTilde_alp_alpOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;printInMatrix(&nbsp;lTilde_alp_alpOut,&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;-----------------------&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Compute&nbsp;statistics&nbsp;of&nbsp;population&nbsp;parameter&nbsp;estimates.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;popParCovOut(&nbsp;nAlp&nbsp;*&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;popParSEOut(&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;popParCorOut(&nbsp;nAlp&nbsp;*&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;popParCVOut(&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;popParCIOut(&nbsp;nAlp&nbsp;*&nbsp;2&nbsp;);<br>
+<br>
+&nbsp;&nbsp;try<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;for(&nbsp;int&nbsp;form&nbsp;=&nbsp;1;&nbsp;form&nbsp;&lt;&nbsp;4;&nbsp;form++&nbsp;)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;popStatistics(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;whichObjective,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;N,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Y,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;alpOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lTilde_alp_alpOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bLow,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bUp,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bStep,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;enum&nbsp;PopCovForm(form),<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;popParCovOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;popParSEOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;popParCorOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;popParCVOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&amp;popParCIOut<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;formulation&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;form&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;popParCovOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;printInMatrix(&nbsp;popParCovOut,&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;popParSEOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;printInMatrix(&nbsp;popParSEOut,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;popParCorOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;printInMatrix(&nbsp;popParCorOut,&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;popParCVOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;printInMatrix(&nbsp;popParCVOut,&nbsp;1&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;popParCIOut&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;printInMatrix(&nbsp;popParCIOut,&nbsp;2&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;-----------------------&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;catch(...)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;cerr&nbsp;&lt;&lt;&nbsp;&quot;popStatistics&nbsp;failed&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;return&nbsp;0;<br>
+}<br>
+</span>
+</font></code>
+The program will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+=======================<br>
+objective&nbsp;=&nbsp;MODIFIED_LAPLACE<br>
+LTilde&nbsp;=&nbsp;21.8566<br>
+popPar&nbsp;=<br>
+[&nbsp;1.95115&nbsp;]<br>
+[&nbsp;3.63406&nbsp;]<br>
+lTilde_alp_alpOut&nbsp;=<br>
+[&nbsp;2.15793&nbsp;-5.54357e-009&nbsp;]<br>
+[&nbsp;-5.58165e-009&nbsp;0.232837&nbsp;]<br>
+-----------------------<br>
+formulation&nbsp;=&nbsp;1<br>
+popParCovOut&nbsp;=<br>
+[&nbsp;0.463406&nbsp;-0.116585&nbsp;]<br>
+[&nbsp;-0.116585&nbsp;2.38831&nbsp;]<br>
+popParSEOut&nbsp;=<br>
+[&nbsp;0.68074&nbsp;]<br>
+[&nbsp;1.54541&nbsp;]<br>
+popParCorOut&nbsp;=<br>
+[&nbsp;1&nbsp;-0.11082&nbsp;]<br>
+[&nbsp;-0.11082&nbsp;1&nbsp;]<br>
+popParCVOut&nbsp;=<br>
+[&nbsp;34.8891&nbsp;]<br>
+[&nbsp;42.5258&nbsp;]<br>
+popParCIOut&nbsp;=<br>
+[&nbsp;0.381368&nbsp;3.52094&nbsp;]<br>
+[&nbsp;0.0703381&nbsp;7.19779&nbsp;]<br>
+-----------------------<br>
+formulation&nbsp;=&nbsp;2<br>
+popParCovOut&nbsp;=<br>
+[&nbsp;0.463406&nbsp;1.1071e-008&nbsp;]<br>
+[&nbsp;1.1071e-008&nbsp;4.29485&nbsp;]<br>
+popParSEOut&nbsp;=<br>
+[&nbsp;0.68074&nbsp;]<br>
+[&nbsp;2.0724&nbsp;]<br>
+popParCorOut&nbsp;=<br>
+[&nbsp;1&nbsp;7.84753e-009&nbsp;]<br>
+[&nbsp;7.84753e-009&nbsp;1&nbsp;]<br>
+popParCVOut&nbsp;=<br>
+[&nbsp;34.8891&nbsp;]<br>
+[&nbsp;57.0271&nbsp;]<br>
+popParCIOut&nbsp;=<br>
+[&nbsp;0.381368&nbsp;3.52094&nbsp;]<br>
+[&nbsp;-1.1449&nbsp;8.41302&nbsp;]<br>
+-----------------------<br>
+formulation&nbsp;=&nbsp;3<br>
+popParCovOut&nbsp;=<br>
+[&nbsp;0.469168&nbsp;0.21226&nbsp;]<br>
+[&nbsp;0.21226&nbsp;7.81939&nbsp;]<br>
+popParSEOut&nbsp;=<br>
+[&nbsp;0.684959&nbsp;]<br>
+[&nbsp;2.79632&nbsp;]<br>
+popParCorOut&nbsp;=<br>
+[&nbsp;1&nbsp;0.11082&nbsp;]<br>
+[&nbsp;0.11082&nbsp;1&nbsp;]<br>
+popParCVOut&nbsp;=<br>
+[&nbsp;35.1053&nbsp;]<br>
+[&nbsp;76.9474&nbsp;]<br>
+popParCIOut&nbsp;=<br>
+[&nbsp;0.371639&nbsp;3.53067&nbsp;]<br>
+[&nbsp;-2.81424&nbsp;10.0824&nbsp;]<br>
+-----------------------<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../lib/src/popStatistics.cpp
+
+</body>
+</html>

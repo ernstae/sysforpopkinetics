@@ -1,0 +1,20 @@
+<html><body><p><a href=dtd-overview.html>Overview</a> <a href=dtd-tree.html>Tree</a> <a href=dtd-index.html>Index</a> <a href=dtd-notations.html>Notations</a> <a href=dtd-entities.html>Entities</a> </p><h1>Element &lt;ind_records&gt;</h1><p>>A string containing the table of all the individuals' variants (i.e. records).</p><p>
+Each row is separated by a new line, and contains a 
+comma (,) separated list of values.
+The first row always contains the list of variant names.
+The second row and on contains the values of the variants.
+    <pre>
+    &lt;ind_records&gt;
+    ID,TIME,DV,DOSE,PRED,RES,MDV,F,Y,ORGDV
+    1,0,8,10,10,-2,...,...,...,8
+    1,0.1,1,0,1,0,...,...,...,1
+    1,0.2,2,0,2,0,...,...,...,2
+    2,0,10,8.5,8.5,1.5,...,...,...,10
+    2,0.1,1,0,1,0,...,...,...,1
+    3,0,10,12,12,-2,...,...,...,10
+    3,0.5,5,0,5,0,...,...,...,5
+    3.1,9.5,0,10,-0.5,...,...,...,9.5
+    3.2,20,0,20,0,...,...,...,20
+    &lt;/ind_records&gt;
+    </pre>
+</p><h2>Attributes</h2><dl><dt>columns REQUIRED </dt><dd><p>The number of columns including the leading ID column: i.e. #of variants plus one for ID. </p></dd><dt>rows REQUIRED </dt><dd><p>The number of rows including the header: i.e. The summation of all the individuals' sampling points plus one for the header.  </p></dd></dl><h2>Content</h2><p>(#PCDATA)</p><h2>Parents</h2><p><a href=elt-presentation_data.html>presentation_data</a> </p></body></html>

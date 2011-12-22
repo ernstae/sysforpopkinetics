@@ -1,0 +1,34 @@
+<html><body><pre>
+&lt;html>
+&lt;!--
+  Copyright (c) 1999 The Apache Software Foundation.  All rights 
+  reserved.
+-->
+
+&lt;jsp:useBean id="cart" scope="session" class="sessions.DummyCart" />
+
+&lt;jsp:setProperty name="cart" property="*" />
+&lt;%
+	cart.processRequest(request);
+%>
+
+
+&lt;FONT size = 5 COLOR="#CC0000">
+&lt;br> You have the following items in your cart:
+&lt;ol>
+&lt;% 
+	String[] items = cart.getItems();
+	for (int i=0; i&lt;items.length; i++) {
+%>
+&lt;li> &lt;% out.print(util.HTMLFilter.filter(items[i])); %> 
+&lt;%
+	}
+%>
+&lt;/ol>
+
+&lt;/FONT>
+
+&lt;hr>
+&lt;%@ include file ="/sessions/carts.html" %>
+&lt;/html>
+</pre></body></html>

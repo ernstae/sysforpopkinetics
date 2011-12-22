@@ -1,0 +1,842 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Cluster Administration</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Cluster Administration</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	Processes and files for administering the RFPK computational
+	cluster are presented.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>August 7, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN12"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN16"
+>Hardware</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN18"
+>Node Description</A
+></DT
+><DT
+><A
+HREF="#AEN33"
+>Ethernet Adapter Bug</A
+></DT
+><DT
+><A
+HREF="#AEN37"
+>Node Interconnection</A
+></DT
+><DT
+><A
+HREF="#AEN46"
+>Keyboard, Video and Mouse</A
+></DT
+><DT
+><A
+HREF="#AEN49"
+>BIOS</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN75"
+>Software</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN77"
+>Linux Installation</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN79"
+>Initial Installation</A
+></DT
+><DT
+><A
+HREF="#AEN120"
+>Boot Configuration</A
+></DT
+><DT
+><A
+HREF="#AEN146"
+>Network Configuration</A
+></DT
+><DT
+><A
+HREF="#AEN167"
+>Time Server Configuration</A
+></DT
+></DL
+></DD
+></DL
+></DD
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN12"
+></A
+>Introduction</H2
+><P
+>&#13;      Among RFPK's resources is a computational cluster which was
+      purchased from Linux Labs at the end of the year 2001.
+      With clustering software added to Linux operating system, the
+      cluster has the potential of behaving towards software very much as would a 
+      distributed memory multiprocessor system, except that 
+      interprocess communication is accomplished via Ethernet
+      rather than memory
+      and, therefore, is many orders of magnitude slower. Spk, however,
+      does not require high interprocess communication bandwidth.
+    </P
+><P
+>&#13;      The cluster consists of five individual computers, interconnected
+      by Ethernet.  The fact that each node is an individual machine
+      increases the burden of system administration.  This document
+      describes the configuration both of hardware and software so that
+      it can be restored in case it is destroyed or degraded.
+      It also provides some processes for operating the cluster.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN16"
+></A
+>Hardware</H2
+><DIV
+CLASS="sect2"
+><H3
+CLASS="sect2"
+><A
+NAME="AEN18"
+></A
+>Node Description</H3
+><P
+>&#13;	Each node of the cluster contains a Matsonic
+	MS7308E mainboard, with a single 1GHz Pentium III processor,
+	ethernet, video, keyboard, mouse and IDE disk interfaces.
+      </P
+><P
+>&#13;	One node contains additional hardware so that it can act
+	as a frontend or gateway for the other nodes. The host name
+	of this node is <SPAN
+CLASS="systemitem"
+>cspk1</SPAN
+>, and it differs
+	from the other nodes 
+	the following ways:
+	<P
+></P
+><UL
+><LI
+><P
+>&#13;	      It has a second ethernet adapter.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      There is a combination drive, which contains both a floppy
+	      drive and a CDROM drive.  The other nodes have DVD drives
+	      capable of reading CDROMs, but no floppy.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      There are three PCI sockets, rather than the two which
+	      are found on the other boards. The second ethernet 
+	      adapter occupies one of these sockets. None of the
+	      other PCI sockets of any of the nodes are used,
+	      at present.
+	    </P
+></LI
+></UL
+>
+      </P
+><P
+>&#13;	The other nodes are named <SPAN
+CLASS="systemitem"
+>cspk2</SPAN
+>, ..., <SPAN
+CLASS="systemitem"
+>cspk5</SPAN
+> and
+	are identical.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN33"
+></A
+>Ethernet Adapter Bug</H3
+><P
+>&#13;	All five nodes have an ethernet adapter chip on the mother
+	board.  Each ethernet adapter should, according to IEEE
+	standards, have a unique MAC address "burned into" the 
+	hardware of the adapter.  The built-in adapters of all
+	five nodes have identical MAC addresses, however.  As
+	will be described
+	<A
+HREF="#AEN133"
+>below</A
+>, a non-standard linux network
+	configuration must be employed to work around this bug.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN37"
+></A
+>Node Interconnection</H3
+><P
+>&#13;	At cluster is interconnected using one or the other of
+	two topologies:
+	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      Frontend and computational nodes.  In this topology,
+	      <SPAN
+CLASS="systemitem"
+>cspk1</SPAN
+> is connected to the green LAN via one of its
+	      ethernet interfaces, and to the rest of the nodes
+	      via its other ethernet interface and an ethernet
+	      switch.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Each node is simply an individual computational
+	      engine, connected to the green LAN.
+	    </P
+></LI
+></OL
+>
+	Sometimes, the nodes are partitioned into two subsets,
+	one set implementing the first topology and the other
+	set implementing the second.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN46"
+></A
+>Keyboard, Video and Mouse</H3
+><P
+>&#13;	On each node, the video connector is near the center of
+	the back of the case.  The keyboard and mouse connectors
+	are just to the right of the mainboard Ethernet socket,
+	as viewed from the front.  These connectors are cabled
+	to a KVM switch, so that all nodes are accessible,
+	one at time, from a single keyboard, video monitor and
+	mouse.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN49"
+></A
+>BIOS</H3
+><P
+>&#13;	The BIOS settings are the same for all nodes.  One of the
+	quirks of these systems is that it can be difficult
+	to get to the BIOS configuration screens. At the beginning
+	of the boot sequence, the BIOS will instruct you to
+	press <B
+CLASS="keycap"
+>DEL</B
+> if you want to enter BIOS
+	configuration.  Often you will be taken directly to the
+	Grub boot screen even though you have pressed <B
+CLASS="keycap"
+>DEL</B
+>.
+	If this happens, press 
+	<B
+CLASS="keycap"
+>CTRL-ALT-DEL</B
+> to reboot, then continue
+	to press <B
+CLASS="keycap"
+>DEL</B
+> several times a second.  This 
+	usually gets the attention of the BIOS.
+      </P
+><P
+>&#13;	Small configuration changes need to be made at each of the
+	following BIOS menu categories on all nodes:
+	<P
+></P
+><UL
+><LI
+><P
+>&#13;	      Standard CMOS Setup
+	    </P
+><P
+>&#13;	      Use the <I
+CLASS="emphasis"
+>Auto</I
+> discovery 
+	      capability to set the IDE devices correctly.
+	    </P
+><P
+>&#13;	      For <I
+CLASS="emphasis"
+>Floppy Drive A</I
+>,
+	      select the value: <I
+CLASS="emphasis"
+>Not Installed</I
+>.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Advanced Setup
+	    </P
+><P
+>&#13;	      For <I
+CLASS="emphasis"
+>1st Boot Device</I
+>,
+	      select the value: <I
+CLASS="emphasis"
+>CDROM</I
+>.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Power Management Setup
+	    </P
+><P
+>&#13;	      For <I
+CLASS="emphasis"
+>Power Management/APM</I
+>,
+	      select the value: <I
+CLASS="emphasis"
+>Disabled</I
+>.
+	    </P
+></LI
+></UL
+>
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN75"
+></A
+>Software</H2
+><DIV
+CLASS="sect2"
+><H3
+CLASS="sect2"
+><A
+NAME="AEN77"
+></A
+>Linux Installation</H3
+><DIV
+CLASS="sect3"
+><H4
+CLASS="sect3"
+><A
+NAME="AEN79"
+></A
+>Initial Installation</H4
+><P
+>&#13;	  Using CDROMs install on each node
+	  the same version of RedHat Linux that
+	  is currently installed on the Software Team workstations.
+	  Select the <I
+CLASS="emphasis"
+>workstation</I
+>
+	  configuration, rather than desk-top or server.
+	</P
+><P
+>&#13;	  The interactive installation wizard will ask you to
+	  specify several options:
+	  <P
+></P
+><UL
+><LI
+><P
+>&#13;		Time Zone
+	      </P
+><P
+>&#13;		Select the time zone of Los Angeles, USA
+	      </P
+><P
+>&#13;		Check the <I
+CLASS="emphasis"
+>System Time Uses UTC</I
+> box.
+	      </P
+></LI
+><LI
+><P
+>&#13;		Network Configuration
+	      </P
+><P
+>&#13;		Choose to use DHCP, provide the host name 
+		(<SPAN
+CLASS="systemitem"
+>cspk1</SPAN
+>, <SPAN
+CLASS="systemitem"
+>cspk2</SPAN
+>, <SPAN
+CLASS="systemitem"
+>cspk3</SPAN
+>, <SPAN
+CLASS="systemitem"
+>cspk4</SPAN
+>, or <SPAN
+CLASS="systemitem"
+>cspk5</SPAN
+>),
+		but choose not to start the network when the system
+		boots.
+	      </P
+></LI
+><LI
+><P
+>&#13;		Package Selection.  Select
+		only packages that make sense for a computational server,
+		on which software must be compiled and linked and which
+		must interact with a MySQL database.
+		<P
+></P
+><UL
+><LI
+><P
+>&#13;		      X Window System
+		    </P
+></LI
+><LI
+><P
+>&#13;		      Editors
+		    </P
+></LI
+><LI
+><P
+>&#13;		      Engineering and Scientific
+		    </P
+></LI
+><LI
+><P
+>&#13;		      MySQL Database
+		    </P
+></LI
+><LI
+><P
+>&#13;		      Development Tools
+		    </P
+></LI
+><LI
+><P
+>&#13;		      Legacy Software Development
+		    </P
+></LI
+><LI
+><P
+>&#13;		      System Tools
+		    </P
+></LI
+></UL
+>
+	      </P
+></LI
+><LI
+><P
+>&#13;		Security.  No firewall.
+	      </P
+></LI
+><LI
+><P
+>&#13;		Boot Options
+	      </P
+><P
+>&#13;		Boot the Grub boot loader from the boot segment
+		of the hda disk volume.
+	      </P
+></LI
+></UL
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN120"
+></A
+>Boot Configuration</H4
+><DIV
+CLASS="sect4"
+><H5
+CLASS="sect4"
+><A
+NAME="AEN122"
+></A
+>Run Level</H5
+><P
+>&#13;	    On each node, edit
+	    <TT
+CLASS="filename"
+>/etc/inittab</TT
+> so that the
+	    specification for initial run level after boot looks like
+	    this:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	      id:3:initdefault:
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></DIV
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN127"
+></A
+>Services</H5
+><P
+>&#13;	    Disable the automatic start of the <I
+CLASS="emphasis"
+>sendmail</I
+>
+	    and <I
+CLASS="emphasis"
+>ntp</I
+> daemons:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/sbin/chkconfig sendmail off
+/sbin/chkconfig ntpd off
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></DIV
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN133"
+></A
+><TT
+CLASS="filename"
+>/etc/rc.d/rc.local</TT
+></H5
+><P
+>&#13;	    The following lines should be appended to
+	    <TT
+CLASS="filename"
+>/etc/rc.d/rc.local</TT
+>, which is the last script
+	    run during the initialization of services at boot time, as a
+	    work around for 
+	    <A
+HREF="#AEN33"
+>bug</A
+> in the ethernet adapters.
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/sbin/ifconfig eth0 hw ether 0E:00:01:00:00:02
+/sbin/ifconfig eth0 up
+/sbin/dhclient
+/sbin/ifconfig lo 127.0.0.1
+/etc/rc.d/init.d/ntpd start
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Important!</I
+> The example above applies to
+	    <SPAN
+CLASS="systemitem"
+>cspk2</SPAN
+>.  Note the last two digits in the MAC address on the
+	    first line.  They are <I
+CLASS="emphasis"
+>02</I
+>, which corresponds
+	    to node.  This number must be different for each node.  
+	    For example, the MAC address for <SPAN
+CLASS="systemitem"
+>cspk4</SPAN
+> would be
+	    <I
+CLASS="emphasis"
+>0E:00:01:00:00:04</I
+>.
+	  </P
+></DIV
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN146"
+></A
+>Network Configuration</H4
+><P
+>&#13;	  Everything in this section must be performed by the root
+	  user.
+	</P
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN149"
+></A
+><TT
+CLASS="filename"
+>/etc/hosts</TT
+></H5
+><P
+>&#13;	  </P
+></DIV
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN153"
+></A
+><TT
+CLASS="filename"
+>/etc/sysconfig/network-scripts/ifcfg-eth0</TT
+></H5
+><P
+>&#13;	    The standard DHCP configuration created by the installation should
+	    be sufficient.  Check to make certain that the value of the
+	    <I
+CLASS="emphasis"
+>ONBOOT</I
+> parameter is <I
+CLASS="emphasis"
+>no</I
+>,
+	    because we do not want the adapter to start broadcasting its 
+	    <A
+HREF="#AEN33"
+>invalid</A
+> MAC address out onto the
+	    network.  
+	  </P
+></DIV
+><DIV
+CLASS="sect4"
+><HR><H5
+CLASS="sect4"
+><A
+NAME="AEN160"
+></A
+><TT
+CLASS="filename"
+>/etc/sysconfig/network-scripts/ifcfg-eth1</TT
+></H5
+><P
+>&#13;	    This interface, present only on <SPAN
+CLASS="systemitem"
+>cspk1</SPAN
+>, can retain the standard
+	    DHCP configuration.  In this case, <I
+CLASS="emphasis"
+>ONBOOT</I
+> should
+	    be <I
+CLASS="emphasis"
+>yes</I
+>.
+	  </P
+></DIV
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN167"
+></A
+>Time Server Configuration</H4
+><P
+>&#13;	  It is important that the system clocks of the nodes be closely
+	  synchronized, since the nodes are supposed to work together as a 
+	  single computer system.
+	  See the 
+	  <I
+CLASS="emphasis"
+>Clock Synchronization</I
+> Howto for details.
+	</P
+></DIV
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

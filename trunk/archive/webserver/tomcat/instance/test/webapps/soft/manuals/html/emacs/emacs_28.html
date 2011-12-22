@@ -1,0 +1,395 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Picture</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Picture">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Picture">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC358"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC357"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC359"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_29.html#SEC363"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> Y. Editing Pictures </H1>
+<!--docid::SEC358::-->
+<P>
+
+  To edit a picture made out of text characters (for example, a picture
+of the division of a register into fields, as a comment in a program),
+use the command <KBD>M-x edit-picture</KBD> to enter Picture mode.
+</P><P>
+
+  In Picture mode, editing is based on the <EM>quarter-plane</EM> model of
+text, according to which the text characters lie studded on an area that
+stretches infinitely far to the right and downward.  The concept of the end
+of a line does not exist in this model; the most you can say is where the
+last nonblank character on the line is found.
+</P><P>
+
+  Of course, Emacs really always considers text as a sequence of
+characters, and lines really do have ends.  But Picture mode replaces
+the most frequently-used commands with variants that simulate the
+quarter-plane model of text.  They do this by inserting spaces or by
+converting tabs to spaces.
+</P><P>
+
+  Most of the basic editing commands of Emacs are redefined by Picture mode
+to do essentially the same thing but in a quarter-plane way.  In addition,
+Picture mode defines various keys starting with the <KBD>C-c</KBD> prefix to
+run special picture editing commands.
+</P><P>
+
+  One of these keys, <KBD>C-c C-c</KBD>, is pretty important.  Often a
+picture is part of a larger file that is usually edited in some other
+major mode.  <KBD>M-x edit-picture</KBD> records the name of the previous
+major mode so you can use the <KBD>C-c C-c</KBD> command
+(<CODE>picture-mode-exit</CODE>) later to go back to that mode.  <KBD>C-c C-c</KBD>
+also deletes spaces from the ends of lines, unless given a numeric
+argument.
+</P><P>
+
+  The special commands of Picture mode all work in other modes (provided
+the <TT>`picture'</TT> library is loaded), but are not bound to keys except
+in Picture mode.  The descriptions below talk of moving "one column"
+and so on, but all the picture mode commands handle numeric arguments as
+their normal equivalents do.
+</P><P>
+
+<A NAME="IDX1772"></A>
+  Turning on Picture mode runs the hook <CODE>picture-mode-hook</CODE>
+(see section <A HREF="emacs_33.html#SEC484">AD.2.3 Hooks</A>).
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_28.html#SEC359">Y.1 Basic Editing in Picture Mode</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Basic concepts and simple commands of Picture Mode.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_28.html#SEC360">Y.2 Controlling Motion after Insert</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Controlling direction of cursor motion
+                            after "self-inserting" characters.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_28.html#SEC361">Y.3 Picture Mode Tabs</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Various features for tab stops and indentation.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_28.html#SEC362">Y.4 Picture Mode Rectangle Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Clearing and superimposing rectangles.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Basic Picture"></A>
+<HR SIZE="6">
+<A NAME="SEC359"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC360"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_29.html#SEC363"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Y.1 Basic Editing in Picture Mode </H2>
+<!--docid::SEC359::-->
+<P>
+
+<A NAME="IDX1773"></A>
+<A NAME="IDX1774"></A>
+<A NAME="IDX1775"></A>
+<A NAME="IDX1776"></A>
+<A NAME="IDX1777"></A>
+</P><P>
+
+  Most keys do the same thing in Picture mode that they usually do, but
+do it in a quarter-plane style.  For example, <KBD>C-f</KBD> is rebound to
+run <CODE>picture-forward-column</CODE>, a command which moves point one
+column to the right, inserting a space if necessary so that the actual
+end of the line makes no difference.  <KBD>C-b</KBD> is rebound to run
+<CODE>picture-backward-column</CODE>, which always moves point left one
+column, converting a tab to multiple spaces if necessary.  <KBD>C-n</KBD> and
+<KBD>C-p</KBD> are rebound to run <CODE>picture-move-down</CODE> and
+<CODE>picture-move-up</CODE>, which can either insert spaces or convert tabs
+as necessary to make sure that point stays in exactly the same column.
+<KBD>C-e</KBD> runs <CODE>picture-end-of-line</CODE>, which moves to after the last
+nonblank character on the line.  There is no need to change <KBD>C-a</KBD>,
+as the choice of screen model does not affect beginnings of
+lines.
+</P><P>
+
+<A NAME="IDX1778"></A>
+  Insertion of text is adapted to the quarter-plane screen model through
+the use of Overwrite mode (see section <A HREF="emacs_33.html#SEC476">AD.1 Minor Modes</A>).  Self-inserting characters
+replace existing text, column by column, rather than pushing existing text
+to the right.  <KBD>RET</KBD> runs <CODE>picture-newline</CODE>, which just moves to
+the beginning of the following line so that new text will replace that
+line.
+</P><P>
+
+<A NAME="IDX1779"></A>
+<A NAME="IDX1780"></A>
+<A NAME="IDX1781"></A>
+  Picture mode provides erasure instead of deletion and killing of
+text.  <KBD>DEL</KBD> (<CODE>picture-backward-clear-column</CODE>) replaces the
+preceding character with a space rather than removing it; this moves
+point backwards.  <KBD>C-d</KBD> (<CODE>picture-clear-column</CODE>) replaces the
+next character or characters with spaces, but does not move point.  (If
+you want to clear characters to spaces and move forward over them, use
+<KBD>SPC</KBD>.)  <KBD>C-k</KBD> (<CODE>picture-clear-line</CODE>) really kills the
+contents of lines, but does not delete the newlines from the
+buffer.
+</P><P>
+
+<A NAME="IDX1782"></A>
+  To do actual insertion, you must use special commands.  <KBD>C-o</KBD>
+(<CODE>picture-open-line</CODE>) creates a blank line after the current line;
+it never splits a line.  <KBD>C-M-o</KBD> (<CODE>split-line</CODE>) makes sense in
+Picture mode, so it is not changed.  <KBD>C-j</KBD>
+(<CODE>picture-duplicate-line</CODE>) inserts below the current line another
+line with the same contents.</P><P>
+
+<A NAME="IDX1783"></A>
+   To do actual deletion in Picture mode, use <KBD>C-w</KBD>, <KBD>C-c C-d</KBD>
+(which is defined as <CODE>delete-char</CODE>, as <KBD>C-d</KBD> is in other
+modes), or one of the picture rectangle commands (see section <A HREF="emacs_28.html#SEC362">Y.4 Picture Mode Rectangle Commands</A>).
+</P><P>
+
+<A NAME="Insert in Picture"></A>
+<HR SIZE="6">
+<A NAME="SEC360"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC359"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC361"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_29.html#SEC363"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Y.2 Controlling Motion after Insert </H2>
+<!--docid::SEC360::-->
+<P>
+
+<A NAME="IDX1784"></A>
+<A NAME="IDX1785"></A>
+<A NAME="IDX1786"></A>
+<A NAME="IDX1787"></A>
+<A NAME="IDX1788"></A>
+<A NAME="IDX1789"></A>
+<A NAME="IDX1790"></A>
+<A NAME="IDX1791"></A>
+<A NAME="IDX1792"></A>
+<A NAME="IDX1793"></A>
+<A NAME="IDX1794"></A>
+<A NAME="IDX1795"></A>
+<A NAME="IDX1796"></A>
+<A NAME="IDX1797"></A>
+<A NAME="IDX1798"></A>
+<A NAME="IDX1799"></A>
+  Since "self-inserting" characters in Picture mode overwrite and move
+point, there is no essential restriction on how point should be moved.
+Normally point moves right, but you can specify any of the eight
+orthogonal or diagonal directions for motion after a "self-inserting"
+character.  This is useful for drawing lines in the buffer.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-c &#60;</KBD>
+<DD>Move left after insertion (<CODE>picture-movement-left</CODE>).
+<DT><KBD>C-c &#62;</KBD>
+<DD>Move right after insertion (<CODE>picture-movement-right</CODE>).
+<DT><KBD>C-c ^</KBD>
+<DD>Move up after insertion (<CODE>picture-movement-up</CODE>).
+<DT><KBD>C-c .</KBD>
+<DD>Move down after insertion (<CODE>picture-movement-down</CODE>).
+<DT><KBD>C-c `</KBD>
+<DD>Move up and left ("northwest") after insertion (<CODE>picture-movement-nw</CODE>).
+<DT><KBD>C-c '</KBD>
+<DD>Move up and right ("northeast") after insertion
+(<CODE>picture-movement-ne</CODE>).
+<DT><KBD>C-c /</KBD>
+<DD>Move down and left ("southwest") after insertion
+<BR>(<CODE>picture-movement-sw</CODE>).
+<DT><KBD>C-c \</KBD>
+<DD>Move down and right ("southeast") after insertion
+<BR>(<CODE>picture-movement-se</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX1800"></A>
+<A NAME="IDX1801"></A>
+<A NAME="IDX1802"></A>
+<A NAME="IDX1803"></A>
+  Two motion commands move based on the current Picture insertion
+direction.  The command <KBD>C-c C-f</KBD> (<CODE>picture-motion</CODE>) moves in the
+same direction as motion after "insertion" currently does, while <KBD>C-c
+C-b</KBD> (<CODE>picture-motion-reverse</CODE>) moves in the opposite direction.
+</P><P>
+
+<A NAME="Tabs in Picture"></A>
+<HR SIZE="6">
+<A NAME="SEC361"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC360"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC362"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_29.html#SEC363"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Y.3 Picture Mode Tabs </H2>
+<!--docid::SEC361::-->
+<P>
+
+<A NAME="IDX1804"></A>
+<A NAME="IDX1805"></A>
+<A NAME="IDX1806"></A>
+  Two kinds of tab-like action are provided in Picture mode.  Use
+<KBD>M-<KBD>TAB</KBD></KBD> (<CODE>picture-tab-search</CODE>) for context-based tabbing.
+With no argument, it moves to a point underneath the next
+"interesting" character that follows whitespace in the previous
+nonblank line.  "Next" here means "appearing at a horizontal position
+greater than the one point starts out at."  With an argument, as in
+<KBD>C-u M-<KBD>TAB</KBD></KBD>, this command moves to the next such interesting
+character in the current line.  <KBD>M-<KBD>TAB</KBD></KBD> does not change the
+text; it only moves point.  "Interesting" characters are defined by
+the variable <CODE>picture-tab-chars</CODE>, which should define a set of
+characters.  The syntax for this variable is like the syntax used inside
+of <SAMP>`[<small>...</small>]'</SAMP> in a regular expression--but without the <SAMP>`['</SAMP>
+and the <SAMP>`]'</SAMP>.  Its default value is <CODE>"!-~"</CODE>.
+</P><P>
+
+<A NAME="IDX1807"></A>
+  <KBD>TAB</KBD> itself runs <CODE>picture-tab</CODE>, which operates based on the
+current tab stop settings; it is the Picture mode equivalent of
+<CODE>tab-to-tab-stop</CODE>.  Normally it just moves point, but with a numeric
+argument it clears the text that it moves over.
+</P><P>
+
+<A NAME="IDX1808"></A>
+<A NAME="IDX1809"></A>
+  The context-based and tab-stop-based forms of tabbing are brought
+together by the command <KBD>C-c <KBD>TAB</KBD></KBD> (<CODE>picture-set-tab-stops</CODE>).
+This command sets the tab stops to the positions which <KBD>M-<KBD>TAB</KBD></KBD>
+would consider significant in the current line.  The use of this command,
+together with <KBD>TAB</KBD>, can get the effect of context-based tabbing.  But
+<KBD>M-<KBD>TAB</KBD></KBD> is more convenient in the cases where it is sufficient.
+</P><P>
+
+  It may be convenient to prevent use of actual tab characters in
+pictures.  For example, this prevents <KBD>C-x <KBD>TAB</KBD></KBD> from messing
+up the picture.  You can do this by setting the variable
+<CODE>indent-tabs-mode</CODE> to <CODE>nil</CODE>.  See section <A HREF="emacs_22.html#SEC232">S.3 Tabs vs. Spaces</A>.
+</P><P>
+
+<A NAME="Rectangles in Picture"></A>
+<HR SIZE="6">
+<A NAME="SEC362"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC361"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_29.html#SEC363"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_29.html#SEC363"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> Y.4 Picture Mode Rectangle Commands </H2>
+<!--docid::SEC362::-->
+<P>
+
+  Picture mode defines commands for working on rectangular pieces of the
+text in ways that fit with the quarter-plane model.  The standard rectangle
+commands may also be useful (see section <A HREF="emacs_11.html#SEC68">H.10 Rectangles</A>).
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-c C-k</KBD>
+<DD>Clear out the region-rectangle with spaces
+(<CODE>picture-clear-rectangle</CODE>).  With argument, delete the text.
+<DT><KBD>C-c C-w <VAR>r</VAR></KBD>
+<DD>Similar, but save rectangle contents in register <VAR>r</VAR> first
+(<CODE>picture-clear-rectangle-to-register</CODE>).
+<DT><KBD>C-c C-y</KBD>
+<DD>Copy last killed rectangle into the buffer by overwriting, with upper
+left corner at point (<CODE>picture-yank-rectangle</CODE>).  With argument,
+insert instead.
+<DT><KBD>C-c C-x <VAR>r</VAR></KBD>
+<DD>Similar, but use the rectangle in register <VAR>r</VAR>
+(<CODE>picture-yank-rectangle-from-register</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX1810"></A>
+<A NAME="IDX1811"></A>
+<A NAME="IDX1812"></A>
+<A NAME="IDX1813"></A>
+  The picture rectangle commands <KBD>C-c C-k</KBD>
+(<CODE>picture-clear-rectangle</CODE>) and <KBD>C-c C-w</KBD>
+(<CODE>picture-clear-rectangle-to-register</CODE>) differ from the standard
+rectangle commands in that they normally clear the rectangle instead of
+deleting it; this is analogous with the way <KBD>C-d</KBD> is changed in Picture
+mode.
+</P><P>
+
+  However, deletion of rectangles can be useful in Picture mode, so
+these commands delete the rectangle if given a numeric argument.
+<KBD>C-c C-k</KBD> either with or without a numeric argument saves the
+rectangle for <KBD>C-c C-y</KBD>.
+</P><P>
+
+<A NAME="IDX1814"></A>
+<A NAME="IDX1815"></A>
+<A NAME="IDX1816"></A>
+<A NAME="IDX1817"></A>
+  The Picture mode commands for yanking rectangles differ from the
+standard ones in that they overwrite instead of inserting.  This is
+the same way that Picture mode insertion of other text differs from
+other modes.  <KBD>C-c C-y</KBD> (<CODE>picture-yank-rectangle</CODE>) inserts
+(by overwriting) the rectangle that was most recently killed, while
+<KBD>C-c C-x</KBD> (<CODE>picture-yank-rectangle-from-register</CODE>) does
+likewise for the rectangle found in a specified register.
+<A NAME="Sending Mail"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_29.html#SEC363"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

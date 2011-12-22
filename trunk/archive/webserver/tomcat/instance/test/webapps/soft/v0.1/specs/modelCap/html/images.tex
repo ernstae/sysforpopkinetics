@@ -1,0 +1,595 @@
+\batchmode
+
+
+\documentclass{article}
+\RequirePackage{ifthen}
+
+
+
+\hoffset        = -.5in
+\voffset        = 0.0in
+
+\topmargin      = .0in
+\evensidemargin = .0in
+\oddsidemargin  = .0in
+
+\headheight     = .0in     %% space for actual header
+\headsep        = .0in     %% space from bottom of header to beginning of text
+
+\footskip       = .5in     %% distance from text to bottom of footer
+
+\textheight     = 10in
+\textwidth      = 7.5in
+
+
+
+\usepackage[dvips]{color}
+
+
+\pagecolor[gray]{.7}
+
+\usepackage[]{inputenc}
+
+
+
+\makeatletter
+
+\makeatletter
+\count@=\the\catcode`\_ \catcode`\_=8 
+\newenvironment{tex2html_wrap}{}{}%
+\catcode`\<=12\catcode`\_=\count@
+\newcommand{\providedcommand}[1]{\expandafter\providecommand\csname #1\endcsname}%
+\newcommand{\renewedcommand}[1]{\expandafter\providecommand\csname #1\endcsname{}%
+  \expandafter\renewcommand\csname #1\endcsname}%
+\newcommand{\newedenvironment}[1]{\newenvironment{#1}{}{}\renewenvironment{#1}}%
+\let\newedcommand\renewedcommand
+\let\renewedenvironment\newedenvironment
+\makeatother
+\let\mathon=$
+\let\mathoff=$
+\ifx\AtBeginDocument\undefined \newcommand{\AtBeginDocument}[1]{}\fi
+\newbox\sizebox
+\setlength{\hoffset}{0pt}\setlength{\voffset}{0pt}
+\addtolength{\textheight}{\footskip}\setlength{\footskip}{0pt}
+\addtolength{\textheight}{\topmargin}\setlength{\topmargin}{0pt}
+\addtolength{\textheight}{\headheight}\setlength{\headheight}{0pt}
+\addtolength{\textheight}{\headsep}\setlength{\headsep}{0pt}
+\setlength{\textwidth}{349pt}
+\newwrite\lthtmlwrite
+\makeatletter
+\let\realnormalsize=\normalsize
+\global\topskip=2sp
+\def\preveqno{}\let\real@float=\@float \let\realend@float=\end@float
+\def\@float{\let\@savefreelist\@freelist\real@float}
+\def\liih@math{\ifmmode$\else\bad@math\fi}
+\def\end@float{\realend@float\global\let\@freelist\@savefreelist}
+\let\real@dbflt=\@dbflt \let\end@dblfloat=\end@float
+\let\@largefloatcheck=\relax
+\let\if@boxedmulticols=\iftrue
+\def\@dbflt{\let\@savefreelist\@freelist\real@dbflt}
+\def\adjustnormalsize{\def\normalsize{\mathsurround=0pt \realnormalsize
+ \parindent=0pt\abovedisplayskip=0pt\belowdisplayskip=0pt}%
+ \def\phantompar{\csname par\endcsname}\normalsize}%
+\def\lthtmltypeout#1{{\let\protect\string \immediate\write\lthtmlwrite{#1}}}%
+\newcommand\lthtmlhboxmathA{\adjustnormalsize\setbox\sizebox=\hbox\bgroup\kern.05em }%
+\newcommand\lthtmlhboxmathB{\adjustnormalsize\setbox\sizebox=\hbox to\hsize\bgroup\hfill }%
+\newcommand\lthtmlvboxmathA{\adjustnormalsize\setbox\sizebox=\vbox\bgroup %
+ \let\ifinner=\iffalse \let\)\liih@math }%
+\newcommand\lthtmlboxmathZ{\@next\next\@currlist{}{\def\next{\voidb@x}}%
+ \expandafter\box\next\egroup}%
+\newcommand\lthtmlmathtype[1]{\gdef\lthtmlmathenv{#1}}%
+\newcommand\lthtmllogmath{\lthtmltypeout{l2hSize %
+:\lthtmlmathenv:\the\ht\sizebox::\the\dp\sizebox::\the\wd\sizebox.\preveqno}}%
+\newcommand\lthtmlfigureA[1]{\let\@savefreelist\@freelist
+       \lthtmlmathtype{#1}\lthtmlvboxmathA}%
+\newcommand\lthtmlpictureA{\bgroup\catcode`\_=8 \lthtmlpictureB}%
+\newcommand\lthtmlpictureB[1]{\lthtmlmathtype{#1}\egroup
+       \let\@savefreelist\@freelist \lthtmlhboxmathB}%
+\newcommand\lthtmlpictureZ[1]{\hfill\lthtmlfigureZ}%
+\newcommand\lthtmlfigureZ{\lthtmlboxmathZ\lthtmllogmath\copy\sizebox
+       \global\let\@freelist\@savefreelist}%
+\newcommand\lthtmldisplayA{\bgroup\catcode`\_=8 \lthtmldisplayAi}%
+\newcommand\lthtmldisplayAi[1]{\lthtmlmathtype{#1}\egroup\lthtmlvboxmathA}%
+\newcommand\lthtmldisplayB[1]{\edef\preveqno{(\theequation)}%
+  \lthtmldisplayA{#1}\let\@eqnnum\relax}%
+\newcommand\lthtmldisplayZ{\lthtmlboxmathZ\lthtmllogmath\lthtmlsetmath}%
+\newcommand\lthtmlinlinemathA{\bgroup\catcode`\_=8 \lthtmlinlinemathB}
+\newcommand\lthtmlinlinemathB[1]{\lthtmlmathtype{#1}\egroup\lthtmlhboxmathA
+  \vrule height1.5ex width0pt }%
+\newcommand\lthtmlinlineA{\bgroup\catcode`\_=8 \lthtmlinlineB}%
+\newcommand\lthtmlinlineB[1]{\lthtmlmathtype{#1}\egroup\lthtmlhboxmathA}%
+\newcommand\lthtmlinlineZ{\egroup\expandafter\ifdim\dp\sizebox>0pt %
+  \expandafter\centerinlinemath\fi\lthtmllogmath\lthtmlsetinline}
+\newcommand\lthtmlinlinemathZ{\egroup\expandafter\ifdim\dp\sizebox>0pt %
+  \expandafter\centerinlinemath\fi\lthtmllogmath\lthtmlsetmath}
+\newcommand\lthtmlindisplaymathZ{\egroup %
+  \centerinlinemath\lthtmllogmath\lthtmlsetmath}
+\def\lthtmlsetinline{\hbox{\vrule width.1em \vtop{\vbox{%
+  \kern.1em\copy\sizebox}\ifdim\dp\sizebox>0pt\kern.1em\else\kern.3pt\fi
+  \ifdim\hsize>\wd\sizebox \hrule depth1pt\fi}}}
+\def\lthtmlsetmath{\hbox{\vrule width.1em\kern-.05em\vtop{\vbox{%
+  \kern.1em\kern0.8 pt\hbox{\hglue.17em\copy\sizebox\hglue0.8 pt}}\kern.3pt%
+  \ifdim\dp\sizebox>0pt\kern.1em\fi \kern0.8 pt%
+  \ifdim\hsize>\wd\sizebox \hrule depth1pt\fi}}}
+\def\centerinlinemath{%
+  \dimen1=\ifdim\ht\sizebox<\dp\sizebox \dp\sizebox\else\ht\sizebox\fi
+  \advance\dimen1by.5pt \vrule width0pt height\dimen1 depth\dimen1 
+ \dp\sizebox=\dimen1\ht\sizebox=\dimen1\relax}
+
+\def\lthtmlcheckvsize{\ifdim\ht\sizebox<\vsize 
+  \ifdim\wd\sizebox<\hsize\expandafter\hfill\fi \expandafter\vfill
+  \else\expandafter\vss\fi}%
+\providecommand{\selectlanguage}[1]{}%
+\makeatletter \tracingstats = 1 
+
+
+\begin{document}
+\pagestyle{empty}\thispagestyle{empty}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength hsize=\the\hsize}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength vsize=\the\vsize}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength hoffset=\the\hoffset}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength voffset=\the\voffset}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength topmargin=\the\topmargin}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength topskip=\the\topskip}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength headheight=\the\headheight}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength headsep=\the\headsep}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength parskip=\the\parskip}\lthtmltypeout{}%
+\lthtmltypeout{latex2htmlLength oddsidemargin=\the\oddsidemargin}\lthtmltypeout{}%
+\makeatletter
+\if@twoside\lthtmltypeout{latex2htmlLength evensidemargin=\the\evensidemargin}%
+\else\lthtmltypeout{latex2htmlLength evensidemargin=\the\oddsidemargin}\fi%
+\lthtmltypeout{}%
+\makeatother
+\setcounter{page}{1}
+\onecolumn
+
+% !!! IMAGES START HERE !!!
+
+
+%
+\providecommand{\R}{\mbox{\bf R}}%
+
+
+%
+\providecommand{\Z}{\mbox{\bf Z}}%
+
+
+%
+\providecommand{\N}{\mbox{\bf N}}%
+
+
+%
+\providecommand{\E}{\mbox{\bf E}}%
+
+
+%
+\providecommand{\V}{\mbox{\bf V}}%
+
+
+%
+\providecommand{\Th}[1]{$#1$th}%
+
+
+%
+\providecommand{\BS}{$\backslash$}%
+
+
+%
+\providecommand{\Arg}[1]{\bigskip \noindent $#1$\  \linebreak}%
+
+
+%
+\providecommand{\TT}[1]{\bigskip \noindent {\tt #1 } \linebreak}%
+
+
+%
+\providecommand{\rvec}{\mbox{rvec}}%
+
+\stepcounter{section}
+\stepcounter{section}
+\stepcounter{section}
+\stepcounter{section}
+\stepcounter{subsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsection}
+\stepcounter{subsubsection}
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline378}%
+$y_{i(j))}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+\stepcounter{subsubsection}
+\stepcounter{subsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline380}%
+$j^{\mbox{th}}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline382}%
+$i^{\mbox{th}}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmldisplayA{displaymath52}%
+\begin{displaymath}
+    y_{i(j)} = y_{i(j)}\left( \rule{0.0in}{0.15in}
+      f(x_{ij}, \theta, \eta_i), x_{ij}, \theta, \eta_i, \epsilon_i \right) .
+  \end{displaymath}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline384}%
+$f(x_{ij}, \theta, \eta_i)$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline386}%
+$x_{ij}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline388}%
+$\theta$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline390}%
+$\eta_i$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline392}%
+$\epsilon_i$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_indisplay1045}%
+$\displaystyle { \widetilde{y}_{i(j)} \left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i),
+x_{ij}, \theta, \eta_i, \epsilon_i \right) }$%
+\lthtmlindisplaymathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_indisplay1046}%
+$\displaystyle = y_{i(j)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i),
+x_{ij}, \theta, \eta_i, \epsilon_i \right)
+\left| \!
+\begin{array}{l}
+\\
+{\scriptstyle \epsilon_i = 0}
+\end{array}
+\right.
++ \sum_{m=1}^{n_{\Sigma}} \left[ \partial_{\epsilon}^{(m)}
+y_{i(j)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i),
+x_{ij}, \theta, \eta_i, \epsilon_i \right)
+\left| \!
+\begin{array}{l}
+\\
+{\scriptstyle \epsilon_i = 0}
+\end{array}
+\right.
+\right] \epsilon_{i(m)} .$%
+\lthtmlindisplaymathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline394}%
+$\epsilon_i = 0$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmldisplayA{displaymath94}%
+\begin{displaymath}
+    h_{(m)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i), 
+        x_{ij}, \theta, \eta_i \right)
+      = \partial_{\epsilon}^{(m)} 
+        y_{i(j)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i), 
+        x_{ij}, \theta, \eta_i, \epsilon_i \right)
+        \left| \!
+          \begin{array}{l}
+            \\
+            {\scriptstyle \epsilon_i = 0}
+          \end{array}
+        \right. .
+  \end{displaymath}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline398}%
+$k^{\mbox{th}}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_indisplay1053}%
+$\displaystyle \mbox{cov} [ \tilde{y}_{i(j)} , \tilde{y}_{i(k)} ]$%
+\lthtmlindisplaymathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_indisplay1054}%
+$\textstyle =$%
+\lthtmlindisplaymathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_indisplay1055}%
+$\displaystyle \mbox{cov} \left[
+\sum_{m=1}^{n_{\Sigma}} h_{(m)}\left( \rule{0.0in}{0.15in}
+f(x_{ij}, \theta, \eta_i), x_{ij}, \theta, \eta_i \right) \epsilon_{i(m)},
+\sum_{n=1}^{n_{\Sigma}} h_{(n)}\left( \rule{0.0in}{0.15in}
+f(x_{ik}, \theta, \eta_i), x_{ik}, \theta, \eta_i \right) \epsilon_{i(n)}
+\right]$%
+\lthtmlindisplaymathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_indisplay1057}%
+$\displaystyle \sum_{m=1}^{n_{\Sigma}} \sum_{n=1}^{n_{\Sigma}} \left[
+h_{(m)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i),
+x_{ij}, \theta, \eta_i \right)
+\right]
+\mbox{cov} [ \epsilon_{i(m)} , \epsilon_{i(n)} ]
+\left[
+h_{(n)}\left( \rule{0.0in}{0.15in} f(x_{ik}, \theta, \eta_i),
+x_{ik}, \theta, \eta_i \right)
+\right]$%
+\lthtmlindisplaymathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline402}%
+$R_{i(j,k)}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmldisplayA{displaymath172}%
+\begin{displaymath}
+    y_{i(j)} = f(x_{ij}, \theta, \eta_i) 
+      + \sum_{m=1}^{n_{\Sigma}}
+      h_{(m)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i), 
+        x_{ik}, \theta, \eta_i \right) \epsilon_{i(m)} ,
+  \end{displaymath}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmldisplayA{displaymath184}%
+\begin{displaymath}
+    \widetilde{y}_{i(j)} = y_{i(j)} ,
+  \end{displaymath}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline404}%
+$\epsilon$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmldisplayA{displaymath189}%
+\begin{displaymath}
+    y_{i(j)} = f(x_{ij}, \theta, \eta_i) \exp[ \epsilon_{i(1)} ] ,
+  \end{displaymath}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_indisplay1067}%
+$\displaystyle \widetilde{y}_{i(j)}$%
+\lthtmlindisplaymathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_indisplay1069}%
+$\displaystyle f(x_{ij}, \theta, \eta_i)
++ f(x_{ij}, \theta, \eta_i) \epsilon_{i(1)}$%
+\lthtmlindisplaymathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_indisplay1070}%
+$\textstyle \neq$%
+\lthtmlindisplaymathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_indisplay1071}%
+$\displaystyle y_{i(j)} ,$%
+\lthtmlindisplaymathZ
+\lthtmlcheckvsize\clearpage}
+
+\stepcounter{subsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsection}
+\stepcounter{subsubsection}
+\stepcounter{subsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\appendix
+\stepcounter{section}
+\stepcounter{section}
+\stepcounter{subsection}
+{\newpage\clearpage
+\lthtmldisplayA{displaymath237}%
+\begin{displaymath}
+    y_{i(j)} = f_{i(j)}(\alpha, b_i) + e_{i(j)} ,
+  \end{displaymath}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmldisplayA{displaymath242}%
+\begin{displaymath}
+    R_{i(j,k)}(\alpha, b_i) = \mbox{cov}[e_{i(j)},e_{i(k)}] ,
+  \end{displaymath}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmldisplayA{displaymath248}%
+\begin{displaymath}
+    D_{(p,q)}(\alpha) = \mbox{cov}[b_{i(p)},b_{i(q)}] ,
+  \end{displaymath}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline412}%
+$\alpha$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline414}%
+$b_i$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmldisplayA{displaymath254}%
+\begin{displaymath}
+    \left\{ \alpha^{\mbox{Out}}, 
+      \{ b_i^{\mbox{Out}} ( \alpha^{\mbox{Out}} ) \} \right\} ,
+  \end{displaymath}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+\stepcounter{subsection}
+{\newpage\clearpage
+\lthtmldisplayA{displaymath263}%
+\begin{displaymath}
+    y_{i(j)} = f(x_{ij}, \theta, \eta_i) + 
+      \sum_{m=1}^{n_{\Sigma}} h_{(m)}(x_{ij}, \theta, \eta_i) \epsilon_{i(m)} .
+  \end{displaymath}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmldisplayA{displaymath272}%
+\begin{displaymath}
+    \Sigma_{(m,n)} = \mbox{cov}[\epsilon_{i(m)},\epsilon_{i(n)}] ,
+  \end{displaymath}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmldisplayA{displaymath278}%
+\begin{displaymath}
+    \Omega_{(p,q)} = \mbox{cov}[\eta_{i(p)},\eta_{i(q)}] ,
+  \end{displaymath}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline422}%
+$\Sigma$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline424}%
+$\Omega$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline430}%
+$n_{\Sigma}$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmldisplayA{displaymath286}%
+\begin{displaymath}
+    \left\{ \theta^{\mbox{Out}}, \Omega^{\mbox{Out}},
+      \Sigma^{\mbox{Out}} \right\} ,
+  \end{displaymath}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+\stepcounter{subsection}
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline438}%
+$D(\alpha)$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmldisplayA{displaymath292}%
+\begin{displaymath}
+    D_{(p,q)}(\alpha) = \Omega_{(p,q)} .
+  \end{displaymath}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline442}%
+$e_i$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmlinlinemathA{tex2html_wrap_inline446}%
+$R_i(\alpha, b_i)$%
+\lthtmlinlinemathZ
+\lthtmlcheckvsize\clearpage}
+
+{\newpage\clearpage
+\lthtmldisplayA{eqnarraystar296}%
+\begin{eqnarray*}
+    R_{i(j,k)}(\alpha, b_i) & = &  \mbox{cov} \left[
+      \sum_{m=1}^{n_{\Sigma}} h_{(m)}(x_{ij}, \theta, \eta_i) \epsilon_{i(m)},
+      \sum_{n=1}^{n_{\Sigma}} h_{(n)}(x_{ik}, \theta, \eta_i) \epsilon_{i(n)} \right] \\
+    & = & \sum_{m=1}^{n_{\Sigma}} \sum_{n=1}^{n_{\Sigma}} 
+      h_{(m)}(x_{ij}, \theta, \eta_i) 
+      \mbox{cov} [ \epsilon_{i(m)} , \epsilon_{i(n)} ]
+      h_{(n)}(x_{ik}, \theta, \eta_i)  \\
+    & = & \sum_{m=1}^{n_{\Sigma}} \sum_{n=1}^{n_{\Sigma}} 
+      h_{(m)}(x_{ij}, \theta, \eta_i) 
+      \Sigma_{(m,n)}
+      h_{(n)}(x_{ik}, \theta, \eta_i)
+  \end{eqnarray*}%
+\lthtmldisplayZ
+\lthtmlcheckvsize\clearpage}
+
+
+\end{document}

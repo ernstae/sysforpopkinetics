@@ -1,0 +1,551 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>XML Representation of Data Set</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>XML Representation of Data Set</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;       A data set is represented as an instance of SpkDataML.
+       This document defines the SpkDataML language.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.5</TD
+><TD
+ALIGN="LEFT"
+>April 5, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added &#60;weight&#62;.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.4</TD
+><TD
+ALIGN="LEFT"
+>September 7, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Restricted the values that can be used within &#60;value&#62; tag.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.3</TD
+><TD
+ALIGN="LEFT"
+>December 8, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Inserted an extra tag, &#60;spkdata&#62;.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.2</TD
+><TD
+ALIGN="LEFT"
+>December 5, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Adapted the convension used to express the spreadsheet table.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.1</TD
+><TD
+ALIGN="LEFT"
+>December 4, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN32"
+>SpkDataML DTD</A
+></DT
+><DT
+><A
+HREF="#AEN154"
+>Example</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN32"
+></A
+>SpkDataML DTD</H2
+><P
+>&#13;       <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;&#60;!ELEMENT spkdata (table)*&#62;
+&#60;!ATTLIST spkdata version CDATA #REQUIRED&#62;
+
+&#60;!ELEMENT table (description? | weight? | row*)&#62;
+&#60;!ATTLIST table columns CDATA #REQUIRED&#62;
+&#60;!ATTLIST table rows CDATA #REQUIRED&#62;
+
+&#60;!ELEMENT description (#PCDATA)&#62;
+
+&#60;!ELEMENT weight (#PCDATA)&#62;               --- WARNING!  This feature is not yet implemented (12/13/2005)
+&#60;!ATTLIST weight base (sd|fsd|pois|gen) #REQUIRED&#62;
+&#60;!ATTLIST weight absolute (yes | no) #REQUIRED&#62;
+&#60;!ATTLIST weight x CDATA #REQUIRED&#62;
+&#60;!ATTLIST weight y CDATA #IMPLIED&#62;
+&#60;!ATTLIST weight z CDATA #IMPLIED&#62;
+
+&#60;!ELEMENT row (value)*&#62;
+&#60;!ATTLIST row position CDATA #REQUIRED&#62;
+
+&#60;ELEMENT value (#PCDATA)&#62;
+&#60;!ATTLIST value ref CDATA #IMPLIED&#62;
+&#60;!ATTLIST value type (numeric|string) #IMPLIED&#62;
+       </PRE
+></TD
+></TR
+></TABLE
+>
+<P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+><TT
+CLASS="varname"
+>spkdata</TT
+></DT
+><DD
+><P
+>The top element of the SpkDataML document.  This can contain multiple tables.</P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+>version</DT
+><DD
+><P
+>The version number of SpkDataML.  The initial version is 0.1.</P
+></DD
+></DL
+></DIV
+></DD
+><DT
+><TT
+CLASS="varname"
+>table</TT
+></DT
+><DD
+><P
+>A table or matrix of values.  The first row in the table is the header row, which means it contains the labels describing the nature of values/data in the columns.</P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+>columns</DT
+><DD
+><P
+>The number of columns in the table, &#62;=0.</P
+></DD
+><DT
+>rows</DT
+><DD
+><P
+>The number of rows in the table, &#62;=0.</P
+></DD
+></DL
+></DIV
+></DD
+><DT
+><TT
+CLASS="varname"
+>description</TT
+></DT
+><DD
+><P
+>A short description for the table.</P
+></DD
+><DT
+><TT
+CLASS="varname"
+>weight</TT
+></DT
+><DD
+><P
+>(IMPORATNT! not yet implemented as of 12/13/2005) 
+         </P
+><P
+>&#13;         A type of standard deviation used to calculate weights
+         on each datum.  Select one of the four types as  the <I
+CLASS="emphasis"
+>base</I
+> attribute value.
+         </P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>base = { <TT
+CLASS="varname"
+>sd</TT
+> | <TT
+CLASS="varname"
+>fsd</TT
+> | <TT
+CLASS="varname"
+>pois</TT
+> | <TT
+CLASS="varname"
+>gen</TT
+> }</B
+></P
+><DL
+><DT
+><TT
+CLASS="varname"
+>sd</TT
+></DT
+><DD
+><P
+>Assign a known standard deviation, x, to each datum.</P
+></DD
+><DT
+><TT
+CLASS="varname"
+>fsd</TT
+></DT
+><DD
+><P
+>Assign a known fractional standard deviation, x, to each datum.
+                  SD = x * | data <TT
+CLASS="literal"
+>ij</TT
+> |
+                  </P
+></DD
+><DT
+><TT
+CLASS="varname"
+>pois</TT
+></DT
+><DD
+><P
+>&#13;                  Assign Poisson statistics.  SD = sqrt( x * | data <TT
+CLASS="literal"
+>ij</TT
+> | )
+                  </P
+></DD
+><DT
+><TT
+CLASS="varname"
+>gen</TT
+></DT
+><DD
+><P
+>&#13;                  Assign a customized standard deviation using the formula:
+                  SD = sqrt( x + y * | data <TT
+CLASS="literal"
+>ij</TT
+> | ^z )
+                  </P
+></DD
+></DL
+></DIV
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+>x, y, z</DT
+><DD
+><P
+>  
+                  Set x attribute to the value used to calculate SD, FSD and POIS.
+                  Set all x, y and z to the values for GEN.
+                  </P
+></DD
+></DL
+></DIV
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>absolute = { <TT
+CLASS="varname"
+>yes</TT
+> | <TT
+CLASS="varname"
+>no</TT
+> }</B
+></P
+><DL
+><DT
+><TT
+CLASS="varname"
+>yes</TT
+></DT
+><DD
+><P
+>&#13;The weights are assigned absolutely.  They are assumed to be known, 
+and are equal to the reciprocal of the variance 
+of each datum.  If "sd<TT
+CLASS="literal"
+>i</TT
+>" is the standard deviation of the i-th datum,
+then the weight associated with the datum is 1/sd<TT
+CLASS="literal"
+>i</TT
+>^2. --- SAAM II User Guide
+                  </P
+></DD
+></DL
+></DIV
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+><TT
+CLASS="varname"
+>no</TT
+></DT
+><DD
+><P
+>&#13;The weights are assigned relatively.  They are assumed to be known up to an unknown proportionality constant
+that is estimated from the data.  In this case, if sd<TT
+CLASS="literal"
+>i</TT
+> is the standard deviation 
+of the i-th  datum in the j-th block of data, the weight associated with the
+datum is v<TT
+CLASS="literal"
+>j</TT
+>/sd<TT
+CLASS="literal"
+>i</TT
+>^2.  The proportionality constant v<TT
+CLASS="literal"
+>j</TT
+>
+is estimated for each block of data.  --- SAAM II User Guide
+                  </P
+></DD
+></DL
+></DIV
+></DD
+><DT
+><TT
+CLASS="varname"
+>row</TT
+></DT
+><DD
+><P
+>A row in the table.</P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+>position</DT
+><DD
+><P
+>The position of the row in the table, &#62;=1.</P
+></DD
+></DL
+></DIV
+></DD
+><DT
+><TT
+CLASS="varname"
+>value</TT
+></DT
+><DD
+><P
+>A value in the row.  When the data type is specified as "numeric", only 
+         numerical characters (ie. 0, 1, 2, 3, 4, 5, 6, 7, 8, 9) are accepted.
+         For "string" type, only alphabet (ie., a, b, c, ..., A, B, C,...),
+         underscores (ie. _) and spaces are accepted.
+         accepted.
+         </P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+>type = { <TT
+CLASS="varname"
+>string</TT
+> | <TT
+CLASS="varname"
+>numeric</TT
+> }</DT
+><DD
+><P
+>The data type of the value.</P
+></DD
+><DT
+>ref</DT
+><DD
+><P
+>A string associated with the value.  This attribute value 
+                  has no significance; it should be used only as an annotation/note/remark.
+                  </P
+></DD
+></DL
+></DIV
+></DD
+></DL
+></DIV
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN154"
+></A
+>Example</H2
+><P
+>&#13;        <A
+HREF="../dataML/data.xml"
+TARGET="_top"
+><I
+CLASS="citetitle"
+>An example: Theophylline, 12 subjects</I
+></A
+>
+     </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

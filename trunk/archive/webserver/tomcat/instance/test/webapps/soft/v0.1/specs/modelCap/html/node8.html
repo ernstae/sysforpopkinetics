@@ -1,0 +1,372 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Extended Least Squares Individual Level Residuals</TITLE>
+<META NAME="description" CONTENT="Extended Least Squares Individual Level Residuals">
+<META NAME="keywords" CONTENT="modelCap">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="modelCap.css">
+
+<LINK REL="next" HREF="node9.html">
+<LINK REL="previous" HREF="node7.html">
+<LINK REL="up" HREF="node7.html">
+<LINK REL="next" HREF="node9.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html198"
+  HREF="node9.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html194"
+  HREF="node7.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html188"
+  HREF="node7.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html196"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html199"
+  HREF="node9.html">Map Bayesian Individual Level</A>
+<B> Up:</B> <A NAME="tex2html195"
+  HREF="node7.html">Residual Calculation</A>
+<B> Previous:</B> <A NAME="tex2html189"
+  HREF="node7.html">Residual Calculation</A>
+ &nbsp; <B>  <A NAME="tex2html197"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00052100000000000000">
+Extended Least Squares Individual Level Residuals</A>
+</H3>
+<P>
+<FONT SIZE="+1">Although the residuals discussed in this section are calculated in the
+same way by SPK and NONMEM, this discussion is included here for
+completeness.
+</FONT>
+<P>
+<FONT SIZE="+1">When the extended least squares objective function is being used
+to perform individual level estimation,
+SPK's model for the <IMG
+ WIDTH="27" HEIGHT="42" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.png"
+ ALT="$j^{\mbox{th}}$"> value of an individual's data is
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+y_{(j)} = f_{(j)}(b) + e_{(j)} ,
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="136" HEIGHT="30" BORDER="0"
+ SRC="img2.png"
+ ALT="\begin{displaymath}
+y_{(j)} = f_{(j)}(b) + e_{(j)} ,
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(1)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+where
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+e \sim \mbox{N}[ 0, R(b) ] ,
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="99" HEIGHT="28" BORDER="0"
+ SRC="img3.png"
+ ALT="\begin{displaymath}
+e \sim \mbox{N}[ 0, R(b) ] ,
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(2)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+<IMG
+ WIDTH="11" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img4.png"
+ ALT="$b$"> is the individual's vector of parameters, and <IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img5.png"
+ ALT="$e$"> is a vector of 
+random variables that describe the measurement noise.
+For a complete description of the models used at the individual 
+level by SPK and NONMEM, see Appendix <A HREF="node52.html#App:IndLevelModels">B</A>.
+</FONT>
+<P>
+<FONT SIZE="+1">Let the vector of residuals for the individual be defined as the
+differences between their data and the expected values for their
+data as predicted by the model,
+  </FONT>
+<BR>
+<DIV ALIGN="CENTER">
+
+<!-- MATH
+ \begin{eqnarray}
+r & = & y - \mbox{E}_{e} 
+              \left[ f(b) + e \right] \nonumber \\
+      & = & y - f(b) .
+\end{eqnarray}
+ -->
+<TABLE ALIGN="CENTER" CELLPADDING="0" WIDTH="100%">
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="11" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img6.png"
+ ALT="$\displaystyle r$"></TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="116" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img8.png"
+ ALT="$\displaystyle y - \mbox{E}_{e}
+\left[ f(b) + e \right]$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+&nbsp;</TD></TR>
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT">&nbsp;</TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="65" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img9.png"
+ ALT="$\displaystyle y - f(b) .$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(3)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P><FONT SIZE="+1">
+The covariance matrix for the individual's data is
+given by
+  </FONT>
+<BR>
+<DIV ALIGN="CENTER">
+
+<!-- MATH
+ \begin{eqnarray}
+\mbox{cov}[y] & = & \mbox{cov}_{e}
+          \left[ f(b) + e \right] \nonumber \\
+        & = & R(b) .
+\end{eqnarray}
+ -->
+<TABLE ALIGN="CENTER" CELLPADDING="0" WIDTH="100%">
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="44" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img10.png"
+ ALT="$\displaystyle \mbox{cov}[y]$"></TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="101" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img11.png"
+ ALT="$\displaystyle \mbox{cov}_{e}
+\left[ f(b) + e \right]$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+&nbsp;</TD></TR>
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT">&nbsp;</TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="40" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img12.png"
+ ALT="$\displaystyle R(b) .$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(4)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P><FONT SIZE="+1">
+The vector of weighted residuals for the individual is
+defined as 
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+w = \left\{ \mbox{cov}[y] \right\}^{-1/2} r,
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="132" HEIGHT="28" BORDER="0"
+ SRC="img13.png"
+ ALT="\begin{displaymath}
+w = \left\{ \mbox{cov}[y] \right\}^{-1/2} r,
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(5)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+where the term multiplying the residuals is the matrix square 
+root of the inverse of the covariance.
+</FONT>
+<P>
+<FONT SIZE="+1">The individual level residuals are calculated by evaluating the
+preceding quantities at the optimal values for the individuals'
+vectors of parameters that were determined during
+individual level estimation, i.e., by setting <IMG
+ WIDTH="39" HEIGHT="18" ALIGN="BOTTOM" BORDER="0"
+ SRC="img14.png"
+ ALT="$b = \hat{b}$">.
+</FONT>
+<P>
+<FONT SIZE="+1">The following table lists the residual related quantities, their
+values as calculated by SPK, and their values as calculated by NONMEM.
+In this case, the NONMEM values are calculated using its standard
+individual estimation mode.
+</FONT>
+<P>
+
+<DIV ALIGN="CENTER"><TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1">
+
+  </FONT><FONT SIZE="+1"><B>Quantity</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>SPK Value</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>Description</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>Name</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>NONMEM Value</B> </FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1">
+
+  <!-- MATH
+ $\mbox{E} \left[ f \right]^{\mbox{(ELS)}}$
+ -->
+<IMG
+ WIDTH="78" HEIGHT="48" ALIGN="MIDDLE" BORDER="0"
+ SRC="img15.png"
+ ALT="$\mbox{E} \left[ f \right]^{\mbox{(ELS)}}$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <IMG
+ WIDTH="33" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img16.png"
+ ALT="$f(\hat{b})$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Predicted value for an individual's data.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> IPRED = PRED
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Same </FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <!-- MATH
+ $r^{\mbox{(ELS)}}$
+ -->
+<IMG
+ WIDTH="54" HEIGHT="24" ALIGN="BOTTOM" BORDER="0"
+ SRC="img17.png"
+ ALT="$r^{\mbox{(ELS)}}$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $y - f(\hat{b})$
+ -->
+<IMG
+ WIDTH="60" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img18.png"
+ ALT="$y - f(\hat{b})$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> IRES = RES
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Same </FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <!-- MATH
+ $w^{\mbox{(ELS)}}$
+ -->
+<IMG
+ WIDTH="58" HEIGHT="24" ALIGN="BOTTOM" BORDER="0"
+ SRC="img19.png"
+ ALT="$w^{\mbox{(ELS)}}$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $\left\{ R(\hat{b}) \right\}^{-1/2}
+        [ y - f(\hat{b}) ]$
+ -->
+<IMG
+ WIDTH="154" HEIGHT="55" ALIGN="MIDDLE" BORDER="0"
+ SRC="img20.png"
+ ALT="$\left\{ R(\hat{b}) \right\}^{-1/2}
+[ y - f(\hat{b}) ] $">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Weighted residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> IWRES = WRES
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Same </FONT></TD>
+</TR>
+</TABLE></DIV>
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html198"
+  HREF="node9.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html194"
+  HREF="node7.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html188"
+  HREF="node7.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html196"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html199"
+  HREF="node9.html">Map Bayesian Individual Level</A>
+<B> Up:</B> <A NAME="tex2html195"
+  HREF="node7.html">Residual Calculation</A>
+<B> Previous:</B> <A NAME="tex2html189"
+  HREF="node7.html">Residual Calculation</A>
+ &nbsp; <B>  <A NAME="tex2html197"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Mitch Watrous
+2007-12-17
+</ADDRESS>
+</BODY>
+</HTML>

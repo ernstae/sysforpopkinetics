@@ -1,0 +1,314 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Installing a Library</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Installing a Library">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Installing a Library">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC80"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_79.html#SEC79" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Executing Uninstalled Binaries" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_81.html#SEC81" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Installing an Executable" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_81.html#SEC81" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Installing an Executable" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_68.html#SEC68" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Introducing GNU Libtool" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_83.html#SEC83" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Using GNU Libtool" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 10.6 Installing a Library </H2>
+<!--docid::SEC80::-->
+<P>
+
+Now that the library and an executable which links with it have been
+successfully built, they can be installed.  For the sake of this example
+I will <CODE>cp</CODE> the objects to their destination, though
+<CODE>libtool</CODE> would be just as happy if I were to use
+<CODE>install</CODE> with the long, requisite list of parameters.
+</P><P>
+
+It is important to install the library to the <SAMP>`-rpath'</SAMP> destination
+which was specified when it was linked earlier, or at least that it be
+visible from that location when the runtime loader searches for it.  This
+rule is not enforced by <CODE>libtool</CODE>, since it is often desirable
+to install libraries to a <EM>staging</EM><A NAME="DOCF17" HREF="autobook_fot.html#FOOT17">(17)</A> area.
+Of course, the package must ultimately install the library to the specified
+<SAMP>`-rpath'</SAMP> destination for it to work correctly, like this:
+ 
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ libtool cp libtrim.la /usr/local/lib
+cp .libs/libtrim.sl.0.0 /usr/local/lib/libtrim.sl.0.0
+(cd /usr/local/lib &#38;&#38; rm -f libtrim.sl.0 &#38;&#38; \
+ln -s libtrim.sl.0.0 libtrim.sl.0)
+(cd /usr/local/lib &#38;&#38; rm -f libtrim.sl &#38;&#38; \
+ln -s libtrim.sl.0.0 libtrim.sl)
+chmod 555 /usr/local/lib/libtrim.sl.0.0
+cp .libs/libtrim.lai /usr/local/lib/libtrim.la
+cp .libs/libtrim.a /usr/local/lib/libtrim.a
+ranlib /usr/local/lib/libtrim.a
+chmod 644 /usr/local/lib/libtrim.a
+----------------------------------------------------------------------
+Libraries have been installed in:
+   /usr/local/lib
+
+If you ever happen to want to link against installed libraries
+in a given directory, LIBDIR, you must either use libtool, and
+specify the full pathname of the library, or use -LLIBDIR
+flag during linking and do at least one of the following:
+   - add LIBDIR to the SHLIB_PATH environment variable
+     during execution
+   - use the -Wl,+b -Wl,LIBDIR linker flag
+
+See any operating system documentation about shared libraries for
+more information, such as the ld(1) and ld.so(8) manual pages.
+----------------------------------------------------------------------
+</FONT></pre></td></tr></table></P><P>
+
+Again, <CODE>libtool</CODE> takes care of the details for you.  Both the
+static and shared archives are copied into the installation directory
+and  their access modes are set appropriately.  <CODE>libtool</CODE>
+<I>blesses</I> the static archive again with <CODE>ranlib</CODE>, which would
+be easy to forget without the benefit of <CODE>libtool</CODE>, especially
+if I develop on a host where the library will continue to work without
+this step.  Also, <CODE>libtool</CODE> creates the necessary links for the
+shared archive to conform with HP-UXs library versioning rules.
+Compare this to what you see with the equivalent commands running on
+GNU/Linux to see how <CODE>libtool</CODE> applies these rules
+according to the requirements of its  host.  The block of text
+<CODE>libtool</CODE> shows at the end of the installation serves to explain
+how to link executables against the newly installed library on
+HP-UX and how to make sure that the executables linked against it
+will work.  Of course, the best way to ensure this is to use
+<CODE>libtool</CODE> to perform the linking.  I'll leave the details of
+linking against an installed Libtool library as an exercise - everything
+you need to know can be extrapolated from the example of linking against
+an uninstalled Libtool library,  See section <A HREF="autobook_75.html#SEC75">10.3 Linking an Executable</A>.
+</P><P>
+
+On some architectures, even shared archives need to be <I>blessed</I> on
+installation.  For example, GNU/Linux requires that
+<CODE>ldconfig</CODE> be run when a new library is installed.  Typically, a
+library will be installed to its target destination after being built,
+in which case <CODE>libtool</CODE> will perform any necessary <I>blessing</I>
+during installation.  Sometimes, when building a binary package for
+installation on another machine, for example, it is not desirable to
+perform the <I>blessing</I> on the build machine.  No problem,
+<CODE>libtool</CODE> takes care of this too! <CODE>libtool</CODE> will detect
+if you install the library to a destination other than the one specified
+in the <SAMP>`-rpath'</SAMP> argument passed during the archive link, and will
+simply remind you what needs to be done before the library can be used:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ mkdir -p /usr/local/stow/hello-1.0/lib
+$ libtool cp libtrim.la /usr/local/stow/hello-1.0/lib
+cp .libs/libtrim.sl.0.0 /usr/local/stow/hello-1.0/lib/libtrim.sl.0.0
+(cd /usr/local/stow/hello-1.0/lib &#38;&#38; rm -f libtrim.sl.0 &#38;&#38; \
+ln -s libtrim.sl.0.0 libtrim.sl.0)
+(cd /usr/local/stow/hello-1.0/lib &#38;&#38; rm -f libtrim.sl &#38;&#38; \
+ln -s libtrim.sl.0.0 libtrim.sl)
+chmod 555 /usr/local/stow/hello-1.0/lib/libtrim.sl.0.0
+cp .libs/libtrim.lai /usr/local/stow/hello-1.0/lib/libtrim.la
+cp .libs/libtrim.a /usr/local/stow/hello-1.0/lib/libtrim.a
+ranlib /usr/local/stow/hello-1.0/lib/libtrim.a
+chmod 644 /usr/local/stow/hello-1.0/lib/libtrim.a
+libtool: install: warning: remember to run
+libtool: install: warning: libtool --finish /usr/local/lib
+</FONT></pre></td></tr></table></P><P>
+
+If you will make the installed libraries visible in the destination
+directory with symbolic links, you need to do whatever it is you do to
+make the library visible, and then <I>bless</I> the library in <EM>that</EM>
+location with the <CODE>libtool --finish /usr/local/lib</CODE> command:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ cd /usr/local/stow
+$ stow hello-1.0
+$ libtool --finish /usr/local/lib
+</pre></td></tr></table></P><P>
+
+If you are following the examples so far, you will also need to install
+the Libtool library, <TT>`libhello.la'</TT>, before you move on to the next
+section:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ libtool cp libhello.la /usr/local/lib
+cp .libs/libhello.sl.0.0 /usr/local/lib/libhello.sl.0.0
+(cd /usr/local/lib &#38;&#38; rm -f libhello.sl.0 &#38;&#38; \
+ln -s libhello.sl.0.0 libhello.sl.0)
+(cd /usr/local/lib &#38;&#38; rm -f libhello.sl &#38;&#38; \
+ln -s libhello.sl.0.0 libhello.sl)
+chmod 555 /usr/local/lib/libhello.sl.0.0
+cp .libs/libhello.lai /usr/local/lib/libhello.la
+cp .libs/libhello.a /usr/local/lib/libhello.a
+ranlib /usr/local/lib/libhello.a
+chmod 644 /usr/local/lib/libhello.a
+----------------------------------------------------------------------
+Libraries have been installed in:
+   /usr/local/lib
+
+If you ever happen to want to link against installed libraries
+in a given directory, LIBDIR, you must either use libtool, and
+specify the full pathname of the library, or use -LLIBDIR
+flag during linking and do at least one of the following:
+   - add LIBDIR to the SHLIB_PATH environment variable
+     during execution
+   - use the -Wl,+b -Wl,LIBDIR linker flag
+
+See any operating system documentation about shared libraries for
+more information, such as the ld(1) and ld.so(8) manual pages.
+----------------------------------------------------------------------
+</FONT></pre></td></tr></table></P><P>
+
+Once a Libtool library is installed, binaries which link against it will 
+hardcode the path to the Libtool library, as specified with the
+<SAMP>`-rpath'</SAMP> switch when the library was built.  <CODE>libtool</CODE>
+always encodes the installation directory into a Libtool library for
+just this purpose.  Hardcoding directories in this way is a good thing,
+because binaries linked against such libraries will continue to work if
+there are several incompatible versions of the library visible to the
+runtime loader (say a Trojan <TT>`libhello'</TT> in a user's
+<CODE>LD_LIBRARY_PATH</CODE>, or a test build of the next release).  The
+disadvantage to this system is that if you move libraries to new
+directories, executables linked in this way will be unable to find the
+libraries they need.  Moving any library is a bad idea however, doubly
+so for a Libtool library which has its installation directory encoded
+internally, so the way to avoid problems of this nature is to not move
+libraries around after installation!
+</P><P>
+
+<A NAME="Installing an Executable"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

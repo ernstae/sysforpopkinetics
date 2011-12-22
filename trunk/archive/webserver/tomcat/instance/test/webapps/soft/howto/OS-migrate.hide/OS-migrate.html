@@ -1,0 +1,659 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Operating System Version Migration</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Operating System Version Migration</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	Instructions and advice for migrating from RedHat Linux
+	version 8.0 to RedHat Enterprise Linux Version 3 are given.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>February 1, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN12"
+>Preparation</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN15"
+>Verify the Backup of your Home Directory</A
+></DT
+><DT
+><A
+HREF="#AEN38"
+>Make a Copy of <TT
+CLASS="filename"
+>/etc</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN46"
+>Plan the Migration of Non-RPM Packages</A
+></DT
+><DT
+><A
+HREF="#AEN58"
+>Print Out Key Network Configuration Files</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN62"
+>Install RHEL from Cdrom</A
+></DT
+><DT
+><A
+HREF="#extra"
+>Create Extra Directory</A
+></DT
+><DT
+><A
+HREF="#AEN72"
+>Install a Copy of Your Old Home Directory</A
+></DT
+><DT
+><A
+HREF="#AEN82"
+>Restore Password-Free SSH Connections</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN12"
+></A
+>Preparation</H2
+><P
+>&#13;      In the future, it should be possible to migrate from one
+      version of Redhat Enterprise Linux (RHEL) to the next via
+      an update process, in which most files in your system
+      will remain intact. This is, unfortunately, not possible in the
+      migration from Redhat Linux to RHEL.  Your entire disk 
+      storage will be wiped clean.  It is, therefore, crucial that
+      you prepare carefully for the move.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN15"
+></A
+>Verify the Backup of your Home Directory</H3
+><P
+>&#13;	Each weekday night, your system should be copying your
+	home directory to <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>. You should verify that
+	this is working correctly.  Here is one way to do that:
+	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      In a terminal window, go to the directory on
+	      <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+> which contains your backup copies:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh whitechuck
+cd backup
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+><LI
+><P
+>&#13;	      If you run <B
+CLASS="command"
+>ls -l</B
+>, you should see a
+	      list of directory names, each starting with the date
+	      on which the backup was taken. Go 
+	      <B
+CLASS="command"
+>cd</B
+> to the most recent backup, and
+	      then take a directory listing:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd <I
+CLASS="emphasis"
+>most-recent-backup</I
+>
+ls -lR $USER &#62; /tmp/backup_listing
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Open a terminal window on your workstation, and
+	      make a similar directory listing there, retrieve the 
+	      listing made on <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>, and use <B
+CLASS="command"
+>diff</B
+>
+	      to compare the two:
+	      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd ..
+ls -lR $USER &#62; /tmp/current_listing
+cd /tmp
+scp whitechuck:/tmp/backup_listing .
+diff current_listing backup_listing
+	      </PRE
+></TD
+></TR
+></TABLE
+>
+	    </P
+></LI
+><LI
+><P
+>&#13;	      If the backup is recent, the output from the 
+	      <B
+CLASS="command"
+>diff</B
+> command should be short. Check 
+	      into any differences that come as a surprise.  At the
+	      end of this process, you must be confident that your
+	      backup is good.
+	    </P
+></LI
+></OL
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN38"
+></A
+>Make a Copy of <TT
+CLASS="filename"
+>/etc</TT
+></H3
+><P
+>&#13;	Most of the configuration files on your workstation reside in the
+	<TT
+CLASS="filename"
+>/etc</TT
+> directory.  If certain functions 
+	no longer work after the migration, it will be useful to be
+	able to consult previous versions of the configuration files.
+	From a terminal window, here is a convenient way to make
+	a copy:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su -
+cd /
+tar cvzf /tmp/etc.tgz etc
+chown $USER /tmp/etc.tgz
+exit
+scp /tmp/etc.tgz whitechuck:
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	Upon completing the command sequence listed above,
+	a new tar ball named <TT
+CLASS="filename"
+>etc.tgz</TT
+> should 
+	appear in your home directory on <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN46"
+></A
+>Plan the Migration of Non-RPM Packages</H3
+><P
+>&#13;	The overwhelming majority of software packages on your workstation
+	were installed by the Redhat Package Manager (RPM).  When
+	you install RHEL, later versions of these packages will be
+	installed automatically.  You may, however, have several 
+	packages that were not installed by RPM.  These are most
+	likely located in <TT
+CLASS="filename"
+>/usr/local</TT
+>, although
+	they may be elsewhere.  Only you know what these packages
+	are.
+      </P
+><P
+>&#13;	There are two basic ways to handle the migration of
+	your non-RPM packages:
+	<P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	      Reinstall them from scratch.
+	    </P
+></LI
+><LI
+><P
+>&#13;	      Similar to the way that you placed a copy of 
+	      <TT
+CLASS="filename"
+>/etc</TT
+> on <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>
+	      place a copy of the tar ball for each package
+	      somewhere safe, so that you can copy it back 
+	      and expand it after the migration.  Note, however,
+	      that this might not work, because the package 
+	      might depend in some way on RedHat 8.0 that is 
+	      not compatible with RHEL.
+	    </P
+></LI
+></OL
+>
+	Just to be on the safe side, it might be best to make a 
+	copy of any non-RPM package that you are really depending
+	on, even though your intention is to reinstall from scratch.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN58"
+></A
+>Print Out Key Network Configuration Files</H3
+><P
+>&#13;	The RHEL installation script will ask certain questions
+	about your network configuration.  It will be useful
+	to have printout of key files to refer to.  From a 
+	shell window:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;pr /etc/resolv.conf | lpr
+pr /etc/hosts | lpr
+pr /etc/sysconfig/network | lpr
+pr /etc/sysconfig/network-scripts/ifcfg-eth0 | lpr
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN62"
+></A
+>Install RHEL from Cdrom</H2
+><P
+>&#13;    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="extra"
+></A
+>Create Extra Directory</H2
+><P
+>&#13;      The Software Team backup process places a copy of your
+      entire home directory on <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+> after each working
+      day.  Sometimes you need storage for files which do not
+      require nightly backup. This is a convenient way to 
+      provide this storage in a way that is accessible with
+      ordinary user permissions.
+    </P
+><P
+>&#13;      In a shell window:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su -
+cd /opt
+mkdir extra
+chown <I
+CLASS="emphasis"
+>&#60;your user name&#62;</I
+> extra
+exit
+cd
+ln -s /opt/extra extra
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN72"
+></A
+>Install a Copy of Your Old Home Directory</H2
+><P
+>&#13;      In order to simplify the task of restoring the functions
+      that you enjoyed before the migration, you can copy the
+      most recent backup from <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+> to your workstation.
+    </P
+><P
+>&#13;      The following assumes that you have set up directory which is
+      located outside of your home directory, but to which you have
+      write privilege and to which there is a symbolic link called
+      <TT
+CLASS="filename"
+>extra</TT
+> in your home directory.  For details,
+      see <A
+HREF="#extra"
+>Create Extra Directory</A
+>.
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh whitechuck
+cd backup
+B=<I
+CLASS="emphasis"
+>name of latest backup</I
+>
+tar cvzf /tmp/$B.tgz $B
+exit
+ssh whitechuck 'ls /tmp | grep .tgz'
+B=<I
+CLASS="emphasis"
+>name of latest backup</I
+>
+cd ~/extra
+scp whitechuck:/tmp/$B.tgz .
+tar xvzf $B.tgz
+rm $B.tgz
+cd
+ln -s /opt/extra/$B/$USER oldhome
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN82"
+></A
+>Restore Password-Free SSH Connections</H2
+><P
+>&#13;      If you have previously followed the instructions in the
+      <I
+CLASS="emphasis"
+>SSH Configuration Howto</I
+> to enable
+      your workstation to create secure connections to remote
+      hosts without requiring a password except when your
+      desktop manager starts up, you will want to follow the
+      steps in this section.
+    </P
+><P
+>&#13;      From a shell window:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd
+cp -R oldhome/.ssh .
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      Now configure the Gnome desktop manager.
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	<B
+CLASS="guimenu"
+>Main</B
+> =&#62; <B
+CLASS="guimenu"
+>Preferences</B
+> =&#62; <B
+CLASS="guimenu"
+>More Preferences</B
+> =&#62; <B
+CLASS="guimenuitem"
+>Sessions</B
+> =&#62; right-click
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      This will open the <SPAN
+CLASS="interface"
+>Sessions</SPAN
+>
+      window.  Press the 
+      <B
+CLASS="guibutton"
+>Startup Programs</B
+> button
+      followed by
+      the <B
+CLASS="guibutton"
+>Add</B
+> button.  Then
+      set the following variables:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	Startup Command: /usr/bin/ssh-add
+	Priority: 70
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      Close the window by pressing the
+      <B
+CLASS="guibutton"
+>OK</B
+> button.
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,232 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Modeling Capabilities Specification</TITLE>
+<META NAME="description" CONTENT="Modeling Capabilities Specification">
+<META NAME="keywords" CONTENT="modelCap">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="modelCap.css">
+
+<LINK REL="next" HREF="node1.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html8"
+  HREF="node1.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev_g.png"> 
+<A NAME="tex2html6"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html9"
+  HREF="node1.html">Contents</A>
+ &nbsp; <B>  <A NAME="tex2html7"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<P>
+
+<P>
+
+<P>
+
+<P>
+
+<P>
+<FONT SIZE="+1"><H1 ALIGN="CENTER">Modeling Capabilities Specification</H1>
+<DIV>
+
+<P ALIGN="CENTER"><STRONG>Mitch Watrous, Sachiko Honda, David Salinger and Paolo Vicini</STRONG></P>
+</DIV>
+</FONT>
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"></A>
+
+<UL>
+<LI><A NAME="tex2html10"
+  HREF="node1.html">Contents</A>
+<LI><A NAME="tex2html11"
+  HREF="node2.html">Introduction</A>
+<LI><A NAME="tex2html12"
+  HREF="node3.html">SPK Overview</A>
+<LI><A NAME="tex2html13"
+  HREF="node4.html">Major Modeling Capabilities</A>
+<LI><A NAME="tex2html14"
+  HREF="node5.html">Modeling Capability Extensions</A>
+<UL>
+<LI><A NAME="tex2html15"
+  HREF="node6.html">Population Level Likelihood Evaluation</A>
+<LI><A NAME="tex2html16"
+  HREF="node7.html">Residual Calculation</A>
+<UL>
+<LI><A NAME="tex2html17"
+  HREF="node8.html">Extended Least Squares Individual Level Residuals</A>
+<LI><A NAME="tex2html18"
+  HREF="node9.html">Map Bayesian Individual Level Residuals</A>
+<LI><A NAME="tex2html19"
+  HREF="node10.html">Population Level Residuals Background</A>
+<LI><A NAME="tex2html20"
+  HREF="node11.html">First Order Population Residuals</A>
+<LI><A NAME="tex2html21"
+  HREF="node12.html">Conditional Methods Population Residuals</A>
+</UL>
+</UL>
+<BR>
+<LI><A NAME="tex2html22"
+  HREF="node13.html">Modeling Capability Restrictions</A>
+<UL>
+<LI><A NAME="tex2html23"
+  HREF="node14.html">Data Item Types ($INPUT)</A>
+<UL>
+<LI><A NAME="tex2html24"
+  HREF="node15.html">Reserved Labels not Recognized by SPK</A>
+<LI><A NAME="tex2html25"
+  HREF="node16.html">Dependent Variable Data Item (DV)</A>
+<LI><A NAME="tex2html26"
+  HREF="node17.html">Event Identification Data Item (EVID)</A>
+<LI><A NAME="tex2html27"
+  HREF="node18.html">Identification Data Item (ID)</A>
+</UL>
+<LI><A NAME="tex2html28"
+  HREF="node19.html">Data Sets ($DATA)</A>
+<UL>
+<LI><A NAME="tex2html29"
+  HREF="node20.html">Event Identification Data Items (EVID)</A>
+<LI><A NAME="tex2html30"
+  HREF="node21.html">Steady State Data Items (SS)</A>
+</UL>
+<LI><A NAME="tex2html31"
+  HREF="node22.html">Model Specification via the PRED Block ($PRED)</A>
+<UL>
+<LI><A NAME="tex2html32"
+  HREF="node23.html">Variable Naming Restrictions</A>
+<LI><A NAME="tex2html33"
+  HREF="node24.html">Special NONMEM-PREDPP Arguments (NEWIND and ICALL)</A>
+<LI><A NAME="tex2html34"
+  HREF="node25.html">Variables from NONMEM-PREDPP Common Blocks</A>
+<LI><A NAME="tex2html35"
+  HREF="node26.html">Controlling the Calling Frequency (CALLFL)</A>
+<LI><A NAME="tex2html36"
+  HREF="node27.html">First-order Approximation for the Intraindividual Error Model
+  during Population Level Estimation</A>
+</UL>
+<LI><A NAME="tex2html37"
+  HREF="node28.html">Pharmacokinetic Model Specification ($SUBROUTINE)</A>
+<UL>
+<LI><A NAME="tex2html38"
+  HREF="node29.html">Pharmacokinetic Library Subroutines (ADVAN)</A>
+<LI><A NAME="tex2html39"
+  HREF="node30.html">Translator Routines (TRANS)</A>
+</UL>
+<LI><A NAME="tex2html40"
+  HREF="node31.html">Pharmacokinetic Parameter Models ($PK)</A>
+<UL>
+<LI><A NAME="tex2html41"
+  HREF="node32.html">No Support for $PK Block</A>
+<LI><A NAME="tex2html42"
+  HREF="node33.html">Specifiying Pharmacokinetic Parameter Models using $PRED</A>
+</UL>
+<LI><A NAME="tex2html43"
+  HREF="node34.html">Initial Estimates and Bounds for Theta ($THETA)</A>
+<UL>
+<LI><A NAME="tex2html44"
+  HREF="node35.html">Unbounded Upper or Lower Limits</A>
+</UL>
+<LI><A NAME="tex2html45"
+  HREF="node36.html">Initial Estimates for Omega ($OMEGA)</A>
+<UL>
+<LI><A NAME="tex2html46"
+  HREF="node37.html">Diagonal or Full Matrices Only</A>
+<LI><A NAME="tex2html47"
+  HREF="node38.html">Only One Block for Nondiagonal Matrices (BLOCK)</A>
+</UL>
+<LI><A NAME="tex2html48"
+  HREF="node39.html">Intraindividual Error Models ($ERROR)</A>
+<UL>
+<LI><A NAME="tex2html49"
+  HREF="node40.html">No Support for $ERROR Block</A>
+<LI><A NAME="tex2html50"
+  HREF="node41.html">Specifiying Intraindividual Error Models using $PRED</A>
+</UL>
+<LI><A NAME="tex2html51"
+  HREF="node42.html">Initial Estimates for Sigma ($SIGMA)</A>
+<UL>
+<LI><A NAME="tex2html52"
+  HREF="node43.html">Diagonal or Full Matrices Only</A>
+<LI><A NAME="tex2html53"
+  HREF="node44.html">Only One Block for Nondiagonal Matrices (BLOCK)</A>
+</UL>
+<LI><A NAME="tex2html54"
+  HREF="node45.html">Instructions for the Estimation Step ($ESTIMATION)</A>
+<UL>
+<LI><A NAME="tex2html55"
+  HREF="node46.html">Continue Estimation when Theta is Nonphysiological (NOABORT)</A>
+<LI><A NAME="tex2html56"
+  HREF="node47.html">Conditional Likelihood for Noncontinuous Observed
+  Responses (LIKELIHOOD)</A>
+<LI><A NAME="tex2html57"
+  HREF="node48.html">Constrain Average Eta Estimates to be Close to Zero (CENTERING)</A>
+<LI><A NAME="tex2html58"
+  HREF="node49.html">Request Second Eta Derivatives to no be Numerical (NONUMERICAL)</A>
+<LI><A NAME="tex2html59"
+  HREF="node50.html">Fix Selected Etas to be Zero (ZERO)</A>
+</UL>
+</UL>
+<BR>
+<LI><A NAME="tex2html60"
+  HREF="node51.html">Appendix: The C++ Equivalent of the $PRED Block</A>
+<LI><A NAME="tex2html61"
+  HREF="node52.html">Appendix: Individual Level Models</A>
+<UL>
+<LI><A NAME="tex2html62"
+  HREF="node53.html">SPK Model for an Individual's Data</A>
+<LI><A NAME="tex2html63"
+  HREF="node54.html">NONMEM Model for an Individual's Data</A>
+<LI><A NAME="tex2html64"
+  HREF="node55.html">Comparison of the Models for an Individual's Data</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html65"
+  HREF="node56.html">Appendix: Population Level Models</A>
+<UL>
+<LI><A NAME="tex2html66"
+  HREF="node57.html">SPK Mixed Effects Model</A>
+<LI><A NAME="tex2html67"
+  HREF="node58.html">NONMEM Mixed Effects Model</A>
+<LI><A NAME="tex2html68"
+  HREF="node59.html">Comparison of the Mixed Effects Models</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html69"
+  HREF="node60.html">About this document ...</A>
+</UL>
+<!--End of Table of Child-Links-->
+<BR><HR>
+<ADDRESS>
+Mitch Watrous
+2007-12-17
+</ADDRESS>
+</BODY>
+</HTML>

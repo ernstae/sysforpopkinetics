@@ -1,0 +1,226 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Entering Emacs</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Entering Emacs">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Entering Emacs">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC17"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_5.html#SEC16"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_6.html#SEC18"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_5.html#SEC16"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_6.html#SEC18"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> C. Entering and Exiting Emacs </H1>
+<!--docid::SEC17::-->
+<P>
+
+  The usual way to invoke Emacs is with the shell command <CODE>emacs</CODE>.
+Emacs clears the screen and then displays an initial help message and
+copyright notice.  Some operating systems discard all type-ahead when
+Emacs starts up; they give Emacs no way to prevent this.  Therefore, it
+is advisable to wait until Emacs clears the screen before typing your
+first editing command.
+</P><P>
+
+  If you run Emacs from a shell window under the X Window System, run it
+in the background with <CODE>emacs&#38;</CODE>.  This way, Emacs does not tie up
+the shell window, so you can use that to run other shell commands while
+Emacs operates its own X windows.  You can begin typing Emacs commands
+as soon as you direct your keyboard input to the Emacs frame.
+</P><P>
+
+<A NAME="IDX25"></A>
+  When Emacs starts up, it creates a buffer named <SAMP>`*scratch*'</SAMP>.
+That's the buffer you start out in.  The <SAMP>`*scratch*'</SAMP> buffer uses Lisp
+Interaction mode; you can use it to type Lisp expressions and evaluate
+them, or you can ignore that capability and simply doodle.  (You can
+specify a different major mode for this buffer by setting the variable
+<CODE>initial-major-mode</CODE> in your init file.  See section <A HREF="emacs_33.html#SEC505">AD.7 The Init File, <TT>`~/.emacs'</TT></A>.)
+</P><P>
+
+  It is possible to specify files to be visited, Lisp files to be
+loaded, and functions to be called, by giving Emacs arguments in the
+shell command line.  See section <A HREF="emacs_34.html#SEC528">AE. Command Line Arguments</A>.  But we don't recommend
+doing this.  The feature exists mainly for compatibility with other
+editors.
+</P><P>
+
+  Many other editors are designed to be started afresh each time you
+want to edit.  You edit one file and then exit the editor.  The next
+time you want to edit either another file or the same one, you must run
+the editor again.  With these editors, it makes sense to use a
+command-line argument to say which file to edit.
+</P><P>
+
+  But starting a new Emacs each time you want to edit a different file
+does not make sense.  For one thing, this would be annoyingly slow.
+For another, this would fail to take advantage of Emacs's ability to
+visit more than one file in a single editing session.  And it would
+lose the other accumulated context, such as the kill ring, registers,
+undo history, and mark ring.
+</P><P>
+
+  The recommended way to use GNU Emacs is to start it only once, just
+after you log in, and do all your editing in the same Emacs session.
+Each time you want to edit a different file, you visit it with the
+existing Emacs, which eventually comes to have many files in it ready
+for editing.  Usually you do not kill the Emacs until you are about to
+log out.  See section <A HREF="emacs_16.html#SEC110">M. File Handling</A>, for more information on visiting more than one
+file.
+</P><P>
+
+<A NAME="Exiting"></A>
+<HR SIZE="6">
+<A NAME="SEC18"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_6.html#SEC17"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_6.html#SEC17"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> C.1 Exiting Emacs </H2>
+<!--docid::SEC18::-->
+<P>
+
+  There are two commands for exiting Emacs because there are two kinds
+of exiting: <EM>suspending</EM> Emacs and <EM>killing</EM> Emacs.
+</P><P>
+
+  <EM>Suspending</EM> means stopping Emacs temporarily and returning
+control to its parent process (usually a shell), allowing you to resume
+editing later in the same Emacs job, with the same buffers, same kill
+ring, same undo history, and so on.  This is the usual way to exit.
+</P><P>
+
+  <EM>Killing</EM> Emacs means destroying the Emacs job.  You can run Emacs
+again later, but you will get a fresh Emacs; there is no way to resume
+the same editing session after it has been killed.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-z</KBD>
+<DD>Suspend Emacs (<CODE>suspend-emacs</CODE>) or iconify a frame
+(<CODE>iconify-or-deiconify-frame</CODE>).
+<DT><KBD>C-x C-c</KBD>
+<DD>Kill Emacs (<CODE>save-buffers-kill-emacs</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX26"></A>
+<A NAME="IDX27"></A>
+  To suspend Emacs, type <KBD>C-z</KBD> (<CODE>suspend-emacs</CODE>).  This takes
+you back to the shell from which you invoked Emacs.  You can resume
+Emacs with the shell command <CODE>%emacs</CODE> in most common shells.
+</P><P>
+
+  On systems that do not support suspending programs, <KBD>C-z</KBD> starts
+an inferior shell that communicates directly with the terminal.
+Emacs waits until you exit the subshell.  (The way to do that is
+probably with <KBD>C-d</KBD> or <CODE>exit</CODE>, but it depends on which shell
+you use.)  The only way on these systems to get back to the shell from
+which Emacs was run (to log out, for example) is to kill Emacs.
+</P><P>
+
+  Suspending also fails if you run Emacs under a shell that doesn't
+support suspending programs, even if the system itself does support it.
+In such a case, you can set the variable <CODE>cannot-suspend</CODE> to a
+non-<CODE>nil</CODE> value to force <KBD>C-z</KBD> to start an inferior shell.
+(One might also describe Emacs's parent shell as "inferior" for
+failing to support job control properly, but that is a matter of taste.)
+</P><P>
+
+  When Emacs communicates directly with an X server and creates its own
+dedicated X windows, <KBD>C-z</KBD> has a different meaning.  Suspending an
+application that uses its own X windows is not meaningful or useful.
+Instead, <KBD>C-z</KBD> runs the command <CODE>iconify-or-deiconify-frame</CODE>,
+which temporarily iconifies (or "minimizes") the selected Emacs
+frame (see section <A HREF="emacs_19.html#SEC191">P. Frames and X Windows</A>).  Then you can use the window manager to get
+back to a shell window.
+</P><P>
+
+<A NAME="IDX28"></A>
+<A NAME="IDX29"></A>
+  To exit and kill Emacs, type <KBD>C-x C-c</KBD>
+(<CODE>save-buffers-kill-emacs</CODE>).  A two-character key is used for
+this to make it harder to type by accident.  This command first offers
+to save any modified file-visiting buffers.  If you do not save them
+all, it asks for reconfirmation with <KBD>yes</KBD> before killing Emacs,
+since any changes not saved will be lost forever.  Also, if any
+subprocesses are still running, <KBD>C-x C-c</KBD> asks for confirmation
+about them, since killing Emacs will also kill the subprocesses.
+</P><P>
+
+<A NAME="IDX30"></A>
+  If the value of the variable <CODE>confirm-kill-emacs</CODE> is
+non-<CODE>nil</CODE>, <KBD>C-x C-c</KBD> assumes that its value is a predicate
+function, and calls that function.  If the result is non-<CODE>nil</CODE>, the
+session is killed, otherwise Emacs continues to run.  One convenient
+function to use as the value of <CODE>confirm-kill-emacs</CODE> is the
+function <CODE>yes-or-no-p</CODE>.  The default value of
+<CODE>confirm-kill-emacs</CODE> is <CODE>nil</CODE>.
+</P><P>
+
+  There is no way to resume an Emacs session once you have killed it.
+You can, however, arrange for Emacs to record certain session
+information when you kill it, such as which files are visited, so that
+the next time you start Emacs it will try to visit the same files and
+so on.  See section <A HREF="emacs_32.html#SEC465">AC.25 Saving Emacs Sessions</A>.
+</P><P>
+
+  The operating system usually listens for certain special characters
+whose meaning is to kill or suspend the program you are running.
+<B>This operating system feature is turned off while you are in Emacs.</B>
+The meanings of <KBD>C-z</KBD> and <KBD>C-x C-c</KBD> as keys in Emacs were
+inspired by the use of <KBD>C-z</KBD> and <KBD>C-c</KBD> on several operating
+systems as the characters for stopping or killing a program, but that is
+their only relationship with the operating system.  You can customize
+these keys to run any commands of your choice (see section <A HREF="emacs_33.html#SEC492">AD.4.1 Keymaps</A>).
+<A NAME="Basic"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_6.html#SEC17"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

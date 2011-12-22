@@ -1,0 +1,99 @@
+<html><head>
+<title>Row major conversion of a matrix to a column vector</title>
+<meta name="description" id="description" content="Row major conversion of a matrix to a column vector">
+<meta name="keywords" id="keywords" content=" row major conversion matrix column vector rvec "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="rvecva.htm" target="_top">section</a>, <a href="rvecva_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+The function converts a <code><span style='white-space: nowrap'><i>m</i></span></code> by <code><span style='white-space: nowrap'><i>n</i></span></code> matrix, <code><span style='white-space: nowrap'><i>A</i></span></code>, 
+to a column vector containing the values of <code><span style='white-space: nowrap'><i>A</i></span></code> in
+the following order:
+
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;<i>a</i>&nbsp;&nbsp;&nbsp;,&nbsp;<i>a</i>&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;...&nbsp;,&nbsp;<i>a</i>&nbsp;&nbsp;,&nbsp;&nbsp;<i>a</i>&nbsp;&nbsp;&nbsp;,&nbsp;&nbsp;<i>a</i>&nbsp;&nbsp;&nbsp;,&nbsp;...&nbsp;,&nbsp;<i>a</i>&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,1&nbsp;&nbsp;&nbsp;1,2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1,<i>n</i>&nbsp;&nbsp;&nbsp;2,1&nbsp;&nbsp;&nbsp;&nbsp;2,2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>m</i>,<i>n</i><br>
+</span></code><br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>a</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is an array containing the values of <code><span style='white-space: nowrap'><i>m</i></span></code> by <code><span style='white-space: nowrap'><i>n</i></span></code> matrix, <code><span style='white-space: nowrap'><i>A</i></span></code>,
+where <code><span style='white-space: nowrap'><i>m</i></span></code> and <code><span style='white-space: nowrap'><i>n</i></span></code> are greater than or equal to zero.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nCols</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>specifies the column dimension <code><span style='white-space: nowrap'><i>n</i></span></code> of the matrix <code><span style='white-space: nowrap'><i>A</i></span></code>.
+The value must be greater than zero unless <code><span style='white-space: nowrap'><i>A</i></span></code> is empty.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link and run the following program,
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;SpkValarray.h&quot;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;rvec.h&quot;<br>
+<br>
+&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;SPK_VA::valarray;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;A&nbsp;to&nbsp;a&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;A&nbsp;=&nbsp;|&nbsp;&nbsp;1.0&nbsp;&nbsp;2.0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;3.0&nbsp;&nbsp;4.0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;a[]&nbsp;=&nbsp;{&nbsp;1.0,&nbsp;3.0,&nbsp;2.0,&nbsp;4.0&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;A&nbsp;(&nbsp;a,&nbsp;4&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;rvec(A)&nbsp;expects&nbsp;a&nbsp;matrix&nbsp;B&nbsp;in&nbsp;the&nbsp;following&nbsp;form:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;rvec(A)&nbsp;=&nbsp;|&nbsp;&nbsp;1.0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;2.0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;3.0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;4.0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;B&nbsp;=&nbsp;rvec(&nbsp;A,&nbsp;2&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;A&nbsp;=&quot;&nbsp;&lt;&lt;&nbsp;A&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;rvec(A)&nbsp;=&quot;&nbsp;&lt;&lt;&nbsp;B&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+the following results will be displayed.
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;a&nbsp;=&nbsp;{&nbsp;1.0,&nbsp;3.0,&nbsp;2.0,&nbsp;4.0&nbsp;}<br>
+<br>
+&nbsp;&nbsp;rvec(A)&nbsp;=&nbsp;{&nbsp;1.0,&nbsp;2,0,&nbsp;3.0,&nbsp;4.0&nbsp;}<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/rvec.h
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.242
+----------------------------------
+USER VISIBLE CHANGES
+
+Fixed memory leak.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  971
+
+BY:  Mitch Watrous
+
+WHEN:  August 25, 2008

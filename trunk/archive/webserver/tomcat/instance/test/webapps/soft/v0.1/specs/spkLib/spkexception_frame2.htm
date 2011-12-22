@@ -1,0 +1,216 @@
+<html><head>
+<title>SpkException Class</title>
+<meta name="description" id="description" content="SpkException Class">
+<meta name="keywords" id="keywords" content=" Spkexception class exception error handling "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="spkexception.htm" target="_top">section</a>, <a href="spkexception_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This is the exception the Spk library throws when it detects errors during a session.  
+A SpkException object
+maintains a list of <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+ objects that are added 
+by client during the course of execution.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>A SpkException should be thrown when an error is detected and be caught by a client that
+knows what to do with it, either partially or completely; no intermediate
+clients shall attempt to catch the exception.
+
+
+<br>
+<br>
+<b><big><a name="Constructors" id="Constructors">Constructors</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+SpkException()&nbsp;throw()<br>
+</span></font></code>Default constructor.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+SpkException(const&nbsp;SpkError&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>e</span></i><code><font color="blue"><span style='white-space: nowrap'>)&nbsp;throw()<br>
+</span></font></code>Instantiate SpkException with <i>e</i> as the first error.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+SpkException(&nbsp;enum&nbsp;SpkError::ErrorCode&nbsp;</span></font></code><i><span style='white-space: nowrap'>code</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>message</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;unsigned&nbsp;int&nbsp;</span></font></code><i><span style='white-space: nowrap'>line</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>filename</span></i><code><font color="blue"><span style='white-space: nowrap'>)&nbsp;throw()<br>
+</span></font></code>Create a <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+ object, instanciate SpkException and adds to the head of the error list.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+SpkException(const&nbsp;SpkException&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>right</span></i><code><font color="blue"><span style='white-space: nowrap'>)&nbsp;throw()<br>
+</span></font></code>(deep) Copy constructor.
+
+
+<br>
+<br>
+<b><big><a name="Public Interfaces" id="Public Interfaces">Public Interfaces</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+const&nbsp;SpkException&amp;&nbsp;operator=(const&nbsp;SpkException&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>right</span></i><code><font color="blue"><span style='white-space: nowrap'>)&nbsp;throw()&nbsp;<br>
+</span></font></code>Assignment operator (performing deep copy).
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+SpkException&amp;&nbsp;push(&nbsp;const&nbsp;SpkError&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>e</span></i><code><font color="blue"><span style='white-space: nowrap'>)&nbsp;throw()<br>
+</span></font></code>Appends <i>e</i> to the list of errors.  If the list is already full,
+it aborts the execution.  You can determine the maximum
+number of errors an exception object can hold with
+<code><font color="blue">static SpkException::maxErrorcodes()</font></code> or test whether it is full or not with
+<code><font color="blue">SpkException::full()</font></code>.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+SpkException&amp;&nbsp;push(&nbsp;enum&nbsp;SpkError::ErrorCode&nbsp;</span></font></code><i><span style='white-space: nowrap'>code</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>message</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;unsigned&nbsp;int&nbsp;</span></font></code><i><span style='white-space: nowrap'>line</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>filename</span></i><code><font color="blue"><span style='white-space: nowrap'>)&nbsp;throw()<br>
+</span></font></code>Create a <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+ object and append it to the list of errors.  If the list is already full,
+it aborts the execution.  You can determine the maximum
+number of errors an exception object can hold with
+<code><font color="blue">static SpkException::maxErrorcodes()</font></code> or test whether it is full or not with
+<code><font color="blue">SpkException::full()</font></code>.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+const&nbsp;SpkError&nbsp;pop()&nbsp;throw()<br>
+</span></font></code>Returns the most recently added Error object and remove the object from the list
+of errors.  If the list is already empty, it aborts the execution.
+You can test whether it is full or not with
+<code><font color="blue">SpkException::empty()</font></code>.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+const&nbsp;SpkError&amp;&nbsp;operator[](int&nbsp;</span></font></code><i><span style='white-space: nowrap'>index</span></i><code><font color="blue"><span style='white-space: nowrap'>)&nbsp;const&nbsp;throw()<br>
+</span></font></code>Returns the <i>index</i>-th <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+ object found in the
+list of errors. If an invalid value is given, it aborts the execution.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+int&nbsp;size()&nbsp;const&nbsp;throw()<br>
+</span></font></code>Returns the number of <i>SpkError</i> objects accumulated so far.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+bool&nbsp;full()&nbsp;const&nbsp;throw()<br>
+</span></font></code>Returns true if the error list is full.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+bool&nbsp;empty()&nbsp;const&nbsp;throw()<br>
+</span></font></code>Returns true if the error list is empty.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+int&nbsp;find(const&nbsp;enum&nbsp;SpkError::ErrorCode&nbsp;code)&nbsp;const<br>
+</span></font></code>Returns the position of the first occurrence of <i>SpkError</i> object that contains <i>code</i>
+as the error code in the error list (0 &lt;= position &lt; size()) if there is a match.
+If there is no match, returns a negative number.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+int&nbsp;findFile(const&nbsp;char*&nbsp;filename)&nbsp;const<br>
+</span></font></code>Returns the position of the first occurrence of <i>SpkError</i> object that contains <i>filename</i>
+in the error list (0 &lt;= position &lt; size()) if there is an <b>exact</b> match.
+If there is no exact match, returns a negative number.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+const&nbsp;char*&nbsp;what()&nbsp;const&nbsp;throw()<br>
+</span></font></code>Returns the name of this class.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+friend&nbsp;std::ostream&amp;&nbsp;operator&lt;&lt;(std::ostream&amp;&nbsp;stream,&nbsp;const&nbsp;SpkException&amp;&nbsp;e);<br>
+</span></font></code>Returns a list of serialized <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+ objects.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+friend&nbsp;std::string&amp;&nbsp;operator&lt;&lt;(std::string&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>s</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;SpkException&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>e</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>Behaves the same as <code><font color="blue">
+std::ostream&amp; operator&lt;&lt;(std::ostream&amp;, const SpkException&amp;)</font></code> does,
+except this version takes a std::string object in place of std::ostream. 
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;<br>
+friend&nbsp;std::istream&amp;&nbsp;operator&gt;&gt;(std::istream&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>stream</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;SpkException&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>e</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>Read information from e and extract to stream in the format 
+described in the std::istream&amp; SpkException::operator&gt;&gt;(std::istream&amp;, SpkException&amp;) section
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+friend&nbsp;std::string&amp;&nbsp;operator&gt;&gt;(std::string&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>s</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;SpkException&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>e</span></i><code><font color="blue"><span style='white-space: nowrap'>);<br>
+</span></font></code>Behaves the same as <code><font color="blue">
+std::ostream&amp; operator&gt;&gt;(std::istream&amp;, SpkException&amp;)</font></code> does,
+except this version takes a std::string object in place of std::istream. 
+
+
+
+<br>
+<br>
+<b><big><a name="Class Member Functions" id="Class Member Functions">Class Member Functions</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+static&nbsp;unsigned&nbsp;int&nbsp;maxErrors()&nbsp;throw()<br>
+</span></font></code>Returns the maximum number of SpkError objects a SpkException can 
+hold.
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you save the following program as <code><font color="blue">main.cpp</font></code>, compile, link, and run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;SpkException.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;f(double&nbsp;a,&nbsp;double&nbsp;b)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;b&nbsp;==&nbsp;0.0&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;throw&nbsp;SpkException(&nbsp;SpkError::SPK_FP_ZERODIVIDE_ERR,&nbsp;&quot;divide&nbsp;by&nbsp;zero&quot;,&nbsp;__LINE__,&nbsp;__FILE__&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;a&nbsp;/&nbsp;b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;a&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;b&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;c&nbsp;=&nbsp;0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c&nbsp;=&nbsp;f(a,b);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;catch(&nbsp;const&nbsp;SpkException&amp;&nbsp;e&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;e;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;-1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+errorcode<br>
+</span>
+</font></code>
+<i>... an integer defined as SpkError::SPK_FP_ZERODIVIDE_ERR will appear here (e.x. 3)...</i>
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+linenum<br>
+8<br>
+filename<br>
+main.cpp<br>
+message<br>
+divide&nbsp;by&nbsp;zero<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/SpkException.cpp
+
+</body>
+</html>

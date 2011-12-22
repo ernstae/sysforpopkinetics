@@ -1,0 +1,727 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Conditional Methods Population Residuals</TITLE>
+<META NAME="description" CONTENT="Conditional Methods Population Residuals">
+<META NAME="keywords" CONTENT="modelCap">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="modelCap.css">
+
+<LINK REL="previous" HREF="node11.html">
+<LINK REL="up" HREF="node7.html">
+<LINK REL="next" HREF="node13.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html244"
+  HREF="node13.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html240"
+  HREF="node7.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html236"
+  HREF="node11.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html242"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html245"
+  HREF="node13.html">Modeling Capability Restrictions</A>
+<B> Up:</B> <A NAME="tex2html241"
+  HREF="node7.html">Residual Calculation</A>
+<B> Previous:</B> <A NAME="tex2html237"
+  HREF="node11.html">First Order Population Residuals</A>
+ &nbsp; <B>  <A NAME="tex2html243"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00052500000000000000">
+Conditional Methods Population Residuals</A>
+</H3>
+<P>
+<FONT SIZE="+1">The conditional estimation methods in SPK use either the Expected Hessian
+objective function, which is equivalent to NONMEM'S First Order
+Conditional Estimation (FOCE) method, or the Laplace
+objective, which is equivalent to NONMEM's Laplace method. Both
+conditional estimation methods perform Taylor series approximation of the
+model function <IMG
+ WIDTH="50" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img94.png"
+ ALT="$f(\alpha,b)$"> by setting <!-- MATH
+ $b^{\ast}_i = \hat{b}_i$
+ -->
+<IMG
+ WIDTH="51" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img119.png"
+ ALT="$b^{\ast}_i = \hat{b}_i$"> 
+for all of the individuals. 
+</FONT>
+<P>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+\tilde{f}_i(\alpha, b) = f_i(\alpha, \hat{b})+\partial_b f_i(\alpha, \hat{b})(b-\hat{b})
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="FOCE"></A><IMG
+ WIDTH="248" HEIGHT="28" BORDER="0"
+ SRC="img120.png"
+ ALT="\begin{displaymath}
+\tilde{f}_i(\alpha, b) = f_i(\alpha, \hat{b})+\partial_b f_i(\alpha, \hat{b})(b-\hat{b})
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(32)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+<P>
+<FONT SIZE="+1">The following table lists the residual related quantities, their
+values as calculated by SPK, and their values as calculated by NONMEM.
+Eq.&nbsp;<A HREF="node10.html#P">16</A> applied to Eq.&nbsp;<A HREF="#FOCE">32</A> provides the PPRED entry in the table
+below. The rest of the entries follow similarly.
+In this case, the NONMEM values are calculated using 
+one of NONMEM's conditional estimation that are available in the
+$ESTIMATION command.
+</FONT>
+<P>
+
+<DIV ALIGN="CENTER"><TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1">
+
+  </FONT><FONT SIZE="+1"><B>Quantity</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>SPK Value</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>Description</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>Name</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>NONMEM Value</B> </FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1">
+
+  <!-- MATH
+ $\mbox{E} \left[ f_i \right]^{\mbox{(P)}}$
+ -->
+<IMG
+ WIDTH="63" HEIGHT="48" ALIGN="MIDDLE" BORDER="0"
+ SRC="img79.png"
+ ALT="$\mbox{E} \left[ f_i \right]^{\mbox{(P)}}$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $f_i(\alpha, \hat{b}_i) - \partial_b f_i(\alpha, \hat{b}_i) \; \hat{b}_i$
+ -->
+<IMG
+ WIDTH="164" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img121.png"
+ ALT="$f_i(\alpha, \hat{b}_i) - \partial_b f_i(\alpha, \hat{b}_i) \; \hat{b}_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Approximate predicted value for an individual's data.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> PPRED 
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM.</FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <!-- MATH
+ $r^{\mbox{(P)}}_i$
+ -->
+<IMG
+ WIDTH="35" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="img81.png"
+ ALT="$r^{\mbox{(P)}}_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $y_i - f_i(\alpha, \hat{b}_i) + \partial_b f_i(\alpha, \hat{b}_i) \; \hat{b}_i$
+ -->
+<IMG
+ WIDTH="197" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img122.png"
+ ALT="$y_i - f_i(\alpha, \hat{b}_i) + \partial_b f_i(\alpha, \hat{b}_i) \; \hat{b}_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Approximate residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> PRES 
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM.</FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <!-- MATH
+ $w^{\mbox{(P)}}_i$
+ -->
+<IMG
+ WIDTH="40" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="img83.png"
+ ALT="$w^{\mbox{(P)}}_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $\begin{array}{l}
+        \left\{ \partial_b f_i(\alpha, \hat{b}_i) \;
+          D(\alpha) \; \partial_b f_i(\alpha, \hat{b}_i)^T
+          + R_i(\alpha, \hat{b}_i) \right\}^{-1/2} \\
+        \mbox{\hspace{0.5in}}
+        \ast [ y_i - f_i(\alpha, \hat{b}_i) 
+           + \partial_b f_i(\alpha, \hat{b}_i) \; \hat{b}_i ]
+      \end{array}$
+ -->
+<IMG
+ WIDTH="344" HEIGHT="70" ALIGN="MIDDLE" BORDER="0"
+ SRC="img123.png"
+ ALT="$\begin{array}{l}
+\left\{ \partial_b f_i(\alpha, \hat{b}_i) \;
+D(\alpha) \; \p...
+..., \hat{b}_i)
++ \partial_b f_i(\alpha, \hat{b}_i) \; \hat{b}_i ]
+\end{array} $">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Approximate weighted residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> PWRES 
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM.</FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <!-- MATH
+ $\rho^{\mbox{(P)}}_i$
+ -->
+<IMG
+ WIDTH="36" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="img85.png"
+ ALT="$\rho^{\mbox{(P)}}_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <IMG
+ WIDTH="28" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img116.png"
+ ALT="$-\hat{b_i}$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Individual parameter residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> PETARES
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM. </FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <!-- MATH
+ $z^{\mbox{(P)}}_i$
+ -->
+<IMG
+ WIDTH="36" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="img87.png"
+ ALT="$z^{\mbox{(P)}}_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $\left\{ D(\alpha) \right\}^{-1/2} ( - \hat{b_i} )$
+ -->
+<IMG
+ WIDTH="125" HEIGHT="41" ALIGN="MIDDLE" BORDER="0"
+ SRC="img118.png"
+ ALT="$\left\{ D(\alpha) \right\}^{-1/2} ( - \hat{b_i} )$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Weighted individual parameter residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> PWETARES
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM. </FONT></TD>
+</TR>
+</TABLE></DIV>
+<P>
+
+<P>
+<FONT SIZE="+1">The following table lists the residual related quantities, their
+values as calculated by SPK, and their values as calculated by NONMEM for the 
+case variables without P, I or L prefix. These quantities are supposed to be
+compatible with NONMEM outputs. In this case, the NONMEM values are the same.
+Note that in the case of the First Order method in SPK, PPRED and PRED coincide,
+but this is not true for the Expected Hessian.
+</FONT>
+<P>
+
+<DIV ALIGN="CENTER"><TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1">
+
+  </FONT><FONT SIZE="+1"><B>Quantity</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>SPK Value</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>Description</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>Name</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>NONMEM Value</B> </FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1">
+
+  <!-- MATH
+ $\mbox{E} \left[ f_i \right]$
+ -->
+<IMG
+ WIDTH="39" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img88.png"
+ ALT="$\mbox{E} \left[ f_i \right]$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $f_i(\alpha, 0)$
+ -->
+<IMG
+ WIDTH="55" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img80.png"
+ ALT="$f_i(\alpha, 0)$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Approximate predicted value for an individual's data.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> PRED 
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Same.</FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img89.png"
+ ALT="$r_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $y_i - f_i(\alpha, 0)$
+ -->
+<IMG
+ WIDTH="87" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img82.png"
+ ALT="$y_i - f_i(\alpha, 0)$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Approximate residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> RES 
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Same.</FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <IMG
+ WIDTH="21" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img90.png"
+ ALT="$w_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $\begin{array}{l}
+        \left\{ \partial_b f_i(\alpha, 0) \;
+          D(\alpha) \; \partial_b f_i(\alpha, 0)^T
+          + R_i(\alpha, 0) \right\}^{-1/2} \\
+        \mbox{\hspace{0.5in}}
+        \ast [ y_i - f_i(\alpha, 0) ]
+      \end{array}$
+ -->
+<IMG
+ WIDTH="329" HEIGHT="59" ALIGN="MIDDLE" BORDER="0"
+ SRC="img84.png"
+ ALT="$\begin{array}{l}
+\left\{ \partial_b f_i(\alpha, 0) \;
+D(\alpha) \; \partial_b...
+...^{-1/2} \\
+\mbox{\hspace{0.5in}}
+\ast [ y_i - f_i(\alpha, 0) ]
+\end{array} $">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Approximate weighted residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> WRES 
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Same.</FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img91.png"
+ ALT="$\rho_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> 0
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Individual parameter residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> ETARES
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM. </FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img92.png"
+ ALT="$z_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> 0
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Weighted individual parameter residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> WETARES
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM. </FONT></TD>
+</TR>
+</TABLE></DIV>
+<P>
+
+<P>
+<FONT SIZE="+1">When Eq.&nbsp;<A HREF="node10.html#L">17</A> applied to Eq.&nbsp;<A HREF="#FOCE">32</A>, the optimal value for <IMG
+ WIDTH="16" HEIGHT="38" ALIGN="MIDDLE" BORDER="0"
+ SRC="img124.png"
+ ALT="$\check{b}_i$">
+actually coincides with <IMG
+ WIDTH="16" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img64.png"
+ ALT="$\hat{b}_i$"> due to the properties of Gauss-Newton
+optimization. Thus, in the Expected Hessian, <!-- MATH
+ $\check{b}_i
+=\hat{b}_i$
+ -->
+<IMG
+ WIDTH="49" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img125.png"
+ ALT="$\check{b}_i
+=\hat{b}_i$"> and so the linerarized quantities are equal to the individual quantities.
+</FONT>
+<P>
+
+<DIV ALIGN="CENTER"><TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1">
+
+  </FONT><FONT SIZE="+1"><B>Quantity</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>SPK Value</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>Description</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>Name</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>NONMEM Value</B> </FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1">
+
+  <!-- MATH
+ $\mbox{E} \left[ f_i \right]^{\mbox{(L)}}$
+ -->
+<IMG
+ WIDTH="62" HEIGHT="48" ALIGN="MIDDLE" BORDER="0"
+ SRC="img98.png"
+ ALT="$\mbox{E} \left[ f_i \right]^{\mbox{(L)}}$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $f_i(\alpha, \hat{b}_i)$
+ -->
+<IMG
+ WIDTH="59" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img126.png"
+ ALT="$f_i(\alpha, \hat{b}_i)$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Approximate predicted value for an individual's data.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> LPRED 
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM.</FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <!-- MATH
+ $r^{\mbox{(L)}}_i$
+ -->
+<IMG
+ WIDTH="35" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="img100.png"
+ ALT="$r^{\mbox{(L)}}_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $y_i - f_i(\alpha, \hat{b}_i)$
+ -->
+<IMG
+ WIDTH="91" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img127.png"
+ ALT="$y_i - f_i(\alpha, \hat{b}_i)$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Approximate residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> LRES 
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM.</FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <!-- MATH
+ $w^{\mbox{(L)}}_i$
+ -->
+<IMG
+ WIDTH="39" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="img102.png"
+ ALT="$w^{\mbox{(L)}}_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $\begin{array}{l}
+        \left\{ R_i(\alpha, \hat{b}_i) \right\}^{-1/2}
+        [ y_i - f_i(\alpha, \hat{b}_i)]
+      \end{array}$
+ -->
+<IMG
+ WIDTH="229" HEIGHT="49" ALIGN="MIDDLE" BORDER="0"
+ SRC="img128.png"
+ ALT="$\begin{array}{l}
+\left\{ R_i(\alpha, \hat{b}_i) \right\}^{-1/2}
+[ y_i - f_i(\alpha, \hat{b}_i)]
+\end{array} $">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Approximate weighted residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> LWRES 
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM.</FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <!-- MATH
+ $\rho^{\mbox{(L)}}_i$
+ -->
+<IMG
+ WIDTH="35" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="img104.png"
+ ALT="$\rho^{\mbox{(L)}}_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <IMG
+ WIDTH="28" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img116.png"
+ ALT="$-\hat{b_i}$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Individual parameter residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> LETARES
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM. </FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <!-- MATH
+ $z^{\mbox{(L)}}_i$
+ -->
+<IMG
+ WIDTH="35" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="img106.png"
+ ALT="$z^{\mbox{(L)}}_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $\left\{ D(\alpha) \right\}^{-1/2} ( - \hat{b_i} )$
+ -->
+<IMG
+ WIDTH="125" HEIGHT="41" ALIGN="MIDDLE" BORDER="0"
+ SRC="img118.png"
+ ALT="$\left\{ D(\alpha) \right\}^{-1/2} ( - \hat{b_i} )$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Weighted individual parameter residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> LWETARES
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM. </FONT></TD>
+</TR>
+</TABLE></DIV>
+<P>
+
+<P>
+<FONT SIZE="+1">Eq.&nbsp;<A HREF="node10.html#I">18</A> applied to Eq.&nbsp;<A HREF="#FOCE">32</A> provides the IPRED entry in the table
+below. The rest of the entries follow similarly.
+</FONT>
+<P>
+
+<DIV ALIGN="CENTER"><TABLE CELLPADDING=3 BORDER="1">
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1">
+
+  </FONT><FONT SIZE="+1"><B>Quantity</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>SPK Value</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>Description</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>Name</B>
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> </FONT><FONT SIZE="+1"><B>NONMEM Value</B> </FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1">
+
+  <!-- MATH
+ $\mbox{E} \left[ f_i \right]^{\mbox{(I)}}$
+ -->
+<IMG
+ WIDTH="58" HEIGHT="48" ALIGN="MIDDLE" BORDER="0"
+ SRC="img109.png"
+ ALT="$\mbox{E} \left[ f_i \right]^{\mbox{(I)}}$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $f_i(\alpha, \hat{b}_i)$
+ -->
+<IMG
+ WIDTH="59" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img126.png"
+ ALT="$f_i(\alpha, \hat{b}_i)$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Approximate predicted value for an individual's data.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> IPRED 
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM.</FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <!-- MATH
+ $r^{\mbox{(I)}}_i$
+ -->
+<IMG
+ WIDTH="30" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="img129.png"
+ ALT="$r^{\mbox{(I)}}_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $y_i - f_i(\alpha, \hat{b}_i)$
+ -->
+<IMG
+ WIDTH="91" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img127.png"
+ ALT="$y_i - f_i(\alpha, \hat{b}_i)$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Approximate residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> IRES 
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM.</FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <!-- MATH
+ $w^{\mbox{(I)}}_i$
+ -->
+<IMG
+ WIDTH="35" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="img130.png"
+ ALT="$w^{\mbox{(I)}}_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $\begin{array}{l}
+        \left\{ R_i(\alpha, \hat{b}_i) \right\}^{-1/2} \\
+        \mbox{\hspace{0.5in}}
+        \ast [ y_i - f_i(\alpha, \hat{b}_i)]
+      \end{array}$
+ -->
+<IMG
+ WIDTH="189" HEIGHT="70" ALIGN="MIDDLE" BORDER="0"
+ SRC="img131.png"
+ ALT="$\begin{array}{l}
+\left\{ R_i(\alpha, \hat{b}_i) \right\}^{-1/2} \\
+\mbox{\hspace{0.5in}}
+\ast [ y_i - f_i(\alpha, \hat{b}_i)]
+\end{array} $">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Approximate weighted residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> IWRES 
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM.</FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <!-- MATH
+ $\rho^{\mbox{(I)}}_i$
+ -->
+<IMG
+ WIDTH="31" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="img132.png"
+ ALT="$\rho^{\mbox{(I)}}_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <IMG
+ WIDTH="28" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img116.png"
+ ALT="$-\hat{b_i}$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Individual parameter residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> IETARES
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM. </FONT></TD>
+</TR>
+<TR><TD ALIGN="LEFT" VALIGN="TOP" WIDTH=54><FONT SIZE="+1"> 
+  
+  <!-- MATH
+ $z^{\mbox{(I)}}_i$
+ -->
+<IMG
+ WIDTH="31" HEIGHT="51" ALIGN="MIDDLE" BORDER="0"
+ SRC="img133.png"
+ ALT="$z^{\mbox{(I)}}_i$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=234><FONT SIZE="+1"> <!-- MATH
+ $\left\{ D(\alpha) \right\}^{-1/2} ( - \hat{b_i} )$
+ -->
+<IMG
+ WIDTH="125" HEIGHT="41" ALIGN="MIDDLE" BORDER="0"
+ SRC="img118.png"
+ ALT="$\left\{ D(\alpha) \right\}^{-1/2} ( - \hat{b_i} )$">
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=79><FONT SIZE="+1"> Weighted individual parameter residuals for an individual.
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=61><FONT SIZE="+1"> IWETARES
+    </FONT></TD>
+<TD ALIGN="LEFT" VALIGN="TOP" WIDTH=72><FONT SIZE="+1"> Not available in NONMEM. </FONT></TD>
+</TR>
+</TABLE></DIV>
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html244"
+  HREF="node13.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html240"
+  HREF="node7.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html236"
+  HREF="node11.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html242"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html245"
+  HREF="node13.html">Modeling Capability Restrictions</A>
+<B> Up:</B> <A NAME="tex2html241"
+  HREF="node7.html">Residual Calculation</A>
+<B> Previous:</B> <A NAME="tex2html237"
+  HREF="node11.html">First Order Population Residuals</A>
+ &nbsp; <B>  <A NAME="tex2html243"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Mitch Watrous
+2007-12-17
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.162
+----------------------------------
+USER VISIBLE CHANGES
+
+Added Iterative and Global Two-Stage methods to SPK.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  None.
+
+BY:  Mitch Watrous
+
+WHEN:  March 31, 2006

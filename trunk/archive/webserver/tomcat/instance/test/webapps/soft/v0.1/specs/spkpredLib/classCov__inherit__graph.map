@@ -1,0 +1,3 @@
+base referer
+rect $classDiagCov.html 8,83 80,107
+rect $classFullCov.html 104,83 170,107

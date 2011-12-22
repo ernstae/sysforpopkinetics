@@ -1,0 +1,2005 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html40/loose.dtd">
+<HTML>
+<!-- Created on April, 18 2002 by texi2html 1.66 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<HEAD>
+<TITLE>CVS--Concurrent Versions System v1.11.2: Administrative files</TITLE>
+
+<META NAME="description" CONTENT="CVS--Concurrent Versions System v1.11.2: Administrative files">
+<META NAME="keywords" CONTENT="CVS--Concurrent Versions System v1.11.2: Administrative files">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.66">
+
+</HEAD>
+
+<BODY LANG="en" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC156"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC157"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> C. Reference manual for Administrative files </H1>
+<!--docid::SEC156::-->
+<P>
+
+Inside the repository, in the directory
+`<TT>$CVSROOT/CVSROOT</TT>', there are a number of
+supportive files for CVS.  You can use CVS in a limited
+fashion without any of them, but if they are set up
+properly they can help make life easier.  For a
+discussion of how to edit them, see <A HREF="cvs_2.html#SEC20">2.4 The administrative files</A>.
+</P>
+<P>
+
+The most important of these files is the `<TT>modules</TT>'
+file, which defines the modules inside the repository.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC157">C.1 The modules file</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Defining modules</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC164">C.2 The cvswrappers file</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Specify binary-ness based on file name</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC165">C.3 The commit support files</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">The commit support files (commitinfo,
+                                verifymsg, editinfo, loginfo)</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC174">C.4 Rcsinfo</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Templates for the log messages</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC175">C.5 Ignoring files via cvsignore</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC176">C.6 The checkoutlist file</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Adding your own administrative files</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC177">C.7 The history file</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">History information</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC178">C.8 Expansions in administrative files</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Various variables are expanded</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC179">C.9 The CVSROOT/config configuration file</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Miscellaneous CVS configuration</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="modules"></A>
+<HR SIZE="6">
+<A NAME="SEC157"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC158"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> C.1 The modules file </H2>
+<!--docid::SEC157::-->
+<P>
+
+The `<TT>modules</TT>' file records your definitions of
+names for collections of source code.  CVS will
+use these definitions if you use CVS to update the
+modules file (use normal commands like <CODE>add</CODE>,
+<CODE>commit</CODE>, etc).
+</P>
+<P>
+
+The `<TT>modules</TT>' file may contain blank lines and
+comments (lines beginning with `<SAMP>#</SAMP>') as well as
+module definitions.  Long lines can be continued on the
+next line by specifying a backslash (`<SAMP>\</SAMP>') as the
+last character on the line.
+</P>
+<P>
+
+There are three basic types of modules: alias modules,
+regular modules, and ampersand modules.  The difference
+between them is the way that they map files in the
+repository to files in the working directory.  In all
+of the following examples, the top-level repository
+contains a directory called `<TT>first-dir</TT>', which
+contains two files, `<TT>file1</TT>' and `<TT>file2</TT>', and a
+directory `<TT>sdir</TT>'.  `<TT>first-dir/sdir</TT>' contains
+a file `<TT>sfile</TT>'.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC158">C.1.1 Alias modules</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">The simplest kind of module</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC159">C.1.2 Regular modules</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC160">C.1.3 Ampersand modules</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC161">C.1.4 Excluding directories</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Excluding directories from a module</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC162">C.1.5 Module options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Regular and ampersand modules can take options</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC163">C.1.6 How the modules file &quot;program options&quot; programs are run</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How the modules &quot;program options&quot; programs
+                              are run.</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="Alias modules"></A>
+<HR SIZE="6">
+<A NAME="SEC158"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC157"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC159"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC157"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> C.1.1 Alias modules </H3>
+<!--docid::SEC158::-->
+<P>
+
+Alias modules are the simplest kind of module:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE><VAR>mname</VAR> -a <VAR>aliases</VAR><small>...</small></CODE>
+<DD>This represents the simplest way of defining a module
+<VAR>mname</VAR>.  The `<SAMP>-a</SAMP>' flags the definition as a
+simple alias: CVS will treat any use of <VAR>mname</VAR> (as
+a command argument) as if the list of names
+<VAR>aliases</VAR> had been specified instead.
+<VAR>aliases</VAR> may contain either other module names or
+paths.  When you use paths in aliases, <CODE>checkout</CODE>
+creates all intermediate directories in the working
+directory, just as if the path had been specified
+explicitly in the CVS arguments.
+</DL>
+<P>
+
+For example, if the modules file contains:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>amodule -a first-dir
+</pre></td></tr></table><P>
+
+then the following two commands are equivalent:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs co amodule
+$ cvs co first-dir
+</pre></td></tr></table><P>
+
+and they each would provide output such as:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs checkout: Updating first-dir
+U first-dir/file1
+U first-dir/file2
+cvs checkout: Updating first-dir/sdir
+U first-dir/sdir/sfile
+</pre></td></tr></table><P>
+
+<A NAME="Regular modules"></A>
+<HR SIZE="6">
+<A NAME="SEC159"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC158"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC160"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC157"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> C.1.2 Regular modules </H3>
+<!--docid::SEC159::-->
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE><VAR>mname</VAR> [ options ] <VAR>dir</VAR> [ <VAR>files</VAR><small>...</small> ]</CODE>
+<DD>In the simplest case, this form of module definition
+reduces to `<SAMP><VAR>mname</VAR> <VAR>dir</VAR></SAMP>'.  This defines
+all the files in directory <VAR>dir</VAR> as module mname.
+<VAR>dir</VAR> is a relative path (from <CODE>$CVSROOT</CODE>) to a
+directory of source in the source repository.  In this
+case, on checkout, a single directory called
+<VAR>mname</VAR> is created as a working directory; no
+intermediate directory levels are used by default, even
+if <VAR>dir</VAR> was a path involving several directory
+levels.
+</DL>
+<P>
+
+For example, if a module is defined by:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>regmodule first-dir
+</pre></td></tr></table><P>
+
+then regmodule will contain the files from first-dir:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs co regmodule
+cvs checkout: Updating regmodule
+U regmodule/file1
+U regmodule/file2
+cvs checkout: Updating regmodule/sdir
+U regmodule/sdir/sfile
+$
+</pre></td></tr></table><P>
+
+By explicitly specifying files in the module definition
+after <VAR>dir</VAR>, you can select particular files from
+directory <VAR>dir</VAR>.  Here is
+an example:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>regfiles first-dir/sdir sfile
+</pre></td></tr></table><P>
+
+With this definition, getting the regfiles module
+will create a single working directory
+`<TT>regfiles</TT>' containing the file listed, which
+comes from a directory deeper
+in the CVS source repository:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs co regfiles
+U regfiles/sfile
+$
+</pre></td></tr></table><P>
+
+<A NAME="Ampersand modules"></A>
+<HR SIZE="6">
+<A NAME="SEC160"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC159"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC161"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC157"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> C.1.3 Ampersand modules </H3>
+<!--docid::SEC160::-->
+<P>
+
+A module definition can refer to other modules by
+including `<SAMP>&amp;<VAR>module</VAR></SAMP>' in its definition.
+<TABLE><tr><td>&nbsp;</td><td class=example><pre><VAR>mname</VAR> [ options ] <VAR>&amp;module</VAR><small>...</small>
+</pre></td></tr></table><P>
+
+Then getting the module creates a subdirectory for each such
+module, in the directory containing the module.  For
+example, if modules contains
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>ampermod &amp;first-dir
+</pre></td></tr></table><P>
+
+then a checkout will create an <CODE>ampermod</CODE> directory
+which contains a directory called <CODE>first-dir</CODE>,
+which in turns contains all the directories and files
+which live there.  For example, the command
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs co ampermod
+</pre></td></tr></table><P>
+
+will create the following files:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>ampermod/first-dir/file1
+ampermod/first-dir/file2
+ampermod/first-dir/sdir/sfile
+</pre></td></tr></table><P>
+
+There is one quirk/bug: the messages that CVS
+prints omit the `<TT>ampermod</TT>', and thus do not
+correctly display the location to which it is checking
+out the files:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs co ampermod
+cvs checkout: Updating first-dir
+U first-dir/file1
+U first-dir/file2
+cvs checkout: Updating first-dir/sdir
+U first-dir/sdir/sfile
+$
+</pre></td></tr></table><P>
+
+Do not rely on this buggy behavior; it may get fixed in
+a future release of CVS.
+</P>
+<P>
+
+<A NAME="Excluding directories"></A>
+<HR SIZE="6">
+<A NAME="SEC161"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC160"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC162"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC157"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> C.1.4 Excluding directories </H3>
+<!--docid::SEC161::-->
+<P>
+
+An alias module may exclude particular directories from
+other modules by using an exclamation mark (`<SAMP>!</SAMP>')
+before the name of each directory to be excluded.
+</P>
+<P>
+
+For example, if the modules file contains:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>exmodule -a !first-dir/sdir first-dir
+</pre></td></tr></table><P>
+
+then checking out the module `<SAMP>exmodule</SAMP>' will check
+out everything in `<SAMP>first-dir</SAMP>' except any files in
+the subdirectory `<SAMP>first-dir/sdir</SAMP>'.
+</P>
+<P>
+
+<A NAME="Module options"></A>
+<HR SIZE="6">
+<A NAME="SEC162"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC161"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC163"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC157"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> C.1.5 Module options </H3>
+<!--docid::SEC162::-->
+<P>
+
+Either regular modules or ampersand modules can contain
+options, which supply additional information concerning
+the module.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<A NAME="IDX278"></A>
+<DT><CODE>-d <VAR>name</VAR></CODE>
+<DD>Name the working directory something other than the
+module name.
+<P>
+
+<A NAME="IDX279"></A>
+<A NAME="IDX280"></A>
+</P>
+<DT><CODE>-e <VAR>prog</VAR></CODE>
+<DD>Specify a program <VAR>prog</VAR> to run whenever files in a
+module are exported.  <VAR>prog</VAR> runs with a single
+argument, the module name.
+<P>
+
+<A NAME="IDX281"></A>
+<A NAME="IDX282"></A>
+</P>
+<DT><CODE>-i <VAR>prog</VAR></CODE>
+<DD>Specify a program <VAR>prog</VAR> to run whenever files in a
+module are committed.  <VAR>prog</VAR> runs with a single
+argument, the full pathname of the affected directory
+in a source repository.  The `<TT>commitinfo</TT>',
+`<TT>loginfo</TT>', and `<TT>verifymsg</TT>' files provide other
+ways to call a program on commit.
+<P>
+
+<A NAME="IDX283"></A>
+<A NAME="IDX284"></A>
+</P>
+<DT><CODE>-o <VAR>prog</VAR></CODE>
+<DD>Specify a program <VAR>prog</VAR> to run whenever files in a
+module are checked out.  <VAR>prog</VAR> runs with a single
+argument, the module name.
+<P>
+
+<A NAME="IDX285"></A>
+<A NAME="IDX286"></A>
+<A NAME="IDX287"></A>
+</P>
+<DT><CODE>-s <VAR>status</VAR></CODE>
+<DD>Assign a status to the module.  When the module file is
+printed with `<SAMP>cvs checkout -s</SAMP>' the modules are
+sorted according to primarily module status, and
+secondarily according to the module name.  This option
+has no other meaning.  You can use this option for
+several things besides status: for instance, list the
+person that is responsible for this module.
+<P>
+
+<A NAME="IDX288"></A>
+<A NAME="IDX289"></A>
+</P>
+<DT><CODE>-t <VAR>prog</VAR></CODE>
+<DD>Specify a program <VAR>prog</VAR> to run whenever files in a
+module are tagged with <CODE>rtag</CODE>.  <VAR>prog</VAR> runs
+with two arguments: the module name and the symbolic
+tag specified to <CODE>rtag</CODE>.  It is not run
+when <CODE>tag</CODE> is executed.  Generally you will find
+that taginfo is a better solution (see section <A HREF="cvs_8.html#SEC78">8.3 User-defined logging</A>).
+<P>
+
+<A NAME="IDX290"></A>
+<A NAME="IDX291"></A>
+</P>
+<DT><CODE>-u <VAR>prog</VAR></CODE>
+<DD>Specify a program <VAR>prog</VAR> to run whenever `<SAMP>cvs
+update</SAMP>' is executed from the top-level directory of the
+checked-out module.  <VAR>prog</VAR> runs with a single
+argument, the full path to the source repository for
+this module.
+</DL>
+<P>
+
+You should also see see section <A HREF="cvs_18.html#SEC163">C.1.6 How the modules file &quot;program options&quot; programs are run</A> about how the
+&quot;program options&quot; programs are run.
+</P>
+<P>
+
+<A NAME="Module program options"></A>
+<HR SIZE="6">
+<A NAME="SEC163"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC162"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC164"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC157"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> C.1.6 How the modules file &quot;program options&quot; programs are run </H3>
+<!--docid::SEC163::-->
+<P>
+
+For checkout, rtag, and export, the program is server-based, and as such the
+following applies:-
+</P>
+<P>
+
+If using remote access methods (pserver, ext, etc.),
+CVS will execute this program on the server from a temporary
+directory. The path is searched for this program.
+</P>
+<P>
+
+If using &quot;local access&quot; (on a local or remote NFS file system, i.e.
+repository set just to a path),
+the program will be executed from the newly checked-out tree, if
+found there, or alternatively searched for in the path if not.
+</P>
+<P>
+
+The commit and update programs are locally-based, and are run as
+follows:-
+</P>
+<P>
+
+The program is always run locally. One must
+re-checkout the tree one is using if these options are updated in the
+modules administrative file. The file CVS/Checkin.prog contains the
+value of the option `-i' set in the modules file, and similarly for
+the file CVS/Update.prog and `-u'. The program is always executed from
+the top level of the checked-out copy on the client. Again, the program
+is first searched for in the checked-out copy and then using the path.
+</P>
+<P>
+
+The programs are all run after the operation has effectively
+completed.
+</P>
+<P>
+
+<A NAME="Wrappers"></A>
+<HR SIZE="6">
+<A NAME="SEC164"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC163"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC165"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> C.2 The cvswrappers file </H2>
+<!--docid::SEC164::-->
+<P>
+
+Wrappers refers to a CVS feature which lets you
+control certain settings based on the name of the file
+which is being operated on.  The settings are `<SAMP>-k</SAMP>'
+for binary files, and `<SAMP>-m</SAMP>' for nonmergeable text
+files.
+</P>
+<P>
+
+The `<SAMP>-m</SAMP>' option
+specifies the merge methodology that should be used when
+a non-binary file is updated.  <CODE>MERGE</CODE> means the usual
+CVS behavior: try to merge the files.  <CODE>COPY</CODE>
+means that <CODE>cvs update</CODE> will refuse to merge
+files, as it also does for files specified as binary
+with `<SAMP>-kb</SAMP>' (but if the file is specified as
+binary, there is no need to specify `<SAMP>-m 'COPY'</SAMP>').
+CVS will provide the user with the
+two versions of the files, and require the user using
+mechanisms outside CVS, to insert any necessary
+changes.  <STRONG>WARNING</STRONG>: do not use <CODE>COPY</CODE> with
+CVS 1.9 or earlier--such versions of CVS will
+copy one version of your file over the other, wiping
+out the previous contents.
+The `<SAMP>-m</SAMP>' wrapper option only affects behavior when
+merging is done on update; it does not affect how files
+are stored.  See <A HREF="cvs_9.html#SEC80">9. Handling binary files</A>, for more on
+binary files.
+</P>
+<P>
+
+The basic format of the file `<TT>cvswrappers</TT>' is:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>wildcard     [option value][option value]...
+
+where option is one of
+-m           update methodology      value: MERGE or COPY
+-k           keyword expansion       value: expansion mode
+
+and value is a single-quote delimited value.
+</pre></td></tr></table><P>
+
+For example, the following command imports a
+directory, treating files whose name ends in
+`<SAMP>.exe</SAMP>' as binary:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs import -I ! -W &quot;*.exe -k 'b'&quot; first-dir vendortag reltag
+</pre></td></tr></table><P>
+
+<A NAME="commit files"></A>
+<HR SIZE="6">
+<A NAME="SEC165"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC164"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC166"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> C.3 The commit support files </H2>
+<!--docid::SEC165::-->
+<P>
+
+The `<SAMP>-i</SAMP>' flag in the `<TT>modules</TT>' file can be
+used to run a certain program whenever files are
+committed (see section <A HREF="cvs_18.html#SEC157">C.1 The modules file</A>).  The files described in
+this section provide other, more flexible, ways to run
+programs whenever something is committed.
+</P>
+<P>
+
+There are three kind of programs that can be run on
+commit.  They are specified in files in the repository,
+as described below.  The following table summarizes the
+file names and the purpose of the corresponding
+programs.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT>`<TT>commitinfo</TT>'
+<DD>The program is responsible for checking that the commit
+is allowed.  If it exits with a non-zero exit status
+the commit will be aborted.
+<P>
+
+</P>
+<DT>`<TT>verifymsg</TT>'
+<DD>The specified program is used to evaluate the log message,
+and possibly verify that it contains all required
+fields.  This is most useful in combination with the
+`<TT>rcsinfo</TT>' file, which can hold a log message
+template (see section <A HREF="cvs_18.html#SEC174">C.4 Rcsinfo</A>).
+<P>
+
+</P>
+<DT>`<TT>editinfo</TT>'
+<DD>The specified program is used to edit the log message,
+and possibly verify that it contains all required
+fields.  This is most useful in combination with the
+`<TT>rcsinfo</TT>' file, which can hold a log message
+template (see section <A HREF="cvs_18.html#SEC174">C.4 Rcsinfo</A>).  (obsolete)
+<P>
+
+</P>
+<DT>`<TT>loginfo</TT>'
+<DD>The specified program is called when the commit is
+complete.  It receives the log message and some
+additional information and can store the log message in
+a file, or mail it to appropriate persons, or maybe
+post it to a local newsgroup, or<small>...</small>  Your
+imagination is the limit!
+</DL>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC166">C.3.1 The common syntax</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC167">C.3.2 Commitinfo</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Pre-commit checking</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC168">C.3.3 Verifying log messages</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How are log messages evaluated?</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC169">C.3.4 Editinfo</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Specifying how log messages are created</TD></TR>
+<TR><TH COLSPAN="3" ALIGN="left" VALIGN="TOP">                                (obsolete)
+</TH></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC171">C.3.5 Loginfo</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Where should log messages be sent?</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="syntax"></A>
+<HR SIZE="6">
+<A NAME="SEC166"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC165"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC167"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC165"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> C.3.1 The common syntax </H3>
+<!--docid::SEC166::-->
+<P>
+
+The administrative files such as `<TT>commitinfo</TT>',
+`<TT>loginfo</TT>', `<TT>rcsinfo</TT>', `<TT>verifymsg</TT>', etc.,
+all have a common format.  The purpose of the files are
+described later on.  The common syntax is described
+here.
+</P>
+<P>
+
+<A NAME="IDX292"></A>
+Each line contains the following:
+<UL>
+<LI>
+A regular expression.  This is a basic regular
+expression in the syntax used by GNU emacs.
+<P>
+
+</P>
+<LI>
+A whitespace separator--one or more spaces and/or tabs.
+<P>
+
+</P>
+<LI>
+A file name or command-line template.
+</UL>
+<P>
+
+Blank lines are ignored.  Lines that start with the
+character `<SAMP>#</SAMP>' are treated as comments.  Long lines
+unfortunately can <EM>not</EM> be broken in two parts in
+any way.
+</P>
+<P>
+
+The first regular expression that matches the current
+directory name in the repository is used.  The rest of the line
+is used as a file name or command-line as appropriate.
+</P>
+<P>
+
+<A NAME="commitinfo"></A>
+<HR SIZE="6">
+<A NAME="SEC167"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC166"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC168"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC165"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> C.3.2 Commitinfo </H3>
+<!--docid::SEC167::-->
+<P>
+
+The `<TT>commitinfo</TT>' file defines programs to execute
+whenever `<SAMP>cvs commit</SAMP>' is about to execute.  These
+programs are used for pre-commit checking to verify
+that the modified, added and removed files are really
+ready to be committed.  This could be used, for
+instance, to verify that the changed files conform to
+to your site's standards for coding practice.
+</P>
+<P>
+
+As mentioned earlier, each line in the
+`<TT>commitinfo</TT>' file consists of a regular expression
+and a command-line template.  The template can include
+a program name and any number of arguments you wish to
+supply to it.  The full path to the current source
+repository is appended to the template, followed by the
+file names of any files involved in the commit (added,
+removed, and modified files).
+</P>
+<P>
+
+<A NAME="IDX293"></A>
+The first line with a regular expression matching the
+directory within the repository will be used.  If the
+command returns a non-zero exit status the commit will
+be aborted.
+</P>
+<P>
+
+<A NAME="IDX294"></A>
+If the repository name does not match any of the
+regular expressions in this file, the `<SAMP>DEFAULT</SAMP>'
+line is used, if it is specified.
+</P>
+<P>
+
+<A NAME="IDX295"></A>
+All occurrences of the name `<SAMP>ALL</SAMP>' appearing as a
+regular expression are used in addition to the first
+matching regular expression or the name `<SAMP>DEFAULT</SAMP>'.
+</P>
+<P>
+
+Note: when CVS is accessing a remote repository,
+`<TT>commitinfo</TT>' will be run on the <EM>remote</EM>
+(i.e., server) side, not the client side (see section <A HREF="cvs_2.html#SEC26">2.9 Remote repositories</A>).
+</P>
+<P>
+
+<A NAME="verifymsg"></A>
+<HR SIZE="6">
+<A NAME="SEC168"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC167"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC169"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC165"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> C.3.3 Verifying log messages </H3>
+<!--docid::SEC168::-->
+<P>
+
+Once you have entered a log message, you can evaluate
+that message to check for specific content, such as
+a bug ID.  Use the `<TT>verifymsg</TT>' file to
+specify a program that is used to verify the log message.
+This program could be a simple script that checks
+that the entered message contains the required fields.
+</P>
+<P>
+
+The `<TT>verifymsg</TT>' file is often most useful together
+with the `<TT>rcsinfo</TT>' file, which can be used to
+specify a log message template.
+</P>
+<P>
+
+Each line in the `<TT>verifymsg</TT>' file consists of a
+regular expression and a command-line template.  The
+template must include a program name, and can include
+any number of arguments.  The full path to the current
+log message template file is appended to the template.
+</P>
+<P>
+
+One thing that should be noted is that the `<SAMP>ALL</SAMP>'
+keyword is not supported.  If more than one matching
+line is found, the first one is used.  This can be
+useful for specifying a default verification script in a
+directory, and then overriding it in a subdirectory.
+</P>
+<P>
+
+<A NAME="IDX296"></A>
+If the repository name does not match any of the
+regular expressions in this file, the `<SAMP>DEFAULT</SAMP>'
+line is used, if it is specified.
+</P>
+<P>
+
+<A NAME="IDX297"></A>
+If the verification script exits with a non-zero exit status,
+the commit is aborted.
+</P>
+<P>
+
+<A NAME="IDX298"></A>
+In the default configuration, CVS allows the
+verification script to change the log message. This is
+controlled via the RereadLogAfterVerify CVSROOT/config
+option.
+</P>
+<P>
+
+When `<SAMP>RereadLogAfterVerify=always</SAMP>' or
+`<SAMP>RereadLogAfterVerify=stat</SAMP>', the log message will
+either always be reread after the verification script
+is run or reread only if the log message file status
+has changed.
+</P>
+<P>
+
+See section <A HREF="cvs_18.html#SEC179">C.9 The CVSROOT/config configuration file</A>, for more on CVSROOT/config options.
+</P>
+<P>
+
+It is NOT a good idea for a `<TT>verifymsg</TT>' script to
+interact directly with the user in the various
+client/server methods. For the <CODE>pserver</CODE> method,
+there is no protocol support for communicating between
+`<TT>verifymsg</TT>' and the client on the remote end. For the
+<CODE>ext</CODE> and <CODE>server</CODE> methods, it is possible
+for CVS to become confused by the characters going
+along the same channel as the CVS protocol
+messages. See <A HREF="cvs_2.html#SEC26">2.9 Remote repositories</A>, for more
+information on client/server setups.  In addition, at the time
+the `<TT>verifymsg</TT>' script runs, the CVS
+server has locks in place in the repository.  If control is
+returned to the user here then other users may be stuck waiting
+for access to the repository.
+</P>
+<P>
+
+This option can be useful if you find yourself using an
+rcstemplate that needs to be modified to remove empty
+elements or to fill in default values.  It can also be
+useful if the rcstemplate has changed in the repository
+and the CVS/Template was not updated, but is able to be
+adapted to the new format by the verification script
+that is run by `<TT>verifymsg</TT>'.
+</P>
+<P>
+
+An example of an update might be to change all
+occurrences of 'BugId:' to be 'DefectId:' (which can be
+useful if the rcstemplate has recently been changed and
+there are still checked-out user trees with cached
+copies in the CVS/Template file of the older version).
+</P>
+<P>
+
+Another example of an update might be to delete a line
+that contains 'BugID: none' from the log message after
+validation of that value as being allowed is made.
+</P>
+<P>
+
+The following is a little silly example of a
+`<TT>verifymsg</TT>' file, together with the corresponding
+`<TT>rcsinfo</TT>' file, the log message template and an
+verification  script.  We begin with the log message template.
+We want to always record a bug-id number on the first
+line of the log message.  The rest of log message is
+free text.  The following template is found in the file
+`<TT>/usr/cvssupport/tc.template</TT>'.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>BugId:
+</pre></td></tr></table><P>
+
+The script `<TT>/usr/cvssupport/bugid.verify</TT>' is used to
+evaluate the log message.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>#!/bin/sh
+#
+#       bugid.verify filename
+#
+#  Verify that the log message contains a valid bugid
+#  on the first line.
+#
+if head -1 &lt; $1 | grep '^BugId:[ ]*[0-9][0-9]*$' &gt; /dev/null; then
+    exit 0
+elif head -1 &lt; $1 | grep '^BugId:[ ]*none$' &gt; /dev/null; then
+    # It is okay to allow commits with 'BugId: none',
+    # but do not put that text into the real log message.
+    grep -v '^BugId:[ ]*none$' &gt; $1.rewrite
+    mv $1.rewrite $1
+    exit 0
+else
+    echo &quot;No BugId found.&quot;
+    exit 1
+fi
+</pre></td></tr></table><P>
+
+The `<TT>verifymsg</TT>' file contains this line:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>^tc     /usr/cvssupport/bugid.verify
+</pre></td></tr></table><P>
+
+The `<TT>rcsinfo</TT>' file contains this line:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>^tc     /usr/cvssupport/tc.template
+</pre></td></tr></table><P>
+
+The `<TT>config</TT>' file contains this line:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>RereadLogAfterVerify=always
+</pre></td></tr></table><P>
+
+<A NAME="editinfo"></A>
+<HR SIZE="6">
+<A NAME="SEC169"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC168"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC170"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC165"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> C.3.4 Editinfo </H3>
+<!--docid::SEC169::-->
+<P>
+
+<EM>NOTE:</EM> The `<TT>editinfo</TT>' feature has been
+rendered obsolete.  To set a default editor for log
+messages use the <CODE>EDITOR</CODE> environment variable
+(see section <A HREF="cvs_19.html#SEC180">D. All environment variables which affect CVS</A>) or the `<SAMP>-e</SAMP>' global
+option (see section <A HREF="cvs_16.html#SEC117">A.4 Global options</A>).  See <A HREF="cvs_18.html#SEC168">C.3.3 Verifying log messages</A>,
+for information on the use of the `<TT>verifymsg</TT>'
+feature for evaluating log messages.
+</P>
+<P>
+
+If you want to make sure that all log messages look the
+same way, you can use the `<TT>editinfo</TT>' file to
+specify a program that is used to edit the log message.
+This program could be a custom-made editor that always
+enforces a certain style of the log message, or maybe a
+simple shell script that calls an editor, and checks
+that the entered message contains the required fields.
+</P>
+<P>
+
+If no matching line is found in the `<TT>editinfo</TT>'
+file, the editor specified in the environment variable
+<CODE>$CVSEDITOR</CODE> is used instead.  If that variable is
+not set, then the environment variable <CODE>$EDITOR</CODE>
+is used instead.  If that variable is not
+set a default will be used.  See <A HREF="cvs_1.html#SEC6">1.3.2 Committing your changes</A>.
+</P>
+<P>
+
+The `<TT>editinfo</TT>' file is often most useful together
+with the `<TT>rcsinfo</TT>' file, which can be used to
+specify a log message template.
+</P>
+<P>
+
+Each line in the `<TT>editinfo</TT>' file consists of a
+regular expression and a command-line template.  The
+template must include a program name, and can include
+any number of arguments.  The full path to the current
+log message template file is appended to the template.
+</P>
+<P>
+
+One thing that should be noted is that the `<SAMP>ALL</SAMP>'
+keyword is not supported.  If more than one matching
+line is found, the first one is used.  This can be
+useful for specifying a default edit script in a
+module, and then overriding it in a subdirectory.
+</P>
+<P>
+
+<A NAME="IDX299"></A>
+If the repository name does not match any of the
+regular expressions in this file, the `<SAMP>DEFAULT</SAMP>'
+line is used, if it is specified.
+</P>
+<P>
+
+If the edit script exits with a non-zero exit status,
+the commit is aborted.
+</P>
+<P>
+
+Note: when CVS is accessing a remote repository,
+or when the `<SAMP>-m</SAMP>' or `<SAMP>-F</SAMP>' options to <CODE>cvs
+commit</CODE> are used, `<TT>editinfo</TT>' will not be consulted.
+There is no good workaround for this; use
+`<TT>verifymsg</TT>' instead.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC170">C.3.4.1 Editinfo example</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="editinfo example"></A>
+<HR SIZE="6">
+<A NAME="SEC170"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC169"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC171"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC169"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H4> C.3.4.1 Editinfo example </H4>
+<!--docid::SEC170::-->
+<P>
+
+The following is a little silly example of a
+`<TT>editinfo</TT>' file, together with the corresponding
+`<TT>rcsinfo</TT>' file, the log message template and an
+editor script.  We begin with the log message template.
+We want to always record a bug-id number on the first
+line of the log message.  The rest of log message is
+free text.  The following template is found in the file
+`<TT>/usr/cvssupport/tc.template</TT>'.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>BugId:
+</pre></td></tr></table><P>
+
+The script `<TT>/usr/cvssupport/bugid.edit</TT>' is used to
+edit the log message.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>#!/bin/sh
+#
+#       bugid.edit filename
+#
+#  Call $EDITOR on FILENAME, and verify that the
+#  resulting file contains a valid bugid on the first
+#  line.
+if [ &quot;x$EDITOR&quot; = &quot;x&quot; ]; then EDITOR=vi; fi
+if [ &quot;x$CVSEDITOR&quot; = &quot;x&quot; ]; then CVSEDITOR=$EDITOR; fi
+$CVSEDITOR $1
+until head -1|grep '^BugId:[ ]*[0-9][0-9]*$' &lt; $1
+do  echo -n  &quot;No BugId found.  Edit again? ([y]/n)&quot;
+    read ans
+    case ${ans} in
+        n*) exit 1;;
+    esac
+    $CVSEDITOR $1
+done
+</pre></td></tr></table><P>
+
+The `<TT>editinfo</TT>' file contains this line:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>^tc     /usr/cvssupport/bugid.edit
+</pre></td></tr></table><P>
+
+The `<TT>rcsinfo</TT>' file contains this line:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>^tc     /usr/cvssupport/tc.template
+</pre></td></tr></table><P>
+
+<A NAME="loginfo"></A>
+<HR SIZE="6">
+<A NAME="SEC171"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC170"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC172"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC165"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> C.3.5 Loginfo </H3>
+<!--docid::SEC171::-->
+<P>
+
+The `<TT>loginfo</TT>' file is used to control where
+`<SAMP>cvs commit</SAMP>' log information is sent.  The first
+entry on a line is a regular expression which is tested
+against the directory that the change is being made to,
+relative to the <CODE>$CVSROOT</CODE>.  If a match is found, then
+the remainder of the line is a filter program that
+should expect log information on its standard input.
+</P>
+<P>
+
+If the repository name does not match any of the
+regular expressions in this file, the `<SAMP>DEFAULT</SAMP>'
+line is used, if it is specified.
+</P>
+<P>
+
+All occurrences of the name `<SAMP>ALL</SAMP>' appearing as a
+regular expression are used in addition to the first
+matching regular expression or `<SAMP>DEFAULT</SAMP>'.
+</P>
+<P>
+
+The first matching regular expression is used.
+</P>
+<P>
+
+See section <A HREF="cvs_18.html#SEC165">C.3 The commit support files</A>, for a description of the syntax of
+the `<TT>loginfo</TT>' file.
+</P>
+<P>
+
+The user may specify a format string as
+part of the filter.  The string is composed of a
+`<SAMP>%</SAMP>' followed by a space, or followed by a single
+format character, or followed by a set of format
+characters surrounded by `<SAMP>{</SAMP>' and `<SAMP>}</SAMP>' as
+separators.  The format characters are:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><TT>s</TT>
+<DD>file name
+<DT><TT>V</TT>
+<DD>old version number (pre-checkin)
+<DT><TT>v</TT>
+<DD>new version number (post-checkin)
+</DL>
+<P>
+
+All other characters that appear in a format string
+expand to an empty field (commas separating fields are
+still provided).
+</P>
+<P>
+
+For example, some valid format strings are `<SAMP>%</SAMP>',
+`<SAMP>%s</SAMP>', `<SAMP>%{s}</SAMP>', and `<SAMP>%{sVv}</SAMP>'.
+</P>
+<P>
+
+The output will be a space separated string of tokens enclosed in
+quotation marks (<TT>&quot;</TT>).
+Any embedded dollar signs (<TT>$</TT>), backticks (<TT>`</TT>),
+backslashes (<TT>\</TT>), or quotation marks will be preceded
+by a backslash (this allows the shell to correctly parse it
+as a single string, reguardless of the characters it contains).
+For backwards compatibility, the first
+token will be the repository subdirectory.  The rest of the
+tokens will be comma-delimited lists of the information
+requested in the format string.  For example, if
+`<SAMP>/u/src/master/yoyodyne/tc</SAMP>' is the repository, `<SAMP>%{sVv}</SAMP>'
+is the format string, and three files (<TT>ChangeLog</TT>,
+<TT>Makefile</TT>, <TT>foo.c</TT>) were modified, the output
+might be:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>&quot;yoyodyne/tc ChangeLog,1.1,1.2 Makefile,1.3,1.4 foo.c,1.12,1.13&quot;
+</pre></td></tr></table><P>
+
+As another example, `<SAMP>%{}</SAMP>' means that only the
+name of the repository will be generated.
+</P>
+<P>
+
+Note: when CVS is accessing a remote repository,
+`<TT>loginfo</TT>' will be run on the <EM>remote</EM>
+(i.e., server) side, not the client side (see section <A HREF="cvs_2.html#SEC26">2.9 Remote repositories</A>).
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC172">C.3.5.1 Loginfo example</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_18.html#SEC173">C.3.5.2 Keeping a checked out copy</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Updating a tree on every checkin</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="loginfo example"></A>
+<HR SIZE="6">
+<A NAME="SEC172"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC171"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC173"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC171"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H4> C.3.5.1 Loginfo example </H4>
+<!--docid::SEC172::-->
+<P>
+
+The following `<TT>loginfo</TT>' file, together with the
+tiny shell-script below, appends all log messages
+to the file `<TT>$CVSROOT/CVSROOT/commitlog</TT>',
+and any commits to the administrative files (inside
+the `<TT>CVSROOT</TT>' directory) are also logged in
+`<TT>/usr/adm/cvsroot-log</TT>'.
+Commits to the `<TT>prog1</TT>' directory are mailed to <TT>ceder</TT>.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>ALL             /usr/local/bin/cvs-log $CVSROOT/CVSROOT/commitlog $USER
+^CVSROOT        /usr/local/bin/cvs-log /usr/adm/cvsroot-log
+^prog1          Mail -s %s ceder
+</pre></td></tr></table><P>
+
+The shell-script `<TT>/usr/local/bin/cvs-log</TT>' looks
+like this:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>#!/bin/sh
+(echo &quot;------------------------------------------------------&quot;;
+ echo -n $2&quot;  &quot;;
+ date;
+ echo;
+ cat) &gt;&gt; $1
+</pre></td></tr></table><P>
+
+<A NAME="Keeping a checked out copy"></A>
+<HR SIZE="6">
+<A NAME="SEC173"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC172"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC174"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC171"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H4> C.3.5.2 Keeping a checked out copy </H4>
+<!--docid::SEC173::-->
+<P>
+
+<A NAME="IDX300"></A>
+<A NAME="IDX301"></A>
+<A NAME="IDX302"></A>
+</P>
+<P>
+
+It is often useful to maintain a directory tree which
+contains files which correspond to the latest version
+in the repository.  For example, other developers might
+want to refer to the latest sources without having to
+check them out, or you might be maintaining a web site
+with CVS and want every checkin to cause the files
+used by the web server to be updated.
+</P>
+<P>
+
+The way to do this is by having loginfo invoke
+<CODE>cvs update</CODE>.  Doing so in the naive way will
+cause a problem with locks, so the <CODE>cvs update</CODE>
+must be run in the background.
+Here is an example for unix (this should all be on one line):
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>^cyclic-pages		(date; cat; (sleep 2; cd /u/www/local-docs;
+ cvs -q update -d) &amp;) &gt;&gt; $CVSROOT/CVSROOT/updatelog 2&gt;&amp;1
+</pre></td></tr></table><P>
+
+This will cause checkins to repository directories
+starting with <CODE>cyclic-pages</CODE> to update the checked
+out tree in `<TT>/u/www/local-docs</TT>'.
+</P>
+<P>
+
+<A NAME="rcsinfo"></A>
+<HR SIZE="6">
+<A NAME="SEC174"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC173"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC175"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> C.4 Rcsinfo </H2>
+<!--docid::SEC174::-->
+<P>
+
+The `<TT>rcsinfo</TT>' file can be used to specify a form to
+edit when filling out the commit log.  The
+`<TT>rcsinfo</TT>' file has a syntax similar to the
+`<TT>verifymsg</TT>', `<TT>commitinfo</TT>' and `<TT>loginfo</TT>'
+files.  See section <A HREF="cvs_18.html#SEC166">C.3.1 The common syntax</A>.  Unlike the other files the second
+part is <EM>not</EM> a command-line template.  Instead,
+the part after the regular expression should be a full pathname to
+a file containing the log message template.
+</P>
+<P>
+
+If the repository name does not match any of the
+regular expressions in this file, the `<SAMP>DEFAULT</SAMP>'
+line is used, if it is specified.
+</P>
+<P>
+
+All occurrences of the name `<SAMP>ALL</SAMP>' appearing as a
+regular expression are used in addition to the first
+matching regular expression or `<SAMP>DEFAULT</SAMP>'.
+</P>
+<P>
+
+The log message template will be used as a default log
+message.  If you specify a log message with `<SAMP>cvs
+commit -m <VAR>message</VAR></SAMP>' or `<SAMP>cvs commit -f
+<VAR>file</VAR></SAMP>' that log message will override the
+template.
+</P>
+<P>
+
+See section <A HREF="cvs_18.html#SEC168">C.3.3 Verifying log messages</A>, for an example `<TT>rcsinfo</TT>'
+file.
+</P>
+<P>
+
+When CVS is accessing a remote repository,
+the contents of `<TT>rcsinfo</TT>' at the time a directory
+is first checked out will specify a template which does
+not then change.  If you edit `<TT>rcsinfo</TT>' or its
+templates, you may need to check out a new working
+directory.
+</P>
+<P>
+
+<A NAME="cvsignore"></A>
+<HR SIZE="6">
+<A NAME="SEC175"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC174"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC176"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> C.5 Ignoring files via cvsignore </H2>
+<!--docid::SEC175::-->
+<P>
+
+There are certain file names that frequently occur
+inside your working copy, but that you don't want to
+put under CVS control.  Examples are all the object
+files that you get while you compile your sources.
+Normally, when you run `<SAMP>cvs update</SAMP>', it prints a
+line for each file it encounters that it doesn't know
+about (see section <A HREF="cvs_16.html#SEC154">A.16.2 update output</A>).
+</P>
+<P>
+
+CVS has a list of files (or sh(1) file name patterns)
+that it should ignore while running <CODE>update</CODE>,
+<CODE>import</CODE> and <CODE>release</CODE>.
+This list is constructed in the following way.
+</P>
+<P>
+
+<UL>
+<LI>
+The list is initialized to include certain file name
+patterns: names associated with CVS
+administration, or with other common source control
+systems; common names for patch files, object files,
+archive files, and editor backup files; and other names
+that are usually artifacts of assorted utilities.
+Currently, the default list of ignored file name
+patterns is:
+<P>
+
+<A NAME="IDX303"></A>
+<A NAME="IDX304"></A>
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>    RCS     SCCS    CVS     CVS.adm
+    RCSLOG  cvslog.*
+    tags    TAGS
+    .make.state     .nse_depinfo
+    *~      #*      .#*     ,*      _$*     *$
+    *.old   *.bak   *.BAK   *.orig  *.rej   .del-*
+    *.a     *.olb   *.o     *.obj   *.so    *.exe
+    *.Z     *.elc   *.ln
+    core
+</pre></td></tr></table><P>
+
+</P>
+<LI>
+The per-repository list in
+`<TT>$CVSROOT/CVSROOT/cvsignore</TT>' is appended to
+the list, if that file exists.
+<P>
+
+</P>
+<LI>
+The per-user list in `<TT>.cvsignore</TT>' in your home
+directory is appended to the list, if it exists.
+<P>
+
+</P>
+<LI>
+Any entries in the environment variable
+<CODE>$CVSIGNORE</CODE> is appended to the list.
+<P>
+
+</P>
+<LI>
+Any `<SAMP>-I</SAMP>' options given to CVS is appended.
+<P>
+
+</P>
+<LI>
+As CVS traverses through your directories, the contents
+of any `<TT>.cvsignore</TT>' will be appended to the list.
+The patterns found in `<TT>.cvsignore</TT>' are only valid
+for the directory that contains them, not for
+any sub-directories.
+</UL>
+<P>
+
+In any of the 5 places listed above, a single
+exclamation mark (`<SAMP>!</SAMP>') clears the ignore list.
+This can be used if you want to store any file which
+normally is ignored by CVS.
+</P>
+<P>
+
+Specifying `<SAMP>-I !</SAMP>' to <CODE>cvs import</CODE> will import
+everything, which is generally what you want to do if
+you are importing files from a pristine distribution or
+any other source which is known to not contain any
+extraneous files.  However, looking at the rules above
+you will see there is a fly in the ointment; if the
+distribution contains any `<TT>.cvsignore</TT>' files, then
+the patterns from those files will be processed even if
+`<SAMP>-I !</SAMP>' is specified.  The only workaround is to
+remove the `<TT>.cvsignore</TT>' files in order to do the
+import.  Because this is awkward, in the future
+`<SAMP>-I !</SAMP>' might be modified to override
+`<TT>.cvsignore</TT>' files in each directory.
+</P>
+<P>
+
+Note that the syntax of the ignore files consists of a
+series of lines, each of which contains a space
+separated list of filenames.  This offers no clean way
+to specify filenames which contain spaces, but you can
+use a workaround like `<TT>foo?bar</TT>' to match a file
+named `<TT>foo bar</TT>' (it also matches `<TT>fooxbar</TT>'
+and the like).  Also note that there is currently no
+way to specify comments.
+</P>
+<P>
+
+<A NAME="checkoutlist"></A>
+<HR SIZE="6">
+<A NAME="SEC176"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC175"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC177"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> C.6 The checkoutlist file </H2>
+<!--docid::SEC176::-->
+<P>
+
+It may be helpful to use CVS to maintain your own
+files in the `<TT>CVSROOT</TT>' directory.  For example,
+suppose that you have a script `<TT>logcommit.pl</TT>'
+which you run by including the following line in the
+`<TT>commitinfo</TT>' administrative file:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>ALL   $CVSROOT/CVSROOT/logcommit.pl
+</pre></td></tr></table><P>
+
+To maintain `<TT>logcommit.pl</TT>' with CVS you would
+add the following line to the `<TT>checkoutlist</TT>'
+administrative file:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>logcommit.pl
+</pre></td></tr></table><P>
+
+The format of `<TT>checkoutlist</TT>' is one line for each
+file that you want to maintain using CVS, giving
+the name of the file.
+</P>
+<P>
+
+After setting up `<TT>checkoutlist</TT>' in this fashion,
+the files listed there will function just like
+CVS's built-in administrative files.  For example,
+when checking in one of the files you should get a
+message such as:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs commit: Rebuilding administrative file database
+</pre></td></tr></table><P>
+
+and the checked out copy in the `<TT>CVSROOT</TT>'
+directory should be updated.
+</P>
+<P>
+
+Note that listing `<TT>passwd</TT>' (see section <A HREF="cvs_2.html#SEC30">2.9.3.1 Setting up the server for password authentication</A>) in `<TT>checkoutlist</TT>' is not
+recommended for security reasons.
+</P>
+<P>
+
+For information about keeping a checkout out copy in a
+more general context than the one provided by
+`<TT>checkoutlist</TT>', see <A HREF="cvs_18.html#SEC173">C.3.5.2 Keeping a checked out copy</A>.
+</P>
+<P>
+
+<A NAME="history file"></A>
+<HR SIZE="6">
+<A NAME="SEC177"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC176"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC178"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> C.7 The history file </H2>
+<!--docid::SEC177::-->
+<P>
+
+The file `<TT>$CVSROOT/CVSROOT/history</TT>' is used
+to log information for the <CODE>history</CODE> command
+(see section <A HREF="cvs_16.html#SEC136">A.11 history--Show status of files and users</A>).  This file must be created to turn
+on logging.  This is done automatically if the
+<CODE>cvs init</CODE> command is used to set up the
+repository (see section <A HREF="cvs_2.html#SEC23">2.6 Creating a repository</A>).
+</P>
+<P>
+
+The file format of the `<TT>history</TT>' file is
+documented only in comments in the CVS source
+code, but generally programs should use the <CODE>cvs
+history</CODE> command to access it anyway, in case the
+format changes with future releases of CVS.
+</P>
+<P>
+
+<A NAME="Variables"></A>
+<HR SIZE="6">
+<A NAME="SEC178"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC177"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC179"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> C.8 Expansions in administrative files </H2>
+<!--docid::SEC178::-->
+<P>
+
+Sometimes in writing an administrative file, you might
+want the file to be able to know various things based
+on environment CVS is running in.  There are
+several mechanisms to do that.
+</P>
+<P>
+
+To find the home directory of the user running CVS
+(from the <CODE>HOME</CODE> environment variable), use
+`<SAMP>~</SAMP>' followed by `<SAMP>/</SAMP>' or the end of the line.
+Likewise for the home directory of <VAR>user</VAR>, use
+`<SAMP>~<VAR>user</VAR></SAMP>'.  These variables are expanded on
+the server machine, and don't get any reasonable
+expansion if pserver (see section <A HREF="cvs_2.html#SEC29">2.9.3 Direct connection with password authentication</A>)
+is in use; therefore user variables (see below) may be
+a better choice to customize behavior based on the user
+running CVS.
+</P>
+<P>
+
+One may want to know about various pieces of
+information internal to CVS.  A CVS internal
+variable has the syntax <CODE>${<VAR>variable</VAR>}</CODE>,
+where <VAR>variable</VAR> starts with a letter and consists
+of alphanumeric characters and `<SAMP>_</SAMP>'.  If the
+character following <VAR>variable</VAR> is a
+non-alphanumeric character other than `<SAMP>_</SAMP>', the
+`<SAMP>{</SAMP>' and `<SAMP>}</SAMP>' can be omitted.  The CVS
+internal variables are:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>CVSROOT</CODE>
+<DD><A NAME="IDX305"></A>
+This is the absolute path to the current CVS root directory.
+See section <A HREF="cvs_2.html#SEC9">2. The Repository</A>, for a description of the various
+ways to specify this, but note that the internal
+variable contains just the directory and not any
+of the access method information.
+<P>
+
+</P>
+<DT><CODE>RCSBIN</CODE>
+<DD><A NAME="IDX306"></A>
+In CVS 1.9.18 and older, this specified the
+directory where CVS was looking for RCS
+programs.  Because CVS no longer runs RCS
+programs, specifying this internal variable is now an
+error.
+<P>
+
+</P>
+<DT><CODE>CVSEDITOR</CODE>
+<DD><A NAME="IDX307"></A>
+<DT><CODE>VISUAL</CODE>
+<DD><A NAME="IDX308"></A>
+<DT><CODE>EDITOR</CODE>
+<DD><A NAME="IDX309"></A>
+These all expand to the same value, which is the editor
+that CVS is using.  See section <A HREF="cvs_16.html#SEC117">A.4 Global options</A>, for how
+to specify this.
+<P>
+
+</P>
+<DT><CODE>USER</CODE>
+<DD><A NAME="IDX310"></A>
+Username of the user running CVS (on the CVS
+server machine).
+When using pserver, this is the user specified in the repository
+specification which need not be the same as the username the
+server is running as (see section <A HREF="cvs_2.html#SEC30">2.9.3.1 Setting up the server for password authentication</A>).
+Do not confuse this with the environment variable of the same name.
+</DL>
+<P>
+
+If you want to pass a value to the administrative files
+which the user who is running CVS can specify,
+use a user variable.
+<A NAME="IDX311"></A>
+To expand a user variable, the
+administrative file contains
+<CODE>${=<VAR>variable</VAR>}</CODE>.  To set a user variable,
+specify the global option `<SAMP>-s</SAMP>' to CVS, with
+argument <CODE><VAR>variable</VAR>=<VAR>value</VAR></CODE>.  It may be
+particularly useful to specify this option via
+`<TT>.cvsrc</TT>' (see section <A HREF="cvs_16.html#SEC116">A.3 Default options and the ~/.cvsrc file</A>).
+</P>
+<P>
+
+For example, if you want the administrative file to
+refer to a test directory you might create a user
+variable <CODE>TESTDIR</CODE>.  Then if CVS is invoked
+as
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs -s TESTDIR=/work/local/tests
+</pre></td></tr></table><P>
+
+and the
+administrative file contains <CODE>sh
+${=TESTDIR}/runtests</CODE>, then that string is expanded
+to <CODE>sh /work/local/tests/runtests</CODE>.
+</P>
+<P>
+
+All other strings containing `<SAMP>$</SAMP>' are reserved;
+there is no way to quote a `<SAMP>$</SAMP>' character so that
+`<SAMP>$</SAMP>' represents itself.
+</P>
+<P>
+
+Environment variables passed to administrative files are:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<A NAME="IDX312"></A>
+
+<DT><CODE>CVS_USER</CODE>
+<DD><A NAME="IDX313"></A>
+The CVS-specific username provided by the user, if it
+can be provided (currently just for the pserver access
+method), and to the empty string otherwise.  (<CODE>CVS_USER</CODE>
+and <CODE>USER</CODE> may differ when `<TT>$CVSROOT/CVSROOT/passwd</TT>'
+is used to map CVS usernames to system usernames.)
+<P>
+
+</P>
+<DT><CODE>LOGNAME</CODE>
+<DD><A NAME="IDX314"></A>
+The username of the system user.
+<P>
+
+</P>
+<DT><CODE>USER</CODE>
+<DD><A NAME="IDX315"></A>
+Same as <CODE>LOGNAME</CODE>.
+Do not confuse this with the internal variable of the same name.
+</DL>
+<P>
+
+<A NAME="config"></A>
+<HR SIZE="6">
+<A NAME="SEC179"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC178"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> C.9 The CVSROOT/config configuration file </H2>
+<!--docid::SEC179::-->
+<P>
+
+<A NAME="IDX316"></A>
+<A NAME="IDX317"></A>
+</P>
+<P>
+
+The administrative file `<TT>config</TT>' contains various
+miscellaneous settings which affect the behavior of
+CVS.  The syntax is slightly different from the
+other administrative files.  Variables are not
+expanded.  Lines which start with `<SAMP>#</SAMP>' are
+considered comments.
+Other lines consist of a keyword, `<SAMP>=</SAMP>', and a
+value.  Note that this syntax is very strict.
+Extraneous spaces or tabs are not permitted.
+</P>
+<P>
+
+Currently defined keywords are:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<A NAME="IDX318"></A>
+<DT><CODE>RCSBIN=<VAR>bindir</VAR></CODE>
+<DD>For CVS 1.9.12 through 1.9.18, this setting told
+CVS to look for RCS programs in the
+<VAR>bindir</VAR> directory.  Current versions of CVS
+do not run RCS programs; for compatibility this
+setting is accepted, but it does nothing.
+<P>
+
+<A NAME="IDX319"></A>
+</P>
+<DT><CODE>SystemAuth=<VAR>value</VAR></CODE>
+<DD>If <VAR>value</VAR> is `<SAMP>yes</SAMP>', then pserver should check
+for users in the system's user database if not found in
+`<TT>CVSROOT/passwd</TT>'.  If it is `<SAMP>no</SAMP>', then all
+pserver users must exist in `<TT>CVSROOT/passwd</TT>'.
+The default is `<SAMP>yes</SAMP>'.  For more on pserver, see
+<A HREF="cvs_2.html#SEC29">2.9.3 Direct connection with password authentication</A>.
+<P>
+
+<A NAME="IDX320"></A>
+</P>
+<DT><CODE>TopLevelAdmin=<VAR>value</VAR></CODE>
+<DD>Modify the `<SAMP>checkout</SAMP>' command to create a
+`<SAMP>CVS</SAMP>' directory at the top level of the new
+working directory, in addition to `<SAMP>CVS</SAMP>'
+directories created within checked-out directories.
+The default value is `<SAMP>no</SAMP>'.
+<P>
+
+This option is useful if you find yourself performing
+many commands at the top level of your working
+directory, rather than in one of the checked out
+subdirectories.  The `<TT>CVS</TT>' directory created there
+will mean you don't have to specify <CODE>CVSROOT</CODE> for
+each command.  It also provides a place for the
+`<TT>CVS/Template</TT>' file (see section <A HREF="cvs_2.html#SEC19">2.3 How data is stored in the working directory</A>).
+</P>
+<P>
+
+<A NAME="IDX321"></A>
+</P>
+<DT><CODE>LockDir=<VAR>directory</VAR></CODE>
+<DD>Put CVS lock files in <VAR>directory</VAR> rather than
+directly in the repository.  This is useful if you want
+to let users read from the repository while giving them
+write access only to <VAR>directory</VAR>, not to the
+repository.
+It can also be used to put the locks on a very fast
+in-memory file system to speed up locking and unlocking
+the repository.
+You need to create <VAR>directory</VAR>, but
+CVS will create subdirectories of <VAR>directory</VAR> as it
+needs them.  For information on CVS locks, see
+<A HREF="cvs_10.html#SEC88">10.5 Several developers simultaneously attempting to run CVS</A>.
+<P>
+
+Before enabling the LockDir option, make sure that you
+have tracked down and removed any copies of CVS 1.9 or
+older.  Such versions neither support LockDir, nor will
+give an error indicating that they don't support it.
+The result, if this is allowed to happen, is that some
+CVS users will put the locks one place, and others will
+put them another place, and therefore the repository
+could become corrupted.  CVS 1.10 does not support
+LockDir but it will print a warning if run on a
+repository with LockDir enabled.
+</P>
+<P>
+
+<A NAME="IDX322"></A>
+</P>
+<DT><CODE>LogHistory=<VAR>value</VAR></CODE>
+<DD>Control what is logged to the `<TT>CVSROOT/history</TT>' file (see section <A HREF="cvs_16.html#SEC136">A.11 history--Show status of files and users</A>).
+Default of `<SAMP>TOFEWGCMAR</SAMP>' (or simply `<SAMP>all</SAMP>') will log
+all transactions.  Any subset of the default is
+legal.  (For example, to only log transactions that modify the
+`<TT>*,v</TT>' files, use `<SAMP>LogHistory=TMAR</SAMP>'.)
+<P>
+
+<A NAME="IDX323"></A>
+<A NAME="IDX324"></A>
+</P>
+<DT><CODE>RereadLogAfterVerify=<VAR>value</VAR></CODE>
+<DD>Modify the `<SAMP>commit</SAMP>' command such that CVS will reread the
+log message after running the program specified by `<TT>verifymsg</TT>'.
+<VAR>value</VAR> may be one of `<SAMP>yes</SAMP>' or `<SAMP>always</SAMP>', indicating that
+the log message should always be reread; `<SAMP>no</SAMP>'
+or `<SAMP>never</SAMP>', indicating that it should never be
+reread; or <VAR>value</VAR> may be `<SAMP>stat</SAMP>', indicating
+that the file should be checked with the filesystem
+`<SAMP>stat()</SAMP>' function to see if it has changed (see warning below)
+before rereading.  The default value is `<SAMP>always</SAMP>'.
+<P>
+
+<EM>Note that `stat' mode can cause CVS to pause for up to
+one extra second per directory committed.  This can be less IO and
+CPU intensive but is not recommended for use with large repositories</EM>
+</P>
+<P>
+
+See section <A HREF="cvs_18.html#SEC168">C.3.3 Verifying log messages</A>, for more information on how verifymsg
+may be used.
+</DL>
+<P>
+
+<A NAME="Environment variables"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_19.html#SEC180"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>
+<FONT SIZE="-1">
+This document was generated
+by <I>Derek Robert Price</I> on <I>April, 18 2002</I>
+using <A HREF="http://texi2html.cvshome.org"><I>texi2html</I></A>
+</FONT>
+
+</BODY>
+</HTML>

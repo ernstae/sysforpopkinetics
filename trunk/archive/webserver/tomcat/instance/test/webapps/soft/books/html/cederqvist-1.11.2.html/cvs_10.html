@@ -1,0 +1,1237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html40/loose.dtd">
+<HTML>
+<!-- Created on April, 18 2002 by texi2html 1.66 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<HEAD>
+<TITLE>CVS--Concurrent Versions System v1.11.2: Multiple developers</TITLE>
+
+<META NAME="description" CONTENT="CVS--Concurrent Versions System v1.11.2: Multiple developers">
+<META NAME="keywords" CONTENT="CVS--Concurrent Versions System v1.11.2: Multiple developers">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.66">
+
+</HEAD>
+
+<BODY LANG="en" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC83"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_9.html#SEC82"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC84"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_9.html#SEC80"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> 10. Multiple developers </H1>
+<!--docid::SEC83::-->
+<P>
+
+When more than one person works on a software project
+things often get complicated.  Often, two people try to
+edit the same file simultaneously.  One solution, known
+as <EM>file locking</EM> or <EM>reserved checkouts</EM>, is
+to allow only one person to edit each file at a time.
+This is the only solution with some version control
+systems, including RCS and SCCS.  Currently
+the usual way to get reserved checkouts with CVS
+is the <CODE>cvs admin -l</CODE> command (see section <A HREF="cvs_16.html#SEC120">A.6.1 admin options</A>).  This is not as nicely integrated into
+CVS as the watch features, described below, but it
+seems that most people with a need for reserved
+checkouts find it adequate.
+It also may be possible to use the watches
+features described below, together with suitable
+procedures (not enforced by software), to avoid having
+two people edit at the same time.
+</P>
+<P>
+
+The default model with CVS is known as
+<EM>unreserved checkouts</EM>.  In this model, developers
+can edit their own <EM>working copy</EM> of a file
+simultaneously.  The first person that commits his
+changes has no automatic way of knowing that another
+has started to edit it.  Others will get an error
+message when they try to commit the file.  They must
+then use CVS commands to bring their working copy
+up to date with the repository revision.  This process
+is almost automatic.
+</P>
+<P>
+
+CVS also supports mechanisms which facilitate
+various kinds of communication, without actually
+enforcing rules like reserved checkouts do.
+</P>
+<P>
+
+The rest of this chapter describes how these various
+models work, and some of the issues involved in
+choosing between them.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_10.html#SEC84">10.1 File status</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">A file can be in several states</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_10.html#SEC85">10.2 Bringing a file up to date</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_10.html#SEC86">10.3 Conflicts example</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">An informative example</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_10.html#SEC87">10.4 Informing others about commits</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">To cooperate you must inform</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_10.html#SEC88">10.5 Several developers simultaneously attempting to run CVS</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Simultaneous repository access</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_10.html#SEC89">10.6 Mechanisms to track who is editing files</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_10.html#SEC95">10.7 Choosing between reserved or unreserved checkouts</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Reserved or unreserved checkouts?</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="File status"></A>
+<HR SIZE="6">
+<A NAME="SEC84"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC85"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.1 File status </H2>
+<!--docid::SEC84::-->
+<P>
+
+Based on what operations you have performed on a
+checked out file, and what operations others have
+performed to that file in the repository, one can
+classify a file in a number of states.  The states, as
+reported by the <CODE>status</CODE> command, are:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<A NAME="IDX158"></A>
+<DT>Up-to-date
+<DD>The file is identical with the latest revision in the
+repository for the branch in use.
+<P>
+
+</P>
+<DT>Locally Modified
+<DD><A NAME="IDX159"></A>
+You have edited the file, and not yet committed your changes.
+<P>
+
+</P>
+<DT>Locally Added
+<DD><A NAME="IDX160"></A>
+You have added the file with <CODE>add</CODE>, and not yet
+committed your changes.
+<P>
+
+</P>
+<DT>Locally Removed
+<DD><A NAME="IDX161"></A>
+You have removed the file with <CODE>remove</CODE>, and not yet
+committed your changes.
+<P>
+
+</P>
+<DT>Needs Checkout
+<DD><A NAME="IDX162"></A>
+Someone else has committed a newer revision to the
+repository.  The name is slightly misleading; you will
+ordinarily use <CODE>update</CODE> rather than
+<CODE>checkout</CODE> to get that newer revision.
+<P>
+
+</P>
+<DT>Needs Patch
+<DD><A NAME="IDX163"></A>
+Like Needs Checkout, but the CVS server will send
+a patch rather than the entire file.  Sending a patch or
+sending an entire file accomplishes the same thing.
+<P>
+
+</P>
+<DT>Needs Merge
+<DD><A NAME="IDX164"></A>
+Someone else has committed a newer revision to the repository, and you
+have also made modifications to the file.
+<P>
+
+</P>
+<DT>File had conflicts on merge
+<DD><A NAME="IDX165"></A>
+This is like Locally Modified, except that a previous
+<CODE>update</CODE> command gave a conflict.  If you have not
+already done so, you need to
+resolve the conflict as described in <A HREF="cvs_10.html#SEC86">10.3 Conflicts example</A>.
+<P>
+
+</P>
+<DT>Unknown
+<DD><A NAME="IDX166"></A>
+CVS doesn't know anything about this file.  For
+example, you have created a new file and have not run
+<CODE>add</CODE>.
+<P>
+
+</DL>
+<P>
+
+To help clarify the file status, <CODE>status</CODE> also
+reports the <CODE>Working revision</CODE> which is the
+revision that the file in the working directory derives
+from, and the <CODE>Repository revision</CODE> which is the
+latest revision in the repository for the branch in
+use.
+</P>
+<P>
+
+The options to <CODE>status</CODE> are listed in
+<A HREF="cvs_17.html#SEC155">B. Quick reference to CVS commands</A>.  For information on its <CODE>Sticky tag</CODE>
+and <CODE>Sticky date</CODE> output, see <A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A>.
+For information on its <CODE>Sticky options</CODE> output,
+see the `<SAMP>-k</SAMP>' option in <A HREF="cvs_16.html#SEC153">A.16.1 update options</A>.
+</P>
+<P>
+
+You can think of the <CODE>status</CODE> and <CODE>update</CODE>
+commands as somewhat complementary.  You use
+<CODE>update</CODE> to bring your files up to date, and you
+can use <CODE>status</CODE> to give you some idea of what an
+<CODE>update</CODE> would do (of course, the state of the
+repository might change before you actually run
+<CODE>update</CODE>).  In fact, if you want a command to
+display file status in a more brief format than is
+displayed by the <CODE>status</CODE> command, you can invoke
+</P>
+<P>
+
+<A NAME="IDX167"></A>
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs -n -q update
+</pre></td></tr></table><P>
+
+The `<SAMP>-n</SAMP>' option means to not actually do the
+update, but merely to display statuses; the `<SAMP>-q</SAMP>'
+option avoids printing the name of each directory.  For
+more information on the <CODE>update</CODE> command, and
+these options, see <A HREF="cvs_17.html#SEC155">B. Quick reference to CVS commands</A>.
+</P>
+<P>
+
+<A NAME="Updating a file"></A>
+<HR SIZE="6">
+<A NAME="SEC85"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC84"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC86"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.2 Bringing a file up to date </H2>
+<!--docid::SEC85::-->
+<P>
+
+When you want to update or merge a file, use the <CODE>update</CODE>
+command.  For files that are not up to date this is roughly equivalent
+to a <CODE>checkout</CODE> command: the newest revision of the file is
+extracted from the repository and put in your working directory.
+</P>
+<P>
+
+Your modifications to a file are never lost when you
+use <CODE>update</CODE>.  If no newer revision exists,
+running <CODE>update</CODE> has no effect.  If you have
+edited the file, and a newer revision is available,
+CVS will merge all changes into your working copy.
+</P>
+<P>
+
+For instance, imagine that you checked out revision 1.4 and started
+editing it.  In the meantime someone else committed revision 1.5, and
+shortly after that revision 1.6.  If you run <CODE>update</CODE> on the file
+now, CVS will incorporate all changes between revision 1.4 and 1.6 into
+your file.
+</P>
+<P>
+
+<A NAME="IDX168"></A>
+If any of the changes between 1.4 and 1.6 were made too
+close to any of the changes you have made, an
+<EM>overlap</EM> occurs.  In such cases a warning is
+printed, and the resulting file includes both
+versions of the lines that overlap, delimited by
+special markers.
+See section <A HREF="cvs_16.html#SEC152">A.16 update--Bring work tree in sync with repository</A>, for a complete description of the
+<CODE>update</CODE> command.
+</P>
+<P>
+
+<A NAME="Conflicts example"></A>
+<HR SIZE="6">
+<A NAME="SEC86"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC85"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC87"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.3 Conflicts example </H2>
+<!--docid::SEC86::-->
+<P>
+
+Suppose revision 1.4 of `<TT>driver.c</TT>' contains this:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>#include &lt;stdio.h&gt;
+
+void main()
+{
+    parse();
+    if (nerr == 0)
+        gencode();
+    else
+        fprintf(stderr, &quot;No code generated.\n&quot;);
+    exit(nerr == 0 ? 0 : 1);
+}
+</pre></td></tr></table><P>
+
+Revision 1.6 of `<TT>driver.c</TT>' contains this:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>#include &lt;stdio.h&gt;
+
+int main(int argc,
+         char **argv)
+{
+    parse();
+    if (argc != 1)
+    {
+        fprintf(stderr, &quot;tc: No args expected.\n&quot;);
+        exit(1);
+    }
+    if (nerr == 0)
+        gencode();
+    else
+        fprintf(stderr, &quot;No code generated.\n&quot;);
+    exit(!!nerr);
+}
+</pre></td></tr></table><P>
+
+Your working copy of `<TT>driver.c</TT>', based on revision
+1.4, contains this before you run `<SAMP>cvs update</SAMP>':
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+
+void main()
+{
+    init_scanner();
+    parse();
+    if (nerr == 0)
+        gencode();
+    else
+        fprintf(stderr, &quot;No code generated.\n&quot;);
+    exit(nerr == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+}
+</pre></td></tr></table><P>
+
+You run `<SAMP>cvs update</SAMP>':
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs update driver.c
+RCS file: /usr/local/cvsroot/yoyodyne/tc/driver.c,v
+retrieving revision 1.4
+retrieving revision 1.6
+Merging differences between 1.4 and 1.6 into driver.c
+rcsmerge warning: overlaps during merge
+cvs update: conflicts found in driver.c
+C driver.c
+</pre></td></tr></table><P>
+
+<A NAME="IDX169"></A>
+CVS tells you that there were some conflicts.
+Your original working file is saved unmodified in
+`<TT>.#driver.c.1.4</TT>'.  The new version of
+`<TT>driver.c</TT>' contains this:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(int argc,
+         char **argv)
+{
+    init_scanner();
+    parse();
+    if (argc != 1)
+    {
+        fprintf(stderr, &quot;tc: No args expected.\n&quot;);
+        exit(1);
+    }
+    if (nerr == 0)
+        gencode();
+    else
+        fprintf(stderr, &quot;No code generated.\n&quot;);
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; driver.c
+    exit(nerr == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+=======
+    exit(!!nerr);
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; 1.6
+}
+</pre></td></tr></table><P>
+
+<A NAME="IDX170"></A>
+<A NAME="IDX171"></A>
+<A NAME="IDX172"></A>
+<A NAME="IDX173"></A>
+<A NAME="IDX174"></A>
+</P>
+<P>
+
+Note how all non-overlapping modifications are incorporated in your working
+copy, and that the overlapping section is clearly marked with
+`<SAMP>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</SAMP>', `<SAMP>=======</SAMP>' and `<SAMP>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</SAMP>'.
+</P>
+<P>
+
+<A NAME="IDX175"></A>
+<A NAME="IDX176"></A>
+You resolve the conflict by editing the file, removing the markers and
+the erroneous line.  Suppose you end up with this file:
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(int argc,
+         char **argv)
+{
+    init_scanner();
+    parse();
+    if (argc != 1)
+    {
+        fprintf(stderr, &quot;tc: No args expected.\n&quot;);
+        exit(1);
+    }
+    if (nerr == 0)
+        gencode();
+    else
+        fprintf(stderr, &quot;No code generated.\n&quot;);
+    exit(nerr == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+}
+</pre></td></tr></table><P>
+
+You can now go ahead and commit this as revision 1.7.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs commit -m &quot;Initialize scanner. Use symbolic exit values.&quot; driver.c
+Checking in driver.c;
+/usr/local/cvsroot/yoyodyne/tc/driver.c,v  &lt;--  driver.c
+new revision: 1.7; previous revision: 1.6
+done
+</pre></td></tr></table><P>
+
+For your protection, CVS will refuse to check in a
+file if a conflict occurred and you have not resolved
+the conflict.  Currently to resolve a conflict, you
+must change the timestamp on the file.  In previous
+versions of CVS, you also needed to
+insure that the file contains no conflict markers.
+Because
+your file may legitimately contain conflict markers (that
+is, occurrences of `<SAMP>&gt;&gt;&gt;&gt;&gt;&gt;&gt; </SAMP>' at the start of a
+line that don't mark a conflict), the current
+version of CVS will print a warning and proceed to
+check in the file.
+</P>
+<P>
+
+<A NAME="IDX177"></A>
+If you use release 1.04 or later of pcl-cvs (a GNU
+Emacs front-end for CVS) you can use an Emacs
+package called emerge to help you resolve conflicts.
+See the documentation for pcl-cvs.
+</P>
+<P>
+
+<A NAME="Informing others"></A>
+<HR SIZE="6">
+<A NAME="SEC87"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC86"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC88"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.4 Informing others about commits </H2>
+<!--docid::SEC87::-->
+<P>
+
+It is often useful to inform others when you commit a
+new revision of a file.  The `<SAMP>-i</SAMP>' option of the
+`<TT>modules</TT>' file, or the `<TT>loginfo</TT>' file, can be
+used to automate this process.  See section <A HREF="cvs_18.html#SEC157">C.1 The modules file</A>.
+See section <A HREF="cvs_18.html#SEC171">C.3.5 Loginfo</A>.  You can use these features of CVS
+to, for instance, instruct CVS to mail a
+message to all developers, or post a message to a local
+newsgroup.
+</P>
+<P>
+
+<A NAME="Concurrency"></A>
+<HR SIZE="6">
+<A NAME="SEC88"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC87"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC89"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.5 Several developers simultaneously attempting to run CVS </H2>
+<!--docid::SEC88::-->
+<P>
+
+<A NAME="IDX178"></A>
+If several developers try to run CVS at the same
+time, one may get the following message:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>[11:43:23] waiting for bach's lock in /usr/local/cvsroot/foo
+</pre></td></tr></table><P>
+
+<A NAME="IDX179"></A>
+<A NAME="IDX180"></A>
+<A NAME="IDX181"></A>
+CVS will try again every 30 seconds, and either
+continue with the operation or print the message again,
+if it still needs to wait.  If a lock seems to stick
+around for an undue amount of time, find the person
+holding the lock and ask them about the cvs command
+they are running.  If they aren't running a cvs
+command, look in the repository directory mentioned in
+the message and remove files which they own whose names
+start with `<TT>#cvs.rfl</TT>',
+`<TT>#cvs.wfl</TT>', or `<TT>#cvs.lock</TT>'.
+</P>
+<P>
+
+Note that these locks are to protect CVS's
+internal data structures and have no relationship to
+the word <EM>lock</EM> in the sense used by
+RCS---which refers to reserved checkouts
+(see section <A HREF="cvs_10.html#SEC83">10. Multiple developers</A>).
+</P>
+<P>
+
+Any number of people can be reading from a given
+repository at a time; only when someone is writing do
+the locks prevent other people from reading or writing.
+</P>
+<P>
+
+<A NAME="IDX182"></A>
+<A NAME="IDX183"></A>
+One might hope for the following property:
+</P>
+<P>
+
+<BLOCKQUOTE>
+If someone commits some changes in one cvs command,
+then an update by someone else will either get all the
+changes, or none of them.
+</BLOCKQUOTE>
+<P>
+
+but CVS does <EM>not</EM> have this property.  For
+example, given the files
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>a/one.c
+a/two.c
+b/three.c
+b/four.c
+</pre></td></tr></table><P>
+
+if someone runs
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs ci a/two.c b/three.c
+</pre></td></tr></table><P>
+
+and someone else runs <CODE>cvs update</CODE> at the same
+time, the person running <CODE>update</CODE> might get only
+the change to `<TT>b/three.c</TT>' and not the change to
+`<TT>a/two.c</TT>'.
+</P>
+<P>
+
+<A NAME="Watches"></A>
+<HR SIZE="6">
+<A NAME="SEC89"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC88"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC90"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.6 Mechanisms to track who is editing files </H2>
+<!--docid::SEC89::-->
+<P>
+
+For many groups, use of CVS in its default mode is
+perfectly satisfactory.  Users may sometimes go to
+check in a modification only to find that another
+modification has intervened, but they deal with it and
+proceed with their check in.  Other groups prefer to be
+able to know who is editing what files, so that if two
+people try to edit the same file they can choose to
+talk about who is doing what when rather than be
+surprised at check in time.  The features in this
+section allow such coordination, while retaining the
+ability of two developers to edit the same file at the
+same time.
+</P>
+<P>
+
+For maximum benefit developers should use <CODE>cvs
+edit</CODE> (not <CODE>chmod</CODE>) to make files read-write to
+edit them, and <CODE>cvs release</CODE> (not <CODE>rm</CODE>) to
+discard a working directory which is no longer in use,
+but CVS is not able to enforce this behavior.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_10.html#SEC90">10.6.1 Telling CVS to watch certain files</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_10.html#SEC91">10.6.2 Telling CVS to notify you</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_10.html#SEC92">10.6.3 How to edit a file which is being watched</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_10.html#SEC93">10.6.4 Information about who is watching and editing</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_10.html#SEC94">10.6.5 Using watches with old versions of CVS</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Watches interact poorly with CVS 1.6 or earlier</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="Setting a watch"></A>
+<HR SIZE="6">
+<A NAME="SEC90"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC89"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC91"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC89"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 10.6.1 Telling CVS to watch certain files </H3>
+<!--docid::SEC90::-->
+<P>
+
+To enable the watch features, you first specify that
+certain files are to be watched.
+</P>
+<P>
+
+<A NAME="IDX184"></A>
+<A NAME="IDX185"></A>
+</P>
+<DL>
+<DT><U>Command:</U> <B>cvs watch on</B> <I>[<CODE>-lR</CODE>] files <small>...</small></I>
+<DD><P>
+
+<A NAME="IDX186"></A>
+Specify that developers should run <CODE>cvs edit</CODE>
+before editing <VAR>files</VAR>.  CVS will create working
+copies of <VAR>files</VAR> read-only, to remind developers
+to run the <CODE>cvs edit</CODE> command before working on
+them.
+</P>
+<P>
+
+If <VAR>files</VAR> includes the name of a directory, CVS
+arranges to watch all files added to the corresponding
+repository directory, and sets a default for files
+added in the future; this allows the user to set
+notification policies on a per-directory basis.  The
+contents of the directory are processed recursively,
+unless the <CODE>-l</CODE> option is given.
+The <CODE>-R</CODE> option can be used to force recursion if the <CODE>-l</CODE>
+option is set in `<TT>~/.cvsrc</TT>' (see section <A HREF="cvs_16.html#SEC116">A.3 Default options and the ~/.cvsrc file</A>).
+</P>
+<P>
+
+If <VAR>files</VAR> is omitted, it defaults to the current directory.
+</P>
+<P>
+
+<A NAME="IDX187"></A>
+</P>
+</DL>
+<P>
+
+<A NAME="IDX188"></A>
+</P>
+<DL>
+<DT><U>Command:</U> <B>cvs watch off</B> <I>[<CODE>-lR</CODE>] files <small>...</small></I>
+<DD><P>
+
+Do not create <VAR>files</VAR> read-only on checkout; thus,
+developers will not be reminded to use <CODE>cvs edit</CODE>
+and <CODE>cvs unedit</CODE>.
+</P>
+<P>
+
+The <VAR>files</VAR> and options are processed as for <CODE>cvs
+watch on</CODE>.
+</P>
+<P>
+
+</P>
+</DL>
+<P>
+
+<A NAME="Getting Notified"></A>
+<HR SIZE="6">
+<A NAME="SEC91"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC90"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC92"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC89"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 10.6.2 Telling CVS to notify you </H3>
+<!--docid::SEC91::-->
+<P>
+
+You can tell CVS that you want to receive
+notifications about various actions taken on a file.
+You can do this without using <CODE>cvs watch on</CODE> for
+the file, but generally you will want to use <CODE>cvs
+watch on</CODE>, to remind developers to use the <CODE>cvs edit</CODE>
+command.
+</P>
+<P>
+
+<A NAME="IDX189"></A>
+<A NAME="IDX190"></A>
+</P>
+<DL>
+<DT><U>Command:</U> <B>cvs watch add</B> <I>[<CODE>-a</CODE> action] [<CODE>-lR</CODE>] files <small>...</small></I>
+<DD><P>
+
+Add the current user to the list of people to receive notification of
+work done on <VAR>files</VAR>.
+</P>
+<P>
+
+The <CODE>-a</CODE> option specifies what kinds of events CVS should notify
+the user about.  <VAR>action</VAR> is one of the following:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+
+<DT><CODE>edit</CODE>
+<DD>Another user has applied the <CODE>cvs edit</CODE> command (described
+below) to a watched file.
+<P>
+
+</P>
+<DT><CODE>commit</CODE>
+<DD>Another user has committed changes to one of the named <VAR>files</VAR>.
+<P>
+
+</P>
+<DT><CODE>unedit</CODE>
+<DD>Another user has abandoned editing a file (other than by committing changes).
+They can do this in several ways, by:
+<P>
+
+<UL>
+
+<LI>
+applying the <CODE>cvs unedit</CODE> command (described below) to the file
+<P>
+
+</P>
+<LI>
+applying the <CODE>cvs release</CODE> command (see section <A HREF="cvs_16.html#SEC148">A.15 release--Indicate that a Module is no longer in use</A>) to the file's parent directory
+(or recursively to a directory more than one level up)
+<P>
+
+</P>
+<LI>
+deleting the file and allowing <CODE>cvs update</CODE> to recreate it
+<P>
+
+</UL>
+<P>
+
+</P>
+<DT><CODE>all</CODE>
+<DD>All of the above.
+<P>
+
+</P>
+<DT><CODE>none</CODE>
+<DD>None of the above.  (This is useful with <CODE>cvs edit</CODE>,
+described below.)
+<P>
+
+</DL>
+<P>
+
+The <CODE>-a</CODE> option may appear more than once, or not at all.  If
+omitted, the action defaults to <CODE>all</CODE>.
+</P>
+<P>
+
+The <VAR>files</VAR> and options are processed as for
+<CODE>cvs watch on</CODE>.
+</P>
+<P>
+
+</P>
+</DL>
+<P>
+
+<A NAME="IDX191"></A>
+<A NAME="IDX192"></A>
+</P>
+<DL>
+<DT><U>Command:</U> <B>cvs watch remove</B> <I>[<CODE>-a</CODE> action] [<CODE>-lR</CODE>] files <small>...</small></I>
+<DD><P>
+
+Remove a notification request established using <CODE>cvs watch add</CODE>;
+the arguments are the same.  If the <CODE>-a</CODE> option is present, only
+watches for the specified actions are removed.
+</P>
+<P>
+
+</P>
+</DL>
+<P>
+
+<A NAME="IDX193"></A>
+When the conditions exist for notification, CVS
+calls the `<TT>notify</TT>' administrative file.  Edit
+`<TT>notify</TT>' as one edits the other administrative
+files (see section <A HREF="cvs_2.html#SEC20">2.4 The administrative files</A>).  This
+file follows the usual conventions for administrative
+files (see section <A HREF="cvs_18.html#SEC166">C.3.1 The common syntax</A>), where each line is a regular
+expression followed by a command to execute.  The
+command should contain a single occurrence of `<SAMP>%s</SAMP>'
+which will be replaced by the user to notify; the rest
+of the information regarding the notification will be
+supplied to the command on standard input.  The
+standard thing to put in the <CODE>notify</CODE> file is the
+single line:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>ALL mail %s -s &quot;CVS notification&quot;
+</pre></td></tr></table><P>
+
+This causes users to be notified by electronic mail.
+</P>
+<P>
+
+<A NAME="IDX194"></A>
+Note that if you set this up in the straightforward
+way, users receive notifications on the server machine.
+One could of course write a `<TT>notify</TT>' script which
+directed notifications elsewhere, but to make this
+easy, CVS allows you to associate a notification
+address for each user.  To do so create a file
+`<TT>users</TT>' in `<TT>CVSROOT</TT>' with a line for each
+user in the format <VAR>user</VAR>:<VAR>value</VAR>.  Then
+instead of passing the name of the user to be notified
+to `<TT>notify</TT>', CVS will pass the <VAR>value</VAR>
+(normally an email address on some other machine).
+</P>
+<P>
+
+CVS does not notify you for your own changes.
+Currently this check is done based on whether the user
+name of the person taking the action which triggers
+notification matches the user name of the person
+getting notification.  In fact, in general, the watches
+features only track one edit by each user.  It probably
+would be more useful if watches tracked each working
+directory separately, so this behavior might be worth
+changing.
+</P>
+<P>
+
+<A NAME="Editing files"></A>
+<HR SIZE="6">
+<A NAME="SEC92"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC91"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC93"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC89"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 10.6.3 How to edit a file which is being watched </H3>
+<!--docid::SEC92::-->
+<P>
+
+<A NAME="IDX195"></A>
+Since a file which is being watched is checked out
+read-only, you cannot simply edit it.  To make it
+read-write, and inform others that you are planning to
+edit it, use the <CODE>cvs edit</CODE> command.  Some systems
+call this a <EM>checkout</EM>, but CVS uses that term
+for obtaining a copy of the sources (see section <A HREF="cvs_1.html#SEC5">1.3.1 Getting the source</A>), an operation which those systems call a
+<EM>get</EM> or a <EM>fetch</EM>.
+</P>
+<P>
+
+<A NAME="IDX196"></A>
+<A NAME="IDX197"></A>
+</P>
+<DL>
+<DT><U>Command:</U> <B>cvs edit</B> <I>[options] files <small>...</small></I>
+<DD><P>
+
+Prepare to edit the working files <VAR>files</VAR>.  CVS makes the
+<VAR>files</VAR> read-write, and notifies users who have requested
+<CODE>edit</CODE> notification for any of <VAR>files</VAR>.
+</P>
+<P>
+
+The <CODE>cvs edit</CODE> command accepts the same <VAR>options</VAR> as the
+<CODE>cvs watch add</CODE> command, and establishes a temporary watch for the
+user on <VAR>files</VAR>; CVS will remove the watch when <VAR>files</VAR> are
+<CODE>unedit</CODE>ed or <CODE>commit</CODE>ted.  If the user does not wish to
+receive notifications, she should specify <CODE>-a none</CODE>.
+</P>
+<P>
+
+The <VAR>files</VAR> and options are processed as for the <CODE>cvs
+watch</CODE> commands.
+</P>
+<P>
+
+</P>
+</DL>
+<P>
+
+Normally when you are done with a set of changes, you
+use the <CODE>cvs commit</CODE> command, which checks in your
+changes and returns the watched files to their usual
+read-only state.  But if you instead decide to abandon
+your changes, or not to make any changes, you can use
+the <CODE>cvs unedit</CODE> command.
+</P>
+<P>
+
+<A NAME="IDX198"></A>
+<A NAME="IDX199"></A>
+<A NAME="IDX200"></A>
+<A NAME="IDX201"></A>
+</P>
+<DL>
+<DT><U>Command:</U> <B>cvs unedit</B> <I>[<CODE>-lR</CODE>] files <small>...</small></I>
+<DD><P>
+
+Abandon work on the working files <VAR>files</VAR>, and revert them to the
+repository versions on which they are based.  CVS makes those
+<VAR>files</VAR> read-only for which users have requested notification using
+<CODE>cvs watch on</CODE>.  CVS notifies users who have requested <CODE>unedit</CODE>
+notification for any of <VAR>files</VAR>.
+</P>
+<P>
+
+The <VAR>files</VAR> and options are processed as for the
+<CODE>cvs watch</CODE> commands.
+</P>
+<P>
+
+If watches are not in use, the <CODE>unedit</CODE> command
+probably does not work, and the way to revert to the
+repository version is with the command <CODE>cvs update -C file</CODE>
+(see section <A HREF="cvs_16.html#SEC152">A.16 update--Bring work tree in sync with repository</A>).
+The meaning is
+not precisely the same; the latter may also
+bring in some changes which have been made in the
+repository since the last time you updated.
+</P>
+</DL>
+<P>
+
+When using client/server CVS, you can use the
+<CODE>cvs edit</CODE> and <CODE>cvs unedit</CODE> commands even if
+CVS is unable to successfully communicate with the
+server; the notifications will be sent upon the next
+successful CVS command.
+</P>
+<P>
+
+<A NAME="Watch information"></A>
+<HR SIZE="6">
+<A NAME="SEC93"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC92"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC94"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC89"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 10.6.4 Information about who is watching and editing </H3>
+<!--docid::SEC93::-->
+<P>
+
+<A NAME="IDX202"></A>
+<A NAME="IDX203"></A>
+</P>
+<DL>
+<DT><U>Command:</U> <B>cvs watchers</B> <I>[<CODE>-lR</CODE>] files <small>...</small></I>
+<DD><P>
+
+List the users currently watching changes to <VAR>files</VAR>.  The report
+includes the files being watched, and the mail address of each watcher.
+</P>
+<P>
+
+The <VAR>files</VAR> and options are processed as for the
+<CODE>cvs watch</CODE> commands.
+</P>
+<P>
+
+</P>
+</DL>
+<P>
+
+<A NAME="IDX204"></A>
+<A NAME="IDX205"></A>
+</P>
+<DL>
+<DT><U>Command:</U> <B>cvs editors</B> <I>[<CODE>-lR</CODE>] files <small>...</small></I>
+<DD><P>
+
+List the users currently working on <VAR>files</VAR>.  The report
+includes the mail address of each user, the time when the user began
+working with the file, and the host and path of the working directory
+containing the file.
+</P>
+<P>
+
+The <VAR>files</VAR> and options are processed as for the
+<CODE>cvs watch</CODE> commands.
+</P>
+<P>
+
+</P>
+</DL>
+<P>
+
+<A NAME="Watches Compatibility"></A>
+<HR SIZE="6">
+<A NAME="SEC94"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC93"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC95"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC89"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 10.6.5 Using watches with old versions of CVS </H3>
+<!--docid::SEC94::-->
+<P>
+
+<A NAME="IDX206"></A>
+If you use the watch features on a repository, it
+creates `<TT>CVS</TT>' directories in the repository and
+stores the information about watches in that directory.
+If you attempt to use CVS 1.6 or earlier with the
+repository, you get an error message such as the
+following (all on one line):
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs update: cannot open CVS/Entries for reading:
+No such file or directory
+</pre></td></tr></table><P>
+
+and your operation will likely be aborted.  To use the
+watch features, you must upgrade all copies of CVS
+which use that repository in local or server mode.  If
+you cannot upgrade, use the <CODE>watch off</CODE> and
+<CODE>watch remove</CODE> commands to remove all watches, and
+that will restore the repository to a state which
+CVS 1.6 can cope with.
+</P>
+<P>
+
+<A NAME="Choosing a model"></A>
+<HR SIZE="6">
+<A NAME="SEC95"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC94"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.7 Choosing between reserved or unreserved checkouts </H2>
+<!--docid::SEC95::-->
+<P>
+
+Reserved and unreserved checkouts each have pros and
+cons.  Let it be said that a lot of this is a matter of
+opinion or what works given different groups' working
+styles, but here is a brief description of some of the
+issues.  There are many ways to organize a team of
+developers.  CVS does not try to enforce a certain
+organization.  It is a tool that can be used in several
+ways.
+</P>
+<P>
+
+Reserved checkouts can be very counter-productive.  If
+two persons want to edit different parts of a file,
+there may be no reason to prevent either of them from
+doing so.  Also, it is common for someone to take out a
+lock on a file, because they are planning to edit it,
+but then forget to release the lock.
+</P>
+<P>
+
+People, especially people who are familiar with
+reserved checkouts, often wonder how often conflicts
+occur if unreserved checkouts are used, and how
+difficult they are to resolve.  The experience with
+many groups is that they occur rarely and usually are
+relatively straightforward to resolve.
+</P>
+<P>
+
+The rarity of serious conflicts may be surprising, until one realizes
+that they occur only when two developers disagree on the proper design
+for a given section of code; such a disagreement suggests that the
+team has not been communicating properly in the first place.  In order
+to collaborate under <EM>any</EM> source management regimen, developers
+must agree on the general design of the system; given this agreement,
+overlapping changes are usually straightforward to merge.
+</P>
+<P>
+
+In some cases unreserved checkouts are clearly
+inappropriate.  If no merge tool exists for the kind of
+file you are managing (for example word processor files
+or files edited by Computer Aided Design programs), and
+it is not desirable to change to a program which uses a
+mergeable data format, then resolving conflicts is
+going to be unpleasant enough that you generally will
+be better off to simply avoid the conflicts instead, by
+using reserved checkouts.
+</P>
+<P>
+
+The watches features described above in <A HREF="cvs_10.html#SEC89">10.6 Mechanisms to track who is editing files</A>
+can be considered to be an intermediate model between
+reserved checkouts and unreserved checkouts.  When you
+go to edit a file, it is possible to find out who else
+is editing it.  And rather than having the system
+simply forbid both people editing the file, it can tell
+you what the situation is and let you figure out
+whether it is a problem in that particular case or not.
+Therefore, for some groups it can be considered the
+best of both the reserved checkout and unreserved
+checkout worlds.
+</P>
+<P>
+
+<A NAME="Revision management"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_10.html#SEC83"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_11.html#SEC96"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>
+<FONT SIZE="-1">
+This document was generated
+by <I>Derek Robert Price</I> on <I>April, 18 2002</I>
+using <A HREF="http://texi2html.cvshome.org"><I>texi2html</I></A>
+</FONT>
+
+</BODY>
+</HTML>

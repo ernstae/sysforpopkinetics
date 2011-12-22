@@ -1,0 +1,294 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: 14.1 Where files are installed</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: 14.1 Where files are installed">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: 14.1 Where files are installed">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC106"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_105.html#SEC105" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Installing and Uninstalling" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_107.html#SEC107" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: 14.2 Fine-grained control of install" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_105.html#SEC105" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Installing and Uninstalling" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_105.html#SEC105" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Installing and Uninstalling" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_110.html#SEC110" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Writing Portable C" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 14.1 Where files are installed </H2>
+<!--docid::SEC106::-->
+<P>
+
+If you've ever run <CODE>configure --help</CODE>, you've probably been
+frightened by the huge number of options offered.  Although nobody ever
+uses more than two or three of these, they are still important to
+understand when writing your package; their proper use will help you
+figure out where each file should be installed.  For a background on
+these standard directories and their uses, refer to <A HREF="autobook_13.html#SEC13">3. How to run configure and make</A>.
+</P><P>
+
+We do recommend using the standard directories as described.  While most
+package builders only use <SAMP>`--prefix'</SAMP> or perhaps
+<SAMP>`--exec-prefix'</SAMP>, some packages (eg. GNU/Linux distributions)
+require more control.  For instance, if your package <SAMP>`quux'</SAMP> puts a
+file into <CODE>sysconfigdir</CODE>, then in the default configuration it will
+end up in <TT>`/usr/local/var'</TT>.  However, for a GNU/Linux
+distribution it would make more sense to configure with
+<SAMP>`--sysconfigdir=/var/quux'</SAMP>.
+</P><P>
+
+Automake makes it very easy to use the standard directories.  Each
+directory, such as <SAMP>`bindir'</SAMP>, is mapped onto a <TT>`Makefile'</TT>
+variable of the same name.  Automake adds three useful variables to the
+standard list:
+</P><P>
+
+<DL COMPACT>
+<DT><CODE>pkgincludedir</CODE>
+<DD>This is a convenience variable whose value is
+<SAMP>`$(includedir)/$(PACKAGE)'</SAMP>.
+<P>
+
+<DT><CODE>pkgdatadir</CODE>
+<DD>A convenience variable whose value is <SAMP>`$(datadir)/$(PACKAGE)'</SAMP>.
+<P>
+
+<DT><CODE>pkglibdir</CODE>
+<DD>A variable whose value is <SAMP>`$(libdir)/$(PACKAGE)'</SAMP>.
+</DL>
+<P>
+
+These cannot be set on the <CODE>configure</CODE> command line but are always
+defined as above.  <A NAME="DOCF29" HREF="autobook_fot.html#FOOT29">(29)</A>
+</P><P>
+
+In Automake, a directory variable's name, without the <SAMP>`dir'</SAMP> suffix,
+can be used as a prefix to a primary to indicate install location.
+Confused yet?  And example will help: items listed in
+<SAMP>`bin_PROGRAMS'</SAMP> are installed in <SAMP>`bindir'</SAMP>.
+</P><P>
+
+Automake's rules are actually a bit more precise than this: the
+directory and the primary must agree.  It doesn't make sense to install
+a library in <SAMP>`datadir'</SAMP>, so Automake won't let you.  Here is a
+complete list showing primaries and the directories which can be used
+with them:
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`PROGRAMS'</SAMP>
+<DD><SAMP>`bindir'</SAMP>, <SAMP>`sbindir'</SAMP>, <SAMP>`libexecdir'</SAMP>, <SAMP>`pkglibdir'</SAMP>.
+<P>
+
+<DT><SAMP>`LIBRARIES'</SAMP>
+<DD><SAMP>`libdir'</SAMP>, <SAMP>`pkglibdir'</SAMP>.
+<P>
+
+<DT><SAMP>`LTLIBRARIES'</SAMP>
+<DD><SAMP>`libdir'</SAMP>, <SAMP>`pkglibdir'</SAMP>.
+<P>
+
+<DT><SAMP>`SCRIPTS'</SAMP>
+<DD><SAMP>`bindir'</SAMP>, <SAMP>`sbindir'</SAMP>, <SAMP>`libexecdir'</SAMP>, <SAMP>`pkgdatadir'</SAMP>.
+<P>
+
+<DT><SAMP>`DATA'</SAMP>
+<DD><SAMP>`datadir'</SAMP>, <SAMP>`sysconfdir'</SAMP>, <SAMP>`sharedstatedir'</SAMP>,
+<SAMP>`localstatedir'</SAMP>, <SAMP>`pkgdatadir'</SAMP>.
+<P>
+
+<DT><SAMP>`HEADERS'</SAMP>
+<DD><SAMP>`includedir'</SAMP>, <SAMP>`oldincludedir'</SAMP>, <SAMP>`pkgincludedir'</SAMP>.
+<P>
+
+<DT><SAMP>`TEXINFOS'</SAMP>
+<DD><SAMP>`infodir'</SAMP>.
+<P>
+
+<DT><SAMP>`MANS'</SAMP>
+<DD><SAMP>`man'</SAMP>, <SAMP>`man0'</SAMP>, <SAMP>`man1'</SAMP>, <SAMP>`man2'</SAMP>, <SAMP>`man3'</SAMP>,
+<SAMP>`man4'</SAMP>, <SAMP>`man5'</SAMP>, <SAMP>`man6'</SAMP>, <SAMP>`man7'</SAMP>, <SAMP>`man8'</SAMP>,
+<SAMP>`man9'</SAMP>, <SAMP>`mann'</SAMP>, <SAMP>`manl'</SAMP>.
+</DL>
+<P>
+
+There are two other useful prefixes which, while not directory names,
+can be used in their place.  These prefixes are valid with any primary.
+The first of these is <SAMP>`noinst'</SAMP>.  This prefix tells Automake that
+the listed objects should not be installed, but should be built anyway.
+For instance, you can use <SAMP>`noinst_PROGRAMS'</SAMP> to list programs which
+will not be installed.
+</P><P>
+
+The second such non-directory prefix is <SAMP>`check'</SAMP>.  This prefix tells
+Automake that this object should not be installed, and furthermore that
+it should only be built when the user runs <CODE>make check</CODE>.
+</P><P>
+
+Early in Automake history we discovered that even Automake's extended
+built-in list of directories was not enough -- basically anyone who had
+written a <TT>`Makefile.am'</TT> sent in a bug report about this.  Now
+Automake lets you extend the list of directories.
+</P><P>
+
+First you must define your own directory variable.  This is a macro
+whose name ends in <SAMP>`dir'</SAMP>.  Define this variable however you like.
+We suggest that you define it relative to an autoconf directory
+variable; this gives the user some control over the value.  Don't
+hardcode it to something like <TT>`/etc'</TT>; absolute hardcoded paths are
+rarely portable.
+</P><P>
+
+Now you can attach the base part of the new variable to a primary just
+as you can with the built-in directories:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>foodir = $(datadir)/foo
+foo_DATA = foo.txt
+</pre></td></tr></table></P><P>
+
+Automake lets you attach such a variable to any primary, so you can do
+things you ordinarily wouldn't want to do or be allowed to do.
+For instance, Automake won't diagnose this piece of code that tries to
+install a program in an architecture-independent location:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>foodir = $(datadir)/foo
+foo_PROGRAMS = foo
+</pre></td></tr></table></P><P>
+
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

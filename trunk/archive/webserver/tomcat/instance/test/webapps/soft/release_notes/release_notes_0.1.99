@@ -1,0 +1,43 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.97
+----------------------------------
+USER VISIBLE CHANGES
+Fixed DataSet::getMeasurementIndex() so that it handles data sets missing
+MDV columns.
+
+OTHER CHANGES
+Cleaned up unnecessary copies of temporary values calculated in Pred::eval().
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: September 20, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.98
+----------------------------------
+USER VISIBLE CHANGES
+Output vectors of popResiduals() and indResiduals() are expanded so that
+they contain dummy elements corresponding to data records with MDV=1.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: September 20, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.99
+----------------------------------
+USER VISIBLE CHANGES
+When the optimization completes without convergence, it is now
+treated as a successful completion.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 380
+
+BY: Sachiko Honda
+
+WHEN: September 21, 2005

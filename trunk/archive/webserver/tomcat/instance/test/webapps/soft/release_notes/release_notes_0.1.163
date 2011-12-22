@@ -1,0 +1,14 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.163
+----------------------------------
+USER VISIBLE CHANGES
+The SPK report XML presentation_data section was changed to comma separated data format.
+OTHER CHANGES
+The file NM_generateDataSet.cpp was modified to generte SPK report XML presentation_data section
+with comma separated data formart.  The first row lists the data labels and the following rows 
+are the data values.
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: March 14, 2006

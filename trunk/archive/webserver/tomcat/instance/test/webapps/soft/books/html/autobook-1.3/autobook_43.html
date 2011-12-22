@@ -1,0 +1,304 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Bootstrapping</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Bootstrapping">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Bootstrapping">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC43"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_42.html#SEC42" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Testing" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_44.html#SEC44" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: A Small GNU Autotools Project" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_44.html#SEC44" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: A Small GNU Autotools Project" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Top" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_44.html#SEC44" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: A Small GNU Autotools Project" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H1> 8. Bootstrapping </H1>
+<!--docid::SEC43::-->
+<P>
+
+There are many programs in the GNU Autotools, each of which has a complex
+set of inputs.  When one of these inputs changes, it is important to run
+the proper programs in the proper order.  Unfortunately, it is hard to
+remember both the dependencies and the ordering.
+</P><P>
+
+For instance, whenever you edit <TT>`configure.in'</TT>, you must remember
+to re-run <CODE>aclocal</CODE> in case you added a reference to a new macro.
+You must also rebuild <TT>`configure'</TT> by running <CODE>autoconf</CODE>;
+<TT>`config.h'</TT> by running <CODE>autoheader</CODE>, in case you added a new
+<CODE>AC_DEFINE</CODE>; and <CODE>automake</CODE> to propagate any new
+<CODE>AC_SUBST</CODE>s to the various <TT>`Makefile.in'</TT>s.  If you edit a
+<TT>`Makefile.am'</TT>, you must re-run <CODE>automake</CODE>.  In both these
+cases, you must then remember to re-run <CODE>config.status --recheck</CODE>
+if <TT>`configure'</TT> changed, followed by <CODE>config.status</CODE> to rebuild
+the <TT>`Makefile'</TT>s.
+</P><P>
+
+When doing active development on the build system for your project,
+these dependencies quickly become painful.  Of course, Automake knows
+how to handle this automatically.  By default, <CODE>automake</CODE>
+generates a <TT>`Makefile.in'</TT> which knows all these dependencies and
+which automatically re-runs the appropriate tools in the appropriate
+order.  These rules assume that the correct versions of the tools are
+all in your <CODE>PATH</CODE>.
+</P><P>
+
+It helps to have a script ready to do all of this for you once, before
+you have generated a <TT>`Makefile'</TT> that will automatically run the
+tools in the correct order, or when you make a fresh checkout of the
+code from a <FONT SIZE="-1">CVS</FONT> repository where the developers don't keep
+generated files under source control.  There are at least two opposing
+schools of thought regarding how to go about this -- the
+<CODE>autogen.sh</CODE> school and the <CODE>bootstrap</CODE> school:
+</P><P>
+
+<DL COMPACT>
+<A NAME="IDX1"></A>
+<DT><CODE>autogen.sh</CODE>
+<DD>From the outset, this is a poor name for a bootstrap script, since there
+is already a GNU automatic text generation tool called AutoGen.
+Often packages that follow this convention have the script automatically
+run the generated <CODE>configure</CODE> script after the boostrap process,
+passing <CODE>autogen.sh</CODE> arguments through to <CODE>configure</CODE>.
+Except you don't know what options you want yet, since you can't run
+<SAMP>`configure --help'</SAMP> until <CODE>configure</CODE> has been generated.  I
+suggest that if you find yourself compiling a project set up in this way
+that you type:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ /bin/sh ./autogen.sh --help
+</pre></td></tr></table></P><P>
+
+and ignore the spurious warning that tells you <CODE>configure</CODE> will
+be executed.
+</P><P>
+
+<A NAME="IDX2"></A>
+<DT><CODE>bootstrap</CODE>
+<DD>Increasingly, projects are starting to call their bootstrap scripts
+<TT>`bootstrap'</TT>.  Such scripts simply run the various commands required
+to bring the source tree into a state where the end user can simply:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ configure
+$ make
+$ make install
+</pre></td></tr></table></P><P>
+
+Unfortunately, proponents of this school of thought don't put the
+bootstrap script in their distributed tarballs, since the script is
+unnecessary except when the build environment of a developer's machine
+has changed.  This means the proponents of the autogen.sh school may
+never see the advantages of the other method.
+</DL>
+<P>
+
+Autoconf comes with a program called <CODE>autoreconf</CODE> which essentially
+does the work of the <CODE>bootstrap</CODE> script.  <CODE>autoreconf</CODE> is
+rarely used because, historically, has not been very well known, and only
+in Autoconf 2.13 did it acquire the ability to work with Automake.
+Unfortunately, even the Autoconf 2.13 <CODE>autoreconf</CODE> does not handle
+<CODE>libtoolize</CODE> and some <CODE>automake</CODE>-related options that are
+frequently nice to use.
+</P><P>
+
+We recommend the <CODE>bootstrap</CODE> method, until <CODE>autoreconf</CODE> is
+fixed.  At this point <CODE>bootstrap</CODE> has not been standardized, so
+here is a version of the script we used while writing this book
+<A NAME="DOCF3" HREF="autobook_fot.html#FOOT3">(3)</A>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#! /bin/sh
+
+aclocal \
+&#38;&#38; automake --gnu --add-missing \
+&#38;&#38; autoconf
+</pre></td></tr></table></P><P>
+
+We don't use <CODE>autoreconf</CODE> here because that script (as of Autoconf
+2.13) also does not handle the <SAMP>`--add-missing'</SAMP> option, which we
+want.  A typical <CODE>bootstrap</CODE> might also run <CODE>libtoolize</CODE> or
+<CODE>autoheader</CODE>.
+</P><P>
+
+It is also important for all developers on a project to have the same
+versions of the tools installed so that these rules don't inadvertantly
+cause problems due to differences between tool versions.  This version
+skew problem turns out to be fairly significant in the field.  So,
+<CODE>automake</CODE> provides a way to disable these rules by default,
+while still allowing users to enable them when they know their
+environment is set up correctly.
+</P><P>
+
+In order to enable this mode, you must first add
+<CODE>AM_MAINTAINER_MODE</CODE> to<BR> <TT>`configure.in'</TT>.  This will add the
+<SAMP>`--enable-maintainer-mode'</SAMP> option to <TT>`configure'</TT>; when
+specified this flag will cause these so-called `maintainer rules' to
+be enabled.
+</P><P>
+
+Note that maintainer mode is a controversial feature.  Some people like
+to use it because it causes fewer bug reports in some situations.  For
+instance, <FONT SIZE="-1">CVS</FONT> does not preserve relative timestamps on
+files.  If your project has both <TT>`configure.in'</TT> and
+<TT>`configure'</TT> checked in, and maintainer mode is not in use, then
+sometimes <CODE>make</CODE> will decide to rebuild <TT>`configure'</TT> even
+though it is not really required.  This in turn means more headaches for
+your developers -- on a large project most developers won't touch
+<TT>`configure.in'</TT> and many may not even want to install the GNU Autotools
+<A NAME="DOCF4" HREF="autobook_fot.html#FOOT4">(4)</A>.
+</P><P>
+
+The other camp claims that end users should use the same build system
+that developers use, that maintainer mode is simply unaesthetic, and
+furthermore that the modality of maintainer mode is dangerous--you can
+easily forget what mode you are in and thus forget to rebuild, and thus
+correctly test, a change to the configure or build system.  When
+maintainer mode is not in use, the Automake-supplied <CODE>missing</CODE>
+script will be used to warn users when it appears that they need a
+maintainer tool that they do not have.
+</P><P>
+
+The approach you take depends strongly on the social structures
+surrounding your project.
+</P><P>
+
+<A NAME="A Small GNU Autotools Project"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

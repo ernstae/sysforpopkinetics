@@ -1,0 +1,229 @@
+<html><head>
+<title>Basic Constructor</title>
+<meta name="description" id="description" content="Basic Constructor">
+<meta name="keywords" id="keywords" content=" Optimizer constructor "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="optimizerconstructor.htm" target="_top">section</a>, <a href="optimizerconstructor_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Constructor for the class.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The last three arguments for this constructor are optional and only
+need to be provided when restart information for this Optimizer object
+needs to saved to or retrieved from a restart file.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>epsilonIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This real number is used to specify the convergence criteria
+for the optimizer.
+It must be greater than <code><span style='white-space: nowrap'>0.0</span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nMaxIterIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This integer must be greater than or equal to zero.
+It specifies the maximum number of 
+iterations to attempt before giving up on convergence.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>levelIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This integer scalar specifies the amount of tracing.
+Larger values of <i>levelIn</i> entail more tracing.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>restartFileNameIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This string specifies the name of the XML format restart file.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>readRestartInfoIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This bool specifies whether or not restart information should be 
+read from the restart file.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>writeRestartInfoIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This bool specifies whether or not restart information should be 
+written to the restart file.
+
+<br>
+<br>
+<b><big><a name="Other data members" id="Other data members">Other data members</a></big></b>
+
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nIterCompleted</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This integer scalar holds the number of iteration that have been 
+completed in the optimizer.  The initial value of <code><font color="blue"> 0</font></code> is set 
+at the construction time.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>isTooManyIter</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This flag indicates whether the too-many-iteration failure has occurred.  
+It is set to <code><font color="blue">false</font></code> at the construction time.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>saveStateAtEndOfOpt</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This flag indicates if the state information required for a warm start
+should be saved at the end of the optimization process.
+It is set to <code><font color="blue">false</font></code> at the construction time.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>throwExcepIfMaxIter</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This flag indicates if the optimizer should throw an exception when
+the maximum number of iterations is exhausted.
+It is set to <code><font color="blue">true</font></code> at the construction time.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>isWarmStartPossible</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This flag indicates whether it is possible to perform a warm start 
+using the current optimizer state information.
+It is set to <code><font color="blue">false</font></code> at the construction time.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>isWarmStart</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This flag indicates whether the optimization should run a warm start.  
+It is set to <code><font color="blue">false</font></code> at the construction time.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>didOptFinishOk</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This flag indicates whether the optimizer completed without an 
+error occurring during the previous time it was called.
+It is set to <code><font color="blue">false</font></code> at the construction time.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>isBeginOfIterStateInfo</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This flag indicates whether the current optimizer state information 
+is from the beginning of the last iteration during the previous 
+time the optimizer was called.
+It is set to <code><font color="blue">false</font></code> at the construction time.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>stateInfo</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This <code><font color="blue">stateInfo</font></code> structure contains the optimizer state information
+required to perform a warm start.
+Each of its elements is described separately below.
+
+<br>
+<br>
+<b><a name="Other data members.stateInfo.n" id="Other data members.stateInfo.n">stateInfo.n</a></b>
+<br>
+The element <code><font color="blue">n</font></code> specifies the number of components
+in the element vector <code><font color="blue">x</font></code>.
+
+<br>
+<br>
+<b><a name="Other data members.stateInfo.b" id="Other data members.stateInfo.b">stateInfo.b</a></b>
+<br>
+The element <code><font color="blue">b</font></code> specifies the number of Bfgs updates
+that have been made to the Hessian approximation <code><font color="blue">h</font></code>.
+
+<br>
+<br>
+<b><a name="Other data members.stateInfo.r" id="Other data members.stateInfo.r">stateInfo.r</a></b>
+<br>
+The element <code><font color="blue">r</font></code> contains the current trust region radius
+(as an infinity norm bound on the step size).
+
+<br>
+<br>
+<b><a name="Other data members.stateInfo.f" id="Other data members.stateInfo.f">stateInfo.f</a></b>
+<br>
+The element <code><font color="blue">f</font></code> contains the value for <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code>
+at the point <code><span style='white-space: nowrap'><i>x</i></span></code>.
+
+<br>
+<br>
+<b><a name="Other data members.stateInfo.x" id="Other data members.stateInfo.x">stateInfo.x</a></b>
+<br>
+The element <code><font color="blue">x</font></code> is a vector of length <code><font color="blue">n</font></code>.
+It specifies the point at which the objective function, 
+its gradient, and its Hessian were evaluated.
+
+<br>
+<br>
+<b><a name="Other data members.stateInfo.g" id="Other data members.stateInfo.g">stateInfo.g</a></b>
+<br>
+The element <code><font color="blue">g</font></code> is a vector of length <code><font color="blue">n</font></code>.
+It contains the gradient of <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code>
+at the point <code><span style='white-space: nowrap'><i>x</i></span></code>.
+
+<br>
+<br>
+<b><a name="Other data members.stateInfo.h" id="Other data members.stateInfo.h">stateInfo.h</a></b>
+<br>
+The element <code><font color="blue">h</font></code> is a vector of length <code><font color="blue">n * n</font></code>.
+It contains an approximation for the Hessian of <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code>
+at the point <code><span style='white-space: nowrap'><i>x</i></span></code>.
+
+<br>
+<br>
+<b><a name="Other data members.stateInfo.m" id="Other data members.stateInfo.m">stateInfo.m</a></b>
+<br>
+The element <code><font color="blue">m</font></code> specifies the total number of objective 
+function parameters, i.e., the number of free parameters plus the 
+number of parameters that are constrained by both their lower and 
+upper bounds.
+
+<br>
+<br>
+<b><a name="Other data members.stateInfo.low" id="Other data members.stateInfo.low">stateInfo.low</a></b>
+<br>
+The element <code><font color="blue">low</font></code> is a vector of length <code><font color="blue">m</font></code>.
+It specifies the lower bounds for all of the objective function 
+parameters in their original coordinates.
+
+<br>
+<br>
+<b><a name="Other data members.stateInfo.up" id="Other data members.stateInfo.up">stateInfo.up</a></b>
+<br>
+The element <code><font color="blue">up</font></code> is a vector of length <code><font color="blue">m</font></code>.
+It specifies the upper bounds for all of the objective function 
+parameters in their original coordinates.
+
+<br>
+<br>
+<b><a name="Other data members.stateInfo.pos" id="Other data members.stateInfo.pos">stateInfo.pos</a></b>
+<br>
+The element <code><font color="blue">pos</font></code> is a vector of length <code><font color="blue">n</font></code>.
+It specifies the positions, i.e., indices, of the free objective 
+function parameters in the full objective function parameter.
+
+<br>
+<br>
+<b><a name="Other data members.stateInfo.acceptStepCount" id="Other data members.stateInfo.acceptStepCount">stateInfo.acceptStepCount</a></b>
+<br>
+The element <code><font color="blue">acceptStepCount</font></code> specifies 
+the number of consecutive iterations that acceptable 
+step values have been calculated.
+
+
+<hr>Input File: ../../spk/Optimizer.cpp
+
+</body>
+</html>

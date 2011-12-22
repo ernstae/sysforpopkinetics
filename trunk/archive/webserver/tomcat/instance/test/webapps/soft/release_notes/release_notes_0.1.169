@@ -1,0 +1,17 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.169
+----------------------------------
+USER VISIBLE CHANGES
+
+Added an error message in the linear interpolator for the case of 
+identical independent variable values.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  551
+
+BY:  Mitch Watrous
+
+WHEN:  May 19, 2006

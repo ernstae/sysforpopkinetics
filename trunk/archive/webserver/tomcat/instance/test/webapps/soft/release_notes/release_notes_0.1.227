@@ -1,0 +1,32 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.226
+----------------------------------
+USER VISIBLE CHANGES
+
+Made Two-Stage methods more robust.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  571, 572.
+
+BY: Mitch Watrous
+
+WHEN:  March 14, 2008.
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.227
+----------------------------------
+USER VISIBLE CHANGES
+
+Fixed two-stage warnings.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  911
+
+BY:  Mitch Watrous
+
+WHEN:  March 20, 2008

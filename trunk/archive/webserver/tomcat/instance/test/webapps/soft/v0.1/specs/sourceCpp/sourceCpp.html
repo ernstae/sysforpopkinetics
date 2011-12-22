@@ -1,0 +1,3941 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>SPK Compiler Output (C++)</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>SPK Compiler Output (C++)</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;This documentation describes the source code files produced by 
+SPK Compiler.
+         </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 2.5</TD
+><TD
+ALIGN="LEFT"
+>December 14, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>OdePred.h</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 2.4</TD
+><TD
+ALIGN="LEFT"
+>June 10, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>ADVAN6 specific outputs</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 2.3</TD
+><TD
+ALIGN="LEFT"
+>September 8, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added an explanation for IndData::getMeasurements() from the class client's perspective.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 2.2</TD
+><TD
+ALIGN="LEFT"
+>September 8, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added a description for DataSet::DataSet().</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 2.1</TD
+><TD
+ALIGN="LEFT"
+>August 3, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Explanations for Makefile.SPK and Monte Carlo related topics</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 2.0</TD
+><TD
+ALIGN="LEFT"
+>July 1, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Complete reorganization.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.3</TD
+><TD
+ALIGN="LEFT"
+>March 13, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: alan</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Changes to move documentation to web server.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.2</TD
+><TD
+ALIGN="LEFT"
+>January 6, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: alan</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Changed version of Docbook DTD from 4.1.2 to 4.2 in all .xml files</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.1</TD
+><TD
+ALIGN="LEFT"
+>December 8, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN52"
+>Related Articles</A
+></DT
+><DT
+><A
+HREF="#AEN68"
+><TT
+CLASS="filename"
+>NonmemPars.h</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN333"
+><TT
+CLASS="filename"
+>MontePars.h</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN379"
+><TT
+CLASS="filename"
+>IndData.h</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN610"
+><TT
+CLASS="filename"
+>DataSet.h</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN694"
+><TT
+CLASS="filename"
+>Pred.h</TT
+></A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN702"
+>Methods to Implement</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN709"
+>Constructor</A
+></DT
+><DT
+><A
+HREF="#AEN718"
+><TT
+CLASS="literal"
+>virtual bool eval()</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN841"
+><TT
+CLASS="literal"
+>int getNObservs( int i ) const</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN845"
+><TT
+CLASS="literal"
+>int getNRecords( int i ) const</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN849"
+><TT
+CLASS="literal"
+>int getMeasurementIndex( int j ) const</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN853"
+><TT
+CLASS="literal"
+>int getMeasurementIndex( int i, int j ) const</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN857"
+><TT
+CLASS="literal"
+>int getRecordIndex( int j ) const</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN861"
+><TT
+CLASS="literal"
+>int getRecordIndex( int i, int j ) const</TT
+></A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+><A
+HREF="#AEN865"
+><TT
+CLASS="filename"
+>OdePred.h</TT
+></A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN873"
+>Methods to Implement</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN875"
+><TT
+CLASS="literal"
+>OdePred(...)</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN943"
+><TT
+CLASS="literal"
+>~OdePred()</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN947"
+><TT
+CLASS="literal"
+>int getNObservs( int who ) const</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN952"
+><TT
+CLASS="literal"
+>int getNRecords( int who ) const</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN957"
+><TT
+CLASS="literal"
+>const spk_ValueType lininterp( const string &#38; devVar )</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN963"
+><TT
+CLASS="literal"
+>virtual void initUserEnv(...)</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN969"
+><TT
+CLASS="literal"
+>virtual void saveUserEnv(...)</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN975"
+><TT
+CLASS="literal"
+>virtual void evalError(...)</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN980"
+><TT
+CLASS="literal"
+>void evalError()</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN987"
+><TT
+CLASS="literal"
+>virtual void evalPk(...)</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN992"
+><TT
+CLASS="literal"
+>void evalPk( const spk_ValueType &#38; t )</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN1000"
+><TT
+CLASS="literal"
+>virtual void evalDes(...)</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN1005"
+><TT
+CLASS="literal"
+>void evalOde( const spk_ValueType&#38; t, typename vector&#60;spk_ValueType&#62;::const_iterator a )</TT
+></A
+></DT
+></DL
+></DD
+></DL
+></DD
+><DT
+><A
+HREF="#AEN1014"
+><TT
+CLASS="filename"
+>fitDriver.cpp</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN1123"
+><TT
+CLASS="filename"
+>monteDriver.cpp</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN1157"
+><TT
+CLASS="filename"
+>Makefile.SPK</TT
+></A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN52"
+></A
+>Related Articles</H2
+><P
+>&#13;         <P
+></P
+><UL
+><LI
+><P
+>&#13;                  <A
+HREF="../sourceML/sourceML.html"
+TARGET="_top"
+>SpkSourceML</A
+>
+               </P
+></LI
+><LI
+><P
+>&#13;                  <A
+HREF="../dataML/dataML.html"
+TARGET="_top"
+>SpkDataML</A
+>
+               </P
+></LI
+><LI
+><P
+>&#13;                  <A
+HREF="../reportML/reportML.html"
+TARGET="_top"
+>SpkReportML</A
+>
+               </P
+></LI
+><LI
+><P
+>&#13;                  <A
+HREF="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/hierarchy.html"
+TARGET="_top"
+>&#13;                  Pred Library</A
+>
+               </P
+></LI
+></UL
+>
+      </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN68"
+></A
+><TT
+CLASS="filename"
+>NonmemPars.h</TT
+></H2
+><P
+>&#13;      This header file exports a namespace, <TT
+CLASS="literal"
+>NonmemPars</TT
+>, 
+      defining variables that contain the values of NONMEM control parameters. 
+      </P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>Namespace Entries</B
+></P
+><DL
+><DT
+><TT
+CLASS="literal"
+>const int nTheta</TT
+></DT
+><DD
+><P
+>&#13;               is the length of <I
+CLASS="emphasis"
+>theta</I
+> vector.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;double&#62; thetaUp</TT
+></DT
+><DD
+><P
+>&#13;               contains the upper boundary value for <I
+CLASS="emphasis"
+>theta</I
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;double&#62; thetaLow</TT
+></DT
+><DD
+><P
+>&#13;               contains the lower boundary value for <I
+CLASS="emphasis"
+>theta</I
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;double&#62; thetaIn</TT
+></DT
+><DD
+><P
+>&#13;               contains the initial estimate for <I
+CLASS="emphasis"
+>theta</I
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;bool&#62; thetaFixed</TT
+></DT
+><DD
+><P
+>&#13;               contains a vector of boolean flags specifying whether
+               the corresponding i-th element of 
+               <I
+CLASS="emphasis"
+>theta</I
+> is fixed to the initial estimate value or not.
+               <TT
+CLASS="literal"
+>thetaFixed[i]</TT
+> = true causes <I
+CLASS="emphasis"
+>theta(i+1)</I
+>
+               to be fixed.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int nEta</TT
+></DT
+><DD
+><P
+>&#13;               is the length of <I
+CLASS="emphasis"
+>eta</I
+> vector, 
+               which determines the dimension of <I
+CLASS="emphasis"
+>Omega</I
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;double&#62; etaIn</TT
+></DT
+><DD
+><P
+>&#13;               is the initial estimate for <I
+CLASS="emphasis"
+>eta</I
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const enum covStruct omegaStruct</TT
+></DT
+><DD
+><P
+>&#13;               is present only if the <I
+CLASS="emphasis"
+>population analysis</I
+>
+               is requested in the given SpkSourceML document.
+               The value is either <TT
+CLASS="varname"
+>DIAGONAL</TT
+>,  
+               <TT
+CLASS="varname"
+>FULL</TT
+> or <TT
+CLASS="varname"
+>BLOCKDIAG</TT
+>.
+               <TT
+CLASS="varname"
+>DIAGONAL</TT
+> indicates that only the diagonal elements of 
+               <I
+CLASS="emphasis"
+>Omega</I
+> matrix
+               are subject to optimization.  <TT
+CLASS="varname"
+>FULL</TT
+> indicates that potentially all elements
+               are subject to optimization (but remember, <I
+CLASS="emphasis"
+>Omega</I
+> is symmetric).
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const enum covStruct omegaStruct</TT
+></DT
+><DD
+><P
+>&#13;               is present only if the <I
+CLASS="emphasis"
+>individual analysis</I
+>
+               is requested in the given SpkSourceML document.
+               The value is always <TT
+CLASS="varname"
+>DIAGONAL</TT
+> for this type of analysis. 
+               <TT
+CLASS="varname"
+>DIAGONAL</TT
+>  indicates that potentially all lower triangle elements
+               are subject to optimization (remember, <I
+CLASS="emphasis"
+>Omega</I
+> is symmetric). 
+               <TT
+CLASS="varname"
+>BLOCKDIAG</TT
+> indicates that the <I
+CLASS="emphasis"
+>Omega</I
+> matrix is potentially 
+               made up of multiple <TT
+CLASS="varname"
+>DIAGONAL</TT
+> and <TT
+CLASS="varname"
+>FULL</TT
+> blocks.  
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int omegaDim</TT
+></DT
+><DD
+><P
+>&#13;               is the dimension of <I
+CLASS="emphasis"
+>Omega</I
+> (symmetric) matrix.
+               This value is determined by the length of <I
+CLASS="emphasis"
+>eta</I
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int omegaOrder</TT
+></DT
+><DD
+><P
+>&#13;               is the number of elements in <I
+CLASS="emphasis"
+>Omega</I
+> matrix that are subject to optimization
+               (ie. the order of <I
+CLASS="emphasis"
+>Omega</I
+>).
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;double&#62; omegaIn</TT
+></DT
+><DD
+><P
+>&#13;               is the initial estimates for the elements of <I
+CLASS="emphasis"
+>Omega</I
+>
+               that are subject to optimization.  Thus, the length of <TT
+CLASS="varname"
+>omegaIn</TT
+>
+               is <TT
+CLASS="literal"
+>omegaOrder</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;bool&#62; omegaFixed</TT
+></DT
+><DD
+><P
+>&#13;               contains a vector of boolean values specifying whether the corresponding i-th
+               element of <I
+CLASS="emphasis"
+>Omega</I
+> should be fixed to the initial estimate value or not.
+               If Omega is 3 by 3 and only the diagonal elements are subject to optimization,
+               setting <TT
+CLASS="literal"
+>omegaFixed[2] = true</TT
+> causes the (3,3) element of the matrix
+               to be fixed.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int nOmegaBlk</TT
+></DT
+><DD
+><P
+>&#13;               is the number of blocks in the block diagonal representation of <I
+CLASS="emphasis"
+>Omega</I
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;covStruct&#62; omegaBlockStruct</TT
+></DT
+><DD
+><P
+>&#13;               contains a vector of <TT
+CLASS="varname"
+>covStruct</TT
+> values specifying whether the corresponding i-th
+               block is <TT
+CLASS="varname"
+>DIAGONAL</TT
+> or <TT
+CLASS="varname"
+>FULL</TT
+>.
+               If <I
+CLASS="emphasis"
+>Omega</I
+> is made up of 3 blocks, 
+               setting <TT
+CLASS="literal"
+>omegaBlockStruct[1] = FULL</TT
+> causes the second block to be recorded as 
+               <TT
+CLASS="varname"
+>FULL</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;int&#62; omegaBlockdims</TT
+></DT
+><DD
+><P
+>&#13;               contains a vector of integers specifying the dimension corresponding i-th block.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;bool&#62; omegaBlockSameAsPrev</TT
+></DT
+><DD
+><P
+>&#13;               contains a vector of boolean values specifying whether the corresponding i-th
+               block of <I
+CLASS="emphasis"
+>Omega</I
+> should be constrained equal to the previous block.
+               If <I
+CLASS="emphasis"
+>Omega</I
+> is made up of 3 blocks, 
+               setting <TT
+CLASS="literal"
+>omegaBlockSameAsPrev[3] = true</TT
+> causes the third block to be constrained 
+               equal to the second.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int nEps</TT
+></DT
+><DD
+><P
+>&#13;               is the length of <I
+CLASS="emphasis"
+>eps</I
+> vector,
+               which determines the dimension of <I
+CLASS="emphasis"
+>Sigma</I
+>.
+               This field is present only if the <I
+CLASS="emphasis"
+>population analysis</I
+> is requested.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const enum covStruct sigmaStruct</TT
+></DT
+><DD
+><P
+>&#13;               is present only if the <I
+CLASS="emphasis"
+>population analysis</I
+> is requested.
+               The value is either <TT
+CLASS="varname"
+>DIAGONAL</TT
+>, <TT
+CLASS="varname"
+>FULL</TT
+> or
+               <TT
+CLASS="varname"
+>BLOCKDIAG</TT
+>. 
+               <TT
+CLASS="varname"
+>DIAGONAL</TT
+> indicates that only the diagonal elements of 
+               <I
+CLASS="emphasis"
+>Sigma</I
+> matrix
+               are subject to optimization.  <TT
+CLASS="varname"
+>FULL</TT
+> indicates that potentially all lower triangle elements
+               are subject to optimization (remember, <I
+CLASS="emphasis"
+>Sigma</I
+> is symmetric). 
+               <TT
+CLASS="varname"
+>BLOCKDIAG</TT
+> indicates that the <I
+CLASS="emphasis"
+>Sigma</I
+> matrix is potentially 
+               made up of multiple <TT
+CLASS="varname"
+>DIAGONAL</TT
+> and <TT
+CLASS="varname"
+>FULL</TT
+> blocks.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int sigmaDim</TT
+></DT
+><DD
+><P
+>&#13;               is the dimension of <I
+CLASS="emphasis"
+>Sigma</I
+> (symmetric) matrix.
+               ex. For a 3 by 3 matrix, the value here is 3.
+               This field is present only if the <I
+CLASS="emphasis"
+>population analysis</I
+> is requested.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int sigmaOrder</TT
+></DT
+><DD
+><P
+>&#13;               is the number of elements in <I
+CLASS="emphasis"
+>Sigma</I
+> matrix that are subject to optimization
+               (ie. the order of <I
+CLASS="emphasis"
+>Sigma</I
+>).
+               This field is present only if the <I
+CLASS="emphasis"
+>population analysis</I
+> is requested.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;double&#62; sigmaIn</TT
+></DT
+><DD
+><P
+>&#13;               is the initial estimates for the elements of <I
+CLASS="emphasis"
+>Sigma</I
+>
+               that are subject to optimization.  Thus, the length of <TT
+CLASS="varname"
+>simgaIn</TT
+>
+               is <TT
+CLASS="varname"
+>sigmaOrder</TT
+>.
+               This field is present only if the <I
+CLASS="emphasis"
+>population analysis</I
+> is requested.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int nSigmaBlk</TT
+></DT
+><DD
+><P
+>&#13;               is the number of blocks in the block diagonal representation of <I
+CLASS="emphasis"
+>Sigma</I
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;covStruct&#62; sigmaBlockStruct</TT
+></DT
+><DD
+><P
+>&#13;               contains a vector of <TT
+CLASS="varname"
+>covStruct</TT
+> values specifying whether the corresponding i-th
+               block is <TT
+CLASS="varname"
+>DIAGONAL</TT
+> or <TT
+CLASS="varname"
+>FULL</TT
+>.
+               If <I
+CLASS="emphasis"
+>Sigma</I
+> is made up of 3 blocks, 
+               setting <TT
+CLASS="literal"
+>sigmaBlockStruct[1] = FULL</TT
+> causes the second block to be recorded as 
+               <TT
+CLASS="varname"
+>FULL</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;int&#62; sigmaBlockdims</TT
+></DT
+><DD
+><P
+>&#13;               contains a vector of integers specifying the dimension corresponding i-th block.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;bool&#62; sigmaBlockSameAsPrev</TT
+></DT
+><DD
+><P
+>&#13;               contains a vector of boolean values specifying whether the corresponding i-th
+               block of <I
+CLASS="emphasis"
+>Sigma</I
+> should be constrained equal to the previous block.
+               If <I
+CLASS="emphasis"
+>Sigma</I
+> is made up of 3 blocks, 
+               setting <TT
+CLASS="literal"
+>sigmaBlockSameAsPrev[3] = true</TT
+> causes the third block to be constrained 
+               equal to the second.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int seed</TT
+></DT
+><DD
+><P
+>&#13;               specifies the seed for random number generation.
+               A value &#60; 0 indicates no simulation to be done.
+               </P
+></DD
+><DT
+>----- For ADVAN6 only from here -----</DT
+><DD
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+><TT
+CLASS="literal"
+>const bool isPkFunctionofT</TT
+></DT
+><DD
+><P
+>&#13;                        inidicates as to whether the user's PK model is a function of T (continuous time variable).
+                        A value, true, indicates it does.
+                        </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const bool nCompartments</TT
+></DT
+><DD
+><P
+>&#13;                        specifies the number of compartments 
+                        (including the output compartment that 
+                        NONMEM implicitely adds).
+                        </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const bool nParameters</TT
+></DT
+><DD
+><P
+>&#13;                        specifies the number of PK parameters.  Currently this is equal to the length
+                        of P vector variable appearing in the user's model.
+                        </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const bool defaultDoseComp</TT
+></DT
+><DD
+><P
+>&#13;                        specifies the default compartment that receives dose.
+                        </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const bool defaultObservationComp</TT
+></DT
+><DD
+><P
+>&#13;                        specifies the default observation compartment.
+                        </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;bool&#62; initialOff</TT
+></DT
+><DD
+><P
+>&#13;                        is a vector of boolean values where the i-th value indicates
+                        as to whether the corresponding compartment is initiall off or not.
+                        True inidicates initially off.
+                        </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;bool&#62; noOff</TT
+></DT
+><DD
+><P
+>&#13;                        is a vector of boolean values where the i-th value indicates
+                        as to whether the corresponding compartment can be turned off or not.
+                        True indicates no turn-off.
+                        </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;bool&#62; noDose</TT
+></DT
+><DD
+><P
+>&#13;                        is a vector of boolean values where the i-th value indicates
+                        as to whehter the corresponding compartment would ever receive a dose or not.
+                        True indicates no dose at all.
+                        </P
+></DD
+></DL
+></DIV
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN333"
+></A
+><TT
+CLASS="filename"
+>MontePars.h</TT
+></H2
+><P
+>&#13;         This header file exports a namespace, <TT
+CLASS="filename"
+>MontePars</TT
+> containing
+         parameters that control Monte Carlo simulation.
+         This file is generated only if <I
+CLASS="emphasis"
+>Monte Carlo simulation is requested</I
+>
+         from the given SpkSourceML document.
+      </P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+><TT
+CLASS="literal"
+>const enum { plain, grid, misser, analytic } method</TT
+></DT
+><DD
+><P
+>specifies the method for approximating (or computing) the integral.
+               </P
+><P
+>  
+               NOTE: Do not assume the order of appearance of enum values
+               to be the same as the one appeared in this document!
+               <P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+><TT
+CLASS="literal"
+>plain</TT
+></DT
+><DD
+><P
+>Monte-Carlo approximation for integral
+                        </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>analytic</TT
+></DT
+><DD
+><P
+>Closed form solution only valid for <I
+CLASS="emphasis"
+>LinearModel</I
+> 
+                        (consult <A
+HREF="mailto:brad@apl.washington.edu"
+TARGET="_top"
+>Brad Bell</A
+> for details)
+                        </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>grid</TT
+></DT
+><DD
+><P
+>Approximation integral using evaluation on a uniform grid
+                        </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>miser</TT
+></DT
+><DD
+><P
+>Approximation integral using Miser algorithm</P
+></DD
+></DL
+></DIV
+>
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int nEval</TT
+></DT
+><DD
+><P
+>&#13;               is the number of components or the number of function evaluations.
+               If method = grid, the value is taken as the number of random effects.
+               Otherwise, the value must be one.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;int&#62; numberEval</TT
+></DT
+><DD
+><P
+>&#13;               specifies the number of function evalautions.
+               If method == grid, the length of the vector is equal to the
+               number of random effects.  numberEval[i] specifies the 
+               number of grid points in i-th random effect, 
+               and the corresponding total number of function evaluations is
+               the product of the elements of numberEval.
+               If method != grid, the length of the vector is 1 and 
+               numberEval[0] is taken as the total number of functions
+               evaluations.
+               </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN379"
+></A
+><TT
+CLASS="filename"
+>IndData.h</TT
+></H2
+><P
+>&#13;      This header file exports the definition of a template class, <TT
+CLASS="classname"
+>IndData</TT
+>.
+      <TT
+CLASS="classname"
+>IndData</TT
+> is a representation of the data set associated with
+      <I
+CLASS="emphasis"
+>a single individual</I
+>.
+      </P
+><P
+>&#13;      The class object contains not only the individual's original data set but also
+      placeholders for values computed during the process that correspond to each data record.
+      The original data set values are declared read-only and others are most likely read-write.
+      It also provides a number of methods for data operation.
+      </P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>Public Methods</B
+></P
+><DL
+><DT
+><TT
+CLASS="literal"
+>IndData( int nRecords, 
+                                    const vector&#60;char*&#62; &#38;IDIn, 
+                                    const vector&#60;double&#62; &#38;d1In, 
+                                    const vector&#60;double&#62; &#38;d2In, 
+                                    ...)</TT
+></DT
+><DD
+><P
+>&#13;               The constructor.  The first argument, <TT
+CLASS="varname"
+>nRecords</TT
+> specifies
+               the number of data records (for the individual).  The arguments after
+               following <TT
+CLASS="varname"
+>nRecords</TT
+> (ex. <TT
+CLASS="varname"
+>IDIn</TT
+>,
+               <TT
+CLASS="varname"
+>d1In</TT
+>, <TT
+CLASS="varname"
+>d2In</TT
+>...)
+               are vectors containing the values of data items
+               from the data set such as ID, DV and TIME.  Optional data items such
+               as ID and MDV will appear in this list of arguments with their default values.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>~IndData()</TT
+></DT
+><DD
+><P
+>&#13;                The destructor.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int getNRecords() const</TT
+></DT
+><DD
+><P
+>&#13;               Returns the total number of data records associated with this individual.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int getNObservs() const</TT
+></DT
+><DD
+><P
+>&#13;               Returns the number of data records whose corresponding MDV (Missing Data Value)
+               value is 0 (false).
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;double&#62; getMeasurements() const</TT
+></DT
+><DD
+><P
+>&#13;               Returns a vector of measurements.
+               i.e. The DV values of which corresponding MDV values are 0.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int getMeasurementIndex( j ) const</TT
+></DT
+><DD
+><P
+>&#13;               Returns the index to an element of the measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int getRecordIndex( int j' ) const</TT
+></DT
+><DD
+><P
+>&#13;               Returns the index to a record in the original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceMeasurements( const valarray&#60;double&#62; &#38; yi )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of measurements with the values of <TT
+CLASS="varname"
+>yi</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replacePred ( const valarray&#60;double&#62; &#38; predIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of PRED (prediction) with the values of <TT
+CLASS="varname"
+>predIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceRes( const valarray&#60;double&#62; &#38; ResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of RES (residual) with the values of <TT
+CLASS="varname"
+>ResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceWRes( const valarray&#60;double&#62; &#38; WResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of WRES (weighted residual)
+               with the values of <TT
+CLASS="varname"
+>WResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replacePPred( const valarray&#60;double&#62; &#38; pPredIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of PPRED (population prediction)
+               with the values of <TT
+CLASS="varname"
+>pPredIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replacePRes( const valarray&#60;double&#62; &#38; pResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of PRES (population residual)
+               with the values of <TT
+CLASS="varname"
+>pResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replacePWRes( const valarray&#60;double&#62; &#38; pWResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of PWRES (population weighted residual)
+               with the values of <TT
+CLASS="varname"
+>pWResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceIPred( const valarray&#60;double&#62; &#38; iPredIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of IPRED (individualized prediction)
+               with the values of <TT
+CLASS="varname"
+>iPredIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceIRes( const valarray&#60;double&#62; &#38; iResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of IRES (individualized residual)
+               with the values of <TT
+CLASS="varname"
+>iResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceIWres( const valarray&#60;double&#62; &#38; iWResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of IWRES (individualized weighted residual)
+               with the values of <TT
+CLASS="varname"
+>iWResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceCPred( const valarray&#60;double&#62; &#38; cPredIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of CPRED (conditional prediction) 
+               with the values of <TT
+CLASS="varname"
+>cPredIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceCRes( const valarray&#60;double&#62; &#38; cResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of CRES (conditional residual)
+               with the values of <TT
+CLASS="varname"
+>cResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceCWRes( const valarray&#60;double&#62; &#38; cWResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of CWRES (conditional weighted residual)
+               with the values of <TT
+CLASS="varname"
+>cWResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceEta( const valarray&#60;double&#62; &#38; etaIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of ETA (eta) 
+               with the values of <TT
+CLASS="varname"
+>etaIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceEtaRes( const valarray&#60;double&#62; &#38; etaResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of ETARES (eta residual)
+               with the values of <TT
+CLASS="varname"
+>etaResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceWEtaRes( const valarray&#60;double&#60; &#38; etaWResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of WETARES (weighted eta residual)
+               with the values of <TT
+CLASS="varname"
+>etaWResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceIEtaRes( const valarray&#60;double&#62; &#38; iEtaResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of IETARES (individualized eta residual)
+               with the values of <TT
+CLASS="varname"
+>iEtaResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceIWEtaRes( const valarray&#60;double&#62; &#38; iEtaWResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of IWETARES (individualized weighted eta residual)
+               with the values of <TT
+CLASS="varname"
+>iWEtaResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replacePEtaRes( const valarray&#60;double&#62; &#38; pEtaResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of PETARES (population eta residual)
+               with the values of <TT
+CLASS="varname"
+>pEtaResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replacePWEtaRes( const valarray&#60;double&#62; &#38; pEtaWResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of PWETARES (population weighted eta residual)
+               with the values of <TT
+CLASS="varname"
+>pEtaWResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceCEtaRes( const valarray&#60;double&#62; &#38; cEtaResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of CETARES (conditional eta residual)
+               with the values of <TT
+CLASS="varname"
+>cEtaResIn</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void replaceCWEtaRes( const valarray&#60;double&#62; &#38; cEtaWResIn )</TT
+></DT
+><DD
+><P
+>&#13;               Replace the internally kept values of CWETARES (conditional weighted eta residual)
+               with the values of <TT
+CLASS="varname"
+>cEtaWResIn</TT
+>.
+               </P
+></DD
+></DL
+></DIV
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>Public Properties</B
+></P
+><DL
+><DT
+><TT
+CLASS="literal"
+>const vector&#60;T&#62; <TT
+CLASS="replaceable"
+><I
+>xXx</I
+></TT
+></TT
+></DT
+><DD
+><P
+>&#13;               <TT
+CLASS="replaceable"
+><I
+>xXx</I
+></TT
+> is replaced exactly by the labels of user-given (read only) 
+               data items such as ID, TIME and DV. 
+               It has a length of <TT
+CLASS="varname"
+>nRecords</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>vector&#60;T&#62; <TT
+CLASS="replaceable"
+><I
+>yYy</I
+></TT
+></TT
+></DT
+><DD
+><P
+>&#13;               <TT
+CLASS="replaceable"
+><I
+>yYy</I
+></TT
+> is replaced exactly by variable names that appear
+               on the left hand side of assignment statements in model definitions.
+               It has a length of <TT
+CLASS="varname"
+>nRecords</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>vector&#60; vector&#60;T&#62; &#62; THETA</TT
+></DT
+><DD
+><P
+>&#13;               A read-write vector of <TT
+CLASS="varname"
+>n</TT
+>, 
+               <TT
+CLASS="varname"
+>nTheta</TT
+>-dimensional vectors, 
+               where <TT
+CLASS="varname"
+>n</TT
+> is the number of data records for the indiviual and
+               <TT
+CLASS="varname"
+>nTheta</TT
+> is the size of <I
+CLASS="emphasis"
+>theta</I
+> vector.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>vector&#60; vector&#60;T&#62; &#62; ETA</TT
+></DT
+><DD
+><P
+>&#13;               A read-write vector of <TT
+CLASS="varname"
+>n</TT
+> 
+               <TT
+CLASS="varname"
+>nEta</TT
+>-dimensional vectors, 
+               where <TT
+CLASS="varname"
+>n</TT
+> is the number of data records for the indiviual and
+               <TT
+CLASS="varname"
+>nTheta</TT
+> is the size of <I
+CLASS="emphasis"
+>eta</I
+> vector.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>vector&#60; vector&#60;T&#62; &#62; EPS</TT
+></DT
+><DD
+><P
+>&#13;               A read-write vector that contains <TT
+CLASS="varname"
+>n</TT
+> 
+               <TT
+CLASS="varname"
+>nEps</TT
+>-dimensional vectors, 
+               where <TT
+CLASS="varname"
+>n</TT
+> is the number of data records for the indiviual and
+               <TT
+CLASS="varname"
+>nTheta</TT
+> is the size of <I
+CLASS="emphasis"
+>eps</I
+> vector.
+               <I
+CLASS="emphasis"
+>This vector is present only if the population analysis is requested.</I
+>
+               </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN610"
+></A
+><TT
+CLASS="filename"
+>DataSet.h</TT
+></H2
+><P
+>&#13;      This header file exports the definition of a template class, <TT
+CLASS="classname"
+>DataSet</TT
+>.
+      <TT
+CLASS="classname"
+>DataSet</TT
+> class is a reprentation of an entire data set
+      (the population size &#62;= 1).
+      </P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>Public Methods</B
+></P
+><DL
+><DT
+><TT
+CLASS="literal"
+>DataSet&#60;class T&#62;::DataSet()</TT
+></DT
+><DD
+><P
+>&#13;               Constructor.  The type of the template argument is somewhat restrictive at this point.
+               <TT
+CLASS="varname"
+>T</TT
+> has to be a concrete type of 
+               <A
+HREF="http://www.coin-or.org/CppAD/"
+TARGET="_top"
+>CppAD</A
+>. 
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>~DataSet()</TT
+></DT
+><DD
+><P
+>Destructor</P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int getPopSize() const </TT
+></DT
+><DD
+><P
+>&#13;               Returns the number of individuals in the population.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;double&#62; getAllMeasurements() const</TT
+></DT
+><DD
+><P
+>&#13;               Returns a vector of measurements, i.e. DV values of which corresponding MDV values
+               are 0 in the original data set.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int getMeasurementIndex( int j ) const</TT
+></DT
+><DD
+><P
+>&#13;               Returns the index to an element of the measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int getMeasurementIndex( int i, int j ) const</TT
+></DT
+><DD
+><P
+>&#13;               Returns the index to an element of the i-th individual's measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the 
+               i-th individual's original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int getRecordIndex( int j' ) const</TT
+></DT
+><DD
+><P
+>&#13;               Returns the index to a record in the original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int getRecordIndex( int i, int j' ) const</TT
+></DT
+><DD
+><P
+>&#13;               Returns the index to a record in the i-th individual's
+               original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>void expand( const valarray&#60;double&#62; &#38; trancated, valarray&#60;double&#62; &#38; expanded ) const</TT
+></DT
+><DD
+><P
+>&#13;               Map <TT
+CLASS="varname"
+>trancated</TT
+> that is in the measurement-oriented space to the original record-oriented space.  The measurement-oriented space refers to the space in which only the data records that contain Dependent Variable values.  Whereas, the record-oriented space refers to the original data set that also contains rows missing DVs.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;int&#62; getNObservs() const</TT
+></DT
+><DD
+><P
+>&#13;               Returns a vector of numbers of obervation records.  The i-th element of the vector
+               indicates the number of measurements for the i-th individual, 
+               where 0 &#60;= i &#60; n and
+               n is the number of individuals in the population.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int getNObservs(int i) const</TT
+></DT
+><DD
+><P
+>&#13;               Returns the number of obervation records for the i-th individual.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;int&#62; getNRecords() const</TT
+></DT
+><DD
+><P
+>&#13;               Returns a vector of numbers of records.  The i-th element of the vector
+               indicates the number of record for the i-th individual, 
+               where 0 &#60;= i &#60; n and
+               n is the number of individuals in the population.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int getNRecords(int i) const</TT
+></DT
+><DD
+><P
+>&#13;               Returns the number of records for the i-th individual.
+               </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>friend ostream &#38; operator&#60;&#60;( ostream&#38; o, const DataSet&#60;T&#62; A )</TT
+></DT
+><DD
+><P
+>&#13;               Extracts the data set into <TT
+CLASS="literal"
+>o</TT
+> in the following format:
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;&#60;presentation_data columns="10" rows="12"&#62;
+   &#60;data_labels&#62;
+      &#60;label name="ID"&#62;
+      &#60;label name="TIME"&#62;
+      &#60;label name="DV" synonym="CP"&#62;
+      ...
+   &#60;/data_label&#62;
+   &#60;row position=""&#62;
+      &#60;value type="double" ref="ID"&#62;
+         1
+      &#60;/value&#62;
+      &#60;value type="double" ref="TIME"&#62;
+         0.0
+      &#60;/value&#62;
+      &#60;value type="double" ref="DV"&#62;
+         0.0
+      &#60;/value&#62;
+      ...
+   &#60;/row&#62;
+   &#60;row position=""&#62;
+      &#60;value type="double" ref="ID"&#62;
+         1
+      &#60;/value&#62;
+      &#60;value type="double" ref="TIME"&#62;
+         1.0
+      &#60;/value&#62;
+      &#60;value type="double" ref="DV"&#62;
+         3.0
+      &#60;/value&#62;
+      ...
+   &#60;/row&#62;
+
+&#60;/<TT
+CLASS="replaceable"
+><I
+>presentation_data</I
+></TT
+>&#62;
+</PRE
+></TD
+></TR
+></TABLE
+>
+               The order in which &#60;label&#62;s in &#60;data_labels&#62; appear is arbitrary.  
+               However, the &#60;value&#62;s in a &#60;row&#62; are guaranteed to be listed
+               in the same order as &#60;label&#62;s.
+               </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN694"
+></A
+><TT
+CLASS="filename"
+>Pred.h</TT
+></H2
+><P
+>&#13;<TT
+CLASS="filename"
+>Pred.h</TT
+> defines a template class, <TT
+CLASS="classname"
+>Pred</TT
+>,
+which is derived from an abstract class, <TT
+CLASS="classname"
+>PredBase</TT
+>.
+The purpose of this class is to provide a facility to execute the user's PRED model.
+      </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;template &#60;class spk_ValueType&#62;
+Pred : public PredBase
+{
+   public:
+      Pred( const DataSet&#60;spk_ValueType&#62;* dataIn );
+      ~Pred(){}
+      virtual bool eval( int spk_thetaOffset, int spk_thetaLen,
+                         int spk_etaOffset,   int spk_etaLen,
+		         int spk_epsOffset,   int spk_epsLen,
+		         int spk_fOffset,     int spk_fLen,
+		         int spk_yOffset,     int spk_yLen,
+		         int spk_i,
+		         int spk_j,
+                         int &#38; spk_m,
+		         const vector&#60;spk_ValueType&#62; &#38; spk_indepVar,
+		         vector&#60;spk_ValueType&#62;       &#38; spk_depVar ) = 0;
+      int getNObservs( int who ) const;
+      int getNRecords( int who ) const;
+      int getMeasurementIndex( int who, int recordIndex ) const;
+      int getMeasurementIndex( int recordIndex ) const;
+      int getRecordIndex( int who, int measurementIndex ) const;
+      int getRecordIndex( int measurementIndex ) const;
+}
+      </PRE
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN702"
+></A
+>Methods to Implement</H3
+><A
+NAME="predbase"
+></A
+><P
+>&#13;            <TT
+CLASS="classname"
+>Pred</TT
+> must implement a pure virtual function of
+            its super class <A
+HREF="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classPredBase.html"
+TARGET="_top"
+>&#13;            PredBase</A
+>, <TT
+CLASS="function"
+>eval()</TT
+>.
+         </P
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN709"
+></A
+>Constructor</H4
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>Arguments</B
+></P
+><DL
+><DT
+><TT
+CLASS="literal"
+>const DataSet&#60;spk_ValueType&#62;* dataIn</TT
+></DT
+><DD
+><P
+>&#13;                     A pointer to a DataSet object.
+                     </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN718"
+></A
+><TT
+CLASS="literal"
+>virtual bool eval()</TT
+></H4
+><P
+>&#13;               <TT
+CLASS="function"
+>eval()</TT
+> function evaluates
+               the $PRED model at the evaluation point corresponding to the i-th
+               individual's j-th data record.
+            </P
+><P
+>&#13;               For the complete specification of <TT
+CLASS="function"
+>eval()</TT
+>,
+               consult <A
+HREF="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classPredBase.html#a0"
+TARGET="_top"
+>&#13;               PredBase Specifiction</A
+>.
+            </P
+><DIV
+CLASS="formalpara"
+><P
+><B
+><B
+>Requirements. </B
+></B
+>
+                  <P
+></P
+><UL
+><LI
+><P
+>&#13;The user's model definition which is in a psudo FORTRAN language
+shall retain the case-insensitive attribute when it is translated to C++.
+                        </P
+></LI
+><LI
+><P
+>&#13;Prefix <TT
+CLASS="literal"
+>spk_</TT
+> is added to all non-user variables in order
+to avoid a conflict with user variable names.  A non-user variable
+in this sense is a variable created by the system (i.e. non-user).
+Whereas, a user-variable is a variable that appear in the model definition.
+                        </P
+></LI
+></UL
+>
+               </P
+></DIV
+><DIV
+CLASS="formalpara"
+><P
+><B
+><B
+>Return Value. </B
+></B
+>
+               The function returns <TT
+CLASS="literal"
+>true</TT
+> 
+               if the MDV for the current data 
+               record is 0.  <TT
+CLASS="literal"
+>false</TT
+> otherwise.
+               </P
+></DIV
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>Arguments</B
+></P
+><DL
+><DT
+><TT
+CLASS="literal"
+>const int spk_thetaOffset</TT
+></DT
+><DD
+><P
+>&#13;                     is the index to the head of <I
+CLASS="emphasis"
+>theta</I
+> 
+                      vector within <TT
+CLASS="varname"
+>spk_indepVar</TT
+>.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int spk_thetaLen</TT
+></DT
+><DD
+><P
+>&#13;                     is the length of <I
+CLASS="emphasis"
+>theta</I
+> vector.  
+                     The vector elements are assumed to be placed
+                     from <TT
+CLASS="varname"
+>spk_indepVar[spk_thetaOffset]</TT
+> 
+                     to <TT
+CLASS="varname"
+>spk_indepVar[spk_theetaOffset + spk_thetaLen]</TT
+>.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int spk_etaOffset</TT
+></DT
+><DD
+><P
+>&#13;                     is the index to the head of <I
+CLASS="emphasis"
+>eta</I
+> 
+                     vector within <TT
+CLASS="varname"
+>spk_indepVar</TT
+>.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int spk_etaLen</TT
+></DT
+><DD
+><P
+>&#13;                     is the length of <I
+CLASS="emphasis"
+>eta</I
+> vector.  
+                     The vector elements are assumed to be placed   
+                     from <TT
+CLASS="varname"
+>spk_indepVar[spk_etaOffset]</TT
+>
+                     to <TT
+CLASS="varname"
+>spk_indepVar[spk_etaOffset + spk_etaLen]</TT
+>.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int spk_epsOffset</TT
+></DT
+><DD
+><P
+>&#13;                     is the index to the head of <I
+CLASS="emphasis"
+>eps</I
+> 
+                     vector within <TT
+CLASS="varname"
+>spk_indepVar</TT
+>.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int spk_epsLen</TT
+></DT
+><DD
+><P
+>&#13;                     is the length of <I
+CLASS="emphasis"
+>eps</I
+> vector.
+                     The vector elements are assumed to be placed
+                     from <TT
+CLASS="varname"
+>spk_indepVar[spk_thetaOffset]</TT
+> 
+                     to <TT
+CLASS="varname"
+>spk_indepVar[spk_theetaOffset + spk_theetaLen]</TT
+>.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int spk_fOffset</TT
+></DT
+><DD
+><P
+>&#13;                     is the index to the element in <TT
+CLASS="varname"
+>spk_depVar</TT
+> in which
+                     the prediction for the j-th data record for the i-th individual, 
+                     <I
+CLASS="emphasis"
+>F</I
+> (in NONMEM's term), shall be placed.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int spk_fLen</TT
+></DT
+><DD
+><P
+>&#13;                     is the number of measurements for the i-th individual.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int spk_yOffset</TT
+></DT
+><DD
+><P
+>&#13;                     is the index to the element in <TT
+CLASS="varname"
+>spk_depVar</TT
+> in which
+                     the error model value for the j-th data record for the i-th individual,
+                     <I
+CLASS="emphasis"
+>Y</I
+> (in NONMEM's term), shall be placed.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int spk_yLen</TT
+></DT
+><DD
+><P
+>&#13;                     is the number of measurments for the i-th individual..
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int spk_i</TT
+></DT
+><DD
+><P
+>&#13;                     is the index to the i-th individual 
+                     within the population (0 indicates the first individual).
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int spk_j</TT
+></DT
+><DD
+><P
+>&#13;                     is the index to the j-th data record of the i-th individual.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const int &#38;spk_m</TT
+></DT
+><DD
+><P
+>&#13;                     will be replaced by the index to the observation record that corresponds to
+                     the j-th data record of the i-th individual if the MDV is 0.  
+                     The value is unspecified for MDV=1.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const vector&#60;T&#62; &#38; spk_indepVar</TT
+></DT
+><DD
+><P
+>&#13;                     is the vector containing independent variables: 
+                     <I
+CLASS="emphasis"
+>theta</I
+>, <I
+CLASS="emphasis"
+>eta</I
+> 
+                     and <I
+CLASS="emphasis"
+>eps</I
+>.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>vector&#60;T&#62; &#38; spk_depVar</TT
+></DT
+><DD
+><P
+>&#13;                     is an output in which the predicted value for the i-th individual's j-th data record
+                     will be placed at the <TT
+CLASS="varname"
+>spk_yOffset</TT
+>-th element.
+                     The <TT
+CLASS="literal"
+>spk_yOffset</TT
+>-th elements will be 
+                     are replaced by the error model value for the i-th individual's j-th data record.
+                     </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN841"
+></A
+><TT
+CLASS="literal"
+>int getNObservs( int i ) const</TT
+></H4
+><P
+>&#13;            Returns the number of obervations records for the i-th individual.
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN845"
+></A
+><TT
+CLASS="literal"
+>int getNRecords( int i ) const</TT
+></H4
+><P
+>&#13;            Returns the number of total records for the i-th individual.
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN849"
+></A
+><TT
+CLASS="literal"
+>int getMeasurementIndex( int j ) const</TT
+></H4
+><P
+>&#13;               Returns the index to an element of the measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN853"
+></A
+><TT
+CLASS="literal"
+>int getMeasurementIndex( int i, int j ) const</TT
+></H4
+><P
+>&#13;               Returns the index to an element of the i-th individual's measurement vector, i.e. y, that 
+               corresponds to the measurement, i.e. DV, value of the j-th row of the 
+               i-th individual's original data set.
+               If the MDV field value of the j-th row of the original data set were 1, indicating
+               the data record does not contain a valid measurement value, i.e. DV, the value 
+               returned by this method is -1.            
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN857"
+></A
+><TT
+CLASS="literal"
+>int getRecordIndex( int j ) const</TT
+></H4
+><P
+>&#13;               Returns the index to a record in the original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN861"
+></A
+><TT
+CLASS="literal"
+>int getRecordIndex( int i, int j ) const</TT
+></H4
+><P
+>&#13;               Returns the index to a record in the i-th individual's
+               original data set from which the j'th 
+               element of the measurement vector, i.e. y, originated.
+            </P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN865"
+></A
+><TT
+CLASS="filename"
+>OdePred.h</TT
+></H2
+><P
+>&#13;      <TT
+CLASS="filename"
+>OdePred.h</TT
+> defines a template class, <TT
+CLASS="classname"
+>OdePred</TT
+>,
+      which is dervied from an abstract class, 
+      <A
+HREF="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classOdePredBase.html"
+TARGET="_top"
+>&#13;      OdePredBase</A
+>.  The purpose of this class is to provide a facility to execute
+      the User's ODE model.
+      </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;template &#60;class spk_ValueType&#62;
+class OdePred : public OdePredBase&#60;spk_ValueType&#62;
+{
+public:
+   OdePred( const DataSet&#60;spk_ValueType&#62;*  dataIn,
+            int                            nPopSizeIn,
+            bool                           isPkFunctionOfTIn,
+            int                            nCompartmentsWithOutputIn,
+            int                            nParametersIn,
+            int                            defaultDoseCompIn,
+            int                            defaultObservationCompIn,
+            const std::valarray&#60;bool&#62;&#38;     initialOffIn,
+            const std::valarray&#60;bool&#62;&#38;     noOffIn,
+            const std::valarray&#60;bool&#62;&#38;     noDoseIn,
+            double                         tolRelIn
+   );
+
+  ~OdePred();
+
+  int getNObservs( int who ) const;
+
+  int getNRecords( int who ) const;
+
+  const spk_ValueType lininterp( const string &#38; devVar );
+
+  virtual void initUserEnv( int spk_thetaOffset, int spk_thetaLen,
+                            int spk_etaOffset,   int spk_etaLen,
+                            int spk_epsOffset,   int spk_epsLen,
+                            int spk_fOffset,     int spk_fLen,
+                            int spk_yOffset,     int spk_yLen,
+                            int spk_i,
+                            int spk_j,
+                            const vector&#60;spk_ValueType&#62;&#38; spk_indepVar,
+                            vector&#60;spk_ValueType&#62;      &#38; spk_depVar );
+
+  virtual void saveUserEnv( int spk_thetaOffset, int spk_thetaLen,
+                            int spk_etaOffset,   int spk_etaLen,
+                            int spk_epsOffset,   int spk_epsLen,
+                            int spk_fOffset,     int spk_fLen,
+                            int spk_yOffset,     int spk_yLen,
+                            int spk_i,
+                            int spk_j,
+                            const std::vector&#60;spk_ValueType&#62;&#38; spk_indepVar,
+                            const std::vector&#60;spk_ValueType&#62;&#38; spk_depVar );
+                                                                                                                          
+  virtual void evalError(   int spk_thetaOffset, int spk_thetaLen,
+                            int spk_etaOffset,   int spk_etaLen,
+                            int spk_epsOffset,   int spk_epsLen,
+                            int spk_i,
+                            int spk_j,
+                            const std::vector&#60;spk_ValueType&#62;&#38; spk_indepVar);
+  virtual void evalError();
+
+  virtual void evalPk(      int thetaOffset, int thetaLen,
+                            int etaOffset,   int etaLen,
+                            int spk_i,
+                            int spk_j,
+                            const std::vector&#60;spk_ValueType&#62;&#38; spk_indepVar );
+  void evalPk( const spk_ValueType &#38; t );
+
+  virtual void evalDes(     int thetaOffset,     int thetaLen,
+                            int spk_i,
+                            int spk_j,
+                            const std::vector&#60;spk_ValueType&#62;&#38; spk_indepVar );
+  void evalDes(             const spk_ValueType &#38; t,
+                            typename vector&#60;spk_ValueType&#62;::const_iterator a );
+}
+      </PRE
+></TD
+></TR
+></TABLE
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN873"
+></A
+>Methods to Implement</H3
+><DIV
+CLASS="sect3"
+><H4
+CLASS="sect3"
+><A
+NAME="AEN875"
+></A
+><TT
+CLASS="literal"
+>OdePred(...)</TT
+></H4
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>Arguments</B
+></P
+><DL
+><DT
+><TT
+CLASS="literal"
+>const DataSet&#60;spk_ValueType&#62; * dataIn</TT
+></DT
+><DD
+><P
+>A pointer to a DataSet object.</P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int nPopSizeIn</TT
+></DT
+><DD
+><P
+>The population size (&#62; 0).</P
+></DD
+><DT
+><TT
+CLASS="literal"
+>bool isPkFunctionOfTIn</TT
+></DT
+><DD
+><P
+>&#13;                     The value of <TT
+CLASS="literal"
+>true</TT
+> indicates that the PK model 
+                     is a function of T (i.e. continuous time variable).
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int nCompartmentsWithOutputIn</TT
+></DT
+><DD
+><P
+>&#13;                     The number of compartments, including the output compartment.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int nParametersIn</TT
+></DT
+><DD
+><P
+>&#13;                     The number of PK parameters.  
+                     </P
+><P
+>&#13;                     <I
+CLASS="emphasis"
+>Note to Developer: </I
+>
+                     The meaning of this parameter is not quite understood.  Currently
+                     the value is not used by the system.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int defaultDoseCompIn</TT
+></DT
+><DD
+><P
+>&#13;                     The integer value indicates the default dose compartment (&#62;=1).
+                     For instance, the value of <TT
+CLASS="literal"
+>1</TT
+> indicates
+                     the first compartment is given doses.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>int defaultObservationCompIn</TT
+></DT
+><DD
+><P
+>&#13;                     The integer value indicates the default observation compartment (&#62;=1).
+                     For instance, the value of <TT
+CLASS="literal"
+>1</TT
+> indicates
+                     the first compartment is taken observations.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;bool&#62; &#38; initialOffIn</TT
+></DT
+><DD
+><P
+>&#13;                     An array of boolean values.  If <TT
+CLASS="literal"
+>initialOffIn[i]</TT
+>
+                     were true, (i+1)-th compartment is considered initially OFF.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;bool&#62; &#38; noOffIn</TT
+></DT
+><DD
+><P
+>&#13;                     An array of boolean values.  If <TT
+CLASS="literal"
+>noOffIn[i]</TT
+> were true,
+                     (i+1)-th compartment is considered that it will be never turned off.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>const valarray&#60;bool&#62; &#38; noDoseIn</TT
+></DT
+><DD
+><P
+>&#13;                     An array of boolean values.  If <TT
+CLASS="literal"
+>noDoseIn[i]</TT
+> were true,
+                     (i+1)-th compartment is considered that it will be never receive doses.
+                     </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>double tolRelIn</TT
+></DT
+><DD
+><P
+>&#13;                     The relative tolerance.
+                     </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN943"
+></A
+><TT
+CLASS="literal"
+>~OdePred()</TT
+></H4
+><P
+>Destructor</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN947"
+></A
+><TT
+CLASS="literal"
+>int getNObservs( int who ) const</TT
+></H4
+><P
+>&#13;            The function returns the number of measurements 
+            for the individual indicated by <TT
+CLASS="varname"
+>who</TT
+>
+            Measurements means DV values whose corresponding MDV values are 0.
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN952"
+></A
+><TT
+CLASS="literal"
+>int getNRecords( int who ) const</TT
+></H4
+><P
+>&#13;            The function returns the number of data records
+            for the individual indicated by <TT
+CLASS="varname"
+>who</TT
+>. 
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN957"
+></A
+><TT
+CLASS="literal"
+>const spk_ValueType lininterp( const string &#38; devVar )</TT
+></H4
+><P
+>&#13;            <TT
+CLASS="function"
+>lininterp</TT
+> linearly interpolates 
+            <TT
+CLASS="varname"
+>devVar</TT
+> at the current T (i.e. continuous time variable).
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN963"
+></A
+><TT
+CLASS="literal"
+>virtual void initUserEnv(...)</TT
+></H4
+><P
+>&#13;            This function initializes the user's space so that their models are
+            evaluated properly at a given evaluation point.
+            The specifications for the arguments are the same as of 
+            <A
+HREF="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classPredBase.html#a0"
+TARGET="_top"
+>&#13;            <TT
+CLASS="function"
+>Pred::eval()</TT
+></A
+>.
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN969"
+></A
+><TT
+CLASS="literal"
+>virtual void saveUserEnv(...)</TT
+></H4
+><P
+>&#13;            This function saves the status of user's environment.
+            The specifications for the arguments are the same as of 
+            <A
+HREF="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classPredBase.html#a0"
+TARGET="_top"
+>&#13;            <TT
+CLASS="function"
+>Pred::eval()</TT
+></A
+>.
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN975"
+></A
+><TT
+CLASS="literal"
+>virtual void evalError(...)</TT
+></H4
+><P
+>&#13;            This is a deplicated version of <TT
+CLASS="function"
+>evalError()</TT
+>.
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN980"
+></A
+><TT
+CLASS="literal"
+>void evalError()</TT
+></H4
+><P
+>&#13;            Evaluates the user's error model at the current state of the object.
+            </P
+><P
+>&#13;            <I
+CLASS="emphasis"
+>Note to developers:</I
+> Once the deplicated version is removed
+            from <A
+HREF="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classOdePredBase.html"
+TARGET="_top"
+>&#13;            OdePred</A
+> class, this function should be come "virtual".
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN987"
+></A
+><TT
+CLASS="literal"
+>virtual void evalPk(...)</TT
+></H4
+><P
+>&#13;            This is a deplicated version of <TT
+CLASS="function"
+>evalPk()</TT
+>.
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN992"
+></A
+><TT
+CLASS="literal"
+>void evalPk( const spk_ValueType &#38; t )</TT
+></H4
+><P
+>&#13;            Evaluates the user's error model at <TT
+CLASS="varname"
+>t</TT
+> and the current state of
+            the object.
+            </P
+><P
+>&#13;            <I
+CLASS="emphasis"
+>Note to developers:</I
+> Once the deplicated version is removed
+            from <A
+HREF="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classOdePredBase.html"
+TARGET="_top"
+>&#13;            OdePred</A
+> class, this function should be come "virtual".
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1000"
+></A
+><TT
+CLASS="literal"
+>virtual void evalDes(...)</TT
+></H4
+><P
+>&#13;            This is a deplicated version of <TT
+CLASS="function"
+>evalDes()</TT
+>.
+            </P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1005"
+></A
+><TT
+CLASS="literal"
+>void evalOde( const spk_ValueType&#38; t, typename vector&#60;spk_ValueType&#62;::const_iterator a )</TT
+></H4
+><P
+>&#13;            Evaluates the user's differential equation model at <TT
+CLASS="varname"
+>t</TT
+>,
+            <TT
+CLASS="varname"
+>a</TT
+> and the current state of the object.
+            </P
+><P
+>&#13;            <I
+CLASS="emphasis"
+>Note to developers:</I
+> Once the deplicated version is removed
+            from <A
+HREF="http://192.168.2.2:8080/soft/v0.1/specs/spkpredLib/classOdePredBase.html"
+TARGET="_top"
+>&#13;            OdePred</A
+> class, this function should be come "virtual".
+            </P
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN1014"
+></A
+><TT
+CLASS="filename"
+>fitDriver.cpp</TT
+></H2
+><P
+>&#13;      This is the SPK job driver (for parameter estimation, statistics and simulation).
+      When you run <TT
+CLASS="filename"
+>Makefile.SPK</TT
+> generated together by SPK Compiler,
+      this file builds to an executable named <TT
+CLASS="filename"
+>driver</TT
+>.
+      </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;Usage: driver FORCE_WARM_START
+
+FORCE_WARM_START --- Forces the job to start from the status found in "checkpoint.xml" in the current directory.
+      </PRE
+></TD
+></TR
+></TABLE
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>Input File</B
+></P
+><DL
+><DT
+><TT
+CLASS="filename"
+>checkpoint.xml</TT
+></DT
+><DD
+><P
+>&#13;                  When the contents of this file is loaded into the job driver,
+                  the optimization will start from the status saved in the file (i.e. warm-start).
+                  </P
+><P
+>&#13;                  There are two scenarios where this file is loaded into the job driver:
+                  <P
+></P
+><UL
+><LI
+><P
+>&#13;                       This file is found in the working directory 
+                       <I
+CLASS="emphasis"
+>and</I
+> the user has requested the warm start.
+                       </P
+></LI
+><LI
+><P
+>&#13;                       This file is found in the working directory
+                       <I
+CLASS="emphasis"
+>and</I
+> the first command line argument to this driver
+                       is <I
+CLASS="emphasis"
+>1</I
+>.  The argument value overrides the user's request.
+                       </P
+></LI
+></UL
+>
+                  </P
+></DD
+></DL
+></DIV
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>Return value</B
+></P
+><DL
+><DT
+>0</DT
+><DD
+><P
+>&#13;               Successful/normal completion.
+               </P
+></DD
+><DT
+>1</DT
+><DD
+><P
+>&#13;               Normal completion for unknown problem(s).
+               </P
+></DD
+><DT
+>2</DT
+><DD
+><P
+>&#13;               Abnormal completion for unknown failures.
+               This shall result in submitting a bugzilla report.
+               </P
+></DD
+><DT
+>10</DT
+><DD
+><P
+>&#13;               Normal completion but some known problem was detected during a file/directory access
+               </P
+></DD
+><DT
+>12</DT
+><DD
+><P
+>&#13;               Normal completion but some known prolem was detected during optimization.
+               </P
+></DD
+><DT
+>13</DT
+><DD
+><P
+>&#13;               Normal completion but some known problem was detected during statisitcs calculation.
+               </P
+></DD
+><DT
+>14</DT
+><DD
+><P
+>&#13;               Normal completion but some known user input error was detected.
+               </P
+></DD
+><DT
+>15</DT
+><DD
+><P
+>&#13;               Normal completion but some known programmer's error was detected.
+               </P
+></DD
+><DT
+>16</DT
+><DD
+><P
+>&#13;               Normal completion but some known problem was detected during data simulation.
+               </P
+></DD
+><DT
+>100</DT
+><DD
+><P
+>&#13;               Abnormal completion due to a unknown system failures.
+               This shall result in submitting a bugzilla report.
+               </P
+></DD
+><DT
+>101</DT
+><DD
+><P
+>&#13;               The value, 101, is reserved for C++ compilation error.
+               </P
+></DD
+><DT
+>102</DT
+><DD
+><P
+>&#13;               Abnormal completion due to a unknown optimization failure.
+               This shall result in submitting a bugzilla report.
+               </P
+></DD
+><DT
+>103</DT
+><DD
+><P
+>&#13;               Abnormal completion due to a unknown statisitcs calculation failure.
+               This shall result in submitting a bugzilla report.
+               </P
+></DD
+><DT
+>104</DT
+><DD
+><P
+>&#13;               Abnormal completion due to some unknown user input error.
+               </P
+></DD
+><DT
+>105</DT
+><DD
+><P
+>&#13;               Abnormal completion due to some programmer's error.
+               </P
+></DD
+><DT
+>106</DT
+><DD
+><P
+>&#13;               Abnormal completion due to a unknown data simulation fatal failure.
+               This shall result in submitting a bugzilla report.
+               </P
+></DD
+></DL
+></DIV
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>File Output</B
+></P
+><DL
+><DT
+><TT
+CLASS="filename"
+>checkpoint.xml</TT
+></DT
+><DD
+><P
+>&#13;                  The optimizer's state information from the last successful iteration 
+                  is saved in this file.  This file is always generated as long as
+                  fitDriver executes an iteration of optimization.
+                  </P
+></DD
+></DL
+></DIV
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>Screen Output</B
+></P
+><DL
+><DT
+>Standard Error</DT
+><DD
+><P
+>&#13;<I
+CLASS="emphasis"
+>Plain</I
+> error messages that are directed to the standard error and cannot be
+caught by the driver normally still go to the standard error.
+Such messages may include an error generated as a rusult of violation of an assertion statement.
+                        </P
+></DD
+><DT
+>Standard Output</DT
+><DD
+><P
+>&#13;The optimizer's tracing information which is generated for each iteration of
+optimization is directed to the standard output as long as tracing level 
+is requested to be greater than 0 by the user.  
+At the very end of the execution, an exit value is also printed in the following format:
+<TT
+CLASS="literal"
+>exit code = INT</TT
+>, where <TT
+CLASS="literal"
+>INT</TT
+> is one of the return values defined above.
+                        </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN1123"
+></A
+><TT
+CLASS="filename"
+>monteDriver.cpp</TT
+></H2
+><P
+>&#13;      This is a driver for a post-optimality process (ex. Monte Carlo).
+      </P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>Return value</B
+></P
+><DL
+><DT
+>0</DT
+><DD
+><P
+>&#13;               Successful/normal completion.
+               </P
+></DD
+><DT
+>10</DT
+><DD
+><P
+>&#13;               Normal completion but some known problem was detected during file/directory access 
+               </P
+></DD
+><DT
+>100</DT
+><DD
+><P
+>&#13;               Abnormal completion due to a unknown file/directory access failure.
+               </P
+></DD
+><DT
+>200</DT
+><DD
+><P
+>&#13;               Abnormal completion due to a known post-optimality failure.
+               </P
+></DD
+><DT
+>7</DT
+><DD
+><P
+>&#13;               Abnormal completion for other known errors.
+               </P
+></DD
+><DT
+>300</DT
+><DD
+><P
+>&#13;               Abnormal completion due to a unknown post-optimality failure.
+               </P
+></DD
+><DT
+>8</DT
+><DD
+><P
+>&#13;               Abnormal completion for other unknown failures.
+               </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN1157"
+></A
+><TT
+CLASS="filename"
+>Makefile.SPK</TT
+></H2
+><P
+>&#13;      The primary goals of this Make file is to define rules to build 
+      two versions of executables.  One is an executable hooked to the production
+      version of libraries and the other is to the test version of libraries.
+      An executable is either for the parameter optimization or for 
+      the Monte Carlo integration.
+      </P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>Targets</B
+></P
+><DL
+><DT
+>proc <I
+CLASS="emphasis"
+>(default)</I
+></DT
+><DD
+><P
+>&#13;               Compile SPK-Compiler-generated C++ source code files,
+               link to <I
+CLASS="emphasis"
+>production</I
+> libraries 
+               (ie. libspk, libspkpred, and libopt)
+               and build a driver, named <TT
+CLASS="filename"
+>driver</TT
+>.
+               The <I
+CLASS="emphasis"
+>production</I
+> libraries are expected to be 
+               found in <TT
+CLASS="filename"
+>/usr/local/lib/spkprod/</TT
+>.
+               </P
+></DD
+><DT
+>test</DT
+><DD
+><P
+>&#13;               Compile SPK-Compiler-generated C++ source code files,
+               link to <I
+CLASS="emphasis"
+>test</I
+> libraries 
+               (ie. libspk, libspkpred, and libopt)
+               and build a driver, named <TT
+CLASS="filename"
+>driver</TT
+>.
+               The <I
+CLASS="emphasis"
+>production</I
+> libraries are expected to be 
+               found in <TT
+CLASS="filename"
+>/usr/local/lib/spktest/</TT
+>.
+               </P
+></DD
+><DT
+>clean</DT
+><DD
+><P
+>&#13;               Delete all artifacts generated by SPK Compiler except for itself, 
+               <TT
+CLASS="filename"
+>Makefile.SPK</TT
+>.
+               </P
+></DD
+></DL
+></DIV
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>Source Code Files</B
+></P
+><DL
+><DT
+>Common source</DT
+><DD
+><P
+>&#13;               The source code files commonly needed by the two processes: optimization and Monte Carlo.
+               The files are expected to be found in the current directory.
+               </P
+><P
+>&#13;                  <P
+></P
+><UL
+><LI
+><P
+>NonmemPars.h</P
+></LI
+><LI
+><P
+>IndData.h</P
+></LI
+><LI
+><P
+>DataSet.h</P
+></LI
+><LI
+><P
+>Pred.h</P
+></LI
+></UL
+>
+               </P
+></DD
+><DT
+>Optimization-specific source</DT
+><DD
+><P
+>&#13;               The source code file only needed by the optimization process.
+               The file is expected to be found in the current directory.
+               </P
+><P
+>&#13;                  <P
+></P
+><UL
+><LI
+><P
+>fitDriver.cpp</P
+></LI
+></UL
+>
+               </P
+></DD
+><DT
+>Monte Carlo-specific source</DT
+><DD
+><P
+>&#13;               The source code files only needed by the Monte Carlo process.
+               </P
+><P
+>&#13;               The following header is expected be found in the current directory.
+               </P
+><P
+>&#13;                  <P
+></P
+><UL
+><LI
+><P
+>MontePars.h</P
+></LI
+></UL
+>
+               </P
+><P
+>&#13;               The following files are expected to be found in <TT
+CLASS="filename"
+>/usr/local/src/spktest/ml/</TT
+>.
+               </P
+><P
+>&#13;                  <P
+></P
+><UL
+><LI
+><P
+>monteDriver.cpp</P
+></LI
+><LI
+><P
+>AnalyticalIntegral.h</P
+></LI
+><LI
+><P
+>AnalyticalIntegral.cpp</P
+></LI
+><LI
+><P
+>GridIntegral.h</P
+></LI
+><LI
+><P
+>GridIntegral.cpp</P
+></LI
+><LI
+><P
+>GridIntegral.h</P
+></LI
+><LI
+><P
+>MapBay.h</P
+></LI
+><LI
+><P
+>MapBay.cpp</P
+></LI
+><LI
+><P
+>MapBay.h</P
+></LI
+><LI
+><P
+>MontePopObj.h</P
+></LI
+><LI
+><P
+>MontePopObj.cpp</P
+></LI
+></UL
+>                     
+               </P
+></DD
+></DL
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

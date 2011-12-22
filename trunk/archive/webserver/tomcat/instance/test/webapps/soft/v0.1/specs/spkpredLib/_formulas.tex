@@ -1,0 +1,512 @@
+\documentclass{article}
+\usepackage{epsfig}
+\pagestyle{empty}
+\begin{document}
+\[ \mbox{cov}(\mbox{par}) = \left[ \begin{array}{cccc} \mbox{block}_1 & & & 0 \\ & \mbox{block}_2 & & \\ & & \ddots & \\ 0 & & & \mbox{block}_{\mbox{nPar}} \end{array} \right] , \]
+\pagebreak
+
+\[ \mbox{cov}(\mbox{par}) . \]
+\pagebreak
+
+\[ \partial_{\mbox{par}} \; \mbox{cov}(\mbox{par}) = \partial_{\mbox{par}} \; \mbox{rvec} \left[ \mbox{cov}(\mbox{par}) \right] . \]
+\pagebreak
+
+\[ \mbox{cov}^{-1}(\mbox{par}) . \]
+\pagebreak
+
+\[ \partial_{\mbox{par}} \; \mbox{cov}^{-1}(\mbox{par}) = \partial_{\mbox{par}} \; \mbox{rvec} \left[ \mbox{cov}^{-1}(\mbox{par}) \right] . \]
+\pagebreak
+
+\[ \begin{array}{ccc} A1[T] = \partial / \partial T A1(T), & A1[T,T] = \partial / \partial T [ \partial / \partial T A1(T) ], & \cdots \\ A2[T] = \partial / \partial T A2(T), & A2[T,T] = \partial / \partial T [ \partial / \partial T A2(T) ], & \cdots \\ . & . & . \\ . & . & . \\ . & . & . \mbox{} \end{array} \]
+\pagebreak
+
+\[ \mbox{cov}(\mbox{par}) = \left[ \begin{array}{cccc} \exp(2 \mbox{par}_1) & & & 0 \\ & \exp(2 \mbox{par}_2) & & \\ & & \ddots & \\ 0 & & & \exp(2 \mbox{par}_{\mbox{nPar}}) \end{array} \right] , \]
+\pagebreak
+
+\[ \mbox{cov}(\mbox{par}) = L(\mbox{par}) \; L(\mbox{par})^{\mbox{T}} , \]
+\pagebreak
+
+$ L(\mbox{par}) $
+\pagebreak
+
+\[ L(\mbox{par}) = \left[ \begin{array}{ccccc} \exp(\mbox{par}_1) & & & & 0 \\ \mbox{par}_2 & \exp(\mbox{par}_3) & & & \\ \mbox{par}_4 & \mbox{par}_5 & \exp(\mbox{par}_6) & & \\ \vdots & \vdots & \ddots & \ddots & \\ & & & \mbox{par}_{\mbox{nPar}-1} & \exp(\mbox{par}_{\mbox{nPar}}) \end{array} \right] . \]
+\pagebreak
+
+\[ b_i = \left[ \begin{array}{c} \mbox{thetaCurrIn} \\ \mbox{omegaParCurr} \end{array} \right] , \]
+\pagebreak
+
+\[ \partial_b f_i(b_i) , \]
+\pagebreak
+
+$ i $
+\pagebreak
+
+$ b_i $
+\pagebreak
+
+\[ \partial_b R_i(b_i) = \partial_b \mbox{rvec} \left[ R_i(b_i) \right] , \]
+\pagebreak
+
+\[ \partial_b R^{-1}_i(b_i) = \partial_b \mbox{rvec} \left[ R^{-1}_i(b_i) \right] , \]
+\pagebreak
+
+$j^{\mbox{th}}$
+\pagebreak
+
+\[ y_{(j)} = f_{(j)}(b) + e_{(j)} , \]
+\pagebreak
+
+\[ R_{(j,k)}(b) = \mbox{cov}[e_{(j)},e_{(k)}] , \]
+\pagebreak
+
+$b$
+\pagebreak
+
+\[ D_{(p,q)} = \mbox{cov}[b_{(p)},b_{(q)}] , \]
+\pagebreak
+
+\[ b^{\mbox{Out}} , \]
+\pagebreak
+
+\[ y_{(j)} = f(x_{j}, \theta) + \sum_{m=1}^{n_{\Omega}} h_{(m)}(x_{j}, \theta) \eta_{(m)} . \]
+\pagebreak
+
+\[ \Omega_{(m,n)} = \mbox{cov}[\eta_{(m)},\eta_{(n)}] , \]
+\pagebreak
+
+$\theta$
+\pagebreak
+
+$\Omega$
+\pagebreak
+
+$x_{j}$
+\pagebreak
+
+$n_{\Omega}$
+\pagebreak
+
+\[ \left\{ \theta^{\mbox{Out}}, \Omega^{\mbox{Out}} \right\} , \]
+\pagebreak
+
+\[ b = \left[ \begin{array}{c} \theta \\ \mbox{omegaPar} \end{array} \right] , \]
+\pagebreak
+
+$\eta$
+\pagebreak
+
+$D$
+\pagebreak
+
+$e$
+\pagebreak
+
+$R(b)$
+\pagebreak
+
+\[ R_{(j,k)}(b) = \sum_{m=1}^{n_{\Omega}} \sum_{n=1}^{n_{\Omega}} \left[ h_{(m)}\left( \rule{0.0in}{0.15in} f(x_j, \theta), x_j, \theta \right) \right] \Omega_{(m,n)} \left[ h_{(n)}\left( \rule{0.0in}{0.15in} f(x_{k}, \theta), x_{k}, \theta \right) \right] . \]
+\pagebreak
+
+\[ y_{(j)} = y_{(j)}\left( \rule{0.0in}{0.15in} f(x_j, \theta), x_j, \theta, \eta \right) . \]
+\pagebreak
+
+$f(x_j, \theta)$
+\pagebreak
+
+$x_j$
+\pagebreak
+
+\begin{eqnarray} \lefteqn{ \widetilde{y}_{(j)} \left( \rule{0.0in}{0.15in} f(x_j, \theta), x_j, \theta, \eta \right) } \nonumber \\ & & = y_{(j)}\left( \rule{0.0in}{0.15in} f(x_j, \theta), x_j, \theta, \eta \right) \left| \! \begin{array}{l} \\ {\scriptstyle \eta = 0} \end{array} \right. + \sum_{m=1}^{n_{\Omega}} \left[ \partial_{\eta}^{(m)} y_{(j)}\left( \rule{0.0in}{0.15in} f(x_j, \theta), x_j, \theta, \eta \right) \left| \! \begin{array}{l} \\ {\scriptstyle \eta = 0} \end{array} \right. \right] \eta_{(m)} . \end{eqnarray}
+\pagebreak
+
+$\eta = 0$
+\pagebreak
+
+\[ h_{(m)}\left( \rule{0.0in}{0.15in} f(x_j, \theta), x_j, \theta \right) = \partial_{\eta}^{(m)} y_{(j)}\left( \rule{0.0in}{0.15in} f(x_j, \theta), x_j, \theta, \eta \right) \left| \! \begin{array}{l} \\ {\scriptstyle \eta = 0} \end{array} \right. . \]
+\pagebreak
+
+$k^{\mbox{th}}$
+\pagebreak
+
+\begin{eqnarray} \mbox{cov} [ \tilde{y}_j , \tilde{y}_{(k)} ] & = & \mbox{cov} \left[ \sum_{m=1}^{n_{\Omega}} h_{(m)}\left( \rule{0.0in}{0.15in} f(x_j, \theta), x_j, \theta \right) \eta_{(m)}, \sum_{n=1}^{n_{\Omega}} h_{(n)}\left( \rule{0.0in}{0.15in} f(x_{k}, \theta), x_{k}, \theta \right) \eta_{(n)} \right] \\ & = & \sum_{m=1}^{n_{\Omega}} \sum_{n=1}^{n_{\Omega}} \left[ h_{(m)}\left( \rule{0.0in}{0.15in} f(x_j, \theta), x_j, \theta \right) \right] \mbox{cov} [ \eta_{(m)} , \eta_{(n)} ] \left[ h_{(n)}\left( \rule{0.0in}{0.15in} f(x_{k}, \theta), x_{k}, \theta \right) \right] \\ & = & \sum_{m=1}^{n_{\Omega}} \sum_{n=1}^{n_{\Omega}} \left[ h_{(m)}\left( \rule{0.0in}{0.15in} f(x_j, \theta), x_j, \theta \right) \right] \Omega_{(m,n)} \left[ h_{(n)}\left( \rule{0.0in}{0.15in} f(x_{k}, \theta), x_{k}, \theta \right) \right] \end{eqnarray}
+\pagebreak
+
+$R_{(j,k)}$
+\pagebreak
+
+\[ y_{(j)} = f(x_j, \theta) + \sum_{m=1}^{n_{\Omega}} h_{(m)}\left( \rule{0.0in}{0.15in} f(x_j, \theta), x_{k}, \theta \right) \eta_{(m)} , \]
+\pagebreak
+
+\[ \widetilde{y}_{(j)} = y_{(j)} , \]
+\pagebreak
+
+\[ y_{(j)} = f(x_j, \theta) \exp[ \eta_{(1)} ] , \]
+\pagebreak
+
+\begin{eqnarray} \widetilde{y}_{(j)} & = & f(x_j, \theta) + f(x_j, \theta) \eta_{(1)} \\ & \neq & y_{(j)} , \end{eqnarray}
+\pagebreak
+
+\[ b_i = \left[ \begin{array}{c} \mbox{thetaCurr} \\ \mbox{omegaParCurr} \end{array} \right] . \]
+\pagebreak
+
+\[ f_i(\mbox{theta}) \]
+\pagebreak
+
+\[ h_i(\mbox{theta}) = \partial_{\mbox{eta}} \; y_i(\mbox{theta}, \mbox{eta}) \left|_{\mbox{eta}=0} \right. \]
+\pagebreak
+
+\[ \mbox{fCurr} = f_i(\mbox{theta}) \]
+\pagebreak
+
+\[ \mbox{hCurr} = h_i(\mbox{theta}) . \]
+\pagebreak
+
+$b_i$
+\pagebreak
+
+\[ \partial_{\mbox{theta}} \; f_i(\mbox{theta}) \]
+\pagebreak
+
+\[ \partial_{\mbox{theta}} \left[ h_i(\mbox{theta}) \right] = \partial_{\mbox{theta}} \left[ \partial_{\mbox{eta}} \; y_i(\mbox{theta}, \mbox{eta}) \left|_{\mbox{eta}=0} \right. \right] \]
+\pagebreak
+
+\[ \mbox{f_thetaCurr} = \partial_{\mbox{theta}} \; f_i(\mbox{theta}) \]
+\pagebreak
+
+\[ \mbox{h_thetaCurr} = \partial_{\mbox{theta}} \; h_i(\mbox{theta}) . \]
+\pagebreak
+
+\[ f_i(b_i) , \]
+\pagebreak
+
+\[ R_i(b_i) , \]
+\pagebreak
+
+\[ R^{-1}_i(b_i) , \]
+\pagebreak
+
+\[ \mbox{standardPar} = \left[ \begin{array}{c} \mbox{thetaCurr} \\ \mbox{omegaMinRepCurr} \end{array} \right] . \]
+\pagebreak
+
+\[ \partial_b \; \mbox{standardPar} = \partial_b \left[ \begin{array}{c} \mbox{thetaCurr} \\ \mbox{omegaMinRepCurr} \end{array} \right] . \]
+\pagebreak
+
+\[ \mbox{standardParMask} = \left[ \begin{array}{c} \mbox{thetaMask} \\ \mbox{omegaMinRepMask} \end{array} \right] . \]
+\pagebreak
+
+\[ fOut_{i(j)} = y_{i(j)}( f_{i(j)}(theta, eta), theta, eta, eps) . \]
+\pagebreak
+
+\[ \mbox{fOut} = y(f(theta, eta), theta, eta, eps) . \]
+\pagebreak
+
+\[ yOut_{i(j)} = y_{i(j)}( fIn_{i(j)}(theta, eta), theta, eta, eps) . \]
+\pagebreak
+
+\[ \mbox{fIn} = f(theta, eta) . \]
+\pagebreak
+
+\[ \mbox{yOut} = y(f(theta, eta), theta, eta, eps) . \]
+\pagebreak
+
+\[ \alpha = \left[ \begin{array}{c} \mbox{thetaCurrIn} \\ \mbox{omegaParCurr} \\ \mbox{sigmaParCurr} \end{array} \right] , \]
+\pagebreak
+
+\[ b_i = \mbox{etaCurrIn} . \]
+\pagebreak
+
+\[ \partial_{\alpha} f_i(\alpha, b_i) , \]
+\pagebreak
+
+$ \alpha $
+\pagebreak
+
+\[ \partial_b f_i(\alpha, b_i) , \]
+\pagebreak
+
+\[ \partial_{\alpha} R_i(\alpha, b_i) = \partial_{\alpha} \mbox{rvec} \left[ R_i(\alpha, b_i) \right] , \]
+\pagebreak
+
+\[ \partial_b R_i(\alpha, b_i) = \partial_b \mbox{rvec} \left[ R_i(\alpha, b_i) \right] , \]
+\pagebreak
+
+\[ \partial_{\alpha} R^{-1}_i(\alpha, b_i) = \partial_{\alpha} \mbox{rvec} \left[ R^{-1}_i(\alpha, b_i) \right] , \]
+\pagebreak
+
+\[ \partial_b R^{-1}_i(\alpha, b_i) = \partial_b \mbox{rvec} \left[ R^{-1}_i(\alpha, b_i) \right] , \]
+\pagebreak
+
+\[ \partial_{\alpha} D(\alpha) = \partial_{\alpha} \mbox{rvec} \left[ D(\alpha) \right] , \]
+\pagebreak
+
+\[ D(\alpha) = \Omega(\mbox{omegaPar}) . \]
+\pagebreak
+
+\[ \partial_{\alpha} D^{-1}(\alpha) = \partial_{\alpha} \mbox{rvec} \left[ D^{-1}(\alpha) \right] , \]
+\pagebreak
+
+$i^{\mbox{th}}$
+\pagebreak
+
+\[ y_{i(j)} = f_{i(j)}(\alpha, b_i) + e_{i(j)} , \]
+\pagebreak
+
+\[ R_{i(j,k)}(\alpha, b_i) = \mbox{cov}[e_{i(j)},e_{i(k)}] , \]
+\pagebreak
+
+\[ D_{(p,q)}(\alpha) = \mbox{cov}[b_{i(p)},b_{i(q)}] , \]
+\pagebreak
+
+$\alpha$
+\pagebreak
+
+\[ \left\{ \alpha^{\mbox{Out}}, \{ b_i^{\mbox{Out}} ( \alpha^{\mbox{Out}} ) \} \right\} , \]
+\pagebreak
+
+\[ y_{i(j)} = f(x_{ij}, \theta, \eta_i) + \sum_{m=1}^{n_{\Sigma}} h_{(m)}(x_{ij}, \theta, \eta_i) \epsilon_{i(m)} . \]
+\pagebreak
+
+\[ \Sigma_{(m,n)} = \mbox{cov}[\epsilon_{i(m)},\epsilon_{i(n)}] , \]
+\pagebreak
+
+\[ \Omega_{(p,q)} = \mbox{cov}[\eta_{i(p)},\eta_{i(q)}] , \]
+\pagebreak
+
+$\Sigma$
+\pagebreak
+
+$\eta_i$
+\pagebreak
+
+$x_{ij}$
+\pagebreak
+
+$n_{\Sigma}$
+\pagebreak
+
+\[ \left\{ \theta^{\mbox{Out}}, \Omega^{\mbox{Out}}, \Sigma^{\mbox{Out}} \right\} , \]
+\pagebreak
+
+\[ \alpha = \left[ \begin{array}{c} \theta \\ \mbox{omegaPar} \\ \mbox{sigmaPar} \end{array} \right] , \]
+\pagebreak
+
+\[ b_i = \eta_i . \]
+\pagebreak
+
+$D(\alpha)$
+\pagebreak
+
+\[ D_{(p,q)}(\alpha) = \Omega_{(p,q)} . \]
+\pagebreak
+
+$e_i$
+\pagebreak
+
+$\epsilon_i$
+\pagebreak
+
+$R_i(\alpha, b_i)$
+\pagebreak
+
+\[ R_{i(j,k)}(\alpha, b_i) = \sum_{m=1}^{n_{\Sigma}} \sum_{n=1}^{n_{\Sigma}} \left[ h_{(m)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i), x_{ij}, \theta, \eta_i \right) \right] \Sigma_{(m,n)} \left[ h_{(n)}\left( \rule{0.0in}{0.15in} f(x_{ik}, \theta, \eta_i), x_{ik}, \theta, \eta_i \right) \right] . \]
+\pagebreak
+
+\[ y_{i(j)} = y_{i(j)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i), x_{ij}, \theta, \eta_i, \epsilon_i \right) . \]
+\pagebreak
+
+$f(x_{ij}, \theta, \eta_i)$
+\pagebreak
+
+\begin{eqnarray} \lefteqn{ \widetilde{y}_{i(j)} \left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i), x_{ij}, \theta, \eta_i, \epsilon_i \right) } \nonumber \\ & & = y_{i(j)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i), x_{ij}, \theta, \eta_i, \epsilon_i \right) \left| \! \begin{array}{l} \\ {\scriptstyle \epsilon_i = 0} \end{array} \right. + \sum_{m=1}^{n_{\Sigma}} \left[ \partial_{\epsilon}^{(m)} y_{i(j)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i), x_{ij}, \theta, \eta_i, \epsilon_i \right) \left| \! \begin{array}{l} \\ {\scriptstyle \epsilon_i = 0} \end{array} \right. \right] \epsilon_{i(m)} . \end{eqnarray}
+\pagebreak
+
+$\epsilon_i = 0$
+\pagebreak
+
+\[ h_{(m)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i), x_{ij}, \theta, \eta_i \right) = \partial_{\epsilon}^{(m)} y_{i(j)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i), x_{ij}, \theta, \eta_i, \epsilon_i \right) \left| \! \begin{array}{l} \\ {\scriptstyle \epsilon_i = 0} \end{array} \right. . \]
+\pagebreak
+
+\begin{eqnarray} \mbox{cov} [ \tilde{y}_{i(j)} , \tilde{y}_{i(k)} ] & = & \mbox{cov} \left[ \sum_{m=1}^{n_{\Sigma}} h_{(m)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i), x_{ij}, \theta, \eta_i \right) \epsilon_{i(m)}, \sum_{n=1}^{n_{\Sigma}} h_{(n)}\left( \rule{0.0in}{0.15in} f(x_{ik}, \theta, \eta_i), x_{ik}, \theta, \eta_i \right) \epsilon_{i(n)} \right] \\ & = & \sum_{m=1}^{n_{\Sigma}} \sum_{n=1}^{n_{\Sigma}} \left[ h_{(m)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i), x_{ij}, \theta, \eta_i \right) \right] \mbox{cov} [ \epsilon_{i(m)} , \epsilon_{i(n)} ] \left[ h_{(n)}\left( \rule{0.0in}{0.15in} f(x_{ik}, \theta, \eta_i), x_{ik}, \theta, \eta_i \right) \right] \\ & = & \sum_{m=1}^{n_{\Sigma}} \sum_{n=1}^{n_{\Sigma}} \left[ h_{(m)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i), x_{ij}, \theta, \eta_i \right) \right] \Sigma_{(m,n)} \left[ h_{(n)}\left( \rule{0.0in}{0.15in} f(x_{ik}, \theta, \eta_i), x_{ik}, \theta, \eta_i \right) \right] \end{eqnarray}
+\pagebreak
+
+$R_{i(j,k)}$
+\pagebreak
+
+\[ y_{i(j)} = f(x_{ij}, \theta, \eta_i) + \sum_{m=1}^{n_{\Sigma}} h_{(m)}\left( \rule{0.0in}{0.15in} f(x_{ij}, \theta, \eta_i), x_{ik}, \theta, \eta_i \right) \epsilon_{i(m)} , \]
+\pagebreak
+
+\[ \widetilde{y}_{i(j)} = y_{i(j)} , \]
+\pagebreak
+
+$\epsilon$
+\pagebreak
+
+\[ y_{i(j)} = f(x_{ij}, \theta, \eta_i) \exp[ \epsilon_{i(1)} ] , \]
+\pagebreak
+
+\begin{eqnarray} \widetilde{y}_{i(j)} & = & f(x_{ij}, \theta, \eta_i) + f(x_{ij}, \theta, \eta_i) \epsilon_{i(1)} \\ & \neq & y_{i(j)} , \end{eqnarray}
+\pagebreak
+
+\[ \alpha = \left[ \begin{array}{c} \mbox{thetaCurr} \\ \mbox{omegaParCurr} \\ \mbox{sigmaParCurr} \end{array} \right] . \]
+\pagebreak
+
+\[ b_i = \mbox{etaCurr} . \]
+\pagebreak
+
+\[ f_i(\mbox{theta}, \mbox{eta}) \]
+\pagebreak
+
+\[ h_i(\mbox{theta}, \mbox{eta}) = \partial_{\mbox{eps}} \; y_i(\mbox{theta}, \mbox{eta}, \mbox{eps}) \left|_{\mbox{eps}=0} \right. \]
+\pagebreak
+
+\[ \mbox{fCurr} = f_i(\mbox{theta}, \mbox{eta}) \]
+\pagebreak
+
+\[ \mbox{hCurr} = h_i(\mbox{theta}, \mbox{eta}) . \]
+\pagebreak
+
+\[ \partial_{\mbox{theta}} \; f_i(\mbox{theta}, \mbox{eta}) \]
+\pagebreak
+
+\[ \partial_{\mbox{theta}} \left[ h_i(\mbox{theta}, \mbox{eta}) \right] = \partial_{\mbox{theta}} \left[ \partial_{\mbox{eps}} \; y_i(\mbox{theta}, \mbox{eta}, \mbox{eps}) \left|_{\mbox{eps}=0} \right. \right] \]
+\pagebreak
+
+\[ \mbox{f_thetaCurr} = \partial_{\mbox{theta}} \; f_i(\mbox{theta}, \mbox{eta}) \]
+\pagebreak
+
+\[ \mbox{h_thetaCurr} = \partial_{\mbox{theta}} \; h_i(\mbox{theta}, \mbox{eta}) . \]
+\pagebreak
+
+\[ \partial_{\mbox{eta}} \; f_i(\mbox{theta}, \mbox{eta}) \]
+\pagebreak
+
+\[ \partial_{\mbox{eta}} \left[ h_i(\mbox{theta}, \mbox{eta}) \right] = \partial_{\mbox{eta}} \left[ \partial_{\mbox{eps}} \; y_i(\mbox{theta}, \mbox{eta}, \mbox{eps}) \left|_{\mbox{eps}=0} \right. \right] \]
+\pagebreak
+
+\[ \mbox{f_etaCurr} = \partial_{\mbox{eta}} \; f_i(\mbox{theta}, \mbox{eta}) \]
+\pagebreak
+
+\[ \mbox{h_etaCurr} = \partial_{\mbox{eta}} \; h_i(\mbox{theta}, \mbox{eta}) . \]
+\pagebreak
+
+\[ f_i(\alpha, b_i) , \]
+\pagebreak
+
+\[ R_i(\alpha, b_i) , \]
+\pagebreak
+
+\[ R^{-1}_i(\alpha, b_i) , \]
+\pagebreak
+
+\[ D(\alpha) , \]
+\pagebreak
+
+\[ D^{-1}(\alpha) , \]
+\pagebreak
+
+\[ \mbox{standardPar} = \left[ \begin{array}{c} \mbox{thetaCurr} \\ \mbox{omegaMinRepCurr} \\ \mbox{sigmaMinRepCurr} \end{array} \right] . \]
+\pagebreak
+
+\[ \partial_{\alpha} \; \mbox{standardPar} = \partial_{\alpha} \left[ \begin{array}{c} \mbox{thetaCurr} \\ \mbox{omegaMinRepCurr} \\ \mbox{sigmaMinRepCurr} \end{array} \right] . \]
+\pagebreak
+
+\[ \mbox{standardParMask} = \left[ \begin{array}{c} \mbox{thetaMask} \\ \mbox{omegaMinRepMask} \\ \mbox{sigmaMinRepMask} \end{array} \right] . \]
+\pagebreak
+
+\[ \mbox{depVar} = y . \]
+\pagebreak
+
+\[ fOut_{i(j)} = y_{i(j)}(theta, eta, eps) . \]
+\pagebreak
+
+\[ \mbox{fOut} = y(theta, eta, eps) . \]
+\pagebreak
+
+\[ yOut_{i(j)} = y_{i(j)}(theta, eta, eps) . \]
+\pagebreak
+
+\[ \mbox{yOut} = y(theta, eta, eps) . \]
+\pagebreak
+
+\[ theta^{\mbox{(Pop)}} = \overline{ theta^{\mbox{(Ind)}} } = \mbox{E}\left[ theta^{\mbox{(Ind)}} \right] = \sum_{j = 1}^{nMeasurePoint} \lambda_j * theta_j^{\mbox{(Ind)}} , \]
+\pagebreak
+
+\[ Omega^{\mbox{(Pop)}} = \mbox{Cov}\left[ theta^{\mbox{(Ind)}} \right] = \sum_{j = 1}^{nMeasurePoint} \lambda_j * \left[ theta_j^{\mbox{(Ind)}} - \overline{ theta^{\mbox{(Ind)}} } \right] \left[ theta_j^{\mbox{(Ind)}} - \overline{ theta^{\mbox{(Ind)}} } \right]^T , \]
+\pagebreak
+
+\[ Sigma^{\mbox{(Pop)}} = \overline{ Omega^{\mbox{(Ind)}} } = \mbox{E}\left[ Omega^{\mbox{(Ind)}} \right] = \sum_{j = 1}^{nMeasurePoint} \lambda_j * Omega_j^{\mbox{(Ind)}} , \]
+\pagebreak
+
+$ nMeasurePoint $
+\pagebreak
+
+$ \lambda_j $
+\pagebreak
+
+$ theta_j^{\mbox{(Ind)}} $
+\pagebreak
+
+$ Omega_j^{\mbox{(Ind)}} $
+\pagebreak
+
+$ b_j $
+\pagebreak
+
+\[ nTheta^{\mbox{(Pop)}} = nTheta^{\mbox{(Ind)}} , \]
+\pagebreak
+
+\[ nEta^{\mbox{(Pop)}} = nTheta^{\mbox{(Ind)}} , \]
+\pagebreak
+
+\[ nEps^{\mbox{(Pop)}} = nEta^{\mbox{(Ind)}} , \]
+\pagebreak
+
+\[ SigmaStruct^{\mbox{(Pop)}} = OmegaStruct^{\mbox{(Ind)}} , \]
+\pagebreak
+
+\[ Omega^{\mbox{(Pop)}} = nEta^{\mbox{(Pop)}} \times nEta^{\mbox{(Pop)}} , \]
+\pagebreak
+
+\[ Sigma^{\mbox{(Pop)}} = nEps^{\mbox{(Pop)}} \times nEps^{\mbox{(Pop)}} , \]
+\pagebreak
+
+\[ Omega^{\mbox{(Ind)}} = nEta^{\mbox{(Ind)}} \times nEta^{\mbox{(Ind)}} . \]
+\pagebreak
+
+$ nB $
+\pagebreak
+
+$ nInd $
+\pagebreak
+
+$ p(y_i | b_j ) $
+\pagebreak
+
+$ y_i $
+\pagebreak
+
+$ b $
+\pagebreak
+
+\[ \overline{b_i} = \mbox{E}[b | y_i ] = \frac{ \sum_{j=1}^{nMeasurePoint} \lambda_j * p(y_i | b_j ) * b_j } {\sum_{j=1}^{nMeasurePoint} \lambda_j * p(y_i | b_j) } . \]
+\pagebreak
+
+\[ theta^{\mbox{(Pop)}} = \overline{ theta^{\mbox{(Ind)}} } = \mbox{E}\left[ theta^{\mbox{(Ind)}} \right] = \frac{1}{nInd} \sum_{i = 1}^{nInd} theta_i^{\mbox{(Ind)}} , \]
+\pagebreak
+
+\[ Omega^{\mbox{(Pop)}} = \mbox{Cov}\left[ theta^{\mbox{(Ind)}} \right] , \]
+\pagebreak
+
+\[ Sigma^{\mbox{(Pop)}} = \overline{ Omega^{\mbox{(Ind)}} } = \mbox{E}\left[ Omega^{\mbox{(Ind)}} \right] = \frac{1}{nInd} \sum_{i = 1}^{nInd} Omega_i^{\mbox{(Ind)}} . \]
+\pagebreak
+
+\[ \overline{ b } = \mbox{E}\left[ b \right] = \frac{1}{nInd} \sum_{i = 1}^{nInd} \hat{b_i} , \]
+\pagebreak
+
+\[ \mbox{Cov}\left[ b \right] = \frac{1}{nInd} \sum_{i = 1}^{nInd} \left[ \hat{b_i} - \overline{ b } \right] \left[ \hat{b_i} - \overline{ b } \right]^T , \]
+\pagebreak
+
+$ \hat{b_i} $
+\pagebreak
+
+\end{document}

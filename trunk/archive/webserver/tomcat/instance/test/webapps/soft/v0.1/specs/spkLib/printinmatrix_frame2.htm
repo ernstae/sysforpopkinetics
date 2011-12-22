@@ -1,0 +1,82 @@
+<html><head>
+<title>Print Array In Matrix Form</title>
+<meta name="description" id="description" content="Print Array In Matrix Form">
+<meta name="keywords" id="keywords" content=" printinmatrix print array in matrix form "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="printinmatrix.htm" target="_top">section</a>, <a href="printinmatrix_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><br>
+<b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Print out an array in a matrix format to the standard output.
+The array is read in the column-major order.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>T</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;(Optional)<br>
+</span></font></code>is a data type of the elements in the array, <i>a</i>.
+The data type must have <code><font color="blue">cout</font></code> defined to print out an element.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>a</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is an <code><font color="blue">SPK_VA::valarray</font></code> object containing an array of elements
+of type <i>T</i>.  
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>nCols</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>specifies the number of columns in the resulting matrix.
+The value must be greater than zero unless the size of the array is zero.
+The size of the array must be divisible by <i>nCols</i>.
+Otherwise, it will terminate the program.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;SpkValarray.h&quot;<br>
+&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;printInMatrix.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;SPK_VA::valarray;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;data[]&nbsp;=&nbsp;{&nbsp;1,&nbsp;2,&nbsp;3,&nbsp;4,&nbsp;5,&nbsp;6,&nbsp;7,&nbsp;8&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;array(&nbsp;data,&nbsp;8&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;printInMatrix(&nbsp;array,&nbsp;2&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+[&nbsp;1&nbsp;3&nbsp;5&nbsp;7&nbsp;]<br>
+[&nbsp;2&nbsp;4&nbsp;6&nbsp;8&nbsp;]<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/printInMatrix.h
+
+</body>
+</html>

@@ -1,0 +1,118 @@
+<html><head>
+<title>Determinant of a Matrix (valarray version)</title>
+<meta name="description" id="description" content="Determinant of a Matrix (valarray version)">
+<meta name="keywords" id="keywords" content=" det Determinant matrix "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="detva.htm" target="_top">section</a>, <a href="detva_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Evaluates the determinant of the square matrix <code><span style='white-space: nowrap'><i>A</i></span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>To be specific, this function computes the determinant of <code><span style='white-space: nowrap'><i>A</i></span></code> as
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>c</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>det</i>(&nbsp;<i>A</i>&nbsp;)&nbsp;=&nbsp;<i>b</i>&nbsp;*&nbsp;2&nbsp;&nbsp;,<br>
+<br>
+</span></code>where <code><span style='white-space: nowrap'><i>b</i></span></code> is a real number and <code><span style='white-space: nowrap'><i>c</i></span></code> is an integer.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">valarray</font></code> <i>A</i> contains the square matrix <code><span style='white-space: nowrap'><i>A</i></span></code> in the column major order.  
+If the matrix is not LU-decomposable, it throws an <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The integer <i>n%</i> specifies the number of columns in <code><span style='white-space: nowrap'><i>A</i></span></code>.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdB</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>On output, the <code><font color="blue">double</font></code> value pointed to by <i>pdB</i> will 
+be equal to <code><span style='white-space: nowrap'><i>b</i></span></code>.
+Note that the <code><font color="blue">double</font></code> value pointed to by <i>pdB</i> must 
+be declared in the function that calls this function.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>plC</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>On output, the <code><font color="blue">long int</font></code> value pointed to by <i>plC</i> will 
+be equal to <code><span style='white-space: nowrap'><i>c</i></span></code>.
+Note that the <code><font color="blue">long int</font></code> value pointed to by <i>plC</i> must 
+be declared in the function that calls this function.
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile and link the C++ program,
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#include&nbsp;&quot;det.h&quot;<br>
+#include&nbsp;&quot;SpkValarray.h&quot;<br>
+#include&nbsp;&lt;iostream&gt;<br>
+#include&nbsp;&lt;cstdlib&gt;<br>
+#include&nbsp;&lt;iomanip&gt;<br>
+#include&nbsp;&lt;cmath&gt;<br>
+<br>
+using&nbsp;SPK_VA::valarray;<br>
+<br>
+int&nbsp;main()<br>
+{<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;int&nbsp;nARow&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;int&nbsp;nACol=&nbsp;nARow;<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;A(&nbsp;nARow&nbsp;*&nbsp;nACol&nbsp;);<br>
+<br>
+&nbsp;&nbsp;A[0&nbsp;+&nbsp;0&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;1000000.0;<br>
+&nbsp;&nbsp;A[0&nbsp;+&nbsp;1&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1.0;<br>
+&nbsp;&nbsp;A[1&nbsp;+&nbsp;0&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1.0;<br>
+&nbsp;&nbsp;A[1&nbsp;+&nbsp;1&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.0;<br>
+<br>
+&nbsp;&nbsp;double&nbsp;b;<br>
+&nbsp;&nbsp;long&nbsp;int&nbsp;c;<br>
+&nbsp;&nbsp;det(&nbsp;A,&nbsp;nACol,&nbsp;&amp;b,&nbsp;&amp;c&nbsp;);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;setiosflags(ios::scientific)&nbsp;&lt;&lt;&nbsp;setprecision(15);<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;A&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;printInMatrix(&nbsp;A,&nbsp;nACol&nbsp;);<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;det(&nbsp;A&nbsp;)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;b&nbsp;*&nbsp;pow(&nbsp;2.0,&nbsp;c&nbsp;)&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;return&nbsp;EXIT_SUCCESS;<br>
+}<br>
+<br>
+</span>
+</font></code>
+then it should output the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+A&nbsp;=<br>
+[1.000000000000000e+006,&nbsp;-1.000000000000000e-003]<br>
+[-1.000000000000000e+000,&nbsp;2.000000000000000e+000]<br>
+<br>
+det(&nbsp;A&nbsp;)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.999999000000000e+006<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/det.cpp
+
+</body>
+</html>

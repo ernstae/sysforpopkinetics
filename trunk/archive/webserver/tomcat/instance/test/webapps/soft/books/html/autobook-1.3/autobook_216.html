@@ -1,0 +1,293 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Test</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Test">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Test">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC216"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_215.html#SEC215" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Source" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_217.html#SEC217" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Variables" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_217.html#SEC217" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Variables" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_210.html#SEC210" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Sh Implementation" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_219.html#SEC219" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Environment" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 22.2.6 [ </H3>
+<!--docid::SEC216::-->
+<P>
+
+Although technically equivalent, <CODE>test</CODE> is preferable to
+<CODE>[</CODE> in shell code written in conjunction with Autoconf, since
+<SAMP>`['</SAMP> is also used for M4 quoting in Autoconf.  Your code will be
+much easier to read (and write) if you abstain from the use of <SAMP>`['</SAMP>.
+</P><P>
+
+Except in the most degenerate shells, <CODE>test</CODE> is a shell builtin
+to save the overhead of starting another process, and is no slower than
+<SAMP>`['</SAMP>.  It does mean, however, that there is a huge range of features
+which are not implemented often enough that you can use them freely
+within a truly portable script.   The less obvious ones to avoid are
+<SAMP>`-a'</SAMP> and <SAMP>`-o'</SAMP> -- the logical `and' and `or'
+operations.  A good litmus test for the portability of any shell feature
+is to see whether that feature is used in the source of Autoconf, and it
+turns out that <SAMP>`-a'</SAMP> and <SAMP>`-o'</SAMP> <EM>are</EM> used here and
+there, but never more than once in a single command.  All the same, to
+avoid any confusion, I always avoid them entirely.  I would not use the
+following, for example:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>test foo -a bar
+</pre></td></tr></table></P><P>
+
+Instead I would run test twice, like this:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>test foo &#38;&#38; test bar
+</pre></td></tr></table></P><P>
+
+The negation operator of <CODE>test</CODE> is quite portable and can be
+used in portable shell scripts.  For example:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>if test ! foo; then bar; fi
+</pre></td></tr></table></P><P>
+
+The negation operator of <CODE>if</CODE> is not at all portable and should
+be avoided.  The following would generate a syntax error on some shell
+implementations:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>if ! test foo; then bar; fi
+</pre></td></tr></table></P><P>
+
+An implication of this axiom is that when you need to branch if a
+command fails, and that command is not <CODE>test</CODE>, you cannot use
+the negation operator.  The easiest way to work around this is to use
+the <SAMP>`else'</SAMP> clause of the un-negated <CODE>if</CODE>, like this:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>if foo; then :; else bar; fi
+</pre></td></tr></table></P><P>
+
+Notice the use of the <CODE>:</CODE> builtin as a null operation when
+<CODE>foo</CODE> doesn't fail.
+</P><P>
+
+The <CODE>test</CODE> command does not cope with missing or additional
+arguments, so you must take care to ensure that the shell does not
+remove arguments or introduce new ones during variable and quote
+expansions.  The best way to do that is to enclose any variables in
+double quotes.  You should also add a single character prefix to both
+sides in case the value of the expansion is a valid option to
+<CODE>test</CODE>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ for foo in "" "!" "bar" "baz quux"; do
+&#62;   test x"$foo" = x"bar" &#38;&#38; echo 1 || echo 0
+&#62; done
+0
+0
+1
+0
+</pre></td></tr></table></P><P>
+
+Here, you can see that using the <SAMP>`x'</SAMP> prefix for the first operand
+saves <CODE>test</CODE> from interpreting the <SAMP>`!'</SAMP> argument as a real
+option, or from choking on an empty string -- something you must always
+be aware of, or else the following behaviour will ensue:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ foo=!
+$ test "$foo" = "bar" &#38;&#38; echo 1 || echo 0
+test: argument expected
+0
+$ foo=""
+$ test "$foo" = "bar" &#38;&#38; echo 1 || echo 0
+test: argument expected
+0
+</pre></td></tr></table></P><P>
+
+Also, the double quote marks help <CODE>test</CODE> cope with strings that
+contain whitespace.  Without the double quotes, you will see this errors:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ foo="baz quux"
+$ test x$foo = "bar" &#38;&#38; echo 1 || echo 0
+test: too many arguments
+0
+</pre></td></tr></table></P><P>
+
+You shouldn't rely on the default behaviour of test (to return `true'
+if its single argument has non-zero length), use the <SAMP>`-n'</SAMP> option
+to force that behaviour if it is what you want.  Beyond that, the other
+thing you need to know about <CODE>test</CODE>, is that if you use operators
+other than those below, you are reducing the portability of your code:
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`-n'</SAMP> <VAR>string</VAR>
+<DD><VAR>string</VAR> is non-empty.
+<DT><SAMP>`-z'</SAMP> <VAR>string</VAR>
+<DD><VAR>string</VAR> is empty.
+<DT><VAR>string1</VAR> = <VAR>string2</VAR>
+<DD>Both strings are identical.
+<DT><VAR>string1</VAR> != <VAR>string2</VAR>
+<DD>The strings are not the same.
+<DT><SAMP>`-d'</SAMP> <VAR>file</VAR>
+<DD><VAR>file</VAR> exists and is a directory.
+<DT><SAMP>`-f'</SAMP> <VAR>file</VAR>
+<DD><VAR>file</VAR> exists and is a regular file.
+</DL>
+<P>
+
+You can also use the following, provided that you don't mix them within
+a single invocation of <CODE>test</CODE>:
+</P><P>
+
+<DL COMPACT>
+<DT><VAR>expression</VAR> <SAMP>`-a'</SAMP> <VAR>expression</VAR>
+<DD>Both expressions evaluate to `true'.
+<DT><VAR>expression</VAR> <SAMP>`-o'</SAMP> <VAR>expression</VAR>
+<DD>Neither expression evaluates to `false'.
+</DL>
+<P>
+
+<A NAME="Variables"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

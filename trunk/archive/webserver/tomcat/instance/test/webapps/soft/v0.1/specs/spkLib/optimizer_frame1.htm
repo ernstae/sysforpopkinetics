@@ -1,0 +1,58 @@
+<html><head>
+<title>Optimizer Class</title>
+<meta name="description" id="description" content="Optimizer Class">
+<meta name="keywords" id="keywords" content=" Optimizer "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="norm.htm" target="_top">previous</a>
+&nbsp;&nbsp;<a href="optimizerconstructor.htm" target="_top">next</a>
+&nbsp;&nbsp;<a href="_contents.htm" target="_top">contents</a>
+&nbsp;&nbsp;<a href="_reference.htm" target="_top">reference</a>
+&nbsp;&nbsp;<a href="_index.htm" target="_top">index</a>
+&nbsp;&nbsp;<a href="_search.htm" target="_top">search</a>
+&nbsp;&nbsp;<a href="_external.htm" target="_top">external</a>
+&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="optimizer.htm" target="_top">section</a>, <a href="optimizer_frame1.htm" target="_top">frame</a></div>
+<hr><center><b><big><big>Optimizer Class</big></big></b></center>
+<br>
+<b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Defined in <code><font color="blue">Optimizer.h</font></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><code><font color="blue">Optimizer</font></code> encapsulates information needed to control the
+general-purpose optimization library that is used by SPK to search
+for the maximum likelihood solutions.
+Objects of this class are passed as input arguments to SPK's 
+top-level search routines
+ <a href="fitindividual.htm" target="_top"><span style='white-space: nowrap'>fitIndividual</span></a>
+,  <a href="fitpopulation.htm" target="_top"><span style='white-space: nowrap'>fitPopulation</span></a>
+.
+Ultimately, <code><font color="blue">Optimizer</font></code> might allow users to choose among 
+several optimizers;
+if and when that happens, <code><font color="blue">Optimizer</font></code> may become a base class
+defining the common interface for a family of optimizers.
+Currently, SPK always uses the a single optimizer,
+so this <code><font color="blue">Optimizer</font></code> class is merely a bundle of information and 
+controls relevant to that optimizer including the state information
+required by the warm start run of SPK. 
+
+
+<br>
+<br>
+<b><big><a name="Contents" id="Contents">Contents</a></big></b>
+<br>
+<table>
+<tr><td><a href="optimizerconstructor.htm" target="_top">OptimizerConstructor</a></td><td>Basic&nbsp;Constructor</td></tr><tr><td><a href="optimizerdefaultconstructor.htm" target="_top">OptimizerDefaultConstructor</a></td><td>Default&nbsp;Constructor</td></tr><tr><td><a href="optimizercopyconstructor.htm" target="_top">OptimizerCopyConstructor</a></td><td>Copy&nbsp;Constructor</td></tr><tr><td><a href="optimizerassignmentoperator.htm" target="_top">OptimizerAssignmentOperator</a></td><td>Assignment&nbsp;Operator</td></tr><tr><td><a href="optimizerdestructor.htm" target="_top">OptimizerDestructor</a></td><td>Destructor</td></tr><tr><td><a href="getepsilon.htm" target="_top">getEpsilon</a></td><td>Get&nbsp;convergence&nbsp;tolerance&nbsp;epsilon</td></tr><tr><td><a href="getnmaxiter.htm" target="_top">getNMaxIter</a></td><td>Get&nbsp;maximum&nbsp;number&nbsp;of&nbsp;iterations</td></tr><tr><td><a href="getlevel.htm" target="_top">getLevel</a></td><td>Get&nbsp;tracing&nbsp;level</td></tr><tr><td><a href="getnitercompleted.htm" target="_top">getNIterCompleted</a></td><td>Get&nbsp;number&nbsp;of&nbsp;iterations&nbsp;completed</td></tr><tr><td><a href="getistoomanyiter.htm" target="_top">getIsTooManyIter</a></td><td>Get&nbsp;is-too-many&nbsp;iterations&nbsp;flag</td></tr><tr><td><a href="getsavestateatendofopt.htm" target="_top">getSaveStateAtEndOfOpt</a></td><td>Get&nbsp;Save&nbsp;State&nbsp;at&nbsp;End&nbsp;of&nbsp;Optimization&nbsp;Flag</td></tr><tr><td><a href="getthrowexcepifmaxiter.htm" target="_top">getThrowExcepIfMaxIter</a></td><td>Get&nbsp;Throw&nbsp;Exception&nbsp;if&nbsp;Maximum&nbsp;Iterations&nbsp;Exhausted&nbsp;Flag</td></tr><tr><td><a href="getiswarmstartpossible.htm" target="_top">getIsWarmStartPossible</a></td><td>Get&nbsp;is&nbsp;warm&nbsp;start&nbsp;possible&nbsp;flag</td></tr><tr><td><a href="getiswarmstart.htm" target="_top">getIsWarmStart</a></td><td>Get&nbsp;warm&nbsp;start&nbsp;flag</td></tr><tr><td><a href="getdidoptfinishok.htm" target="_top">getDidOptFinishOk</a></td><td>Get&nbsp;the&nbsp;did&nbsp;the&nbsp;optimizer&nbsp;finish&nbsp;ok&nbsp;flag</td></tr><tr><td><a href="getisbeginofiterstateinfo.htm" target="_top">getIsBeginOfIterStateInfo</a></td><td>Get&nbsp;the&nbsp;is&nbsp;beginning&nbsp;of&nbsp;iteration&nbsp;state&nbsp;information&nbsp;flag</td></tr><tr><td><a href="setepsilon.htm" target="_top">setEpsilon</a></td><td>Set&nbsp;convergence&nbsp;tolerance&nbsp;epsilon</td></tr><tr><td><a href="setnmaxiter.htm" target="_top">setNMaxIter</a></td><td>Set&nbsp;maximum&nbsp;number&nbsp;of&nbsp;iterations</td></tr><tr><td><a href="setlevel.htm" target="_top">setLevel</a></td><td>Set&nbsp;level&nbsp;of&nbsp;tracing</td></tr><tr><td><a href="setnitercompleted.htm" target="_top">setNIterCompleted</a></td><td>Set&nbsp;number&nbsp;of&nbsp;iterations&nbsp;completed</td></tr><tr><td><a href="setistoomanyiter.htm" target="_top">setIsTooManyIter</a></td><td>Set&nbsp;is-too-many&nbsp;iterations&nbsp;flag</td></tr><tr><td><a href="setsavestateatendofopt.htm" target="_top">setSaveStateAtEndOfOpt</a></td><td>Set&nbsp;Save&nbsp;State&nbsp;at&nbsp;End&nbsp;of&nbsp;Optimization&nbsp;Flag</td></tr><tr><td><a href="setthrowexcepifmaxiter.htm" target="_top">setThrowExcepIfMaxIter</a></td><td>Set&nbsp;Throw&nbsp;Exception&nbsp;if&nbsp;Maximum&nbsp;Iterations&nbsp;Exhausted&nbsp;Flag</td></tr><tr><td><a href="setiswarmstartpossible.htm" target="_top">setIsWarmStartPossible</a></td><td>Set&nbsp;the&nbsp;is&nbsp;warm&nbsp;start&nbsp;possible&nbsp;flag</td></tr><tr><td><a href="setiswarmstart.htm" target="_top">setIsWarmStart</a></td><td>Set&nbsp;the&nbsp;is&nbsp;a&nbsp;warm&nbsp;start&nbsp;flag</td></tr><tr><td><a href="setdidoptfinishok.htm" target="_top">setDidOptFinishOk</a></td><td>Set&nbsp;the&nbsp;did&nbsp;the&nbsp;optimizer&nbsp;finish&nbsp;ok&nbsp;flag</td></tr><tr><td><a href="setisbeginofiterstateinfo.htm" target="_top">setIsBeginOfIterStateInfo</a></td><td>Set&nbsp;the&nbsp;is&nbsp;beginning&nbsp;of&nbsp;iteration&nbsp;state&nbsp;information&nbsp;flag</td></tr><tr><td><a href="getpar.htm" target="_top">getPar</a></td><td>Get&nbsp;the&nbsp;current&nbsp;objective&nbsp;function&nbsp;parameter&nbsp;value</td></tr><tr><td><a href="getstateinfo.htm" target="_top">getStateInfo</a></td><td>Get&nbsp;state&nbsp;information&nbsp;for&nbsp;a&nbsp;warm&nbsp;start</td></tr><tr><td><a href="setstateinfo.htm" target="_top">setStateInfo</a></td><td>Set&nbsp;state&nbsp;information&nbsp;for&nbsp;a&nbsp;warm&nbsp;start</td></tr><tr><td><a href="initstateinfo.htm" target="_top">initStateInfo</a></td><td>Allocates&nbsp;Memory&nbsp;for&nbsp;the&nbsp;State&nbsp;Information</td></tr><tr><td><a href="freestateinfo.htm" target="_top">freeStateInfo</a></td><td>Free&nbsp;Memory&nbsp;Allocated&nbsp;for&nbsp;the&nbsp;State&nbsp;Information</td></tr><tr><td><a href="setobjfunc.htm" target="_top">setObjFunc</a></td><td>Set&nbsp;the&nbsp;objective&nbsp;function</td></tr><tr><td><a href="readrestartinfofromfile.htm" target="_top">readRestartInfoFromFile</a></td><td>Read&nbsp;the&nbsp;restart&nbsp;information&nbsp;from&nbsp;the&nbsp;file</td></tr><tr><td><a href="writerestartinfotofile.htm" target="_top">writeRestartInfoToFile</a></td><td>Write&nbsp;the&nbsp;restart&nbsp;information&nbsp;to&nbsp;the&nbsp;file</td></tr><tr><td><a href="getattributevalue.htm" target="_top">getAttributeValue</a></td><td>Get&nbsp;the&nbsp;Value&nbsp;of&nbsp;an&nbsp;Attribute&nbsp;in&nbsp;the&nbsp;Current&nbsp;Element</td></tr><tr><td><a href="getvaluexmlchtag.htm" target="_top">getValueXMLChTag</a></td><td>Get&nbsp;a&nbsp;Single&nbsp;Value&nbsp;from&nbsp;a&nbsp;Subelement&nbsp;of&nbsp;the&nbsp;Current&nbsp;Element&nbsp;(XMLCh&nbsp;Tag&nbsp;Version)</td></tr><tr><td><a href="getarrayxmlchtag.htm" target="_top">getArrayXMLChTag</a></td><td>Get&nbsp;an&nbsp;Array&nbsp;of&nbsp;Values&nbsp;from&nbsp;a&nbsp;Subelement&nbsp;of&nbsp;the&nbsp;Current&nbsp;Element&nbsp;(XMLCh&nbsp;\Tag&nbsp;\Version)</td></tr><tr><td><a href="getvaluechartag.htm" target="_top">getValueCharTag</a></td><td>Get&nbsp;a&nbsp;Single&nbsp;Value&nbsp;from&nbsp;a&nbsp;Subelement&nbsp;of&nbsp;the&nbsp;Current&nbsp;Element&nbsp;(Char&nbsp;Tag&nbsp;Version)</td></tr><tr><td><a href="getarraychartag.htm" target="_top">getArrayCharTag</a></td><td>Get&nbsp;an&nbsp;Array&nbsp;of&nbsp;Values&nbsp;from&nbsp;a&nbsp;Subelement&nbsp;of&nbsp;the&nbsp;Current&nbsp;Element&nbsp;(Char&nbsp;\Tag&nbsp;\Version)</td></tr><tr><td><a href="writexmlversion.htm" target="_top">writeXMLVersion</a></td><td>Write&nbsp;the&nbsp;XML&nbsp;version&nbsp;to&nbsp;the&nbsp;Restart&nbsp;File</td></tr><tr><td><a href="writeattribute.htm" target="_top">writeAttribute</a></td><td>Write&nbsp;an&nbsp;Attribute&nbsp;Name&nbsp;and&nbsp;Value&nbsp;to&nbsp;the&nbsp;Restart&nbsp;File</td></tr><tr><td><a href="writevalue.htm" target="_top">writeValue</a></td><td>Write&nbsp;a&nbsp;Subelement&nbsp;of&nbsp;the&nbsp;Current&nbsp;Element&nbsp;that&nbsp;Contains&nbsp;a&nbsp;Single&nbsp;Value&nbsp;(Char&nbsp;Tag&nbsp;Version)</td></tr><tr><td><a href="writearray.htm" target="_top">writeArray</a></td><td>Write&nbsp;a&nbsp;Subelement&nbsp;of&nbsp;the&nbsp;Current&nbsp;Element&nbsp;that&nbsp;Contains&nbsp;an&nbsp;Array&nbsp;of&nbsp;Values&nbsp;(Char&nbsp;Tag&nbsp;Version)</td></tr><tr><td><a href="writestarttag.htm" target="_top">writeStartTag</a></td><td>Write&nbsp;an&nbsp;XML&nbsp;Start&nbsp;Tag</td></tr><tr><td><a href="writestarttagfinalbracket.htm" target="_top">writeStartTagFinalBracket</a></td><td>Write&nbsp;the&nbsp;Final&nbsp;Bracket&nbsp;for&nbsp;an&nbsp;XML&nbsp;Start&nbsp;Tag</td></tr><tr><td><a href="writeendtag.htm" target="_top">writeEndTag</a></td><td>Write&nbsp;an&nbsp;XML&nbsp;End&nbsp;Tag</td></tr><tr><td><a href="isthereerrorinfo.htm" target="_top">isThereErrorInfo</a></td><td>Determine&nbsp;if&nbsp;there&nbsp;is&nbsp;error&nbsp;information</td></tr><tr><td><a href="geterrorinfo.htm" target="_top">getErrorInfo</a></td><td>Get&nbsp;error&nbsp;information</td></tr><tr><td><a href="optimizerinserter.htm" target="_top">OptimizerInserter</a></td><td>Inserter&nbsp;&lt;&lt;</td></tr><tr><td><a href="operatorextractor.htm" target="_top">OperatorExtractor</a></td><td>Extractor&nbsp;&gt;&gt;</td></tr></table><code><span style='white-space: nowrap'><br>
+<br>
+</span></code><center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+
+</i>
+</center>
+<hr>Input File: OptimizerClass.omh
+
+</body>
+</html>

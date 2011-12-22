@@ -1,0 +1,1042 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+  <head>
+    <meta name="generator" content=
+    "HTML Tidy for Linux/x86 (vers 1st March 2002), see www.w3.org">
+    <meta http-equiv="Content-Type" content=
+    "text/html; charset=ISO-8859-1">
+
+    <title>DocBook and XML</title>
+    <link rel="stylesheet" href="defguide.css" type="text/css">
+    <meta name="generator" content=
+    "DocBook XSL Stylesheets V1.59.0">
+    <link rel="home" href="docbook.html" title="DocBook">
+    <link rel="up" href="part3.html" title=
+    "Part&#160;III.&#160;Appendixes">
+    <link rel="previous" href="appa.html" title="Installation">
+    <link rel="next" href="appc.html" title="DocBook Versions">
+  </head>
+
+  <body>
+    <div class="navheader">
+      <table border="0" cellpadding="0" cellspacing="0" width=
+      "100%" summary="Navigation table">
+        <tr>
+          <td align="left">&#160;<a title="DocBook" href=
+          "docbook.html"><img src="figures/nav-home.png" alt="Home"
+          border="0"></a>&#160;<a title="Installation" href=
+          "appa.html"><img src="figures/nav-prev.png" alt="Prev"
+          border="0"></a>&#160;<a title=
+          "Part&#160;III.&#160;Appendixes" href="part3.html"><img
+          src="figures/nav-up.png" alt="Up" border="0"></a>&#160;<a
+          title="DocBook Versions" href="appc.html"><img src=
+          "figures/nav-next.png" alt="Next" border="0"></a></td>
+
+          <td align="right"><i>DocBook: The Definitive Guide</i>
+          Version 2.0.8 <span class="alpha-version">(<a href=
+          "co01.html"><em>Alpha</em></a>)</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="appendix" lang="en">
+      <div class="titlepage">
+        <div>
+          <a name="app-xml"></a>
+
+          <div class="component-title">
+            <h1 class="label">B</h1>
+
+            <h1 class="title">DocBook and XML</h1>
+          </div>
+        </div>
+
+        <div>
+          <p class="releaseinfo">$Revision: 1.1 $</p>
+        </div>
+
+        <div>
+          <p class="pubdate">$Date: 2001/08/02 10:22:22 $</p>
+        </div>
+      </div>
+
+      <p><a class="indexterm" name="xmldocbookappb"></a> <a class=
+      "indexterm" name="docbookxmlappa"></a> <a class="indexterm"
+      name="d0e279412"></a> <a class="indexterm" name=
+      "d0e279418"></a> XML, the <a href=
+      "http://www.w3.org/TR/REC-xml" target="_top">Extensible
+      Markup Language</a>, is a simple dialect of SGML. In the
+      words of the XML specification, &#8220;the goal [of XML] is
+      to enable generic SGML to be served, received, and processed
+      on the Web in the way that is now possible with
+      HTML.&#8221;</p>
+
+      <p>XML raises two issues with respect to DocBook:</p>
+
+      <div class="itemizedlist">
+        <ul type="disc">
+          <li>
+            <p>Are DocBook SGML instances valid XML instances?</p>
+          </li>
+
+          <li>
+            <p>Can the DocBook DTD be made into a valid XML
+            DTD?</p>
+          </li>
+        </ul>
+      </div>
+      <br>
+      <br>
+
+      <p>If you have an existing SGML system, and your primary goal
+      is to serve DocBook documents over the Web as XML, only the
+      first of these issues is relevant. As the popularity of XML
+      grows, we will see more and more XML-aware tools that don't
+      implement full ISO 8879 SGML. If your goal is to author
+      DocBook documents with one of this new generation of tools,
+      you will only be able to achieve validity with an XML DocBook
+      DTD.</p>
+
+      <p><a class="indexterm" name="d0e279499"></a> Although not
+      yet officially adopted by the OASIS DocBook Technical
+      Committee, an XML version of DocBook is available now and
+      provided on the CD-ROM.</p>
+
+      <div class="sect1" lang="en">
+        <div class="titlepage">
+          <div>
+            <h2 class="title" style="clear: both"><a name=
+            "d0e279514"></a>DocBook Instances as XML</h2>
+          </div>
+        </div>
+
+        <p><a class="indexterm" name="d0e279521"></a> <a class=
+        "indexterm" name="d0e279527"></a> Most DocBook documents
+        can be made into well-formed XML documents very easily.
+        With few exceptions, valid DocBook SGML instances are also
+        well-formed XML instances. The following areas may need to
+        be addressed.</p>
+
+        <div class="sect2" lang="en">
+          <div class="titlepage">
+            <div>
+              <h3 class="title"><a name="d0e279542"></a>System
+              Identifiers</h3>
+            </div>
+          </div>
+
+          <p><a class="indexterm" name="d0e279547"></a> <a class=
+          "indexterm" name="d0e279553"></a> <a class="indexterm"
+          name="d0e279559"></a> <a class="indexterm" name=
+          "d0e279565"></a> It is common for SGML instances to use
+          only a public identifier in document type and parameter
+          entity declarations:</p>
+<pre class="programlisting">
+&lt;!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook V3.1//EN"&gt;
+&lt;chapter&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+&lt;para&gt;
+This &lt;emphasis&gt;paragraph&lt;/paragraph&gt; is important.
+&lt;/para&gt;
+&lt;/chapter&gt;
+</pre>
+
+          <p>XML requires a system identifier:</p>
+<pre class="programlisting">
+&lt;!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd"&gt;
+&lt;chapter&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+&lt;para&gt;
+This &lt;emphasis&gt;paragraph&lt;/paragraph&gt; is important.
+&lt;/para&gt;
+&lt;/chapter&gt;
+</pre>
+          <br>
+          <br>
+
+          <p><a class="indexterm" name="d0e279584"></a> <a class=
+          "indexterm" name="d0e279590"></a> <a class="indexterm"
+          name="d0e279596"></a> If you're used to using catalog
+          files to resolve system identifiers, you may be dismayed
+          to learn that system identifiers are required. Because
+          most tools favor system identifiers over public
+          identifiers, all of the portability that was gained by
+          the use of catalog files seems to have been lost. In the
+          long run, it'll be regained by the fact that XML system
+          identifiers can be URNs, which will have a resolution
+          scheme like catalogs, but what about the short run?</p>
+
+          <p>Luckily, there are a couple of options. First, you can
+          tell your tools to use the public identifiers even though
+          system identifiers are present. Simply add:</p>
+<pre class="screen">
+OVERRIDE YES
+</pre>
+
+          <p><a class="indexterm" name="d0e279614"></a> to your
+          catalog files. Alternatively, you can remap system
+          identifers with the <tt>SYSTEM</tt> catalog directive. If
+          you are faced with documents that don't use public
+          identifiers at all, this is probably your only
+          option.</p>
+        </div>
+
+        <div class="sect2" lang="en">
+          <div class="titlepage">
+            <div>
+              <h3 class="title"><a name=
+              "d0e279623"></a>Minimization</h3>
+            </div>
+          </div>
+
+          <p><a class="indexterm" name="d0e279628"></a> <a class=
+          "indexterm" name="d0e279636"></a> If you have used SGML
+          minimization features in your instances:</p>
+<pre class="programlisting">
+&lt;!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook V3.1//EN"&gt;
+&lt;chapter id=<a name="xml-attrquote"></a><img src=
+"figures/callouts/1.png" alt="1" border=
+"0">chap1&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+&lt;para&gt;
+This &lt;emphasis&gt;paragraph<a name="xml-endtag"></a><img src=
+"figures/callouts/2.png" alt="2" border="0">&lt;/&gt; is important.
+&lt;/para&gt;
+&lt;/chapter&gt;
+</pre>
+
+          <p>they will not be well-formed XML instances. In
+          particular, XML</p>
+
+          <div class="calloutlist">
+            <table border="0" summary="Callout list">
+              <tr>
+                <td width="5%" valign="top" align="left"><a href=
+                "#xml-attrquote"><img src="figures/callouts/1.png"
+                alt="1" border="0"></a></td>
+
+                <td valign="top" align="left">
+                  <p><a class="indexterm" name="d0e279664"></a> <a
+                  class="indexterm" name="d0e279670"></a> Requires
+                  that all attribute values be quoted.</p>
+                </td>
+              </tr>
+
+              <tr>
+                <td width="5%" valign="top" align="left"><a href=
+                "#xml-endtag"><img src="figures/callouts/2.png"
+                alt="2" border="0"></a></td>
+
+                <td valign="top" align="left">
+                  <p>Does not allow short tag minization.</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+          XML also forbids tag omission, and there are probably a
+          half dozen or so more exotic examples of minimization
+          that you have used. They're all illegal. The easiest way
+          to remove these minimizations is probably with a tool
+          like <b>sgmlnorm</b> (included in the SP and Jade
+          distributions, on the <a href="appe.html" title=
+          "What's on the CD-ROM?">CD-ROM</a>).<br>
+          <br>
+
+          <p>The result will be something like this:</p>
+<pre class="programlisting">
+&lt;?xml version='1.0'?&gt;
+&lt;!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd"&gt;
+&lt;chapter id="chap1"&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+&lt;para&gt;
+This &lt;emphasis&gt;paragraph&lt;/emphasis&gt; is important.
+&lt;/para&gt;
+&lt;/chapter&gt;
+</pre>
+        </div>
+
+        <div class="sect2" lang="en">
+          <div class="titlepage">
+            <div>
+              <h3 class="title"><a name="d0e279699"></a>Attribute
+              Default Values</h3>
+            </div>
+          </div>
+
+          <p><a class="indexterm" name="d0e279704"></a> Correct
+          processing of this document may require access to the
+          default attributes:</p>
+<pre class="programlisting">
+&lt;!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook V3.1//EN"&gt;
+&lt;chapter&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+&lt;para&gt;
+Write to us at:
+&lt;address<a name="xml-defattr"></a><img src=
+"figures/callouts/1.png" alt="1" border="0">&gt;
+90 Sherman Street
+Cambridge, MA 02140
+&lt;/address&gt;
+&lt;/para&gt;
+&lt;/chapter&gt;
+</pre>
+
+          <div class="calloutlist">
+            <table border="0" summary="Callout list">
+              <tr>
+                <td width="5%" valign="top" align="left"><a href=
+                "#xml-defattr"><img src="figures/callouts/1.png"
+                alt="1" border="0"></a></td>
+
+                <td valign="top" align="left">
+                  <p><a href="address.html"><tt class=
+                  "sgmltag-element">Address</tt></a> expresses that
+                  its content is line-specific with an
+                  attribute.</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <p>Some XML processing environments are going to ignore
+          the doctype declaration in your document, even if it's
+          present. This is relevant when your instance uses
+          elements that have attributes with default values. The
+          default values are expressed in the DTD, but may not be
+          expressed in your instance. In the case of DocBook, there
+          are relatively few of these, and your stylesheet can
+          probably be constructed to do the right thing in either
+          case. (It essentially treats the attributes as if they
+          had implied values.)</p>
+
+          <p>The result will be something like this:</p>
+<pre class="programlisting">
+&lt;?xml version='1.0'?&gt;
+&lt;!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd"&gt;
+&lt;chapter&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+&lt;para&gt;
+Write to us at:
+&lt;address format="linespecific"&gt;
+90 Sherman Street
+Cambridge, MA 02140
+&lt;/address&gt;
+&lt;/para&gt;
+&lt;/chapter&gt;
+</pre>
+        </div>
+
+        <div class="sect2" lang="en">
+          <div class="titlepage">
+            <div>
+              <h3 class="title"><a name="d0e279732"></a>Character
+              and <tt>SDATA</tt> Entities</h3>
+            </div>
+          </div>
+<pre class="programlisting">
+&lt;!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook V3.1//EN"&gt;
+&lt;chapter&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+&lt;para&gt;
+This book was published by O'Reilly<a name="xml-sdata"></a><img
+src="figures/callouts/1.png" alt="1" border="0">&amp;trade;.
+&lt;/para&gt;
+&lt;/chapter&gt;
+</pre>
+
+          <div class="calloutlist">
+            <table border="0" summary="Callout list">
+              <tr>
+                <td width="5%" valign="top" align="left"><a href=
+                "#xml-sdata"><img src="figures/callouts/1.png" alt=
+                "1" border="0"></a></td>
+
+                <td valign="top" align="left">
+                  <p><a class="indexterm" name="d0e279746"></a> <a
+                  class="indexterm" name="d0e279752"></a> <a class=
+                  "indexterm" name="d0e279756"></a> <a class=
+                  "indexterm" name="d0e279762"></a> <a class=
+                  "indexterm" name="d0e279768"></a> <a class=
+                  "indexterm" name="d0e279774"></a> <a class=
+                  "indexterm" name="d0e279782"></a> The DocBook DTD
+                  defines all of the standard ISO entities
+                  automatically, but the ISO definitions use
+                  <tt>SDATA</tt>, which is not allowed in XML.
+                  Eventually, ISO (or someone else) will release
+                  official ISO standard entity sets that make
+                  reference to the appropriate Unicode character
+                  for each entity. Until then, the XML version of
+                  DocBook is distributed with an unofficial
+                  set.</p>
+
+                  <p><a class="indexterm" name="d0e279814"></a> <a
+                  class="indexterm" name="d0e279820"></a> If you
+                  use entities in your document, it may be wise to
+                  put declarations for them in the internal subset
+                  of each instance, because some XML browsers are
+                  going to parse the internal subset but not the
+                  external subset. If the entity declarations are
+                  in your DTD, and the browser does not parse the
+                  external subset, the browser won't know how to
+                  display the entities in your document.</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <p>The result will be something like this:</p>
+<pre class="programlisting">
+&lt;?xml version='1.0'?&gt;
+&lt;!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+&lt;!ENTITY trade "&amp;#x2122;"&gt;
+&lt;chapter&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+&lt;para&gt;
+This book was published by O'Reilly&amp;trade;.
+&lt;/para&gt;
+&lt;/chapter&gt;
+</pre>
+        </div>
+
+        <div class="sect2" lang="en">
+          <div class="titlepage">
+            <div>
+              <h3 class="title"><a name=
+              "d0e279836"></a>Case-Sensitivity</h3>
+            </div>
+          </div>
+<pre class="programlisting">
+<a name="xml-nmcasekey"></a><img src="figures/callouts/1.png" alt=
+"1" border=
+"0">&lt;!DocType Book PUBLIC "-//OASIS//DTD DocBook V3.1//EN"&gt;
+<a name="xml-namecase1"></a><img src="figures/callouts/2.png" alt=
+"2" border="0">&lt;book&gt;&lt;title&gt;Book Title&lt;/title&gt;
+&lt;chapter&gt;&lt;title&gt;Chapter Title<a name=
+"xml-namecase2"></a><img src="figures/callouts/3.png" alt="3"
+border="0">&lt;/Title&gt;
+&lt;para&gt;
+Paragraph test.
+&lt;/para&gt;
+<a name="xml-wf1"></a><img src="figures/callouts/4.png" alt="4"
+border="0">&lt;PARA&gt;
+A second paragraph.
+&lt;/PARA&gt;
+&lt;/chapter&gt;
+&lt;/book&gt;
+</pre>
+
+          <p><a class="indexterm" name="d0e279850"></a> <a class=
+          "indexterm" name="d0e279856"></a> <a class="indexterm"
+          name="d0e279862"></a> <a class="indexterm" name=
+          "d0e279868"></a> With the standard DocBook SGML
+          declaration, DocBook instances are not case-sensitive
+          with respect to element and attribute names. XML is
+          always case-sensitive. As long as you have used the same
+          case consistently, your XML instances will be
+          well-formed, but it may still be advantageous to do some
+          case-folding because it will simplify the construction of
+          stylesheets.</p>
+
+          <div class="calloutlist">
+            <table border="0" summary="Callout list">
+              <tr>
+                <td width="5%" valign="top" align="left"><a href=
+                "#xml-nmcasekey"><img src="figures/callouts/1.png"
+                alt="1" border="0"></a></td>
+
+                <td valign="top" align="left">
+                  <p>Keywords in XML are case-sensitive, and must
+                  be in uppercase. <a class="indexterm" name=
+                  "d0e279890"></a></p>
+                </td>
+              </tr>
+
+              <tr>
+                <td width="5%" valign="top" align="left"><a href=
+                "#xml-namecase1"><img src="figures/callouts/2.png"
+                alt="2" border="0"></a></td>
+
+                <td valign="top" align="left">
+                  <p>The name declared in the document type
+                  declaration, like all other names, is
+                  case-sensitive. <a class="indexterm" name=
+                  "d0e279899"></a></p>
+                </td>
+              </tr>
+
+              <tr>
+                <td width="5%" valign="top" align="left"><a href=
+                "#xml-namecase2"><img src="figures/callouts/3.png"
+                alt="3" border="0"></a></td>
+
+                <td valign="top" align="left">
+                  <p>Start and end tags must use the same case. <a
+                  class="indexterm" name="d0e279908"></a> <a class=
+                  "indexterm" name="d0e279914"></a></p>
+                </td>
+              </tr>
+
+              <tr>
+                <td width="5%" valign="top" align="left"><a href=
+                "#xml-wf1"><img src="figures/callouts/4.png" alt=
+                "4" border="0"></a></td>
+
+                <td valign="top" align="left">
+                  <p>In XML, <a href="para.html"><tt class=
+                  "sgmltag-element">Para</tt></a> is not the same
+                  as <a href="para.html"><tt class=
+                  "sgmltag-element">PARA</tt></a>. Note that this
+                  is a validity error (against the XML version of
+                  DocBook), but it is not an XML well-formedness
+                  error. The use of <a href="para.html"><tt class=
+                  "sgmltag-element">para</tt></a> and <a href=
+                  "para.html"><tt class=
+                  "sgmltag-element">PARA</tt></a> as distinct names
+                  is as legitimate as using <tt class=
+                  "sgmltag-element">foo</tt> and <tt class=
+                  "sgmltag-element">bar</tt>, as long as they are
+                  properly nested. <a class="indexterm" name=
+                  "d0e279950"></a></p>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <p>The result will be something like this:</p>
+<pre class="programlisting">
+&lt;?xml version='1.0'?&gt;
+&lt;!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd"&gt;
+&lt;book&gt;&lt;title&gt;Book Title&lt;/title&gt;
+&lt;chapter&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+&lt;para&gt;
+Paragraph test.
+&lt;/para&gt;
+&lt;para&gt;
+A second paragraph.
+&lt;/para&gt;
+&lt;/chapter&gt;
+&lt;/book&gt;
+</pre>
+        </div>
+
+        <div class="sect2" lang="en">
+          <div class="titlepage">
+            <div>
+              <h3 class="title"><a name="d0e279960"></a>No #CONREF
+              Attributes</h3>
+            </div>
+          </div>
+<pre class="programlisting">
+&lt;!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook V3.1//EN"&gt;
+&lt;chapter&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+&lt;indexterm id="idx-bor"&gt;&lt;primary&gt;Something&lt;/primary&gt;&lt;/indexterm&gt;<a
+ name="xml-conrefstart"></a><img src="figures/callouts/1.png" alt=
+"1" border="0">
+&lt;para&gt;
+Paragraph test.
+&lt;/para&gt;
+&lt;indexterm startref="idx-bor"&gt;<a name="xml-conref"></a><img
+src="figures/callouts/2.png" alt="2" border="0">
+&lt;/chapter&gt;
+</pre>
+
+          <p><a class="indexterm" name="d0e279971"></a> <a class=
+          "indexterm" name="d0e279975"></a> <a class="indexterm"
+          name="d0e279979"></a> <a class="indexterm" name=
+          "d0e279983"></a> <a class="indexterm" name=
+          "d0e279987"></a> <a class="indexterm" name=
+          "d0e279991"></a> <a class="indexterm" name=
+          "d0e279995"></a> The <tt class=
+          "sgmltag-attribute">StartRef</tt> attribute on <a href=
+          "indexterm.html"><tt class=
+          "sgmltag-element">indexterm</tt></a> and the <tt class=
+          "sgmltag-attribute">OtherTerm</tt> attribute on <a href=
+          "glosssee.html"><tt class=
+          "sgmltag-element">GlossSee</tt></a> and <a href=
+          "glossseealso.html"><tt class=
+          "sgmltag-element">GlossSeeAlso</tt></a> are
+          <tt>#CONREF</tt> attributes.</p>
+
+          <p>In SGML terms, this means that when these attributes
+          are used, the content of the tag is taken to be the same
+          as the content of the tag pointed to by the
+          attribute.</p>
+
+          <div class="calloutlist">
+            <table border="0" summary="Callout list">
+              <tr>
+                <td width="5%" valign="top" align="left"><a href=
+                "#xml-conrefstart"><img src=
+                "figures/callouts/1.png" alt="1" border="0"></a> <a
+                href="#xml-conref"><img src=
+                "figures/callouts/2.png" alt="2" border="0"></a></td>
+
+                <td valign="top" align="left">
+                  <p>If you have used these attributes, your
+                  instance will contain both empty and non-empty
+                  versions of these tags.</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <br>
+          <br>
+
+          <p>Your best bet is to transform the <tt>#CONREF</tt>
+          version into an empty tag and let your stylesheet deal
+          with it appropriately.</p>
+
+          <p>The result will be something like this:</p>
+<pre class="programlisting">
+&lt;?xml version='1.0'?&gt;
+&lt;!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd"&gt;
+&lt;chapter&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+&lt;indexterm id="idx-bor"&gt;&lt;primary&gt;Something&lt;/primary&gt;&lt;/indexterm&gt;
+&lt;para&gt;
+Paragraph test.
+&lt;/para&gt;
+&lt;indexterm startref="idx-bor"/&gt;
+&lt;/chapter&gt;
+</pre>
+        </div>
+
+        <div class="sect2" lang="en">
+          <div class="titlepage">
+            <div>
+              <h3 class="title"><a name="d0e280037"></a>Only
+              Explicit CDATA-Marked Sections Are Allowed</h3>
+            </div>
+          </div>
+<pre class="programlisting">
+&lt;!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+&lt;!ENTITY % draft "IGNORE"&gt;
+&lt;!ENTITY % sourcecode "CDATA"&gt;
+]&gt;
+&lt;chapter&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+<a name="xml-ignore"></a><img src="figures/callouts/1.png" alt="1"
+border="0">&lt;![ %draft; [
+&lt;para&gt;
+Draft paragraph.
+&lt;/para&gt;
+]]&gt;
+&lt;para&gt;
+The following code is totally out of context:
+&lt;programlisting&gt;
+&lt;![ <a name="xml-cdata"></a><img src="figures/callouts/2.png"
+alt="2" border="0">%sourcecode; [
+if (x &lt; 3) {
+  y = 3;
+}
+]]&gt;
+&lt;/programlisting&gt;
+&lt;/chapter&gt;
+</pre>
+
+          <div class="calloutlist">
+            <table border="0" summary="Callout list">
+              <tr>
+                <td width="5%" valign="top" align="left"><a href=
+                "#xml-ignore"><img src="figures/callouts/1.png"
+                alt="1" border="0"></a> <a href="#xml-cdata"><img
+                src="figures/callouts/2.png" alt="2" border="0"></a></td>
+
+                <td valign="top" align="left">
+                  <p><a class="indexterm" name="d0e280050"></a> <a
+                  class="indexterm" name="d0e280056"></a> <a class=
+                  "indexterm" name="d0e280062"></a> Parameter
+                  entities are not allowed in the body of XML
+                  documents (they are allowed in the internal
+                  subset).</p>
+                </td>
+              </tr>
+
+              <tr>
+                <td width="5%" valign="top" align="left"><a href=
+                "#xml-ignore"><img src="figures/callouts/1.png"
+                alt="1" border="0"></a></td>
+
+                <td valign="top" align="left">
+                  <p>XML instances cannot contain <tt>IGNORE</tt>,
+                  <tt>INCLUDE</tt>, <tt>TEMP</tt>, or
+                  <tt>RCDATA</tt> marked sections. <a class=
+                  "indexterm" name="d0e280088"></a> <a class=
+                  "indexterm" name="d0e280094"></a> <a class=
+                  "indexterm" name="d0e280098"></a> <a class=
+                  "indexterm" name="d0e280104"></a> <a class=
+                  "indexterm" name="d0e280108"></a></p>
+                </td>
+              </tr>
+
+              <tr>
+                <td width="5%" valign="top" align="left"><a href=
+                "#xml-cdata"><img src="figures/callouts/2.png" alt=
+                "2" border="0"></a></td>
+
+                <td valign="top" align="left">
+                  <p><tt>CDATA</tt> marked sections must use the
+                  &#8220;<tt>CDATA</tt>&#8221; keyword literally
+                  because parameter entities are not allowed. <a
+                  class="indexterm" name="d0e280120"></a></p>
+                </td>
+              </tr>
+            </table>
+          </div>
+
+          <p>The result will be something like this:</p>
+<pre class="programlisting">
+&lt;?xml version='1.0'?&gt;
+&lt;!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd"&gt;
+&lt;chapter&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+&lt;para&gt;
+The following code is totally out of context:
+&lt;programlisting&gt;
+&lt;![CDATA[
+if (x &lt; 3) {
+  y = 3;
+}
+]]&gt;
+&lt;/programlisting&gt;
+&lt;/chapter&gt;
+</pre>
+        </div>
+
+        <div class="sect2" lang="en">
+          <div class="titlepage">
+            <div>
+              <h3 class="title"><a name="d0e280130"></a>No SUBDOC
+              or CDATA External Entities</h3>
+            </div>
+          </div>
+<pre class="programlisting">
+&lt;!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook V3.1//EN" [
+&lt;!ENTITY % sourcecode SYSTEM "program.c" CDATA&gt;
+]&gt;
+&lt;chapter&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+&lt;para&gt;
+The following code is totally out of context:
+&lt;programlisting&gt;
+&amp;sourcecode;
+&lt;/programlisting&gt;
+&lt;/chapter&gt;
+</pre>
+
+          <p><a class="indexterm" name="d0e280137"></a> <a class=
+          "indexterm" name="d0e280143"></a> <a class="indexterm"
+          name="d0e280149"></a> XML instances cannot use
+          <tt>CDATA</tt> or <tt>SUBDOC</tt> external entities. One
+          option for integrating external <tt>CDATA</tt> content
+          into a document is to employ a pre-processing pass that
+          inserts the content inline, wrapped in a <tt>CDATA</tt>
+          marked section.</p>
+
+          <p><a class="indexterm" name="d0e280172"></a> <a class=
+          "indexterm" name="d0e280176"></a> <tt>SUBDOC</tt>
+          entities may be more problematic. If you do not require
+          validation, it may be sufficient to simply put them
+          inline. XML namespaces may offer another possible
+          solution.</p>
+
+          <p>The result will be something like this:</p>
+<pre class="programlisting">
+&lt;?xml version='1.0'?&gt;
+&lt;!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd"&gt;
+&lt;chapter&gt;&lt;title&gt;Chapter Title&lt;/title&gt;
+&lt;para&gt;
+The following code is totally out of context:
+&lt;programlisting&gt;
+&lt;![CDATA[
+int main () {
+..
+}
+]]&gt;
+&lt;/programlisting&gt;
+&lt;/chapter&gt;
+</pre>
+        </div>
+
+        <div class="sect2" lang="en">
+          <div class="titlepage">
+            <div>
+              <h3 class="title"><a name="d0e280190"></a>No Data
+              Attributes on Notations</h3>
+            </div>
+          </div>
+
+          <p>They're not allowed in XML, so don't add any. <a
+          class="indexterm" name="d0e280198"></a></p>
+        </div>
+
+        <div class="sect2" lang="en">
+          <div class="titlepage">
+            <div>
+              <h3 class="title"><a name="d0e280202"></a>No
+              Attribute Value Specifications on<br>
+              Entity Declarations</h3>
+            </div>
+          </div>
+
+          <p><a class="indexterm" name="d0e280209"></a> <a class=
+          "indexterm" name="d0e280217"></a> <a class="indexterm"
+          name="d0e280225"></a> They're not allowed in XML, so
+          don't add any.</p>
+        </div>
+      </div>
+
+      <div class="sect1" lang="en">
+        <div class="titlepage">
+          <div>
+            <h2 class="title" style="clear: both"><a name=
+            "s-docbookxml"></a>The DocBook DTD as XML</h2>
+          </div>
+        </div>
+        <a class="indexterm" name="d0e280242"></a><a class=
+        "indexterm" name="d0e280249"></a>
+
+        <p>Converting the DocBook DTD to XML is much more
+        challenging than converting the instances. It is probably
+        not possible to construct an XML DTD that is identical to
+        the validation power of DocBook. The list below identifies
+        most of the issues that must be addressed, and describes
+        how the DocBook XML DTD; deals with them:</p>
+
+        <div class="variablelist">
+          <dl>
+            <dt><span class="term">Comments are not allowed inside
+            markup declarations</span></dt>
+
+            <dd>
+              <p><a class="indexterm" name="d0e280281"></a> <a
+              class="indexterm" name="d0e280287"></a> Most of them
+              have been moved to comment declarations preceding the
+              markup declaration that used to contain them. A few
+              small, inline comments that seemed like they would be
+              out of context if moved before the declaration were
+              simply deleted.</p>
+            </dd>
+
+            <dt><span class="term">Name groups are not allowed in
+            element or attribute list declarations</span></dt>
+
+            <dd>
+              <p><a class="indexterm" name="d0e280299"></a> <a
+              class="indexterm" name="d0e280303"></a> <a class=
+              "indexterm" name="d0e280311"></a> The small number of
+              places in which DocBook uses name groups have been
+              expanded.</p>
+
+              <p>There's one downside: DocBook uses
+              <tt>%admon.class;</tt> in a name group to define the
+              content model, and attribute lists for elements in
+              the admonitions class. In DocBook XML, this
+              convenience cannot be expressed. If additional
+              admonitions are added, the element and attribute list
+              declarations will have to be copied for them.</p>
+            </dd>
+
+            <dt><span class="term">No <tt>CDATA</tt> or
+            <tt>RCDATA</tt> declared content</span></dt>
+
+            <dd>
+              <p><a class="indexterm" name="d0e280336"></a> <a
+              class="indexterm" name="d0e280342"></a> <a href=
+              "graphic.html"><tt class=
+              "sgmltag-element">Graphic</tt></a> and <a href=
+              "inlinegraphic.html"><tt class=
+              "sgmltag-element">InlineGraphic</tt></a> have been
+              made <tt>EMPTY</tt>. The content model for <tt class=
+              "sgmltag-element">SynopFragmentRef</tt> , the only
+              <tt>RCDATA</tt> element in DocBook, has been changed
+              to <tt>(arg | group)+</tt>.</p>
+            </dd>
+
+            <dt><span class="term">No exclusions or inclusions on
+            element declarations</span></dt>
+
+            <dd>
+              <p><a class="indexterm" name="d0e280370"></a> <a
+              class="indexterm" name="d0e280376"></a> They had to
+              be removed.</p>
+
+              <p><a class="indexterm" name="d0e280384"></a> In
+              DocBook, exclusions are used to exclude the
+              following:</p>
+
+              <div class="itemizedlist">
+                <ul type="disc">
+                  <li>
+                    <p>Ubiquitous elements (<a href=
+                    "indexterm.html"><tt class=
+                    "sgmltag-element">indexterm</tt></a> and <a
+                    href="beginpage.html"><tt class=
+                    "sgmltag-element">BeginPage</tt></a>) from a
+                    number of contexts in which they should not
+                    occur (such as metadata, for example).</p>
+                  </li>
+
+                  <li>
+                    <p><a class="indexterm" name="d0e280403"></a>
+                    Formal objects from <a href=
+                    "highlights.html"><tt class=
+                    "sgmltag-element">Highlights</tt></a>, <a href=
+                    "example.html"><tt class=
+                    "sgmltag-element">Example</tt></a>s, <a href=
+                    "figure.html"><tt class=
+                    "sgmltag-element">Figure</tt></a>s and <a href=
+                    "legalnotice.html"><tt class=
+                    "sgmltag-element">LegalNotice</tt></a>s.</p>
+                  </li>
+
+                  <li>
+                    <p><a class="indexterm" name="d0e280422"></a>
+                    <a class="indexterm" name="d0e280428"></a>
+                    Formal objects and <a href=
+                    "informaltable.html"><tt class=
+                    "sgmltag-element">InformalTable</tt></a>s from
+                    tables.</p>
+                  </li>
+
+                  <li>
+                    <p><a class="indexterm" name="d0e280440"></a>
+                    <a class="indexterm" name="d0e280444"></a>
+                    Block elements and <a href="footnote.html"><tt
+                    class="sgmltag-element">Footnote</tt></a>s from
+                    <a href="footnote.html"><tt class=
+                    "sgmltag-element">Footnote</tt></a>s</p>
+                  </li>
+
+                  <li>
+                    <p>Admonitions, <a href="entrytbl.html"><tt
+                    class="sgmltag-element">EntryTbl</tt></a>s, and
+                    <a href="acronym.html"><tt class=
+                    "sgmltag-element">Acronym</tt></a>s from
+                    themselves. <a class="indexterm" name=
+                    "d0e280465"></a> <a class="indexterm" name=
+                    "d0e280471"></a></p>
+                  </li>
+                </ul>
+              </div>
+              <br>
+              <br>
+
+              <p>Removing these exclusions from DocBook XML means
+              that it is now valid, in the XML sense, to do some
+              things that don't make a lot of sense (like put a <a
+              href="footnote.html"><tt class=
+              "sgmltag-element">Footnote</tt></a> in a <a href=
+              "footnote.html"><tt class=
+              "sgmltag-element">Footnote</tt></a>). Be careful.</p>
+
+              <p><a class="indexterm" name="d0e280491"></a> <a
+              class="indexterm" name="d0e280497"></a> <a class=
+              "indexterm" name="d0e280503"></a> <a class=
+              "indexterm" name="d0e280507"></a> <a class=
+              "indexterm" name="d0e280513"></a> Inclusions in
+              DocBook are used to add the ubiquitious elements (<a
+              href="indexterm.html"><tt class=
+              "sgmltag-element">indexterm</tt></a> and <a href=
+              "beginpage.html"><tt class=
+              "sgmltag-element">BeginPage</tt></a>) unconditionally
+              to a large number of contexts. In order to make these
+              elements available in DocBook XML, they have been
+              added to most of the parameter entities that include
+              <tt>#PCDATA</tt>. If new locations are discovered
+              where these terms are desired, DocBook XML will be
+              updated.</p>
+            </dd>
+
+            <dt><span class="term">Elements with mixed content must
+            have <tt>#PCDATA</tt> first.</span></dt>
+
+            <dd>
+              <p><a class="indexterm" name="d0e280543"></a> <a
+              class="indexterm" name="d0e280549"></a> The content
+              models of many elements have been updated to make
+              them a repeatable OR group beginning with
+              <tt>#PCDATA</tt>.</p>
+            </dd>
+
+            <dt><span class="term">Many declared attribute types
+            (<tt>NAME</tt>, <tt>NUMBER</tt>, <tt>NUTOKEN</tt>, and
+            so on) are not allowed</span></dt>
+
+            <dd>
+              <p><a class="indexterm" name="d0e280573"></a> <a
+              class="indexterm" name="d0e280579"></a> <a class=
+              "indexterm" name="d0e280585"></a> They have all been
+              replaced by <tt>NMTOKEN</tt> or <tt>CDATA</tt>.</p>
+            </dd>
+
+            <dt><span class="term">No <tt>#CONREF</tt> attributes
+            allowed.</span></dt>
+
+            <dd>
+              <p><a class="indexterm" name="d0e280606"></a> <a
+              class="indexterm" name="d0e280612"></a> <a class=
+              "indexterm" name="d0e280616"></a> <a class=
+              "indexterm" name="d0e280622"></a> <a class=
+              "indexterm" name="d0e280628"></a> The
+              <tt>#CONREF</tt> attributes on <a href=
+              "indexterm.html"><tt class=
+              "sgmltag-element">indexterm</tt></a>, <a href=
+              "glosssee.html"><tt class=
+              "sgmltag-element">GlossSee</tt></a>, and <a href=
+              "glossseealso.html"><tt class=
+              "sgmltag-element">GlossSeeAlso</tt></a> were changed
+              to <tt>#IMPLIED</tt>. The content model of <a href=
+              "indexterm.html"><tt class=
+              "sgmltag-element">indexterm</tt></a> was modified so
+              that it can be empty.</p>
+            </dd>
+
+            <dt><span class="term">Attribute default values must be
+            quoted.</span></dt>
+
+            <dd>
+              <p><a class="indexterm" name="d0e280658"></a> <a
+              class="indexterm" name="d0e280666"></a> Quotes were
+              added wherever necessary. <a class="indexterm" name=
+              "d0e280674"></a> <a class="indexterm" name=
+              "d0e280676"></a></p>
+            </dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="navfooter">
+      <table width="100%" summary="Navigation table">
+        <tr>
+          <td width="40%" align="left"><a title="Installation"
+          href="appa.html"><img src="figures/nav-prev.png" alt=
+          "Prev" border="0"></a>&#160;</td>
+
+          <td width="20%" align="center"><a title="DocBook" href=
+          "docbook.html"><img src="figures/nav-home.png" alt="Home"
+          border="0"></a></td>
+
+          <td width="40%" align="right">&#160;<a title=
+          "DocBook Versions" href="appc.html"><img src=
+          "figures/nav-next.png" alt="Next" border="0"></a></td>
+        </tr>
+
+        <tr>
+          <td width="40%" align="left">Installation&#160;</td>
+
+          <td width="20%" align="center"><a title=
+          "Part&#160;III.&#160;Appendixes" href="part3.html"><img
+          src="figures/nav-up.png" alt="Up" border="0"></a></td>
+
+          <td width="40%" align="right">&#160;DocBook Versions</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="copyrightfooter">
+      <p><a href="dbcpyright.html">Copyright</a> &#169; 1999, 2000,
+      2001, 2002 <a href="http://www.oreilly.com/">O'Reilly &amp;
+      Associates, Inc.</a> All rights reserved.</p>
+    </div>
+  </body>
+</html>
+

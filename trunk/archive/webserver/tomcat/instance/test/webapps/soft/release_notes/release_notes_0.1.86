@@ -1,0 +1,13 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.86
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+
+A monitoring system is added that periodically checks the running status of
+the ASPK daemon, the CSPK daemon and the production SPK web server.
+
+BY: Jiaji Du
+
+WHEN: Auguest 4, 2005

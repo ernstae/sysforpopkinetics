@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.205
+----------------------------------
+USER VISIBLE CHANGES
+
+Added faster Pred model derivative code. 
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  None
+
+BY:  Mitch Watrous
+
+WHEN:  July 12, 2007

@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.213
+----------------------------------
+USER VISIBLE CHANGES
+
+Miscellaneous bug fixes related to robustness and usuability.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  615, 709, 726, 729, 730, 758.
+
+BY:  Mitch Watrous
+
+WHEN:  October 24, 2007.

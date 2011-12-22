@@ -1,0 +1,85 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Reserved Labels not Recognized by SPK</TITLE>
+<META NAME="description" CONTENT="Reserved Labels not Recognized by SPK">
+<META NAME="keywords" CONTENT="modelCap">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="modelCap.css">
+
+<LINK REL="next" HREF="node16.html">
+<LINK REL="previous" HREF="node14.html">
+<LINK REL="up" HREF="node14.html">
+<LINK REL="next" HREF="node16.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html321"
+  HREF="node16.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html317"
+  HREF="node14.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html311"
+  HREF="node14.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html319"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html322"
+  HREF="node16.html">Dependent Variable Data Item</A>
+<B> Up:</B> <A NAME="tex2html318"
+  HREF="node14.html">Data Item Types ($INPUT)</A>
+<B> Previous:</B> <A NAME="tex2html312"
+  HREF="node14.html">Data Item Types ($INPUT)</A>
+ &nbsp; <B>  <A NAME="tex2html320"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00061100000000000000">
+Reserved Labels not Recognized by SPK</A>
+</H3>
+<P>
+<FONT SIZE="+1">The other reserved labels
+(L1, L2, MDV, RAW_, MRG_, TIME, DATE, DAT1, DAT2, DAT3, 
+DROP, SKIP, AMT, RATE, SS, II, ADDL, CMT, PCMT, CALL, CONT)
+can still be used as valid 
+data item types in the $INPUT record.
+If one of these reserved labels appears in the $INPUT record, 
+then it may  be referenced within the $PRED block in the usual way.
+</FONT>
+<P>
+<FONT SIZE="+1">However, SPK will not recognize it as having special meaning and will
+not consider it to be different than any other user defined label.
+It will be the responsibility of the expressions in the $PRED block to 
+perform the tasks corresponding to these reserved data item labels.
+These tasks are usually performed by NM-TRAN, NONMEM, and the
+ADVAN library.
+</FONT>
+<P>
+<BR><HR>
+<ADDRESS>
+Mitch Watrous
+2007-12-17
+</ADDRESS>
+</BODY>
+</HTML>

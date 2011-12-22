@@ -1,0 +1,51 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.9
+----------------------------------
+USER VISIBLE CHANGES
+1. The ID field may appear anywhere in the data record 
+(ie. it does not have to be in the first column).
+
+2. When the ID field is missing in an individual's data set,
+ID="1" is assigned to all data records.
+
+3. When the ID field is missing in a population data set,
+every data record is assigned to a different ID value.
+The values of ID are 1, 2, 3..., n where n is the number
+of data records.  The first record is assigned to ID="1",
+the second record is assigned to ID="2" and so on.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 85
+
+BY: Sachiko Honda
+
+WHEN: 10/12/04, 5:56 PM
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.10
+----------------------------------
+USER VISIBLE CHANGES
+Fixed the incorrect line number reported by the SPK Compiler (for NONMEM-type) 
+when a syntax error was detected in the user's model definition.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 22
+
+BY: Sachiko
+
+WHEN: 10/13/2004, 3:32PM
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.11
+----------------------------------
+USER VISIBLE CHANGES
+Fixed the bug in which the sequences of samples being simulated were
+not independent from each other.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 103
+
+BY: Sachiko Honda
+
+WHEN: 10/19/2004

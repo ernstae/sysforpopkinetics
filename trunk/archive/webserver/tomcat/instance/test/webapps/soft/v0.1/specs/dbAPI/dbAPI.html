@@ -1,0 +1,9687 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Database API</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+>Database API</A
+></H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	An Application Programming Interface (API) to the Spk
+	Database is defined.  The descriptions in this document
+	are independent of any particular programming language.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>December 12, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.01</TD
+><TD
+ALIGN="LEFT"
+>December 26, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added 'Side Effects' and Transaction Processing Considerations'.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.02</TD
+><TD
+ALIGN="LEFT"
+>April 6, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added two functions: get_cmp_jobs and get_run_jobs</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.03</TD
+><TD
+ALIGN="LEFT"
+>June 16, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added two arguments to new_job; added get_method_table function.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.04</TD
+><TD
+ALIGN="LEFT"
+>August 19, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: jd</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added 'Aborting Job' section and five API functions.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.05</TD
+><TD
+ALIGN="LEFT"
+>May 9, 2006</TD
+><TD
+ALIGN="LEFT"
+>Revised by: jd</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added five API functions.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.06</TD
+><TD
+ALIGN="LEFT"
+>June 30, 2008</TD
+><TD
+ALIGN="LEFT"
+>Revised by: jd</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added ten more API functions.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN42"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN65"
+>Usage Scenario</A
+></DT
+><DT
+><A
+HREF="#AEN102"
+>Aborting Job</A
+></DT
+><DT
+><A
+HREF="#AEN132"
+>Functions</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN138"
+>Data Types Used in Function Specifications</A
+></DT
+><DT
+><A
+HREF="#AEN172"
+>Function Specifications</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN174"
+>connect -- open a connection to the database</A
+></DT
+><DT
+><A
+HREF="#AEN244"
+>disconnect -- close a connection to a database</A
+></DT
+><DT
+><A
+HREF="#AEN301"
+>new_job -- submit a new job</A
+></DT
+><DT
+><A
+HREF="#AEN413"
+>job_status -- return the current state of a job</A
+></DT
+><DT
+><A
+HREF="#AEN475"
+>job_history -- retrieve history for a given job</A
+></DT
+><DT
+><A
+HREF="#AEN528"
+>get_job -- retrieve a row from the job table</A
+></DT
+><DT
+><A
+HREF="#AEN581"
+>user_jobs -- get status for user's most recent jobs</A
+></DT
+><DT
+><A
+HREF="#AEN647"
+>de_q2c -- select highest priority job from compiler queue</A
+></DT
+><DT
+><A
+HREF="#AEN714"
+>get_cmp_jobs -- get all jobs currently being compiled</A
+></DT
+><DT
+><A
+HREF="#AEN771"
+>en_q2r -- add a compiled job to the run queue</A
+></DT
+><DT
+><A
+HREF="#AEN844"
+>de_q2r -- select the highest priority job from the run queue</A
+></DT
+><DT
+><A
+HREF="#AEN911"
+>get_run_jobs -- get all jobs currently being running</A
+></DT
+><DT
+><A
+HREF="#AEN968"
+>end_job -- end a job, whether successful or not</A
+></DT
+><DT
+><A
+HREF="#AEN1051"
+>job_report -- retrieve the final report for a job</A
+></DT
+><DT
+><A
+HREF="#AEN1113"
+>new_dataset -- add a dataset to the database</A
+></DT
+><DT
+><A
+HREF="#AEN1193"
+>get_dataset -- retrieve a dataset</A
+></DT
+><DT
+><A
+HREF="#AEN1257"
+>update_dataset -- update a row in the <I
+CLASS="emphasis"
+>dataset</I
+> table</A
+></DT
+><DT
+><A
+HREF="#AEN1329"
+>user_datasets -- get a user's datasets</A
+></DT
+><DT
+><A
+HREF="#AEN1391"
+>new_model -- add a model to the database</A
+></DT
+><DT
+><A
+HREF="#AEN1471"
+>get_model -- retrieve a model</A
+></DT
+><DT
+><A
+HREF="#AEN1535"
+>update_model -- update a row in the <I
+CLASS="emphasis"
+>model</I
+> table</A
+></DT
+><DT
+><A
+HREF="#AEN1607"
+>user_models -- get a user's models</A
+></DT
+><DT
+><A
+HREF="#AEN1669"
+>new_user -- add a new user</A
+></DT
+><DT
+><A
+HREF="#AEN1733"
+>update_user -- update a row in the <I
+CLASS="emphasis"
+>user</I
+> table</A
+></DT
+><DT
+><A
+HREF="#AEN1802"
+>get_user -- retrieve a user record by username</A
+></DT
+><DT
+><A
+HREF="#AEN1865"
+>get_end_table - - return the entire end table</A
+></DT
+><DT
+><A
+HREF="#AEN1914"
+>get_method_table - - return the entire method table</A
+></DT
+><DT
+><A
+HREF="#AEN1963"
+>get_state_table - - return the entire state table</A
+></DT
+><DT
+><A
+HREF="#AEN2012"
+>abort job -- abort a job</A
+></DT
+><DT
+><A
+HREF="#AEN2077"
+>get job ids -- get all job ids with a given state_code</A
+></DT
+><DT
+><A
+HREF="#AEN2139"
+>de_q2ac -- remove highest priority job from aborting 
+               compiler queue</A
+></DT
+><DT
+><A
+HREF="#AEN2205"
+>de_q2ar -- remove highest priority job from aborting 
+               run queue</A
+></DT
+><DT
+><A
+HREF="#AEN2271"
+>get_mail_notice -- get end-job email notice 
+            request option</A
+></DT
+><DT
+><A
+HREF="#AEN2332"
+>get_user_by_id -- retrieve a user record by user_id</A
+></DT
+><DT
+><A
+HREF="#AEN2395"
+>set_job_abstract -- set job abstract.</A
+></DT
+><DT
+><A
+HREF="#AEN2465"
+>new_group -- add a new group</A
+></DT
+><DT
+><A
+HREF="#AEN2528"
+>new_group_member -- add a new group member</A
+></DT
+><DT
+><A
+HREF="#AEN2594"
+>get_group_users -- retrieve all users of a group</A
+></DT
+><DT
+><A
+HREF="#AEN2657"
+>new_folder -- add a new folder</A
+></DT
+><DT
+><A
+HREF="#AEN2727"
+>rename_folder -- rename a folder</A
+></DT
+><DT
+><A
+HREF="#AEN2797"
+>delete_folder -- delete a folder</A
+></DT
+><DT
+><A
+HREF="#AEN2863"
+>move_folder -- move a folder</A
+></DT
+><DT
+><A
+HREF="#AEN2933"
+>move_jobs -- move jobs</A
+></DT
+><DT
+><A
+HREF="#AEN2999"
+>get_folder_path -- get folder path</A
+></DT
+><DT
+><A
+HREF="#AEN3064"
+>get_sub_folders -- get sub folders</A
+></DT
+><DT
+><A
+HREF="#AEN3130"
+>user_job_count -- count total number of jobs of a user</A
+></DT
+><DT
+><A
+HREF="#AEN3191"
+>get_folder_path -- get folder tree</A
+></DT
+><DT
+><A
+HREF="#AEN3252"
+>set_parallel -- set a job to run in parallel mode</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN3313"
+>Function Availability by Language</A
+></DT
+></DL
+></DD
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN42"
+>Introduction</A
+></H2
+><P
+>&#13;      A <I
+CLASS="emphasis"
+>relational database</I
+>
+      plays a central role in the
+      architecture of Spk, because it is the means by which the
+      major independent components communicate with one another
+      and because it is the basis for implementation of a 
+      central feature of the design, known as the
+      <A
+HREF="../jobHistory/jobHistory.html"
+TARGET="_top"
+>&#13;	Job History Model
+      </A
+>.
+    </P
+><P
+>&#13;      In order to operate a relational database, it is necessary
+      to have a
+      <I
+CLASS="emphasis"
+>relational database management system (RDBMS).</I
+> 
+      Because Spk will be distributed under an open source
+      license, the open source MySQL RDBMS will be used.
+      MySQL has all the features required by Spk and has a very
+      large user base.
+    </P
+><P
+>&#13;      All of the widely used RDBMS share many
+      similarities.  They implement certain underlying concepts
+      based on the work of E.F.Codd (see for example
+      <A
+HREF="http://www.acm.org/classics/nov95/toc.html"
+TARGET="_top"
+>&#13;	A Relational Model of Data for Large Shared Data Banks  
+      </A
+>)
+      and many others, which define
+      what a relational database is and does.  They all 
+      provide a high-level interface language known as
+      the Structured Query Language (SQL). Most also provide
+      standard vendor-independent interfaces based on popular
+      programming languages such as C, Java, and Perl.
+      These interfaces are known as Application Programming
+      Interfaces (API). At a fundamental level, Spk will rely
+      on these standard APIs so that it will be possible
+      to substitute another RDBMS for MySQL, if necessary.
+    </P
+><P
+>&#13;      In order to insure the integrity of the database as 
+      information is added and modified, it is desirable to 
+      limit interactions with the database to a small body of
+      well-tested code.  For this reason, Spk includes
+      its own high-level API, which caters directly to the
+      needs of the MDA, Aspk and Cspk, and hence eliminates
+      any need for these components to use the low-level
+      APIs directly.  This Spk-specific API is the
+      topic of this document.
+    </P
+><P
+>&#13;      The functions of the Spk API are described
+      in a language independent manner.  There are three
+      language-specific implementations of the API, known
+      as language <I
+CLASS="emphasis"
+>bindings</I
+>.
+      The Spk Database API has a Java binding, a C
+      binding, and a Perl binding to satisfy the needs of the
+      MDA, the Aspk and the Cspk, respectively.
+    </P
+><P
+>&#13;      This specification can be best understood with reference to
+      the following related documents:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    <A
+HREF="../jobHistory/jobHistory.html"
+TARGET="_top"
+>&#13;	      Job History Model
+	    </A
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <A
+HREF="../erModel/erModel.html"
+TARGET="_top"
+>&#13;	      Database Entity-Relationship Model
+	    </A
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <A
+HREF="../dbSchema/dbSchema.html"
+TARGET="_top"
+>&#13;	      Database Schema
+	    </A
+>
+	  </P
+></LI
+></UL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN65"
+>Usage Scenario</A
+></H2
+><P
+>&#13;      When a user decides to run a set of scientific data against
+      a model, she calls upon the Spk MDA running on her
+      workstation to submit the model and data as a job.  The
+      MDA transmits this information across the Internet to a 
+      process known as the MDA Surrogate, which runs on a web
+      server.  The MDA Surrogate then creates a job by adding
+      a row to the <I
+CLASS="emphasis"
+>job</I
+> table of the database,
+      with the model in the <I
+CLASS="emphasis"
+>xml_model</I
+> field
+      and the data in the <I
+CLASS="emphasis"
+>xml_data</I
+> field.
+      The <I
+CLASS="emphasis"
+>state_code</I
+> field of this new row
+      is set to the value 'q2c'
+      thus adding the job to the compiler queue. This queue is a 
+      <I
+CLASS="emphasis"
+>logical</I
+> entity based on values 
+      stored in the <I
+CLASS="emphasis"
+>job</I
+> table, rather than
+      a <I
+CLASS="emphasis"
+>physical</I
+> entity in which records are
+      added and deleted.
+    </P
+><P
+>&#13;      Running independently, either on the machine that runs the
+      web server or on some other machine, an idle
+      Aspk Compiler queries the compiler queue by searching
+      the <I
+CLASS="emphasis"
+>job</I
+> table for jobs with 
+      <I
+CLASS="emphasis"
+>state_code</I
+> equal to 
+      'q2c' and selects the
+      one which has the
+      highest priority.  In a logical sense, it removes the 
+      job from the compiler queue when it changes the 
+      <I
+CLASS="emphasis"
+>state_code</I
+> from
+      'q2c' to 'cmp'.
+      The job is not removed from the 
+      <I
+CLASS="emphasis"
+>job </I
+>table, however.  Jobs are
+      never deleted from this table. 
+    </P
+><P
+>&#13;      The process by which the Aspk Compiler selects the highest
+      priority job that has <I
+CLASS="emphasis"
+>state_code</I
+> equal
+      to 'q2c' and changes the 
+      <I
+CLASS="emphasis"
+>state_code</I
+> to 'cmp' must occur atomically,
+      because there may be several instances of the Compiler
+      trying to do the same thing simultaneously. 
+    </P
+><P
+>&#13;      Having selected a job to compile,
+      the Aspk Compiler proceeds to transform the model source
+      into the C++ language.  If it encounters errors, it
+      adds an error report to the <I
+CLASS="emphasis"
+>report</I
+>
+      field of the job, sets the <I
+CLASS="emphasis"
+>state_code</I
+>
+      field to 'end' and the <I
+CLASS="emphasis"
+>end_code</I
+> field
+      to 'cerr'.
+      It is then idle and can scan for another job to compile.
+    </P
+><P
+>&#13;      If the Aspk Compiler succeeds in compiling the model,
+      it updates <I
+CLASS="emphasis"
+>job</I
+> by storing
+      its output in the <I
+CLASS="emphasis"
+>cpp_source</I
+> field
+      and changing the <I
+CLASS="emphasis"
+>state_code</I
+> to
+      'q2r'.  The Compiler is then idle and can scan
+      for another job to compile.
+    </P
+><P
+>&#13;      When a Cspk becomes idle, it queries the run
+      queue by selecting the highest priority job which has
+      <I
+CLASS="emphasis"
+>state_code</I
+> equal to 
+      'q2r'.  It logically removes the job from
+      the queue by setting the <I
+CLASS="emphasis"
+>state_code</I
+>
+      to 'run'.  The selection and the changing of 
+      state must occur as an atomic transaction, because 
+      there may be another Cspk process trying to select
+      the highest priority job at the same time.
+    </P
+><P
+>&#13;      When the Cpsk has finished running the job, it updates
+      the <I
+CLASS="emphasis"
+>job</I
+> table by storing the 
+      results of the computation in the <I
+CLASS="emphasis"
+>report</I
+>
+      field, setting <I
+CLASS="emphasis"
+>state_code</I
+> to 'end'
+      and <I
+CLASS="emphasis"
+>end_code</I
+> to 'srun'.
+      The Cspk is then idle and can scan the queue for another
+      job to run.
+    </P
+><P
+>&#13;      The MDA via its MDA Surrogate, periodically queries the
+      database to discover whether or not any of its user's
+      outstanding jobs have reached the <I
+CLASS="emphasis"
+>End</I
+> state.  
+      When it discovers that one has, it retrieves the 
+      contents of the <I
+CLASS="emphasis"
+>report</I
+> field
+      and presents them to the user.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN102"
+>Aborting Job</A
+></H2
+><P
+>&#13;      When a user decides to abort a job, the MDA sets the 
+      <I
+CLASS="emphasis"
+>state_code</I
+> field of the job row to indicate 
+      that the job is aborted or should be aborted by one of the daemons. 
+    </P
+><P
+>&#13;      If the current <I
+CLASS="emphasis"
+>state_code</I
+> is 'q2c', the MDA sets
+      the job's <I
+CLASS="emphasis"
+>state_code</I
+> to 'end' and the job's
+      <I
+CLASS="emphasis"
+>end_code</I
+> to 'abrt'. 
+    </P
+><P
+>&#13;      If the current <I
+CLASS="emphasis"
+>state_code</I
+> is 'cmp', the MDA sets 
+      the job's <I
+CLASS="emphasis"
+>state_code</I
+> to 'q2ac'.  The compiler 
+      daemon visits the database every second.  When the compiler daemon  
+      finds the job, it changes the <I
+CLASS="emphasis"
+>state_code</I
+> to
+      'acmp' and sends a termination signal to the process executing the
+      compiler instance for the job.  When the process terminates, the 
+      compiler daemon sets the job's <I
+CLASS="emphasis"
+>state_code</I
+> to 'end' 
+      and the job's end_code to 'abrt'.
+    </P
+><P
+>&#13;      If the current <I
+CLASS="emphasis"
+>state_code</I
+> is 'q2r', the MDA sets
+      the job's <I
+CLASS="emphasis"
+>state_code</I
+> to 'end' and the job's
+      <I
+CLASS="emphasis"
+>end_code</I
+> to 'abrt'. 
+    </P
+><P
+>&#13;      If the current <I
+CLASS="emphasis"
+>state_code</I
+> is 'run', the MDA sets 
+      the job's <I
+CLASS="emphasis"
+>state_code</I
+> to 'q2ar'.  The run-time 
+      daemon visits the database every second.  When the run-time
+ daemon  
+      finds the job, it changes the <I
+CLASS="emphasis"
+>state_code</I
+> to
+      'arun' and sends a termination signal to the process executing the
+      SPK driver instance for the job.  When the process terminates, the 
+      run-time daemon sets the job's <I
+CLASS="emphasis"
+>state_code</I
+> to 'end' 
+      and the job's end_code to 'abrt'.
+    </P
+><P
+>&#13;      If the compiler daemon is shutdown in the middle of a job abortion,
+      it may leave jobs with <I
+CLASS="emphasis"
+>state_code</I
+> 'q2ac' or 
+      'acmp'.  When the compiler daemon is restarted,  it sets the job's
+      <I
+CLASS="emphasis"
+>state_code</I
+> to 'end' and the job's 
+      <I
+CLASS="emphasis"
+>end_code</I
+> to 'abrt'.
+    </P
+><P
+>&#13;      If the run-time daemon is shutdown in the middle of a job abortion,
+      it may leave jobs with <I
+CLASS="emphasis"
+>state_code</I
+> 'q2ar' or 
+      'arun'.  When the run-time daemon is restarted,  it sets the job's
+      <I
+CLASS="emphasis"
+>state_code</I
+> to 'end' and the job's 
+      <I
+CLASS="emphasis"
+>end_code</I
+> to 'abrt'.  In the later case, there may
+      be a checkpoint file in the working directory of the job.  The daemon 
+      copies the text content of the checkpoint file to the database if there
+      is one.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN132"
+>Functions</A
+></H2
+><P
+>&#13;      In this section the individual API functions will be described.
+      Although they are referred to as <I
+CLASS="emphasis"
+>functions</I
+> here,
+      they are implemented as <I
+CLASS="emphasis"
+>subroutines</I
+> in the Perl
+      language
+      and as <I
+CLASS="emphasis"
+>class methods</I
+> in Java. The descriptions
+      below define those properties that are independent of language binding.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN138"
+>Data Types Used in Function Specifications</A
+></H3
+><P
+>&#13;	Data types are language dependent.  Because we
+	are dealing with data fields that are defined in SQL, rather than
+	Perl or Java, the reader should always consult the 
+	<A
+HREF="../dbSchema/dbSchema.html"
+TARGET="_top"
+>&#13;	  Database Schema
+	</A
+>
+	to understand the true specification of a data item.
+      </P
+><P
+>&#13;	Here is a glossary of data type names used in the function
+	descriptions below:
+	<DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>database handle</B
+></DT
+><DD
+><P
+>&#13;		Typically some sort of reference. Each language binding defines
+		a data type which is appropriate.
+	      </P
+></DD
+><DT
+><B
+>pair list</B
+></DT
+><DD
+><P
+>&#13;		A container which holds a list of field names and their associated
+		field values, or references to names and values, depending on the
+		language.
+	      </P
+></DD
+><DT
+><B
+>positive integer</B
+></DT
+><DD
+><P
+>&#13;		A whole number, at least 32 bits in length.
+	      </P
+></DD
+><DT
+><B
+>row</B
+></DT
+><DD
+><P
+>&#13;		A container that can hold a sequence of field values or 
+		references to field values, depending on the language.
+	      </P
+></DD
+><DT
+><B
+>row-array</B
+></DT
+><DD
+><P
+>&#13;		An array of rows.
+	      </P
+></DD
+><DT
+><B
+>string</B
+></DT
+><DD
+><P
+>&#13;		A sequence of bytes, this type may contain binary
+		data and may be many megabytes in length.
+	      </P
+></DD
+><DT
+><B
+>true, false</B
+></DT
+><DD
+><P
+>&#13;		Values which, in a particular language, are appropriate
+		for "if" statements.
+	      </P
+></DD
+></DL
+></DIV
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN172"
+>Function Specifications</A
+></H3
+><DIV
+CLASS="sect3"
+><H4
+CLASS="sect3"
+><A
+NAME="AEN174"
+>connect -- open a connection to the database</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		handle = connect dbname hostname dbuser dbpassword
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Connect opens a connection to a database, returning a handle 
+		that represents this connection when passed as an argument to
+		other functions in the API.  A process may have several
+		connections open simultaneously.  Because each connection 
+		ties up resources in the RDBMS, it is important to use the
+		<I
+CLASS="emphasis"
+>disconnect</I
+> function to close a connection
+		as soon as it is no longer needed.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN195"
+></A
+><P
+><B
+>Table 1. Values returned by connect</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs when the database user does not have permission to
+		    connect to the named database on the given host, when the 
+		    password is incorrect, or when the maximum number of handles
+		    has been exceeded.  Additional error information is available
+		    in the individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN216"
+></A
+><P
+><B
+>Table 2. Arguments to connect</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>dbname</TD
+><TD
+>string</TD
+><TD
+>Name of the relational database.</TD
+></TR
+><TR
+><TD
+>hostname</TD
+><TD
+>string</TD
+><TD
+>&#13;		    Internet host at which from which user
+		    is permitted to make a connection.
+		  </TD
+></TR
+><TR
+><TD
+>dbuser</TD
+><TD
+>string</TD
+><TD
+>&#13;		    Username for database access. This is not the
+		    username of an Spk user.
+		  </TD
+></TR
+><TR
+><TD
+>dbpassword</TD
+><TD
+>string</TD
+><TD
+>&#13;		    Password for database access.  This is not the
+		    password of an Spk user.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN244"
+>disconnect -- close a connection to a database</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = disconnect handle
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		An open database connection is closed,
+		thus releasing resources in the RDBMS.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN264"
+></A
+><P
+><B
+>Table 3. Values returned by disconnect</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>false</TD
+><TD
+>&#13;		    Failure can occur if the handle is invalid.  Additional
+		    error information is available in the individual language
+		    bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN285"
+></A
+><P
+><B
+>Table 4. Arguments to disconnect</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>The handle returned by a previous call to the connect function.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN301"
+>new_job -- submit a new job</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		job_id = new_job handle user_id abstract dataset_id dataset_version model_id model_version xml_source method_code parent is_warm_start is_mail_notice
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		A new job is created by adding a row to the
+		<I
+CLASS="emphasis"
+>job</I
+> table.  The
+		value of the job_id field of this row is returned.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		The state_code field of the job is set to 'q2c'.
+	      </P
+></DD
+><DD
+><P
+>&#13;		The event_time field is set to the time of insertion.
+	      </P
+></DD
+><DD
+><P
+>&#13;		A state transition record is appended to the 
+		<I
+CLASS="emphasis"
+>history</I
+> table.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB) and that
+		the <I
+CLASS="emphasis"
+>job_id</I
+> field carries the auto_increment
+		modifier.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN328"
+></A
+><P
+><B
+>Table 5. Values returned by new_job</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		    Unique value of the job_id field of a newly created row in
+		    the <I
+CLASS="emphasis"
+>job</I
+> table.
+		  </TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>0</TD
+><TD
+>&#13;		    Failure occurs if the handle, the user_id, or the model_id are
+		    invalid.  Additional error information is available in the
+		    individual language bindings.
+		 </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN350"
+></A
+><P
+><B
+>Table 6. Arguments to new_job</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>&#13;		    A handle to an open database connection.
+		  </TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		    Key to the user's row in the <I
+CLASS="emphasis"
+>user</I
+> table.
+		  </TD
+></TR
+><TR
+><TD
+>abstract</TD
+><TD
+>string</TD
+><TD
+>&#13;		    Short description of the job.
+		  </TD
+></TR
+><TR
+><TD
+>dataset_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		    Key to a row in the <I
+CLASS="emphasis"
+>dataset</I
+>
+		    table, which contains in its
+		    archive field an RCS-compatible archive comprising the
+		    current version and all previous versions of a dataset.
+		  </TD
+></TR
+><TR
+><TD
+>dataset_version</TD
+><TD
+>string</TD
+><TD
+>&#13;		    RCS version of the dataset.
+		  </TD
+></TR
+><TR
+><TD
+>model_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		    Key to a row in the <I
+CLASS="emphasis"
+>model</I
+>
+		    table, which contains in its
+		    archive field an RCS-compatible archive comprising the
+		    current version and all previous versions of a model.
+		  </TD
+></TR
+><TR
+><TD
+>model_version</TD
+><TD
+>string</TD
+><TD
+>&#13;		    RCS version of the model.
+		  </TD
+></TR
+><TR
+><TD
+>xml_source</TD
+><TD
+>string</TD
+><TD
+>&#13;		    An XML document containing source code for the model, 
+		    constraints, parameters and presentation directives.
+		  </TD
+></TR
+><TR
+><TD
+>method_code</TD
+><TD
+>string</TD
+><TD
+>&#13;		    The method that is to be used for the computation.
+		  </TD
+></TR
+><TR
+><TD
+>parent</TD
+><TD
+>non-negative integer</TD
+><TD
+>&#13;		    The job_id of the job which is the parent of this one.  If the
+		    job has no parent, this value should be zero.
+		  </TD
+></TR
+><TR
+><TD
+>is_warm_start</TD
+><TD
+>true or false</TD
+><TD
+>&#13;		    True for being a warm start job; false for otherwise.
+		  </TD
+></TR
+><TR
+><TD
+>is_mail_notice</TD
+><TD
+>true or false</TD
+><TD
+>&#13;		    True for requesting end-job mail notice; false for otherwise.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN413"
+>job_status -- return the current state of a job</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		row = job_status handle job_id 
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		The state_code, the event_time of the 
+		most recent state transition, and the end_code (which may be null)
+		are returned.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN433"
+></A
+><P
+><B
+>Table 7. Values returned by job_status</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>row </TD
+><TD
+>&#13;		    state_code, event_time, end_code (end_code will
+		    be null unless state_code = 'end')
+		  </TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>Null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle or job_id is invalid.
+		    Additional error information is available in the individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN454"
+></A
+><P
+><B
+>Table 8. Arguments to job_status</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>job_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		    Key to a row in the <I
+CLASS="emphasis"
+>job</I
+> table.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN475"
+>job_history -- retrieve history for a given job</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		row-array = job_history handle job_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		All rows of the history table that correspond to a given job_id are
+		returned.  Each row describes a state transition.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN487"
+></A
+><P
+><B
+>Table 9. Values returned by job_history</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>row-array</TD
+><TD
+>An array containing all history for the given job</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>Null or undefined.</TD
+><TD
+>&#13;		     Failure occurs if their is no history for the job_id.
+		    Additional error information depends on the individual
+		    language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN508"
+></A
+><P
+><B
+>Table 10. Arguments to job_history</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>job_id</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row in the job table.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN528"
+>get_job -- retrieve a row from the job table</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		row = get_job handle job_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		This function retrieves the entire row from the job table that corresponds
+		to the given job_id.  
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN540"
+></A
+><P
+><B
+>Table 11. Values returned by get_job</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>row</TD
+><TD
+>An entire row of the job table.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    The case where there is no row corresponding to the
+		    job id is distinguishable from a failure due to 
+		    database error.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN561"
+></A
+><P
+><B
+>Table 12. Arguments to get_job</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>job_id</TD
+><TD
+>positive integer</TD
+><TD
+>A valid key to the job table.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN581"
+>user_jobs -- get status for user's most recent jobs</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		row-array = user_jobs handle user_id maxnum
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Returns an array of rows, each of which contains the
+		current status of one of a given user's jobs.  Jobs are
+		sorted in reverse order of job_id, hence the most recently
+		submitted job appears first. The  maximum number of jobs to
+		return is given as one of the arguments.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports consistent reads
+		(as does MySQL database, with type=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN601"
+></A
+><P
+><B
+>Table 13. Values returned by user-jobs</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>row-array</TD
+><TD
+>In each row: job_id, abstract, state_code, start_time, event_time, end_code</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle or user_id is invalid.
+		    Additional error information is available in the
+		    individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN622"
+></A
+><P
+><B
+>Table 14. Arguments to user_jobs</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		    Key to the user's row in the <I
+CLASS="emphasis"
+>user</I
+> table.
+		  </TD
+></TR
+><TR
+><TD
+>maxnum</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		    Maximum number of rows to be returned. For example, if only
+		    the status of the most recent job is desired, this argument
+		    would have the value 1.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN647"
+>de_q2c -- select highest priority job from compiler queue</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		row = de_q2c handle
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		The <I
+CLASS="emphasis"
+>job</I
+> table is queried to find the
+		highest priority job with state_code equal to 'q2c'.
+		If the queue is not empty, the fields needed by the Aspk
+		Compiler are returned.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		The state code field of the job is set to cmp.
+	      </P
+></DD
+><DD
+><P
+>&#13;		The event_time field is updated to the time of this state transition.  
+	      </P
+></DD
+><DD
+><P
+>&#13;		A state transition record is added to the 
+		<I
+CLASS="emphasis"
+>history</I
+> table.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		The work of this function is performed within transaction state,
+		between a <B
+CLASS="command"
+>begin</B
+> database command and a 
+		<B
+CLASS="command"
+>commit</B
+>.  The job is found by using a 
+		<B
+CLASS="command"
+>select for update</B
+> command. In case of error,
+		the functions performs a <B
+CLASS="command"
+>rollback</B
+> before
+		exiting.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN677"
+></A
+><P
+><B
+>Table 15. Values returned by de_q2c</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>row </TD
+><TD
+>job_id, dataset_id, dataset_version, xml_source</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Information that can be used to differentiate between
+		    an empty queue and an error condition such as an invalid
+		    handle is provided by the individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN698"
+></A
+><P
+><B
+>Table 16. Arguments to de_q2c</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN714"
+>get_cmp_jobs -- get all jobs currently being compiled</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		row-array = get_cmp_jobs handle
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		An array of rows containing all jobs with state_code = 'cmp' is returned.
+		The rows contain the fields job_id, dataset_id and xml_source.  This 
+		function would typically be called by the compiler deamon upon starting
+		up, in order to discover any jobs which were being compiled when the
+		the compiler sub-system was shut down, so that those jobs could be compiled
+		again.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN734"
+></A
+><P
+><B
+>Table 17. Values returned by get_cmp_jobs</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>row-array</TD
+><TD
+>In each row: job_id, dataset_id, dataset_version, and xml_source</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Information that can be used to differentiate between a select
+		    that returns the empty set and a database error condition is 
+		    provided by the individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN755"
+></A
+><P
+><B
+>Table 18. Arguments to get_cmp_jobs</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN771"
+>en_q2r -- add a compiled job to the run queue</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = en_q2r handle job_id cpp_source
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		The Aspk Compiler uses this function to move a 
+		job that it has compiled to the queue of jobs 
+		that are ready to be run by the Cspk.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		The state_code field of the job is changed to 'q2r'.
+	      </P
+></DD
+><DD
+><P
+>&#13;		The cpp_source field of the job contains c++ source code.
+	      </P
+></DD
+><DD
+><P
+>&#13;		The event_time field is updated to the time of this state transition.
+	      </P
+></DD
+><DD
+><P
+>&#13;		A state transition record is added to the
+		<I
+CLASS="emphasis"
+>history</I
+> table.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports updates with autocommit
+		(eg. MySQL with type=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN798"
+></A
+><P
+><B
+>Table 19. Values returned by en_q2r</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>false</TD
+><TD
+>&#13;		    Failure occurs if the handle or job_id is invalid.
+		    Additional error information is available in the
+		    individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN819"
+></A
+><P
+><B
+>Table 20. Arguments to en_q2r</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>A handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>job_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		    Key to a row in the <I
+CLASS="emphasis"
+>job</I
+> table.
+		  </TD
+></TR
+><TR
+><TD
+>cpp_source</TD
+><TD
+>string</TD
+><TD
+>&#13;		    An archive of text files in compressed tar format.  
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN844"
+>de_q2r -- select the highest priority job from the run queue</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		row = de_q2r handle
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		The <I
+CLASS="emphasis"
+>job</I
+> table is queried for the highest
+		priority job with state_code equal to 'q2r'.  If the
+		queue is not empty, the fields needed by Cspk are returned.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		The state code field of the job is set to 'run'.
+	      </P
+></DD
+><DD
+><P
+>&#13;		The event_time field is updated to the time of this state transition.
+	      </P
+></DD
+><DD
+><P
+>&#13;		A state transition record is added to the 
+		<I
+CLASS="emphasis"
+>history</I
+> table.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13; 		The work of this function is performed within transaction state,
+		between a <B
+CLASS="command"
+>begin</B
+> database command and a 
+		<B
+CLASS="command"
+>commit</B
+>.  The job is found by using a 
+		<B
+CLASS="command"
+>select for update</B
+> command. In case of error,
+		the functions performs a <B
+CLASS="command"
+>rollback</B
+> before
+		exiting.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN874"
+></A
+><P
+><B
+>Table 21. Values returned by de_q2r</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>row </TD
+><TD
+>job_id, cpp_source</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Information that can be used to distinguish between
+		    an empty queue and an error condition such as an
+		    invalid handle is provided
+		    in each of the language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN895"
+></A
+><P
+><B
+>Table 22. Arguments to de_q2r</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN911"
+>get_run_jobs -- get all jobs currently being running</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		row-array = get_run_jobs handle
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		An array of rows containing all jobs with state_code = 'run' is returned.
+		Each row contains  only the field: job_id.  This 
+		function would typically be called by the runtime deamon upon starting
+		up, in order to discover any jobs which were being run when the
+		the computational sub-system was shut down, so that those jobs could be 
+		restarted.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN931"
+></A
+><P
+><B
+>Table 23. Values returned by get_run_jobs</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>row-array</TD
+><TD
+>In each row: job_id, cpp_source</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>undefined</TD
+><TD
+>&#13;		    Information that can be used to differentiate between a select
+		    that returns the empty set and a database error condition is 
+		    provided by the individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN952"
+></A
+><P
+><B
+>Table 24. Arguments to get_run_jobs</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN968"
+>end_job -- end a job, whether successful or not</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = end_job handle job_id end_code report checkpoint
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Cause a job to make the transition to the
+		<I
+CLASS="emphasis"
+>End</I
+> state.
+		This can occur at the end of a successful run, at the
+		end of a failed run, or in case of errors occurring
+		during Aspk compilation.
+	      </P
+><P
+>&#13;		Note: this function cannot be used to terminate a compilation
+		or a run.  It is used, instead, to record the fact that the job has
+		terminated or completed.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		The state_code field of the job is changed to 'end'.
+	      </P
+></DD
+><DD
+><P
+>&#13;		The end_code of the job is changed to $end_code.
+	      </P
+></DD
+><DD
+><P
+>&#13;		The report field contains a report.
+	      </P
+></DD
+><DD
+><P
+>&#13;		The event_time field is updated to the time of this state transition.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports updates and inserts with autocommit
+		(eg. MySQL with type=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN996"
+></A
+><P
+><B
+>Table 25. Values returned by end_job</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>false</TD
+><TD
+>&#13;		    Failure occurs when the handle, job_id, or end_code
+		    is invalid. Additional error information is available
+		    in the individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1017"
+></A
+><P
+><B
+>Table 26. Arguments to end_job</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>job_id</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row in the <I
+CLASS="emphasis"
+>job</I
+> table.</TD
+></TR
+><TR
+><TD
+>end_code</TD
+><TD
+>string</TD
+><TD
+>Valid key to a row in the <I
+CLASS="emphasis"
+>end</I
+> table.</TD
+></TR
+><TR
+><TD
+>report</TD
+><TD
+>string</TD
+><TD
+>&#13;		    XML containing the final report, whether the results of
+		    successful computation, partial results after an incomplete
+		    run, or description of an error condition.
+		  </TD
+></TR
+><TR
+><TD
+>checkpoint</TD
+><TD
+>string</TD
+><TD
+>&#13;		    XML containing the checkpoint file, in case the job completed
+		    without errors.  Otherwise, the string should be null.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1051"
+>job_report -- retrieve the final report for a job</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		report = job_report handle job_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		The final report, in XML, is returned.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1071"
+></A
+><P
+><B
+>Table 27. Values returned by job_report</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>string</TD
+><TD
+>A string containing a complete XML document.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle or job_id is invalid.
+		    The language bindings return additional information about
+		    error conditions.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1092"
+></A
+><P
+><B
+>Table 28. Arguments to job_report</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>job_id</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row in the <I
+CLASS="emphasis"
+>job</I
+> table.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1113"
+>new_dataset -- add a dataset to the database</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		dataset_id = new_dataset handle user_id name abstract archive
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		The <I
+CLASS="emphasis"
+>dataset</I
+> table contains the source code
+		for scientific datasets along with identification information.
+		The archive field is an RCS-compatible file which contains the
+		current and all previous versions of the XML text of the dataset.
+		This function is used to establish the initial version of a 
+		dataset in the database.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		The event_time field is set to the time of insertion.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB), that
+		the <I
+CLASS="emphasis"
+>dataset_id</I
+> field carries the auto_increment
+		and that the <I
+CLASS="emphasis"
+>name</I
+> field is unique for
+		the given <I
+CLASS="emphasis"
+>user_id</I
+> due to a 
+		<B
+CLASS="command"
+>UNIQUE user_id (user_id, name)</B
+> modifier.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1138"
+></A
+><P
+><B
+>Table 29. Values returned by new_dataset</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row newly added to the <I
+CLASS="emphasis"
+>dataset</I
+> table.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>0</TD
+><TD
+>&#13;		    Failure occurs if the or the user_id is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1160"
+></A
+><P
+><B
+>Table 30. Arguments to new_dataset</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row in the <I
+CLASS="emphasis"
+>user</I
+> table.</TD
+></TR
+><TR
+><TD
+>name</TD
+><TD
+>string</TD
+><TD
+>Name of the dataset.</TD
+></TR
+><TR
+><TD
+>abstract</TD
+><TD
+>string</TD
+><TD
+>Succinct description of the dataset.</TD
+></TR
+><TR
+><TD
+>archive</TD
+><TD
+>string</TD
+><TD
+>RCS-compatible source archive.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1193"
+>get_dataset -- retrieve a dataset</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		list = get_dataset handle dataset_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Given the key into the <I
+CLASS="emphasis"
+>dataset</I
+> table, the
+		corresponding row is returned.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1214"
+></A
+><P
+><B
+>Table 31. Values returned by get_dataset</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>pair list</TD
+><TD
+>&#13;		    List of all field names for the <I
+CLASS="emphasis"
+>dataset</I
+>
+		    table, along with associated values.
+		  </TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle or the dataset_id is invalid.
+		    Information that can be used to distinguish a missing row
+		    from an error is provided by the individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1236"
+></A
+><P
+><B
+>Table 32. Arguments to get_dataset</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>dataset_id</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row in the <I
+CLASS="emphasis"
+>dataset</I
+> table.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1257"
+>update_dataset -- update a row in the <I
+CLASS="emphasis"
+>dataset</I
+> table</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		update_dataset handle dataset_id list
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		A set of fields in a row of the <I
+CLASS="emphasis"
+>dataset</I
+> table
+		are updated.  It is not necessary to update all rows.  The list
+		is a set of (name, value) pairs, which specifies the names of 
+		fields and the new values which are to be stored into them.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		The event_time field is set to the time of the update.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB)
+		and that the <I
+CLASS="emphasis"
+>name</I
+> field is unique for
+		the given <I
+CLASS="emphasis"
+>user_id</I
+> due to a 
+		<B
+CLASS="command"
+>UNIQUE user_id (user_id, name)</B
+> modifier.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1282"
+></A
+><P
+><B
+>Table 33. Values returned by update_dataset</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>false</TD
+><TD
+>&#13;		    Failure occurs if the handle or the dataset_id is invalid.
+		    Individual language bindings provide additional information
+		    in case of error.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1303"
+></A
+><P
+><B
+>Table 34. Arguments to update_dataset</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>dataset_id</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row in the <I
+CLASS="emphasis"
+>dataset</I
+> table.</TD
+></TR
+><TR
+><TD
+>list</TD
+><TD
+>pair list</TD
+><TD
+>&#13;		    The list consists of names of fields in the <I
+CLASS="emphasis"
+>dataset</I
+>
+		    table and the corresponding values that should replace current values.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1329"
+>user_datasets -- get a user's datasets</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		row-array = user_datasets handle user_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Returns an array of rows, each of which contains a description
+		of one of a given user's datasets. Rows are sorted in order of
+		dataset_id.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports consistent reads
+		(as does MySQL database, with type=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1349"
+></A
+><P
+><B
+>Table 35. Values returned by user_datasets</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>row-array</TD
+><TD
+>In each row: dataset_id, name, abstract.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle or user_id is invalid.
+		    Individual language bindings provide information sufficient
+		    to recognize the case where no datasets for this user exist and
+		    to identify faults.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1370"
+></A
+><P
+><B
+>Table 36. Arguments to user_datasets</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row in the <I
+CLASS="emphasis"
+>user</I
+> table.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1391"
+>new_model -- add a model to the database</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		model_id = new_model handle user_id name abstract archive
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		The <I
+CLASS="emphasis"
+>model</I
+> table contains the source code
+		for scientific models along with identification information.
+		The archive field is an RCS-compatible file which contains the
+		current and all previous versions of the XML text of the model.
+		This function is used to establish the initial version of a 
+		model in the database.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		The event_time field is set to the time of insertion.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB), that
+		the <I
+CLASS="emphasis"
+>model_id</I
+> field carries the auto_increment
+		and that the <I
+CLASS="emphasis"
+>name</I
+> field is unique for
+		the given <I
+CLASS="emphasis"
+>user_id</I
+> due to a 
+		<B
+CLASS="command"
+>UNIQUE user_id (user_id, name)</B
+> modifier.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1416"
+></A
+><P
+><B
+>Table 37. Values returned by new_model</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row newly added to the <I
+CLASS="emphasis"
+>model</I
+> table.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>0</TD
+><TD
+>&#13;		    Failure occurs if the or the user_id is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1438"
+></A
+><P
+><B
+>Table 38. Arguments to new_model</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row in the <I
+CLASS="emphasis"
+>user</I
+> table.</TD
+></TR
+><TR
+><TD
+>name</TD
+><TD
+>string</TD
+><TD
+>Name of the model.</TD
+></TR
+><TR
+><TD
+>abstract</TD
+><TD
+>string</TD
+><TD
+>Succinct description of the model.</TD
+></TR
+><TR
+><TD
+>archive</TD
+><TD
+>string</TD
+><TD
+>RCS-compatible source archive.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1471"
+>get_model -- retrieve a model</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		list = get_model handle model_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Given the key into the <I
+CLASS="emphasis"
+>model</I
+> table, the
+		corresponding row is returned.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1492"
+></A
+><P
+><B
+>Table 39. Values returned by get_model</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>pair list</TD
+><TD
+>&#13;		    List of all field names for the <I
+CLASS="emphasis"
+>model</I
+>
+		    table, along with associated values.
+		  </TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle or the model_id is invalid.
+		    Information that can be used to distinguish a missing row
+		    from an error is provided by the individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1514"
+></A
+><P
+><B
+>Table 40. Arguments to get_model</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>model_id</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row in the <I
+CLASS="emphasis"
+>model</I
+> table.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1535"
+>update_model -- update a row in the <I
+CLASS="emphasis"
+>model</I
+> table</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		update_model handle model_id list
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		A set of fields in a row of the <I
+CLASS="emphasis"
+>model</I
+> table
+		are updated.  It is not necessary to update all rows.  The list
+		is a set of (name, value) pairs, which specifies the names of 
+		fields and the new values which are to be stored into them.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		The event_time field is set to the time of the update.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB)
+		and that the <I
+CLASS="emphasis"
+>name</I
+> field is unique for
+		the given <I
+CLASS="emphasis"
+>user_id</I
+> due to a 
+		<B
+CLASS="command"
+>UNIQUE user_id (user_id, name)</B
+> modifier.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1560"
+></A
+><P
+><B
+>Table 41. Values returned by update_model</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>false</TD
+><TD
+>&#13;		    Failure occurs if the handle or the model_id is invalid.
+		    Individual language bindings provide additional information
+		    in case of error.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1581"
+></A
+><P
+><B
+>Table 42. Arguments to update_model</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>model_id</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row in the <I
+CLASS="emphasis"
+>model</I
+> table.</TD
+></TR
+><TR
+><TD
+>list</TD
+><TD
+>pair list</TD
+><TD
+>&#13;		    The list consists of names of fields in the <I
+CLASS="emphasis"
+>model</I
+>
+		    table and the corresponding values that should replace current values.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1607"
+>user_models -- get a user's models</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		row-array = user_models handle user_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Returns an array of rows, each of which contains a description
+		of one of a given user's models. Rows are sorted in order of
+		model_id.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports consistent reads
+		(as does MySQL database, with type=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1627"
+></A
+><P
+><B
+>Table 43. Values returned by user_models</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>row-array</TD
+><TD
+>In each row: model_id, name, abstract.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle or user_id is invalid.
+		    Individual language bindings provide information sufficient
+		    to recognize the case where no models for this user exist and
+		    to identify faults.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1648"
+></A
+><P
+><B
+>Table 44. Arguments to user_models</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row in the <I
+CLASS="emphasis"
+>user</I
+> table.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1669"
+>new_user -- add a new user</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		user_id = new_user handle username password ...
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Add a new Spk user.	      
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB) and that
+		the <I
+CLASS="emphasis"
+>user_id</I
+> field carries the auto_increment
+		modifier.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1690"
+></A
+><P
+><B
+>Table 45. Values returned by new_user</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row newly added to the <I
+CLASS="emphasis"
+>user</I
+> table.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>0</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid, or if the list does not
+		    include at least a unique username and a password.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1712"
+></A
+><P
+><B
+>Table 46. Arguments to new_user</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>list</TD
+><TD
+>name and value list</TD
+><TD
+>&#13;		    A list if names of fields in the <I
+CLASS="emphasis"
+>user</I
+>
+		    table, along with values to be stored in the corresponding
+		    fields.  This list must include, at a minimum, username
+		    and password, along with their associated values.  
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1733"
+>update_user -- update a row in the <I
+CLASS="emphasis"
+>user</I
+> table</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = update_user handle user_id list
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Update fields of the row in the <I
+CLASS="emphasis"
+>user</I
+>
+		table that corresponds to user_id.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1755"
+></A
+><P
+><B
+>Table 47. Values returned by update_user</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>false</TD
+><TD
+>&#13;		    Failure occurs if the handle or the user_id is invalid.
+		    Individual language bindings provide additional information
+		    in case of error.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1776"
+></A
+><P
+><B
+>Table 48. Arguments to update_user</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row in the <I
+CLASS="emphasis"
+>user</I
+> table.</TD
+></TR
+><TR
+><TD
+>list</TD
+><TD
+>pair list</TD
+><TD
+>&#13;		    The list consists of names of fields in the
+		    <I
+CLASS="emphasis"
+>user</I
+> table and the corresponding values
+		    that should replace current values.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1802"
+>get_user -- retrieve a user record by username</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		list = get_user handle username
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		This function retrieves the entire row in the 
+		<I
+CLASS="emphasis"
+>user</I
+> table corresponding to the username.
+		Since username is a unique alternative key, there will be no
+		more than one row returned.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports consistent reads
+		(as does MySQL database, with type=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1823"
+></A
+><P
+><B
+>Table 49. Values returned by get_user</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>pair list</TD
+><TD
+>&#13;		    List of all field names for the <I
+CLASS="emphasis"
+>user</I
+>
+		    table, along with their associated values.
+		  </TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle or the username is invalid.
+		    Information sufficient to distinguish the case of a nonexistent
+		    user from various error conditions is provided by the 
+		    language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1845"
+></A
+><P
+><B
+>Table 50. Arguments to get_user</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>username</TD
+><TD
+>string</TD
+><TD
+>User name for logging in to Spk via the MDA.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1865"
+>get_end_table - - return the entire end table</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		row-array = get_end_table handle
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		The end table maps end codes into their English language equivalents.
+		The table is not very large, hence it is most efficient for the
+		function to return the entire table.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1877"
+></A
+><P
+><B
+>Table 51. Values returned by get_end_table</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>row-array</TD
+><TD
+>end_code, end_name</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    The database "select" that this function performs should never
+		    come up empty, hence the only basis for failure would be a 
+		    database error, in which case the result would be null or undefined,
+		    depending on the language binding.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1898"
+></A
+><P
+><B
+>Table 52. Arguments to get_end_table</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1914"
+>get_method_table - - return the entire method table</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		row-array = get_method_table handle
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		The method table maps method codes into their English language equivalents.
+		The table is not very large, hence it is most efficient for the
+		function to return the entire table.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1926"
+></A
+><P
+><B
+>Table 53. Values returned by get_method_table</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>row-array</TD
+><TD
+>method_code, method_name</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    The database "select" that this function performs should never
+		    come up empty, hence the only basis for failure would be a 
+		    database error, in which case the result would be null or undefined,
+		    depending on the language binding.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1947"
+></A
+><P
+><B
+>Table 54. Arguments to get_method_table</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN1963"
+>get_state_table - - return the entire state table</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		row-array = get_state_table handle
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		The state table maps state codes into their English language equivalents.
+		The table is not very large, hence it is most efficient for the
+		function to return the entire table.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1975"
+></A
+><P
+><B
+>Table 55. Values returned by get_state_table</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>row-array</TD
+><TD
+>state_code, state_name</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    The database "select" that this function performs should never
+		    come up empty, hence the only basis for failure would be a 
+		    database error, in which case the result would be null or undefined,
+		    depending on the language binding.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN1996"
+></A
+><P
+><B
+>Table 56. Arguments to get_state_table</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2012"
+>abort job -- abort a job</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = abort_job handle job_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;               	Abort a job when the job is in one of the four possible states.
+                If the job's state_code equals to 'q2c', set the job's 
+                state_code to 'end' and the job's end_code to 'abrt'.
+                If the job's state_code equals to 'cmp', set the job's 
+                state_code to 'q2ac'- queued to abort compiling.
+                If the job's state_code equals to 'q2r', set the job's 
+                state_code to 'end' and the job's end_code to 'abrt'.
+                If the job's state_code equals to 'run', set the job's 
+                state_code to 'q2ar' - queued to abort running. 
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		The event_time field is updated to the time of this transition.
+	      </P
+></DD
+><DD
+><P
+>&#13;		A state transition record is appended to the 
+		<I
+CLASS="emphasis"
+>history</I
+> table.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB) and that
+		the <I
+CLASS="emphasis"
+>job_id</I
+> field carries the auto_increment
+		modifier.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2036"
+></A
+><P
+><B
+>Table 57. Values returned by abort_job</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true</TD
+><TD
+>The job's state_code has been set to either 'end, 'q2ac' or q2ar'.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>false</TD
+><TD
+>&#13;		    The job's state_code has not been set to either 'end, 'q2ac' or q2ar' 
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2057"
+></A
+><P
+><B
+>Table 58. Arguments to abort_job</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>job_id</TD
+><TD
+>positive integer</TD
+><TD
+>A valid key to the job table.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2077"
+>get job ids -- get all job ids with a given state_code</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		list = get_job_ids handle state_code
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;                Get job_ids of all jobs as an array with a given state_code.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB) and that
+		the <I
+CLASS="emphasis"
+>job_id</I
+> field carries the auto_increment
+		modifier.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2098"
+></A
+><P
+><B
+>Table 59. Values returned by get_job_ids</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>integer array</TD
+><TD
+>&#13;                    An array of job_ids of all the jobs with the given state_code,
+                    0 if there is no job with the given state_code
+                  </TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle or job_id is invalid. Additional
+                    error information is available in the individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2119"
+></A
+><P
+><B
+>Table 60. Arguments to get_job_ids</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>state_code</TD
+><TD
+>string</TD
+><TD
+>state_code of the jobs to get.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2139"
+>de_q2ac -- remove highest priority job from aborting 
+               compiler queue</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		job_id = de_q2ac handle
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;                Remove the highest priority job from the aborting compiler queue, 
+                so that it can be aborted by the compiler daemon.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		The state_code field of the job is set to acmp.
+	      </P
+></DD
+><DD
+><P
+>&#13;		The event_time field is updated to the time of this state transition.  
+	      </P
+></DD
+><DD
+><P
+>&#13;		A state transition record is added to the 
+		<I
+CLASS="emphasis"
+>history</I
+> table.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		The work of this function is performed within transaction state,
+		between a <B
+CLASS="command"
+>begin</B
+> database command and a 
+		<B
+CLASS="command"
+>commit</B
+>.  The job is found by using a 
+		<B
+CLASS="command"
+>select for update</B
+> command. In case of error,
+		the functions performs a <B
+CLASS="command"
+>rollback</B
+> before
+		exiting.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2168"
+></A
+><P
+><B
+>Table 61. Values returned by de_q2ac</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>integer</TD
+><TD
+>&#13;                    job_id of highest priority aborting compilation job, 
+                    false if aborting compiler queue is empty
+                  </TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid. Additional
+                    error information is available in the individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2189"
+></A
+><P
+><B
+>Table 62. Arguments to de_q2ac</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2205"
+>de_q2ar -- remove highest priority job from aborting 
+               run queue</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		job_id = de_q2ar handle
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;                Remove the highest priority job from the aborting run queue, 
+                so that it can be aborted by the run-time daemon.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		The state_code field of the job is set to arun.
+	      </P
+></DD
+><DD
+><P
+>&#13;		The event_time field is updated to the time of this state transition.  
+	      </P
+></DD
+><DD
+><P
+>&#13;		A state transition record is added to the 
+		<I
+CLASS="emphasis"
+>history</I
+> table.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		The work of this function is performed within transaction state,
+		between a <B
+CLASS="command"
+>begin</B
+> database command and a 
+		<B
+CLASS="command"
+>commit</B
+>.  The job is found by using a 
+		<B
+CLASS="command"
+>select for update</B
+> command. In case of error,
+		the functions performs a <B
+CLASS="command"
+>rollback</B
+> before
+		exiting.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2234"
+></A
+><P
+><B
+>Table 63. Values returned by de_q2ar</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>integer</TD
+><TD
+>&#13;                    job_id of highest priority aborting run job, 
+                    false if aborting run queue is empty
+                  </TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid. Additional
+                    error information is available in the individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2255"
+></A
+><P
+><B
+>Table 64. Arguments to de_q2ar</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2271"
+>get_mail_notice -- get end-job email notice 
+            request option</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = get_mail_notice handle job_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;                 Given a job_id, get end-job email notice request option for the job.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;                None, as long as the job_id is valid.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2291"
+></A
+><P
+><B
+>Table 65. Values returned by get_mail_notice</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true or false</TD
+><TD
+>&#13;                     true if the end-job email notice request option is set, false if otherwise
+                  </TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid. Additional
+                    error information is available in the individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2312"
+></A
+><P
+><B
+>Table 66. Arguments to get_mail_notice</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>job_id</TD
+><TD
+>integer</TD
+><TD
+>The key to a row in the job table.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2332"
+>get_user_by_id -- retrieve a user record by user_id</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		list = get_user_by_id handle user_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		This function retrieves the entire row in the 
+		<I
+CLASS="emphasis"
+>user</I
+> table corresponding to the user_id.
+		Since user_id is a unique key, there will be no
+		more than one row returned.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports consistent reads
+		(as does MySQL database, with type=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2353"
+></A
+><P
+><B
+>Table 67. Values returned by get_user_by_id</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>pair list</TD
+><TD
+>&#13;		    List of all field names for the <I
+CLASS="emphasis"
+>user</I
+>
+		    table, along with their associated values.
+		  </TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle or the user_id is invalid.
+		    Information sufficient to distinguish the case of a nonexistent
+		    user from various error conditions is provided by the 
+		    language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2375"
+></A
+><P
+><B
+>Table 68. Arguments to get_user_by_id</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>User ID of the user.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2395"
+>set_job_abstract -- set job abstract.</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = set_job_abstract handle job_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		This function sets the job abstact 
+		<I
+CLASS="emphasis"
+>job</I
+> table corresponding to the job_id.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports consistent reads
+		(as does MySQL database, with type=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2416"
+></A
+><P
+><B
+>Table 69. Values returned by set_job_abstract</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>false</TD
+><TD
+>&#13;		    Failure occurs if the handle, the user_id or the job_id is invalid.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2437"
+></A
+><P
+><B
+>Table 70. Arguments to get_user_by_id</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>User ID of the user.</TD
+></TR
+><TR
+><TD
+>job_id</TD
+><TD
+>positive integer</TD
+><TD
+>Job ID of the job.</TD
+></TR
+><TR
+><TD
+>abstraction</TD
+><TD
+>string</TD
+><TD
+>The specified job abstract.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2465"
+>new_group -- add a new group</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		group_id = new_group handle group_name
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Add a new Spk user group.	      
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB) and that
+		the <I
+CLASS="emphasis"
+>group_id</I
+> field carries the auto_increment
+		modifier.
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2486"
+></A
+><P
+><B
+>Table 71. Values returned by new_group</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>positive integer</TD
+><TD
+>Key to a row newly added to the <I
+CLASS="emphasis"
+>team</I
+> table.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>0</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid, or if the group_name has already
+                    been used by an existing group.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2508"
+></A
+><P
+><B
+>Table 72. Arguments to new_group</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>group_name</TD
+><TD
+>string</TD
+><TD
+>&#13;		   Specified group name. 
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2528"
+>new_group_member -- add a new group member</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = new_group_member handle username group_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Add a user to a group.	      
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2548"
+></A
+><P
+><B
+>Table 73. Values returned by new_group</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true</TD
+><TD
+>Group ID is set to the user in the <I
+CLASS="emphasis"
+>user</I
+> table.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>false</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid, or if the username or the group_id 
+                    is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2570"
+></A
+><P
+><B
+>Table 74. Arguments to new_group</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>username</TD
+><TD
+>string</TD
+><TD
+>&#13;		   Specified username. 
+		  </TD
+></TR
+><TR
+><TD
+>group_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified group_id. 
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2594"
+>get_group_users -- retrieve all users of a group</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		list = get_group_users handle group_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		This function retrieves the a list of entire rows in the 
+		<I
+CLASS="emphasis"
+>user</I
+> table corresponding to the group_id.
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports consistent reads
+		(as does MySQL database, with type=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2615"
+></A
+><P
+><B
+>Table 75. Values returned by get_group_users</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>pair list</TD
+><TD
+>&#13;		    List of all field names for the <I
+CLASS="emphasis"
+>user</I
+>
+		    table, along with their associated values.
+		  </TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle or the group_id is invalid.
+		    Information sufficient to distinguish the case of a nonexistent
+		    user from various error conditions is provided by the 
+		    language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2637"
+></A
+><P
+><B
+>Table 76. Arguments to get_user</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>group_id</TD
+><TD
+>positive integer</TD
+><TD
+>Specified group ID.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2657"
+>new_folder -- add a new folder</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = new_folder handle name parent user_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Add a folder to a user account.	      
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2677"
+></A
+><P
+><B
+>Table 77. Values returned by new_foler</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>folder_id</TD
+><TD
+>A row is added to the <I
+CLASS="emphasis"
+>folder</I
+> table.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>0</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid, or if the name, parent or the user_id 
+                    is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2699"
+></A
+><P
+><B
+>Table 78. Arguments to new_folder</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>name</TD
+><TD
+>string</TD
+><TD
+>&#13;		   Specified folder name. 
+		  </TD
+></TR
+><TR
+><TD
+>parent</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified folder_id of the parent folder. 
+		  </TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified user_id of the folser owner. 
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2727"
+>rename_folder -- rename a folder</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = rename_folder handle folder_id name user_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Rename a folder.	      
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2747"
+></A
+><P
+><B
+>Table 79. Values returned by delete_foler</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true</TD
+><TD
+>A folder name in the <I
+CLASS="emphasis"
+>folder</I
+> table is set.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>false</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid, or if the folder_id, name or the user_id 
+                    is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2769"
+></A
+><P
+><B
+>Table 80. Arguments to delete_folder</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>folder_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified folder_id of the folder to rename. 
+		  </TD
+></TR
+><TR
+><TD
+>name</TD
+><TD
+>string</TD
+><TD
+>&#13;		   Specified the folder name. 
+		  </TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified user_id of the folser owner. 
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2797"
+>delete_folder -- delete a folder</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = delete_folder handle folder_id user_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Delete a folder.	      
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2817"
+></A
+><P
+><B
+>Table 81. Values returned by delete_foler</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true</TD
+><TD
+>A row in the <I
+CLASS="emphasis"
+>folder</I
+> table is deleted.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>false</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid, or if the folder_id or the user_id 
+                    is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2839"
+></A
+><P
+><B
+>Table 82. Arguments to delete_folder</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>folder_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified folder_id of the folder to delete. 
+		  </TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified user_id of the folder owner. 
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2863"
+>move_folder -- move a folder</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = move_folder handle folder_id parent user_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Move a folder to specified parent.	      
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2883"
+></A
+><P
+><B
+>Table 83. Values returned by move_foler</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true</TD
+><TD
+>The parent in the <I
+CLASS="emphasis"
+>folder</I
+> table is set.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>false</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid, or if the folder_id, parent or the user_id 
+                    is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2905"
+></A
+><P
+><B
+>Table 84. Arguments to move_folder</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>folder_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified folder_id of the folder to move. 
+		  </TD
+></TR
+><TR
+><TD
+>parent</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified folder_id of the parent. 
+		  </TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified user_id of the folser owner. 
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2933"
+>move_jobs -- move jobs</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = move_jobs handle job_ids parent
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Move jobs to specified folder.	      
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2953"
+></A
+><P
+><B
+>Table 85. Values returned by move_jobs</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true</TD
+><TD
+>The folder_id in the <I
+CLASS="emphasis"
+>job</I
+> table is set.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>false</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid, or if the job_ids or parent  
+                    is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN2975"
+></A
+><P
+><B
+>Table 86. Arguments to move_jobs</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>job_ids</TD
+><TD
+>list of positive integers</TD
+><TD
+>&#13;		   Specified job_ids of the jobs to move. 
+		  </TD
+></TR
+><TR
+><TD
+>parent</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified folder_id of the jobs to move into. 
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN2999"
+>get_folder_path -- get folder path</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = get_folder_path handle folder_id user_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Retrieves path and name of a specified folder.	      
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN3019"
+></A
+><P
+><B
+>Table 87. Values returned by get_folder_path</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>string</TD
+><TD
+>The path and name of the folder.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>empty string</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid, or if the folder_ids or user_id 
+                    is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN3040"
+></A
+><P
+><B
+>Table 88. Arguments to get_folder_path</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>folder_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   folder_id of the specified folder. 
+		  </TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified user_id of the folder owner.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN3064"
+>get_sub_folders -- get sub folders</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = get_sub_folders handle folder_id user_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Retrieves sub folders of a folder.	      
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN3084"
+></A
+><P
+><B
+>Table 89. Values returned by get_sub_folders</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>row-array</TD
+><TD
+>The row of the <I
+CLASS="emphasis"
+>folder</I
+> table selected by folder_id and user_id.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>null or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid, or if the folder_id or the user_id 
+                    is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN3106"
+></A
+><P
+><B
+>Table 90. Arguments to get_sub_folders</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>folder_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified folder_id of the folder to retrieve sub folders.
+		  </TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified user_id of the folder to retrieve sub folders.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN3130"
+>user_job_count -- count total number of jobs of a user</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = user_job_count handle user_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Retrieves total number of jobs of a user.	      
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN3150"
+></A
+><P
+><B
+>Table 91. Values returned by user_job_count</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>positive integer</TD
+><TD
+>The total number of jobs owned by the specified user.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>0</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid, or if the user_id 
+                    is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN3171"
+></A
+><P
+><B
+>Table 92. Arguments to user_job_count</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified user_id of the user to retrieve job count.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN3191"
+>get_folder_path -- get folder tree</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = get_folder_tree handle user_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Retrieves folder tree of a specified user.	      
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN3211"
+></A
+><P
+><B
+>Table 93. Values returned by get_folder_tree</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>string</TD
+><TD
+>The folder tree of the user.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>empty string</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid, or if the user_id 
+                    is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN3232"
+></A
+><P
+><B
+>Table 94. Arguments to get_folder_tree</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified user_id of the folder tree owner.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+><DIV
+CLASS="sect3"
+><HR><H4
+CLASS="sect3"
+><A
+NAME="AEN3252"
+>set_parallel -- set a job to run in parallel mode</A
+></H4
+><DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Synopsis</B
+></DT
+><DD
+><P
+>&#13;		r = set_parallel handle job_id
+	      </P
+></DD
+><DT
+><B
+>Description</B
+></DT
+><DD
+><P
+>&#13;		Specify a job to run in parallel processing mode..	      
+	      </P
+></DD
+><DT
+><B
+>Side Effects</B
+></DT
+><DD
+><P
+>&#13;		None.
+	      </P
+></DD
+><DT
+><B
+>Transaction Processing Considerations</B
+></DT
+><DD
+><P
+>&#13;		None, assuming that the database supports transactions with 
+		autocommit (eg., MySQL database with TYPE=InnoDB).
+	      </P
+></DD
+></DL
+></DIV
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN3272"
+></A
+><P
+><B
+>Table 95. Values returned by set_parallel</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Condition</TH
+><TH
+>Values</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>success</TD
+><TD
+>true</TD
+><TD
+>The total number of jobs owned by the specified user.</TD
+></TR
+><TR
+><TD
+>failure</TD
+><TD
+>false or undefined</TD
+><TD
+>&#13;		    Failure occurs if the handle is invalid, or if the job_id 
+                    is invalid.
+		    Additional information about the nature of the failure is provided
+		    by individual language bindings.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+><P
+>&#13;	  <DIV
+CLASS="table"
+><A
+NAME="AEN3293"
+></A
+><P
+><B
+>Table 96. Arguments to set_parallel</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Name of Argument</TH
+><TH
+>Data Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>handle</TD
+><TD
+>database handle</TD
+><TD
+>Handle to an open database connection.</TD
+></TR
+><TR
+><TD
+>job_id</TD
+><TD
+>positive integer</TD
+><TD
+>&#13;		   Specified job_id of the job to run in parallel processing mode.
+		  </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+	</P
+></DIV
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN3313"
+>Function Availability by Language</A
+></H3
+><P
+>&#13;	Not all functions are implemented in each of the three
+	language bindings.
+	<DIV
+CLASS="table"
+><A
+NAME="AEN3316"
+></A
+><P
+><B
+>Table 97. Functions by Language</B
+></P
+><TABLE
+BORDER="1"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Function</TH
+><TH
+>Perl</TH
+><TH
+>Java</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+><A
+HREF="#AEN174"
+>connect</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN244"
+>disconnect</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN301"
+>new_job</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN475"
+>job_history</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN528"
+>get_job</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN413"
+>job_status</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN581"
+>user_jobs</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN647"
+>de_q2c</A
+></TD
+><TD
+>x</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN714"
+>get_cmp_jobs</A
+></TD
+><TD
+>x</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN771"
+>en_q2r</A
+></TD
+><TD
+>x</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN844"
+>de_q2r</A
+></TD
+><TD
+>x</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN911"
+>get_run_jobs</A
+></TD
+><TD
+>x</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN968"
+>end_job</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1051"
+>job_report</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1113"
+>new_dataset</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1193"
+>get_dataset</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1257"
+>update_dataset</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1329"
+>user_datasets</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1391"
+>new_model</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1471"
+>get_model</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1535"
+>update_model</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1607"
+>user_models</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1669"
+>new_user</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1733"
+>update_user</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1802"
+>get_user</A
+></TD
+><TD
+>x</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1865"
+>get_end_table</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1865"
+>get_method_table</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN1963"
+>get_state_table</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2012"
+>abort_job</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2077"
+>get_job_ids</A
+></TD
+><TD
+>x</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2139"
+>de_q2ac</A
+></TD
+><TD
+>x</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2205"
+>de_q2ar</A
+></TD
+><TD
+>x</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2271"
+>get_mail_notice</A
+></TD
+><TD
+>x</TD
+><TD
+>&nbsp;</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2332"
+>get_user_by_id</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2395"
+>set_job_abstract</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2465"
+>new_group</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2528"
+>new_group_member</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2594"
+>get_group_users</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2657"
+>new_folder</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2727"
+>rename_folder</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2797"
+>delete_folder</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2863"
+>move_folder</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2933"
+>move_jobs</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN2999"
+>get_foler_path</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN3064"
+>get_sub_folers</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN3130"
+>user_job_count</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN3191"
+>get_foler_tree</A
+></TD
+><TD
+>&nbsp;</TD
+><TD
+>x</TD
+></TR
+><TR
+><TD
+><A
+HREF="#AEN3252"
+>set_parallel</A
+></TD
+><TD
+>x</TD
+><TD
+>&nbsp;</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+      </P
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

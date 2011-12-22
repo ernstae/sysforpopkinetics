@@ -1,0 +1,279 @@
+<html><head>
+<title>SpkValarray.h: Central Location to Declare valarray</title>
+<meta name="description" id="description" content="SpkValarray.h: Central Location to Declare valarray">
+<meta name="keywords" id="keywords" content=" valarray which to use ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_spkvalarray_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>general</option>
+<option>SpkValarray</option>
+</select>
+</td>
+<td><a href="spkexception.htm" target="_top">Prev</a>
+</td><td><a href="subtraction.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>general-&gt;</option>
+<option>ABA_x</option>
+<option>ABA_xVA</option>
+<option>addition</option>
+<option>AkronBtimesC</option>
+<option>AkronBtimesCRef</option>
+<option>AkronBtimesCVA</option>
+<option>AkronItimesC</option>
+<option>AkronItimesCVA</option>
+<option>allTrue</option>
+<option>allZero</option>
+<option>backDiv</option>
+<option>BlockAlloc</option>
+<option>blockDiagonalDerivative</option>
+<option>centdiff</option>
+<option>centdiffVA</option>
+<option>cholesky</option>
+<option>countTrues</option>
+<option>CovarianceClasses</option>
+<option>elsq</option>
+<option>elsqVA</option>
+<option>elsqFuncOb</option>
+<option>elsq_x</option>
+<option>elsq_xVA</option>
+<option>elsq_xDiag</option>
+<option>elsq_xBlockDiag</option>
+<option>DBL_EPS_EQUAL_MULT</option>
+<option>det</option>
+<option>detVA</option>
+<option>divByScalar</option>
+<option>DMclass</option>
+<option>elementwiseAnd</option>
+<option>elementwiseOr</option>
+<option>File</option>
+<option>FpErrorChecker</option>
+<option>ModelFunction</option>
+<option>ModelDerivative</option>
+<option>getCol</option>
+<option>getMulCols</option>
+<option>getMulRows</option>
+<option>getRow</option>
+<option>getSubblock</option>
+<option>identityNum</option>
+<option>identityVA</option>
+<option>IkronBtimesC</option>
+<option>IkronBtimesCVA</option>
+<option>inverse</option>
+<option>inverseVA</option>
+<option>inxToMax</option>
+<option>isDblEpsEqual</option>
+<option>isDmatEpsEqual</option>
+<option>isGreaterThanOrEqualTo</option>
+<option>isLessThanOrEqualTo</option>
+<option>isSymmetric</option>
+<option>matabs</option>
+<option>matmaxScalar</option>
+<option>matmaxMatrices</option>
+<option>matminScalar</option>
+<option>matminMatrices</option>
+<option>mulByScalar</option>
+<option>multiply</option>
+<option>norm</option>
+<option>Optimizer</option>
+<option>pi</option>
+<option>placeRows</option>
+<option>printInMatrix</option>
+<option>quasinewtonanybox</option>
+<option>replaceIth</option>
+<option>replaceJth</option>
+<option>replaceSubblockDoubleMatrix</option>
+<option>replaceSubblockValarray</option>
+<option>rvec</option>
+<option>rvecVA</option>
+<option>rvecInverse</option>
+<option>SpkError</option>
+<option>SpkException</option>
+<option>SpkValarray</option>
+<option>subtraction</option>
+<option>symmetrize</option>
+<option>symmetrizeVA</option>
+<option>System</option>
+<option>transpose</option>
+<option>transposeRef</option>
+<option>transposeVA</option>
+<option>transposeDerivative</option>
+<option>transposeDerivativeVA</option>
+<option>transposeRowBlocks</option>
+<option>transposeRowBlocksVA</option>
+<option>UTranTimesSymKronSymTimesU</option>
+<option>UTranTimesSymKronSymTimesU_x</option>
+<option>WarningsManager_constructor</option>
+<option>WarningsManager_addWarning</option>
+<option>WarningsManager_addWarningList</option>
+<option>WarningsManager_clearAllWarnings</option>
+<option>WarningsManager_anyWarnings</option>
+<option>WarningsManager_getWarningList</option>
+<option>WarningsManager_getAllWarnings</option>
+</select>
+</td>
+<td>SpkValarray</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>SpkValarray.h: Central Location to Declare valarray</big></big></b></center>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+
+<code><font color="blue"><br>
+SpkValarray.h</font></code> is the central place to control which implementation of
+<code><font color="blue">valarray</font></code> to use throughout the Spk library.  In the header file, a namespace
+that imports a particular implementation of <code><font color="blue">valarray</font></code> is typedef-ed to
+<b>SPK_VA</b>.  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Spk library implementors should be able to switch between different implementations
+of <code><font color="blue">valarray</font></code> by defining a specific macro at the compilation time and the
+chosen <code><font color="blue">valarray</font></code> must be thoroughly used throughout the library.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>By default, <b>std</b> is typedef-ed to <b>SPK_VA</b>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>In this header is also a function defined:
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;template&nbsp;&lt;class&nbsp;T&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::ostream&amp;&nbsp;operator&lt;&lt;(&nbsp;std::ostream&amp;&nbsp;stream,&nbsp;const&nbsp;SPK_VA::valarray&lt;T&gt;&amp;&nbsp;a&nbsp;)<br>
+</span></font></code>This print function displays the contents of the array <i>a</i> enclosed by
+square brackets, separated by a comma in between.  i.e.:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;a[0],&nbsp;a[1],&nbsp;a[2],&nbsp;...&nbsp;a[n]&nbsp;}<br>
+</span>
+</font></code>
+Currently, <b>BB::valarray</b> is supported as an alternative to std::valarray.  
+To use BB::valarray, define <code><font color="blue">BB_VALARRAY</font></code> macro at the compilation time, for example.
+A preprocessor macro can be defined in a project (.dsp) settings dialog box or
+by directly adding to a compiler option list.
+
+<b>From Visual Studio</b>
+<ol type="1"><li>
+From the main menu, go Project -&gt; Settings....  &quot;Project Settings&quot; dialog box will appear.
+
+</li><li>
+
+Click on a project to build from the list in the left pane.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code></li><li>
+Click the C++ tab in the right pane.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code></li><li>
+Choose General from the Category field at the top of the tab if not chosen yet.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code></li><li>
+Add &quot;BB_VALARRAY&quot; to the list of macros in the Preprocessor Definitions field, 
+if you are going to switch to BB::valarray.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code></li><li>
+Click OK.  The change will take in effect next time you compile (full or incremental) the project.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code></li></ol>
+<b>From a command line</b>
+<ol type="1"><li>
+Add &quot;/D BB_VALARRAY&quot; (without the double quotes) to the compiler option when you compile &amp; link
+the project.
+
+</li></ol>
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile and link the following program,
+
+  <code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iomanip&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;cfloat&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;SpkValarray.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;size&nbsp;=&nbsp;3;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;You&nbsp;may&nbsp;also&nbsp;say,&nbsp;&quot;using&nbsp;SPK_VA&quot;&nbsp;at&nbsp;the&nbsp;top&nbsp;of&nbsp;this&nbsp;main()&nbsp;body&nbsp;and&nbsp;use&nbsp;valarray<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;without&nbsp;specifying&nbsp;SPK_VA::&nbsp;on&nbsp;every&nbsp;incident.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;int&gt;&nbsp;iArray(&nbsp;size&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iArray[0]&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iArray[1]&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;iarray[2]&nbsp;=&nbsp;3;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;setiosflags(std::ios::scientific)&nbsp;&lt;&lt;&nbsp;setprecision(DBL_DIG+1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;iArray&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+it will display:
+
+  <code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;{&nbsp;&nbsp;0.0000000000000000e+000,&nbsp;0.0000000000000000e+000,&nbsp;0.0000000000000000e+000&nbsp;}<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/SpkValarray.h
+
+</body>
+</html>

@@ -1,0 +1,347 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Creating Libtool Libraries with Automake</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Creating Libtool Libraries with Automake">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Creating Libtool Libraries with Automake">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC88"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_87.html#SEC87" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Integration with Makefile.am" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_89.html#SEC89" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Linking against Libtool Libraries with Automake" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_90.html#SEC90" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Using libtoolize" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_87.html#SEC87" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Integration with Makefile.am" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_90.html#SEC90" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Using libtoolize" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 11.2.1 Creating Libtool Libraries with Automake </H3>
+<!--docid::SEC88::-->
+<P>
+
+Continuing in the spirit of making Libtool library management look like
+native static archive management, converting a <TT>`Makefile.am'</TT> from
+static archive use to Libtool library use is a matter of changing the
+name of the library, and adding a Libtool prefix somewhere.  For
+example, a <TT>`Makefile.am'</TT> for building a static archive might be:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>lib_LIBRARIES      = libshell.a
+libshell_a_SOURCES = object.c subr.c symbol.c
+</pre></td></tr></table></P><P>
+
+This would build a static archive called <TT>`libshell.a'</TT> consisting of
+the objects <TT>`object.o'</TT>, <TT>`subr.o'</TT> and <TT>`bar.o'</TT>.  To build
+an equivalent Libtool library from the same objects, you change this to:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>lib_LTLIBRARIES     = libshell.la
+libshell_la_SOURCES = object.c subr.c symbol.c
+</pre></td></tr></table></P><P>
+
+The only changes are that the library is now named with a <CODE>.la</CODE>
+suffix,  and the Automake primary is now <SAMP>`LTLIBRARIES'</SAMP>.
+Note that since the name of the library has changed, you also need to
+use <SAMP>`libshell_la_SOURCES'</SAMP>, and similarly for any other Automake
+macros which used to refer to the old archive.  As for native libraries, 
+Libtool library names should begin with the letters <SAMP>`lib'</SAMP>, so that
+the linker will be able to find them when passed <SAMP>`-l'</SAMP> options.
+</P><P>
+
+Often you will need to add extra objects to the library as determined by 
+<CODE>configure</CODE>, but this is also a mechanical process.  When
+building native libraries, the <TT>`Makefile.am'</TT> would have contained:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>libshell_a_LDADD = xmalloc.o @LIBOBJS@
+</pre></td></tr></table></P><P>
+
+To add the same objects to an equivalent Libtool library would require:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>libshell_la_LDADD = xmalloc.lo @LTLIBOBJS@
+</pre></td></tr></table></P><P>
+
+That is, objects added to a Libtool library must be Libtool objects
+(with a <CODE>.lo</CODE>) suffix.  You should add code to <TT>`configure.in'</TT>
+to ensure that <SAMP>`LTALLOCA'</SAMP> and <SAMP>`LTLIBOBJS'</SAMP> are set
+appropriately, See section <A HREF="autobook_86.html#SEC86">11.1.2 Extra Macros for Libtool</A>.  Automake will
+take care of generating appropriate rules for building the Libtool
+objects mentioned in an <SAMP>`LDADD'</SAMP> macro.
+</P><P>
+
+If you want to pass any additional flags to <CODE>libtool</CODE> when it is
+building, you use the <SAMP>`LDFLAGS'</SAMP> macro for that library, like this:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>libshell_la_LDFLAGS = -version-info 1:0:1
+</pre></td></tr></table></P><P>
+
+For a detailed list of all the available options, see section `Link mode' in <CITE>The Libtool Manual</CITE>.
+</P><P>
+
+<BLOCKQUOTE>
+Libtool's use of <SAMP>`-rpath'</SAMP> has been a point of contention for some
+users, since it prevents you from moving shared libraries to another
+location in the library search path.  Or, at least, if you do, all of
+the executables that were linked with <SAMP>`-rpath'</SAMP> set to the old
+location will need to be relinked.
+<P>
+
+We (the Libtool maintainers) assert that always using <SAMP>`-rpath'</SAMP> is
+a good thing:  Mainly because you can guarantee that any executable
+linked with <SAMP>`-rpath'</SAMP> will find the correct version of the
+library, in the rpath directory, that was intended when the executable
+was linked.  Library versions can still be managed correctly, and will
+be found by the run time loader, by installing newer versions to the
+same directory.  Additionally, it is much harder for a malicious user to
+leave a modified copy of system library in a directory that someone
+might wish to list in their <SAMP>`LD_LIBRARY_PATH'</SAMP> in the hope that some
+code they have written will be executed unexpectedly.
+</P><P>
+
+The argument against <SAMP>`-rpath'</SAMP> was instigated when one of the
+GNU/Linux distributions moved some important system libraries to
+another directory to make room for a different version, and discovered
+that all of the executables that relied on these libraries and were
+linked with Libtool no longer worked.  Doing this was, arguably, bad
+system management -- the new libraries should have been placed in a new
+directory, and the old libraries left alone.  Refusing to use
+<SAMP>`-rpath'</SAMP> incase you want to restructure the system library
+directories is a very weak argument.
+</BLOCKQUOTE>
+<P>
+
+The <SAMP>`-rpath'</SAMP> option (which is required for Libtool libraries) is
+automatically supplied by <CODE>automake</CODE> based on the installation
+directory specified with the library primary.
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>lib_LTLIBRARIES = libshell.la
+</pre></td></tr></table></P><P>
+
+The example would use the value of the make macro <CODE>$(libdir)</CODE> as
+the argument to <SAMP>`-rpath'</SAMP>, since that is where the library will be 
+installed.
+</P><P>
+
+A few of the other options you can use in the library <SAMP>`LDFLAGS'</SAMP> are:
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`-no-undefined'</SAMP>
+<DD>Modern architectures allow us to create shared libraries with undefined
+symbols, provided those symbols are resolved (usually by the executable
+which loads the library) at runtime.  Unfortunately, there are some
+architectures (notably AIX and Windows) which require that
+<EM>all</EM> symbols are resolved when the library is linked.  If you know
+that your library has no unresolved symbols at link time, then adding
+this option tells <CODE>libtool</CODE> that it will be able to build a
+shared library, even on architectures which have this requirement.
+<P>
+
+<DT><SAMP>`-static'</SAMP>
+<DD>Using this option will force <CODE>libtool</CODE> to build only a static
+archive for this library.
+<P>
+
+<DT><SAMP>`-release'</SAMP>
+<DD>On occasion, it is desirable to encode the release number of a library
+into its name.  By specifying the release number with this option,
+<CODE>libtool</CODE> will build a library that does this, but will break
+binary compatibility for each change of the release number.  By breaking
+binary compatibility this way, you negate the possibility of fixing bugs 
+in installed programs by installing an updated shared library.  You
+should probably be using <SAMP>`-version-info'</SAMP> instead.
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>libshell_la_LDFLAGS = -release 27
+</pre></td></tr></table></P><P>
+
+The above fragment might create a library called
+<TT>`libshell-27.so.0.0.0'</TT> for example.
+</P><P>
+
+<DT><SAMP>`-version-info'</SAMP>
+<DD>Set the version number of the library according to the native versioning 
+rules based on the numbers supplied, See section <A HREF="autobook_91.html#SEC91">11.4 Library Versioning</A>.  You
+need to be aware that the library version number is for the use of the
+runtime loader, and is completely unrelated to the release number of
+your project.  If you really want to encode the project release into the
+library, you can use <SAMP>`-release'</SAMP> to do it. 
+<P>
+
+If this option is not supplied explicitly, it defaults to
+<SAMP>`-version-info 0:0:0'</SAMP>.
+</DL>
+<P>
+
+<BLOCKQUOTE>
+Historically, the default behaviour of Libtool was as if
+<SAMP>`-no-undefined'</SAMP> was always passed on the command line, but it
+proved to be annoying to developers who had to constantly turn it off so
+that  their ELF libraries could be featureful.  Now it has to be
+defined explicitly if you need it.
+<P>
+
+There are is a tradeoff:
+</P><P>
+
+<UL>
+<LI>
+If you don't specify <SAMP>`-no-undefined'</SAMP>, then Libtool will not build
+shared libraries on platforms which don't allow undefined symbols at
+link time for such a library.
+<P>
+
+<LI>
+It is only safe to specify this flag when you know for certain that
+<EM>all</EM> of the libraries symbols are defined at link time, otherwise
+the <SAMP>`-no-undefined'</SAMP> link will appear to work until it is tried on
+a platform which requires all symbols to be defined.  Libtool will try
+to link the shared library in this case (because you told it that you
+have not left any undefined symbols), but the link will fail, because
+there <STRONG>are</STRONG> undefined symbols in spite of what you told Libtool.
+</UL>
+<P>
+
+For more information about this topic, see <A HREF="autobook_172.html#SEC172">18.3 Portable Library Design</A>.
+</BLOCKQUOTE>
+<P>
+
+<A NAME="Linking against Libtool Libraries with Automake"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

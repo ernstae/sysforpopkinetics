@@ -1,0 +1,38 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.199
+----------------------------------
+USER VISIBLE CHANGES
+
+Multiple Groebner bases are no longer considered to be a bug during an identifiability analysis.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  None.
+
+BY:  Mitch Watrous
+
+WHEN:  January 5, 2007
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.200
+----------------------------------
+USER VISIBLE CHANGES
+
+Nested IF statement and nested IF construct were added to the expression language.  
+Missing operator now is detected and reported as error.
+SIGMA, OMEGA, THETA, ETA, EPS cannot be on the left handside of an equation.
+K(i, j) is detected as wrong format for K, where K is a variable name.
+Any(i) cannot be on left handside of an equation except P(i) and DATA(i).
+For THETA(i), ETA(i) and EPS(i), i must be a positive integer. 
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+628, 639, 642, 643, 663, 676
+
+BY: Jiaji Du
+
+WHEN: January 22, 2007
+

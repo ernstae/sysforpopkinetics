@@ -1,0 +1,36 @@
+<html><head>
+<title>Constructor for static object</title>
+<meta name="description" id="description" content="Constructor for static object">
+<meta name="keywords" id="keywords" content=" matrix Doublematrix constructor for static object "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="doublematrixconstructorstatic.htm" target="_top">section</a>, <a href="doublematrixconstructorstatic_frame2.htm" target="_top">frame</a></div>
+
+<b>Deprecated</b>
+<center>
+<i>
+
+Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This constructor should be used to construct an empty matrix as
+a static matrix object.  It keeps track of the number of the
+objects.  If other constructors are used to create a 
+static matrix object, it will appear as a memory leak.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><i>identity</i> specifies the filename in which the static object,
+<i>A</i>, appears.  You can use an ANSI macro, <code><font color="blue">__FILE__</font></code>
+to automatically obtain the information.
+
+
+<hr>Input File: ../../spk/DoubleMatrix.cpp
+
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>CppAD</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>CppAD</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;      This document demonstrates how to install/update CppAD
+      as part of SPK test environment.
+      </P
+><P
+>&#13;	This document is written for members of
+	the RFPK Software Team and associates and is specific to the
+	computer systems and network installed in the RFPK Laboratory
+	of the Department of Bioengineering of the University of Washington.  RFPK is the Resource for
+	Population Kinetics.  Its work is supported, in part, by grant
+	P41 EB-001975 of the National Institutes of Health (NIH) of
+	the U.S.  Department of Health and Human Services.
+      </P
+><P
+>&#13;	<A
+HREF="#AEN28"
+>Copyright</A
+> (c) 2005, by the University of Washington.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.1</TD
+><TD
+ALIGN="LEFT"
+>Jul 25, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.2</TD
+><TD
+ALIGN="LEFT"
+>Aug 26, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Add libCppAD.a installation</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.4</TD
+><TD
+ALIGN="LEFT"
+>Oct 17, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: bmb</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Use new CppAD install capabilities</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN25"
+></A
+></DT
+><DT
+><A
+HREF="#AEN28"
+>Copyright Notice</A
+></DT
+><DT
+><A
+HREF="#AEN33"
+>Installation</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN25"
+></A
+></H2
+><P
+>&#13;    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN28"
+></A
+>Copyright Notice</H2
+><P
+>&#13;      Copyright (c) 2005,  by the University of Washington.
+      This material may be distributed only subject to the terms and conditions 
+      set forth in the Open Publication License, V1.0 or later
+      (the latest version is presently available
+      <A
+HREF="http://www.opencontent.org/openpub/"
+TARGET="_top"
+>here</A
+>.
+    </P
+><P
+>&#13;    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN33"
+></A
+>Installation</H2
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+CLASS="literallayout"
+>Download&nbsp;current&nbsp;version&nbsp;of&nbsp;CppAD&nbsp;from&nbsp;the&nbsp;web&nbsp;page<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A
+HREF="http://www.coin-or.org/CppAD/Doc/installunix.htm"
+TARGET="_top"
+>&#13;        http://www.coin-or.org/CppAD/Doc/installunix.htm
+        </A
+>&nbsp;<br>
+	into&nbsp;/tmp&nbsp;on&nbsp;the&nbsp;installation&nbsp;machine.<br>
+	</P
+></LI
+><LI
+><P
+>&#13;        Extraction
+        <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;        cd /tmp
+        tar -xvzf CppAD-yy-mm-dd.tar.gz
+        </PRE
+></TD
+></TR
+></TABLE
+>
+        where yy is the year, 
+        mm is the month,
+        and dd is the day 
+        (each as two decimal digits) corresponding to the version of CppAD.
+        This will extract files into a new directory 
+        whose name is cppad-yy-mm-dd.
+        </P
+></LI
+><LI
+><P
+>&#13;        Configure
+        <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;        cd cppad-yy-mm-dd
+        ./configure --prefix=/usr/local POSTFIX_DIR=spktest
+        </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+><LI
+><P
+>&#13;        Make
+        <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;        make
+        </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+><LI
+><P
+>&#13;        Final Installation
+        <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;        su
+        make install
+        </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+></OL
+></DIV
+></DIV
+></BODY
+></HTML
+>

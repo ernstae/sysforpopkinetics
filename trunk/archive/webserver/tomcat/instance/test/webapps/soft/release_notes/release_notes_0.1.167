@@ -1,0 +1,15 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.167
+----------------------------------
+USER VISIBLE CHANGES:
+  user can now use block diagonal covariance structure
+
+OTHER CHANGES:
+  compiler and spkpred code for blockDiag and related unit tests, makefiles etc
+
+RELATED BUG REPORTS:
+ none
+
+BY: David Salinger
+
+WHEN: 2006-04-20

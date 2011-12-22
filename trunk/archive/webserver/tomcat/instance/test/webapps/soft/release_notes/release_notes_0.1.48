@@ -1,0 +1,153 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.40
+----------------------------------
+USER VISABLE CHANGES
+
+Modified the way predicted values, residuals, and weighted residuals 
+are calculated in SPK.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 134
+
+BY: Mitch Watrous
+
+WHEN: January 28, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.41
+----------------------------------
+USER VISIBLE CHANGES
+
+Turned on the restart file machinery for individual level estimation
+and for First Order (FO) population level estimation.
+
+OTHER CHANGES
+
+Made the current objective function parameter available in the Optimizer 
+class and made weighted individual parameters available with the other 
+population level residuals.
+
+RELATED BUG REPORTS:  150, 155
+
+BY:  Mitch Watrous
+
+WHEN:  February 3, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.42
+----------------------------------
+USER VISABLE CHANGES:
+No more libspkcompiler built or installed.  spkcompiler (executable)
+is directly built from source.
+
+OTHER CHANGES:
+Changed the structure in which Spk Compiler source is organized.
+Consequently, all Makefile.am's are modified as well.
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: February 04, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.43
+----------------------------------
+USER VISABLE CHANGES
+The parameter estimates from the latest successful iteration 
+are reported when the optimization failed or did not converge.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 146
+
+BY: Sachiko Honda
+
+WHEN: February 9, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.44
+----------------------------------
+USER VISABLE CHANGES
+
+None
+
+OTHER CHANGES
+
+Made the individual parameter residuals available as an output from the
+individual and population residual functions.
+
+RELATED BUG REPORTS:158
+
+BY:  Mitch Watrous
+
+WHEN:  February 10, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.45
+----------------------------------
+USER VISABLE CHANGES
+Enabled checkpoint so that users can continue
+a job from points where it finished last time.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: February 11, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.46
+----------------------------------
+USER VISIBLE CHANGES
+
+Sometimes either the compiler daemon or the runtime daemon or both
+are not running at the time that a user submits a job. One reason
+for this may be that when the system was rebooted, the daemon was
+not given enough time to remove its lock-file.  A modification has
+been made to  spkcmpd.pl and spkrund.pl to have the lock-file 
+removed as soon as either of these daemons receives a termination
+signal.
+
+OTHER CHANGES: none
+
+RELATED BUG REPORTS: none
+
+BY:	Alan Westhagen
+
+WHEN:	February 11, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.47
+----------------------------------
+USER VISIBLE CHANGES
+
+<RES, WRES>
+New and seperated algorithms for computing weighted residuals
+of predicted values vs. measurement data for individual and 
+population data.
+
+<ETARES, WETARES>
+Additional computations for residuals and weighted residuals
+of parameters for both levels of parameter estimates.
+
+OTHER CHANGES
+Integrated indResiduals() and popResiduals() and have them
+compute PRED, RES, WRES, ETARES and WETARES.
+
+RELATED BUG REPORTS: 152, 153
+
+BY: Sachiko Honda
+
+WHEN: February 14, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.48
+----------------------------------
+USER VISIBLE CHANGES
+The residuals and weighted residuals for ETA are 
+now available in a proper form (ie. vectors).
+These values are labeled ETARES and WETARES, respectively.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: February 23, 2005

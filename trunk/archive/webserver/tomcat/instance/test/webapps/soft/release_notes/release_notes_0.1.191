@@ -1,0 +1,17 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.191
+----------------------------------
+USER VISIBLE CHANGES
+
+Fixed bugs related to residuals.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  624 and 633
+
+BY:  Mitch Watrous
+
+WHEN:  November 1, 2006
+

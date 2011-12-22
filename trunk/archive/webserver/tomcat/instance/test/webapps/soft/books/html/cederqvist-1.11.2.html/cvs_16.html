@@ -1,0 +1,4491 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html40/loose.dtd">
+<HTML>
+<!-- Created on April, 18 2002 by texi2html 1.66 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<HEAD>
+<TITLE>CVS--Concurrent Versions System v1.11.2: CVS commands</TITLE>
+
+<META NAME="description" CONTENT="CVS--Concurrent Versions System v1.11.2: CVS commands">
+<META NAME="keywords" CONTENT="CVS--Concurrent Versions System v1.11.2: CVS commands">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.66">
+
+</HEAD>
+
+<BODY LANG="en" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC113"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_15.html#SEC112"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC114"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_15.html#SEC112"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> A. Guide to CVS commands </H1>
+<!--docid::SEC113::-->
+<P>
+
+This appendix describes the overall structure of
+CVS commands, and describes some commands in
+detail (others are described elsewhere; for a quick
+reference to CVS commands, see section <A HREF="cvs_17.html#SEC155">B. Quick reference to CVS commands</A>).
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC114">A.1 Overall structure of CVS commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC115">A.2 CVS's exit status</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Indicating CVS's success or failure</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC116">A.3 Default options and the ~/.cvsrc file</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Default options with the ~/.csvrc file</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC117">A.4 Global options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Options you give to the left of cvs_command</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC118">A.5 Common command options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Options you give to the right of cvs_command</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC119">A.6 admin--Administration</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Administration</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC121">A.7 checkout--Check out sources for editing</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Checkout sources for editing</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC124">A.8 commit--Check files into the repository</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Check files into the repository</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC129">A.9 diff--Show differences between revisions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Show differences between revisions</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC134">A.10 export--Export sources from CVS, similar to checkout</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Export sources from CVS, similar to checkout</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC136">A.11 history--Show status of files and users</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Show status of files and users</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC138">A.12 import--Import sources into CVS, using vendor branches</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Import sources into CVS, using vendor branches</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC142">A.13 log--Print out log information for files</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Show log messages for files</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC145">A.14 rdiff---'patch' format diffs between releases</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">'patch' format diffs between releases</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC148">A.15 release--Indicate that a Module is no longer in use</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Indicate that a directory is no longer in use</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC152">A.16 update--Bring work tree in sync with repository</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Bring work tree in sync with repository</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="Structure"></A>
+<HR SIZE="6">
+<A NAME="SEC114"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC115"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.1 Overall structure of CVS commands </H2>
+<!--docid::SEC114::-->
+<P>
+
+The overall format of all CVS commands is:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs [ cvs_options ] cvs_command [ command_options ] [ command_args ]
+</pre></td></tr></table><P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>cvs</CODE>
+<DD>The name of the CVS program.
+<P>
+
+</P>
+<DT><CODE>cvs_options</CODE>
+<DD>Some options that affect all sub-commands of CVS.  These are
+described below.
+<P>
+
+</P>
+<DT><CODE>cvs_command</CODE>
+<DD>One of several different sub-commands.  Some of the commands have
+aliases that can be used instead; those aliases are noted in the
+reference manual for that command.  There are only two situations
+where you may omit `<SAMP>cvs_command</SAMP>': `<SAMP>cvs -H</SAMP>' elicits a
+list of available commands, and `<SAMP>cvs -v</SAMP>' displays version
+information on CVS itself.
+<P>
+
+</P>
+<DT><CODE>command_options</CODE>
+<DD>Options that are specific for the command.
+<P>
+
+</P>
+<DT><CODE>command_args</CODE>
+<DD>Arguments to the commands.
+</DL>
+<P>
+
+There is unfortunately some confusion between
+<CODE>cvs_options</CODE> and <CODE>command_options</CODE>.
+`<SAMP>-l</SAMP>', when given as a <CODE>cvs_option</CODE>, only
+affects some of the commands.  When it is given as a
+<CODE>command_option</CODE> is has a different meaning, and
+is accepted by more commands.  In other words, do not
+take the above categorization too seriously.  Look at
+the documentation instead.
+</P>
+<P>
+
+<A NAME="Exit status"></A>
+<HR SIZE="6">
+<A NAME="SEC115"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC114"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC116"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.2 CVS's exit status </H2>
+<!--docid::SEC115::-->
+<P>
+
+CVS can indicate to the calling environment whether it
+succeeded or failed by setting its <EM>exit status</EM>.
+The exact way of testing the exit status will vary from
+one operating system to another.  For example in a unix
+shell script the `<SAMP>$?</SAMP>' variable will be 0 if the
+last command returned a successful exit status, or
+greater than 0 if the exit status indicated failure.
+</P>
+<P>
+
+If CVS is successful, it returns a successful status;
+if there is an error, it prints an error message and
+returns a failure status.  The one exception to this is
+the <CODE>cvs diff</CODE> command.  It will return a
+successful status if it found no differences, or a
+failure status if there were differences or if there
+was an error.  Because this behavior provides no good
+way to detect errors, in the future it is possible that
+<CODE>cvs diff</CODE> will be changed to behave like the
+other CVS commands.
+</P>
+<P>
+
+<A NAME="~/.cvsrc"></A>
+<HR SIZE="6">
+<A NAME="SEC116"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC115"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC117"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.3 Default options and the ~/.cvsrc file </H2>
+<!--docid::SEC116::-->
+<P>
+
+There are some <CODE>command_options</CODE> that are used so
+often that you might have set up an alias or some other
+means to make sure you always specify that option.  One
+example (the one that drove the implementation of the
+`<TT>.cvsrc</TT>' support, actually) is that many people find the
+default output of the `<SAMP>diff</SAMP>' command to be very
+hard to read, and that either context diffs or unidiffs
+are much easier to understand.
+</P>
+<P>
+
+The `<TT>~/.cvsrc</TT>' file is a way that you can add
+default options to <CODE>cvs_commands</CODE> within cvs,
+instead of relying on aliases or other shell scripts.
+</P>
+<P>
+
+The format of the `<TT>~/.cvsrc</TT>' file is simple.  The
+file is searched for a line that begins with the same
+name as the <CODE>cvs_command</CODE> being executed.  If a
+match is found, then the remainder of the line is split
+up (at whitespace characters) into separate options and
+added to the command arguments <EM>before</EM> any
+options from the command line.
+</P>
+<P>
+
+If a command has two names (e.g., <CODE>checkout</CODE> and
+<CODE>co</CODE>), the official name, not necessarily the one
+used on the command line, will be used to match against
+the file.  So if this is the contents of the user's
+`<TT>~/.cvsrc</TT>' file:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>log -N
+diff -uN
+rdiff -u
+update -Pd
+checkout -P
+release -d
+</pre></td></tr></table><P>
+
+the command `<SAMP>cvs checkout foo</SAMP>' would have the
+`<SAMP>-P</SAMP>' option added to the arguments, as well as
+`<SAMP>cvs co foo</SAMP>'.
+</P>
+<P>
+
+With the example file above, the output from `<SAMP>cvs
+diff foobar</SAMP>' will be in unidiff format.  `<SAMP>cvs diff
+-c foobar</SAMP>' will provide context diffs, as usual.
+Getting &quot;old&quot; format diffs would be slightly more
+complicated, because <CODE>diff</CODE> doesn't have an option
+to specify use of the &quot;old&quot; format, so you would need
+`<SAMP>cvs -f diff foobar</SAMP>'.
+</P>
+<P>
+
+In place of the command name you can use <CODE>cvs</CODE> to
+specify global options (see section <A HREF="cvs_16.html#SEC117">A.4 Global options</A>).  For
+example the following line in `<TT>.cvsrc</TT>'
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs -z6
+</pre></td></tr></table><P>
+
+causes CVS to use compression level 6.
+</P>
+<P>
+
+<A NAME="Global options"></A>
+<HR SIZE="6">
+<A NAME="SEC117"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC116"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC118"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.4 Global options </H2>
+<!--docid::SEC117::-->
+<P>
+
+The available `<SAMP>cvs_options</SAMP>' (that are given to the
+left of `<SAMP>cvs_command</SAMP>') are:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>--allow-root=<VAR>rootdir</VAR></CODE>
+<DD>Specify legal CVSROOT directory.  See
+<A HREF="cvs_2.html#SEC30">2.9.3.1 Setting up the server for password authentication</A>.
+<P>
+
+<A NAME="IDX231"></A>
+<A NAME="IDX232"></A>
+</P>
+<DT><CODE>-a</CODE>
+<DD>Authenticate all communication between the client and
+the server.  Only has an effect on the CVS client.
+As of this writing, this is only implemented when using
+a GSSAPI connection (see section <A HREF="cvs_2.html#SEC33">2.9.4 Direct connection with GSSAPI</A>).
+Authentication prevents certain sorts of attacks
+involving hijacking the active TCP connection.
+Enabling authentication does not enable encryption.
+<P>
+
+<A NAME="IDX233"></A>
+<A NAME="IDX234"></A>
+</P>
+<DT><CODE>-b <VAR>bindir</VAR></CODE>
+<DD>In CVS 1.9.18 and older, this specified that
+RCS programs are in the <VAR>bindir</VAR> directory.
+Current versions of CVS do not run RCS
+programs; for compatibility this option is accepted,
+but it does nothing.
+<P>
+
+<A NAME="IDX235"></A>
+<A NAME="IDX236"></A>
+</P>
+<DT><CODE>-T <VAR>tempdir</VAR></CODE>
+<DD>Use <VAR>tempdir</VAR> as the directory where temporary files are
+located.  Overrides the setting of the <CODE>$TMPDIR</CODE> environment
+variable and any precompiled directory.  This parameter should be
+specified as an absolute pathname.
+(When running client/server, `<SAMP>-T</SAMP>' affects only the local process;
+specifying `<SAMP>-T</SAMP>' for the client has no effect on the server and
+vice versa.)
+<P>
+
+<A NAME="IDX237"></A>
+<A NAME="IDX238"></A>
+</P>
+<DT><CODE>-d <VAR>cvs_root_directory</VAR></CODE>
+<DD>Use <VAR>cvs_root_directory</VAR> as the root directory
+pathname of the repository.  Overrides the setting of
+the <CODE>$CVSROOT</CODE> environment variable.  See section <A HREF="cvs_2.html#SEC9">2. The Repository</A>.
+<P>
+
+<A NAME="IDX239"></A>
+<A NAME="IDX240"></A>
+</P>
+<DT><CODE>-e <VAR>editor</VAR></CODE>
+<DD>Use <VAR>editor</VAR> to enter revision log information.  Overrides the
+setting of the <CODE>$CVSEDITOR</CODE> and <CODE>$EDITOR</CODE>
+environment variables.  For more information, see
+<A HREF="cvs_1.html#SEC6">1.3.2 Committing your changes</A>.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Do not read the `<TT>~/.cvsrc</TT>' file.  This
+option is most often used because of the
+non-orthogonality of the CVS option set.  For
+example, the `<SAMP>cvs log</SAMP>' option `<SAMP>-N</SAMP>' (turn off
+display of tag names) does not have a corresponding
+option to turn the display on.  So if you have
+`<SAMP>-N</SAMP>' in the `<TT>~/.cvsrc</TT>' entry for `<SAMP>log</SAMP>',
+you may need to use `<SAMP>-f</SAMP>' to show the tag names.
+<P>
+
+</P>
+<DT><CODE>-H</CODE>
+<DD><DT><CODE>--help</CODE>
+<DD>Display usage information about the specified `<SAMP>cvs_command</SAMP>'
+(but do not actually execute the command).  If you don't specify
+a command name, `<SAMP>cvs -H</SAMP>' displays overall help for
+CVS, including a list of other help options.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Do not log the `<SAMP>cvs_command</SAMP>' in the command history (but execute it
+anyway).  See section <A HREF="cvs_16.html#SEC136">A.11 history--Show status of files and users</A>, for information on command history.
+<P>
+
+<A NAME="IDX241"></A>
+</P>
+<DT><CODE>-n</CODE>
+<DD>Do not change any files.  Attempt to execute the
+`<SAMP>cvs_command</SAMP>', but only to issue reports; do not remove,
+update, or merge any existing files, or create any new files.
+<P>
+
+Note that CVS will not necessarily produce exactly
+the same output as without `<SAMP>-n</SAMP>'.  In some cases
+the output will be the same, but in other cases
+CVS will skip some of the processing that would
+have been required to produce the exact same output.
+</P>
+<P>
+
+</P>
+<DT><CODE>-Q</CODE>
+<DD>Cause the command to be really quiet; the command will only
+generate output for serious problems.
+<P>
+
+</P>
+<DT><CODE>-q</CODE>
+<DD>Cause the command to be somewhat quiet; informational messages,
+such as reports of recursion through subdirectories, are
+suppressed.
+<P>
+
+<A NAME="IDX242"></A>
+</P>
+<DT><CODE>-r</CODE>
+<DD>Make new working files read-only.  Same effect
+as if the <CODE>$CVSREAD</CODE> environment variable is set
+(see section <A HREF="cvs_19.html#SEC180">D. All environment variables which affect CVS</A>).  The default is to
+make working files writable, unless watches are on
+(see section <A HREF="cvs_10.html#SEC89">10.6 Mechanisms to track who is editing files</A>).
+<P>
+
+</P>
+<DT><CODE>-s <VAR>variable</VAR>=<VAR>value</VAR></CODE>
+<DD>Set a user variable (see section <A HREF="cvs_18.html#SEC178">C.8 Expansions in administrative files</A>).
+<P>
+
+<A NAME="IDX243"></A>
+</P>
+<DT><CODE>-t</CODE>
+<DD>Trace program execution; display messages showing the steps of
+CVS activity.  Particularly useful with `<SAMP>-n</SAMP>' to explore the
+potential impact of an unfamiliar command.
+<P>
+
+</P>
+<DT><CODE>-v</CODE>
+<DD><DT><CODE>--version</CODE>
+<DD>Display version and copyright information for CVS.
+<P>
+
+<A NAME="IDX244"></A>
+<A NAME="IDX245"></A>
+</P>
+<DT><CODE>-w</CODE>
+<DD>Make new working files read-write.  Overrides the
+setting of the <CODE>$CVSREAD</CODE> environment variable.
+Files are created read-write by default, unless <CODE>$CVSREAD</CODE> is
+set or `<SAMP>-r</SAMP>' is given.
+<P>
+
+</P>
+<DT><CODE>-x</CODE>
+<DD><A NAME="IDX246"></A>
+Encrypt all communication between the client and the
+server.  Only has an effect on the CVS client.  As
+of this writing, this is only implemented when using a
+GSSAPI connection (see section <A HREF="cvs_2.html#SEC33">2.9.4 Direct connection with GSSAPI</A>) or a
+Kerberos connection (see section <A HREF="cvs_2.html#SEC34">2.9.5 Direct connection with kerberos</A>).
+Enabling encryption implies that message traffic is
+also authenticated.  Encryption support is not
+available by default; it must be enabled using a
+special configure option, `<TT>--enable-encryption</TT>',
+when you build CVS.
+<P>
+
+</P>
+<DT><CODE>-z <VAR>gzip-level</VAR></CODE>
+<DD><A NAME="IDX247"></A>
+<A NAME="IDX248"></A>
+Set the compression level.
+Valid levels are 1 (high speed, low compression) to
+9 (low speed, high compression), or 0 to disable
+compression (the default).
+Only has an effect on the CVS client.
+<P>
+
+</DL>
+<P>
+
+<A NAME="Common options"></A>
+<HR SIZE="6">
+<A NAME="SEC118"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC117"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC119"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.5 Common command options </H2>
+<!--docid::SEC118::-->
+<P>
+
+This section describes the `<SAMP>command_options</SAMP>' that
+are available across several CVS commands.  These
+options are always given to the right of
+`<SAMP>cvs_command</SAMP>'. Not all
+commands support all of these options; each option is
+only supported for commands where it makes sense.
+However, when a command has one of these options you
+can almost always count on the same behavior of the
+option as in other commands.  (Other command options,
+which are listed with the individual commands, may have
+different behavior from one CVS command to the other).
+</P>
+<P>
+
+<STRONG>Warning:</STRONG> the `<SAMP>history</SAMP>' command is an exception; it supports
+many options that conflict even with these standard options.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<A NAME="IDX249"></A>
+<A NAME="IDX250"></A>
+<A NAME="IDX251"></A>
+<DT><CODE>-D <VAR>date_spec</VAR></CODE>
+<DD>Use the most recent revision no later than <VAR>date_spec</VAR>.
+<VAR>date_spec</VAR> is a single argument, a date description
+specifying a date in the past.
+<P>
+
+The specification is <EM>sticky</EM> when you use it to make a
+private copy of a source file; that is, when you get a working
+file using `<SAMP>-D</SAMP>', CVS records the date you specified, so that
+further updates in the same directory will use the same date
+(for more information on sticky tags/dates, see section <A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A>).
+</P>
+<P>
+
+`<SAMP>-D</SAMP>' is available with the <CODE>annotate</CODE>, <CODE>checkout</CODE>,
+<CODE>diff</CODE>, <CODE>export</CODE>, <CODE>history</CODE>,
+<CODE>rdiff</CODE>, <CODE>rtag</CODE>, and <CODE>update</CODE> commands.
+(The <CODE>history</CODE> command uses this option in a
+slightly different way; see section <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>).
+</P>
+<P>
+
+<A NAME="IDX252"></A>
+<A NAME="IDX253"></A>
+A wide variety of date formats are supported by
+CVS.  The most standard ones are ISO8601 (from the
+International Standards Organization) and the Internet
+e-mail standard (specified in RFC822 as amended by
+RFC1123).
+</P>
+<P>
+
+ISO8601 dates have many variants but a few examples
+are:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>1972-09-24
+1972-09-24 20:05
+</pre></td></tr></table><P>
+
+There are a lot more ISO8601 date formats, and CVS
+accepts many of them, but you probably don't want to
+hear the <EM>whole</EM> long story :-).
+</P>
+<P>
+
+In addition to the dates allowed in Internet e-mail
+itself, CVS also allows some of the fields to be
+omitted.  For example:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>24 Sep 1972 20:05
+24 Sep
+</pre></td></tr></table><P>
+
+The date is interpreted as being in the
+local timezone, unless a specific timezone is
+specified.
+</P>
+<P>
+
+These two date formats are preferred.  However,
+CVS currently accepts a wide variety of other date
+formats.  They are intentionally not documented here in
+any detail, and future versions of CVS might not
+accept all of them.
+</P>
+<P>
+
+One such format is
+<CODE><VAR>month</VAR>/<VAR>day</VAR>/<VAR>year</VAR></CODE>.  This may
+confuse people who are accustomed to having the month
+and day in the other order; `<SAMP>1/4/96</SAMP>' is January 4,
+not April 1.
+</P>
+<P>
+
+Remember to quote the argument to the `<SAMP>-D</SAMP>'
+flag so that your shell doesn't interpret spaces as
+argument separators.  A command using the `<SAMP>-D</SAMP>'
+flag can look like this:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs diff -D &quot;1 hour ago&quot; cvs.texinfo
+</pre></td></tr></table><P>
+
+<A NAME="IDX254"></A>
+</P>
+<DT><CODE>-f</CODE>
+<DD>When you specify a particular date or tag to CVS commands, they
+normally ignore files that do not contain the tag (or did not
+exist prior to the date) that you specified.  Use the `<SAMP>-f</SAMP>' option
+if you want files retrieved even when there is no match for the
+tag or date.  (The most recent revision of the file
+will be used).
+<P>
+
+Note that even with `<SAMP>-f</SAMP>', a tag that you specify
+must exist (that is, in some file, not necessary in
+every file).  This is so that CVS will continue to
+give an error if you mistype a tag name.
+</P>
+<P>
+
+`<SAMP>-f</SAMP>' is available with these commands:
+<CODE>annotate</CODE>, <CODE>checkout</CODE>, <CODE>export</CODE>,
+<CODE>rdiff</CODE>, <CODE>rtag</CODE>, and <CODE>update</CODE>.
+</P>
+<P>
+
+<STRONG>Warning:</STRONG>  The <CODE>commit</CODE> and <CODE>remove</CODE>
+commands also have a
+`<SAMP>-f</SAMP>' option, but it has a different behavior for
+those commands.  See <A HREF="cvs_16.html#SEC125">A.8.1 commit options</A>, and
+<A HREF="cvs_7.html#SEC68">7.2 Removing files</A>.
+</P>
+<P>
+
+</P>
+<DT><CODE>-k <VAR>kflag</VAR></CODE>
+<DD>Alter the default processing of keywords.
+See section <A HREF="cvs_12.html#SEC98">12. Keyword substitution</A>, for the meaning of
+<VAR>kflag</VAR>.  Your <VAR>kflag</VAR> specification is
+<EM>sticky</EM> when you use it to create a private copy
+of a source file; that is, when you use this option
+with the <CODE>checkout</CODE> or <CODE>update</CODE> commands,
+CVS associates your selected <VAR>kflag</VAR> with the
+file, and continues to use it with future update
+commands on the same file until you specify otherwise.
+<P>
+
+The `<SAMP>-k</SAMP>' option is available with the <CODE>add</CODE>,
+<CODE>checkout</CODE>, <CODE>diff</CODE>, <CODE>import</CODE> and
+<CODE>update</CODE> commands.
+</P>
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory, rather than
+recursing through subdirectories.
+<P>
+
+<STRONG>Warning:</STRONG> this is not the same
+as the overall `<SAMP>cvs -l</SAMP>' option, which you can specify to the
+left of a cvs command!
+</P>
+<P>
+
+Available with the following commands: <CODE>annotate</CODE>, <CODE>checkout</CODE>,
+<CODE>commit</CODE>, <CODE>diff</CODE>, <CODE>edit</CODE>, <CODE>editors</CODE>, <CODE>export</CODE>,
+<CODE>log</CODE>, <CODE>rdiff</CODE>, <CODE>remove</CODE>, <CODE>rtag</CODE>,
+<CODE>status</CODE>, <CODE>tag</CODE>, <CODE>unedit</CODE>, <CODE>update</CODE>, <CODE>watch</CODE>,
+and <CODE>watchers</CODE>.
+</P>
+<P>
+
+<A NAME="IDX255"></A>
+<A NAME="IDX256"></A>
+</P>
+<DT><CODE>-m <VAR>message</VAR></CODE>
+<DD>Use <VAR>message</VAR> as log information, instead of
+invoking an editor.
+<P>
+
+Available with the following commands: <CODE>add</CODE>,
+<CODE>commit</CODE> and <CODE>import</CODE>.
+</P>
+<P>
+
+</P>
+<DT><CODE>-n</CODE>
+<DD>Do not run any checkout/commit/tag program.  (A program can be
+specified to run on each of these activities, in the modules
+database (see section <A HREF="cvs_18.html#SEC157">C.1 The modules file</A>); this option bypasses it).
+<P>
+
+<STRONG>Warning:</STRONG> this is not the same as the overall `<SAMP>cvs -n</SAMP>'
+option, which you can specify to the left of a cvs command!
+</P>
+<P>
+
+Available with the <CODE>checkout</CODE>, <CODE>commit</CODE>, <CODE>export</CODE>,
+and <CODE>rtag</CODE> commands.
+</P>
+<P>
+
+</P>
+<DT><CODE>-P</CODE>
+<DD>Prune empty directories.  See <A HREF="cvs_7.html#SEC69">7.3 Removing directories</A>.
+<P>
+
+</P>
+<DT><CODE>-p</CODE>
+<DD>Pipe the files retrieved from the repository to standard output,
+rather than writing them in the current directory.  Available
+with the <CODE>checkout</CODE> and <CODE>update</CODE> commands.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Process directories recursively.  This is on by default.
+<P>
+
+Available with the following commands: <CODE>annotate</CODE>, <CODE>checkout</CODE>,
+<CODE>commit</CODE>, <CODE>diff</CODE>, <CODE>edit</CODE>, <CODE>editors</CODE>, <CODE>export</CODE>,
+<CODE>rdiff</CODE>, <CODE>remove</CODE>, <CODE>rtag</CODE>,
+<CODE>status</CODE>, <CODE>tag</CODE>, <CODE>unedit</CODE>, <CODE>update</CODE>, <CODE>watch</CODE>,
+and <CODE>watchers</CODE>.
+</P>
+<P>
+
+</P>
+<DT><CODE>-r <VAR>tag</VAR></CODE>
+<DD><A NAME="IDX257"></A>
+<A NAME="IDX258"></A>
+Use the revision specified by the <VAR>tag</VAR> argument instead of the
+default <EM>head</EM> revision.  As well as arbitrary tags defined
+with the <CODE>tag</CODE> or <CODE>rtag</CODE> command, two special tags are
+always available: `<SAMP>HEAD</SAMP>' refers to the most recent version
+available in the repository, and `<SAMP>BASE</SAMP>' refers to the
+revision you last checked out into the current working directory.
+<P>
+
+The tag specification is sticky when you use this
+with <CODE>checkout</CODE> or <CODE>update</CODE> to make your own
+copy of a file: CVS remembers the tag and continues to use it on
+future update commands, until you specify otherwise (for more information
+on sticky tags/dates, see section <A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A>).
+</P>
+<P>
+
+The tag can be either a symbolic or numeric tag, as
+described in <A HREF="cvs_4.html#SEC48">4.4 Tags--Symbolic revisions</A>, or the name of a branch, as
+described in <A HREF="cvs_5.html#SEC54">5. Branching and merging</A>.
+</P>
+<P>
+
+Specifying the `<SAMP>-q</SAMP>' global option along with the
+`<SAMP>-r</SAMP>' command option is often useful, to suppress
+the warning messages when the RCS file
+does not contain the specified tag.
+</P>
+<P>
+
+<STRONG>Warning:</STRONG> this is not the same as the overall `<SAMP>cvs -r</SAMP>' option,
+which you can specify to the left of a CVS command!
+</P>
+<P>
+
+`<SAMP>-r</SAMP>' is available with the <CODE>checkout</CODE>, <CODE>commit</CODE>,
+<CODE>diff</CODE>, <CODE>history</CODE>, <CODE>export</CODE>, <CODE>rdiff</CODE>,
+<CODE>rtag</CODE>, and <CODE>update</CODE> commands.
+</P>
+<P>
+
+</P>
+<DT><CODE>-W</CODE>
+<DD>Specify file names that should be filtered.  You can
+use this option repeatedly.  The spec can be a file
+name pattern of the same type that you can specify in
+the `<TT>.cvswrappers</TT>' file.
+Available with the following commands: <CODE>import</CODE>,
+and <CODE>update</CODE>.
+<P>
+
+</DL>
+<P>
+
+<A NAME="admin"></A>
+<HR SIZE="6">
+<A NAME="SEC119"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC118"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC120"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.6 admin--Administration </H2>
+<!--docid::SEC119::-->
+<P>
+
+<UL>
+<LI>
+Requires: repository, working directory.
+<LI>
+Changes: repository.
+<LI>
+Synonym: rcs
+</UL>
+<P>
+
+This is the CVS interface to assorted
+administrative facilities.  Some of them have
+questionable usefulness for CVS but exist for
+historical purposes.  Some of the questionable options
+are likely to disappear in the future.  This command
+<EM>does</EM> work recursively, so extreme care should be
+used.
+</P>
+<P>
+
+<A NAME="IDX259"></A>
+On unix, if there is a group named <CODE>cvsadmin</CODE>,
+only members of that group can run <CODE>cvs admin</CODE>
+(except for the <CODE>cvs admin -k</CODE> command, which can
+be run by anybody).  This group should exist on the
+server, or any system running the non-client/server
+CVS.  To disallow <CODE>cvs admin</CODE> for all users,
+create a group with no users in it.  On NT, the
+<CODE>cvsadmin</CODE> feature does not exist and all users
+can run <CODE>cvs admin</CODE>.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC120">A.6.1 admin options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="admin options"></A>
+<HR SIZE="6">
+<A NAME="SEC120"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC119"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC121"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC119"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.6.1 admin options </H3>
+<!--docid::SEC120::-->
+<P>
+
+Some of these options have questionable usefulness for
+CVS but exist for historical purposes.  Some even
+make it impossible to use CVS until you undo the
+effect!
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-A<VAR>oldfile</VAR></CODE>
+<DD>Might not work together with CVS.  Append the
+access list of <VAR>oldfile</VAR> to the access list of the
+RCS file.
+<P>
+
+</P>
+<DT><CODE>-a<VAR>logins</VAR></CODE>
+<DD>Might not work together with CVS.  Append the
+login names appearing in the comma-separated list
+<VAR>logins</VAR> to the access list of the RCS file.
+<P>
+
+</P>
+<DT><CODE>-b[<VAR>rev</VAR>]</CODE>
+<DD>Set the default branch to <VAR>rev</VAR>.  In CVS, you
+normally do not manipulate default branches; sticky
+tags (see section <A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A>) are a better way to decide
+which branch you want to work on.  There is one reason
+to run <CODE>cvs admin -b</CODE>: to revert to the vendor's
+version when using vendor branches (see section <A HREF="cvs_13.html#SEC107">13.3 Reverting to the latest vendor release</A>).
+There can be no space between `<SAMP>-b</SAMP>' and its argument.
+<P>
+
+<A NAME="IDX260"></A>
+</P>
+<DT><CODE>-c<VAR>string</VAR></CODE>
+<DD>Sets the comment leader to <VAR>string</VAR>.  The comment
+leader is not used by current versions of CVS or
+RCS 5.7.  Therefore, you can almost surely not
+worry about it.  See section <A HREF="cvs_12.html#SEC98">12. Keyword substitution</A>.
+<P>
+
+</P>
+<DT><CODE>-e[<VAR>logins</VAR>]</CODE>
+<DD>Might not work together with CVS.  Erase the login
+names appearing in the comma-separated list
+<VAR>logins</VAR> from the access list of the RCS file.  If
+<VAR>logins</VAR> is omitted, erase the entire access list.
+There can be no space between `<SAMP>-e</SAMP>' and its argument.
+<P>
+
+</P>
+<DT><CODE>-I</CODE>
+<DD>Run interactively, even if the standard input is not a
+terminal.  This option does not work with the
+client/server CVS and is likely to disappear in
+a future release of CVS.
+<P>
+
+</P>
+<DT><CODE>-i</CODE>
+<DD>Useless with CVS.  This creates and initializes a
+new RCS file, without depositing a revision.  With
+CVS, add files with the <CODE>cvs add</CODE> command
+(see section <A HREF="cvs_7.html#SEC67">7.1 Adding files to a directory</A>).
+<P>
+
+</P>
+<DT><CODE>-k<VAR>subst</VAR></CODE>
+<DD>Set the default keyword
+substitution to <VAR>subst</VAR>.  See section <A HREF="cvs_12.html#SEC98">12. Keyword substitution</A>.  Giving an explicit `<SAMP>-k</SAMP>' option to
+<CODE>cvs update</CODE>, <CODE>cvs export</CODE>, or <CODE>cvs
+checkout</CODE> overrides this default.
+<P>
+
+</P>
+<DT><CODE>-l[<VAR>rev</VAR>]</CODE>
+<DD>Lock the revision with number <VAR>rev</VAR>.  If a branch
+is given, lock the latest revision on that branch.  If
+<VAR>rev</VAR> is omitted, lock the latest revision on the
+default branch.  There can be no space between
+`<SAMP>-l</SAMP>' and its argument.
+<P>
+
+This can be used in conjunction with the
+`<TT>rcslock.pl</TT>' script in the `<TT>contrib</TT>'
+directory of the CVS source distribution to
+provide reserved checkouts (where only one user can be
+editing a given file at a time).  See the comments in
+that file for details (and see the `<TT>README</TT>' file
+in that directory for disclaimers about the unsupported
+nature of contrib).  According to comments in that
+file, locking must set to strict (which is the default).
+</P>
+<P>
+
+</P>
+<DT><CODE>-L</CODE>
+<DD>Set locking to strict.  Strict locking means that the
+owner of an RCS file is not exempt from locking for
+checkin.  For use with CVS, strict locking must be
+set; see the discussion under the `<SAMP>-l</SAMP>' option above.
+<P>
+
+<A NAME="IDX261"></A>
+<A NAME="IDX262"></A>
+<A NAME="IDX263"></A>
+<A NAME="IDX264"></A>
+<A NAME="IDX265"></A>
+</P>
+<DT><CODE>-m<VAR>rev</VAR>:<VAR>msg</VAR></CODE>
+<DD>Replace the log message of revision <VAR>rev</VAR> with
+<VAR>msg</VAR>.
+<P>
+
+</P>
+<DT><CODE>-N<VAR>name</VAR>[:[<VAR>rev</VAR>]]</CODE>
+<DD>Act like `<SAMP>-n</SAMP>', except override any previous
+assignment of <VAR>name</VAR>.  For use with magic branches,
+see <A HREF="cvs_5.html#SEC59">5.5 Magic branch numbers</A>.
+<P>
+
+</P>
+<DT><CODE>-n<VAR>name</VAR>[:[<VAR>rev</VAR>]]</CODE>
+<DD>Associate the symbolic name <VAR>name</VAR> with the branch
+or revision <VAR>rev</VAR>.  It is normally better to use
+`<SAMP>cvs tag</SAMP>' or `<SAMP>cvs rtag</SAMP>' instead.  Delete the
+symbolic name if both `<SAMP>:</SAMP>' and <VAR>rev</VAR> are
+omitted; otherwise, print an error message if
+<VAR>name</VAR> is already associated with another number.
+If <VAR>rev</VAR> is symbolic, it is expanded before
+association.  A <VAR>rev</VAR> consisting of a branch number
+followed by a `<SAMP>.</SAMP>' stands for the current latest
+revision in the branch.  A `<SAMP>:</SAMP>' with an empty
+<VAR>rev</VAR> stands for the current latest revision on the
+default branch, normally the trunk.  For example,
+`<SAMP>cvs admin -n<VAR>name</VAR>:</SAMP>' associates <VAR>name</VAR> with the
+current latest revision of all the RCS files;
+this contrasts with `<SAMP>cvs admin -n<VAR>name</VAR>:$</SAMP>' which
+associates <VAR>name</VAR> with the revision numbers
+extracted from keyword strings in the corresponding
+working files.
+<P>
+
+<A NAME="IDX266"></A>
+<A NAME="IDX267"></A>
+<A NAME="IDX268"></A>
+</P>
+<DT><CODE>-o<VAR>range</VAR></CODE>
+<DD>Deletes (<EM>outdates</EM>) the revisions given by
+<VAR>range</VAR>.
+<P>
+
+Note that this command can be quite dangerous unless
+you know <EM>exactly</EM> what you are doing (for example
+see the warnings below about how the
+<VAR>rev1</VAR>:<VAR>rev2</VAR> syntax is confusing).
+</P>
+<P>
+
+If you are short on disc this option might help you.
+But think twice before using it--there is no way short
+of restoring the latest backup to undo this command!
+If you delete different revisions than you planned,
+either due to carelessness or (heaven forbid) a CVS
+bug, there is no opportunity to correct the error
+before the revisions are deleted.  It probably would be
+a good idea to experiment on a copy of the repository
+first.
+</P>
+<P>
+
+Specify <VAR>range</VAR> in one of the following ways:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE><VAR>rev1</VAR>::<VAR>rev2</VAR></CODE>
+<DD>Collapse all revisions between rev1 and rev2, so that
+CVS only stores the differences associated with going
+from rev1 to rev2, not intermediate steps.  For
+example, after `<SAMP>-o 1.3::1.5</SAMP>' one can retrieve
+revision 1.3, revision 1.5, or the differences to get
+from 1.3 to 1.5, but not the revision 1.4, or the
+differences between 1.3 and 1.4.  Other examples:
+`<SAMP>-o 1.3::1.4</SAMP>' and `<SAMP>-o 1.3::1.3</SAMP>' have no
+effect, because there are no intermediate revisions to
+remove.
+<P>
+
+</P>
+<DT><CODE>::<VAR>rev</VAR></CODE>
+<DD>Collapse revisions between the beginning of the branch
+containing <VAR>rev</VAR> and <VAR>rev</VAR> itself.  The
+branchpoint and <VAR>rev</VAR> are left intact.  For
+example, `<SAMP>-o ::1.3.2.6</SAMP>' deletes revision 1.3.2.1,
+revision 1.3.2.5, and everything in between, but leaves
+1.3 and 1.3.2.6 intact.
+<P>
+
+</P>
+<DT><CODE><VAR>rev</VAR>::</CODE>
+<DD>Collapse revisions between <VAR>rev</VAR> and the end of the
+branch containing <VAR>rev</VAR>.  Revision <VAR>rev</VAR> is
+left intact but the head revision is deleted.
+<P>
+
+</P>
+<DT><CODE><VAR>rev</VAR></CODE>
+<DD>Delete the revision <VAR>rev</VAR>.  For example, `<SAMP>-o
+1.3</SAMP>' is equivalent to `<SAMP>-o 1.2::1.4</SAMP>'.
+<P>
+
+</P>
+<DT><CODE><VAR>rev1</VAR>:<VAR>rev2</VAR></CODE>
+<DD>Delete the revisions from <VAR>rev1</VAR> to <VAR>rev2</VAR>,
+inclusive, on the same branch.  One will not be able to
+retrieve <VAR>rev1</VAR> or <VAR>rev2</VAR> or any of the
+revisions in between.  For example, the command
+`<SAMP>cvs admin -oR_1_01:R_1_02 .</SAMP>' is rarely useful.
+It means to delete revisions up to, and including, the
+tag R_1_02.  But beware!  If there are files that have not
+changed between R_1_02 and R_1_03 the file will have
+<EM>the same</EM> numerical revision number assigned to
+the tags R_1_02 and R_1_03.  So not only will it be
+impossible to retrieve R_1_02; R_1_03 will also have to
+be restored from the tapes!  In most cases you want to
+specify <VAR>rev1</VAR>::<VAR>rev2</VAR> instead.
+<P>
+
+</P>
+<DT><CODE>:<VAR>rev</VAR></CODE>
+<DD>Delete revisions from the beginning of the
+branch containing <VAR>rev</VAR> up to and including
+<VAR>rev</VAR>.
+<P>
+
+</P>
+<DT><CODE><VAR>rev</VAR>:</CODE>
+<DD>Delete revisions from revision <VAR>rev</VAR>, including
+<VAR>rev</VAR> itself, to the end of the branch containing
+<VAR>rev</VAR>.
+</DL>
+<P>
+
+None of the revisions to be deleted may have
+branches or locks.
+</P>
+<P>
+
+If any of the revisions to be deleted have symbolic
+names, and one specifies one of the `<SAMP>::</SAMP>' syntaxes,
+then CVS will give an error and not delete any
+revisions.  If you really want to delete both the
+symbolic names and the revisions, first delete the
+symbolic names with <CODE>cvs tag -d</CODE>, then run
+<CODE>cvs admin -o</CODE>.  If one specifies the
+non-`<SAMP>::</SAMP>' syntaxes, then CVS will delete the
+revisions but leave the symbolic names pointing to
+nonexistent revisions.  This behavior is preserved for
+compatibility with previous versions of CVS, but
+because it isn't very useful, in the future it may
+change to be like the `<SAMP>::</SAMP>' case.
+</P>
+<P>
+
+Due to the way CVS handles branches <VAR>rev</VAR>
+cannot be specified symbolically if it is a branch.
+See section <A HREF="cvs_5.html#SEC59">5.5 Magic branch numbers</A>, for an explanation.
+</P>
+<P>
+
+Make sure that no-one has checked out a copy of the
+revision you outdate.  Strange things will happen if he
+starts to edit it and tries to check it back in.  For
+this reason, this option is not a good way to take back
+a bogus commit; commit a new revision undoing the bogus
+change instead (see section <A HREF="cvs_5.html#SEC62">5.8 Merging differences between any two revisions</A>).
+</P>
+<P>
+
+</P>
+<DT><CODE>-q</CODE>
+<DD>Run quietly; do not print diagnostics.
+<P>
+
+</P>
+<DT><CODE>-s<VAR>state</VAR>[:<VAR>rev</VAR>]</CODE>
+<DD>Useful with CVS.  Set the state attribute of the
+revision <VAR>rev</VAR> to <VAR>state</VAR>.  If <VAR>rev</VAR> is a
+branch number, assume the latest revision on that
+branch.  If <VAR>rev</VAR> is omitted, assume the latest
+revision on the default branch.  Any identifier is
+acceptable for <VAR>state</VAR>.  A useful set of states is
+`<SAMP>Exp</SAMP>' (for experimental), `<SAMP>Stab</SAMP>' (for
+stable), and `<SAMP>Rel</SAMP>' (for released).  By default,
+the state of a new revision is set to `<SAMP>Exp</SAMP>' when
+it is created.  The state is visible in the output from
+<VAR>cvs log</VAR> (see section <A HREF="cvs_16.html#SEC142">A.13 log--Print out log information for files</A>), and in the
+`<SAMP>$</SAMP>'Log$ and `<SAMP>$</SAMP>'State$ keywords
+(see section <A HREF="cvs_12.html#SEC98">12. Keyword substitution</A>).  Note that CVS
+uses the <CODE>dead</CODE> state for its own purposes; to
+take a file to or from the <CODE>dead</CODE> state use
+commands like <CODE>cvs remove</CODE> and <CODE>cvs add</CODE>, not
+<CODE>cvs admin -s</CODE>.
+<P>
+
+</P>
+<DT><CODE>-t[<VAR>file</VAR>]</CODE>
+<DD>Useful with CVS.  Write descriptive text from the
+contents of the named <VAR>file</VAR> into the RCS file,
+deleting the existing text.  The <VAR>file</VAR> pathname
+may not begin with `<SAMP>-</SAMP>'.  The descriptive text can be seen in the
+output from `<SAMP>cvs log</SAMP>' (see section <A HREF="cvs_16.html#SEC142">A.13 log--Print out log information for files</A>).
+There can be no space between `<SAMP>-t</SAMP>' and its argument.
+<P>
+
+If <VAR>file</VAR> is omitted,
+obtain the text from standard input, terminated by
+end-of-file or by a line containing `<SAMP>.</SAMP>' by itself.
+Prompt for the text if interaction is possible; see
+`<SAMP>-I</SAMP>'.
+</P>
+<P>
+
+</P>
+<DT><CODE>-t-<VAR>string</VAR></CODE>
+<DD>Similar to `<SAMP>-t<VAR>file</VAR></SAMP>'. Write descriptive text
+from the <VAR>string</VAR> into the RCS file, deleting
+the existing text.
+There can be no space between `<SAMP>-t</SAMP>' and its argument.
+<P>
+
+</P>
+<DT><CODE>-U</CODE>
+<DD>Set locking to non-strict.  Non-strict locking means
+that the owner of a file need not lock a revision for
+checkin.  For use with CVS, strict locking must be
+set; see the discussion under the `<SAMP>-l</SAMP>' option
+above.
+<P>
+
+</P>
+<DT><CODE>-u[<VAR>rev</VAR>]</CODE>
+<DD>See the option `<SAMP>-l</SAMP>' above, for a discussion of
+using this option with CVS.  Unlock the revision
+with number <VAR>rev</VAR>.  If a branch is given, unlock
+the latest revision on that branch.  If <VAR>rev</VAR> is
+omitted, remove the latest lock held by the caller.
+Normally, only the locker of a revision may unlock it;
+somebody else unlocking a revision breaks the lock.
+This causes the original locker to be sent a <CODE>commit</CODE>
+notification (see section <A HREF="cvs_10.html#SEC91">10.6.2 Telling CVS to notify you</A>).
+There can be no space between `<SAMP>-u</SAMP>' and its argument.
+<P>
+
+</P>
+<DT><CODE>-V<VAR>n</VAR></CODE>
+<DD>In previous versions of CVS, this option meant to
+write an RCS file which would be acceptable to
+RCS version <VAR>n</VAR>, but it is now obsolete and
+specifying it will produce an error.
+<P>
+
+</P>
+<DT><CODE>-x<VAR>suffixes</VAR></CODE>
+<DD>In previous versions of CVS, this was documented
+as a way of specifying the names of the RCS
+files.  However, CVS has always required that the
+RCS files used by CVS end in `<SAMP>,v</SAMP>', so
+this option has never done anything useful.
+<P>
+
+</DL>
+<P>
+
+<A NAME="checkout"></A>
+<HR SIZE="6">
+<A NAME="SEC121"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC120"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC122"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.7 checkout--Check out sources for editing </H2>
+<!--docid::SEC121::-->
+<P>
+
+<UL>
+<LI>
+Synopsis: checkout [options] modules<small>...</small>
+<LI>
+Requires: repository.
+<LI>
+Changes: working directory.
+<LI>
+Synonyms: co, get
+</UL>
+<P>
+
+Create or update a working directory containing copies of the
+source files specified by <VAR>modules</VAR>.  You must execute
+<CODE>checkout</CODE> before using most of the other CVS
+commands, since most of them operate on your working
+directory.
+</P>
+<P>
+
+The <VAR>modules</VAR> are either
+symbolic names for some
+collection of source directories and files, or paths to
+directories or files in the repository.  The symbolic
+names are defined in the `<SAMP>modules</SAMP>' file.
+See section <A HREF="cvs_18.html#SEC157">C.1 The modules file</A>.
+</P>
+<P>
+
+Depending on the modules you specify, <CODE>checkout</CODE> may
+recursively create directories and populate them with
+the appropriate source files.  You can then edit these
+source files at any time (regardless of whether other
+software developers are editing their own copies of the
+sources); update them to include new changes applied by
+others to the source repository; or commit your work as
+a permanent change to the source repository.
+</P>
+<P>
+
+Note that <CODE>checkout</CODE> is used to create
+directories.  The top-level directory created is always
+added to the directory where <CODE>checkout</CODE> is
+invoked, and usually has the same name as the specified
+module.  In the case of a module alias, the created
+sub-directory may have a different name, but you can be
+sure that it will be a sub-directory, and that
+<CODE>checkout</CODE> will show the relative path leading to
+each file as it is extracted into your private work
+area (unless you specify the `<SAMP>-Q</SAMP>' global option).
+</P>
+<P>
+
+The files created by <CODE>checkout</CODE> are created
+read-write, unless the `<SAMP>-r</SAMP>' option to CVS
+(see section <A HREF="cvs_16.html#SEC117">A.4 Global options</A>) is specified, the
+<CODE>CVSREAD</CODE> environment variable is specified
+(see section <A HREF="cvs_19.html#SEC180">D. All environment variables which affect CVS</A>), or a watch is in
+effect for that file (see section <A HREF="cvs_10.html#SEC89">10.6 Mechanisms to track who is editing files</A>).
+</P>
+<P>
+
+Note that running <CODE>checkout</CODE> on a directory that was already
+built by a prior <CODE>checkout</CODE> is also permitted.
+This is similar to specifying the `<SAMP>-d</SAMP>' option
+to the <CODE>update</CODE> command in the sense that new
+directories that have been created in the repository
+will appear in your work area.
+However, <CODE>checkout</CODE> takes a module name whereas
+<CODE>update</CODE> takes a directory name.  Also
+to use <CODE>checkout</CODE> this way it must be run from the
+top level directory (where you originally ran
+<CODE>checkout</CODE> from), so before you run
+<CODE>checkout</CODE> to update an existing directory, don't
+forget to change your directory to the top level
+directory.
+</P>
+<P>
+
+For the output produced by the <CODE>checkout</CODE> command
+see <A HREF="cvs_16.html#SEC154">A.16.2 update output</A>.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC122">A.7.1 checkout options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC123">A.7.2 checkout examples</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="checkout options"></A>
+<HR SIZE="6">
+<A NAME="SEC122"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC121"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC123"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC121"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.7.1 checkout options </H3>
+<!--docid::SEC122::-->
+<P>
+
+These standard options are supported by <CODE>checkout</CODE>
+(see section <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>, for a complete description of
+them):
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Use the most recent revision no later than <VAR>date</VAR>.
+This option is sticky, and implies `<SAMP>-P</SAMP>'.  See
+<A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A>, for more information on sticky tags/dates.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Only useful with the `<SAMP>-D <VAR>date</VAR></SAMP>' or `<SAMP>-r
+<VAR>tag</VAR></SAMP>' flags.  If no matching revision is found,
+retrieve the most recent revision (instead of ignoring
+the file).
+<P>
+
+</P>
+<DT><CODE>-k <VAR>kflag</VAR></CODE>
+<DD>Process keywords according to <VAR>kflag</VAR>.  See
+<A HREF="cvs_12.html#SEC98">12. Keyword substitution</A>.
+This option is sticky; future updates of
+this file in this working directory will use the same
+<VAR>kflag</VAR>.  The <CODE>status</CODE> command can be viewed
+to see the sticky options.  See <A HREF="cvs_17.html#SEC155">B. Quick reference to CVS commands</A>, for
+more information on the <CODE>status</CODE> command.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.
+<P>
+
+</P>
+<DT><CODE>-n</CODE>
+<DD>Do not run any checkout program (as specified
+with the `<SAMP>-o</SAMP>' option in the modules file;
+see section <A HREF="cvs_18.html#SEC157">C.1 The modules file</A>).
+<P>
+
+</P>
+<DT><CODE>-P</CODE>
+<DD>Prune empty directories.  See <A HREF="cvs_7.html#SEC74">7.5 Moving and renaming directories</A>.
+<P>
+
+</P>
+<DT><CODE>-p</CODE>
+<DD>Pipe files to the standard output.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Checkout directories recursively.  This option is on by default.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>tag</VAR></CODE>
+<DD>Use revision <VAR>tag</VAR>.  This option is sticky, and implies `<SAMP>-P</SAMP>'.
+See <A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A>, for more information on sticky tags/dates.
+</DL>
+<P>
+
+In addition to those, you can use these special command
+options with <CODE>checkout</CODE>:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-A</CODE>
+<DD>Reset any sticky tags, dates, or `<SAMP>-k</SAMP>' options.
+See <A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A>, for more information on sticky tags/dates.
+<P>
+
+</P>
+<DT><CODE>-c</CODE>
+<DD>Copy the module file, sorted, to the standard output,
+instead of creating or modifying any files or
+directories in your working directory.
+<P>
+
+</P>
+<DT><CODE>-d <VAR>dir</VAR></CODE>
+<DD>Create a directory called <VAR>dir</VAR> for the working
+files, instead of using the module name.  In general,
+using this flag is equivalent to using `<SAMP>mkdir
+<VAR>dir</VAR>; cd <VAR>dir</VAR></SAMP>' followed by the checkout
+command without the `<SAMP>-d</SAMP>' flag.
+<P>
+
+There is an important exception, however.  It is very
+convenient when checking out a single item to have the
+output appear in a directory that doesn't contain empty
+intermediate directories.  In this case <EM>only</EM>,
+CVS tries to &quot;shorten&quot; pathnames to avoid those empty
+directories.
+</P>
+<P>
+
+For example, given a module `<SAMP>foo</SAMP>' that contains
+the file `<SAMP>bar.c</SAMP>', the command `<SAMP>cvs co -d dir
+foo</SAMP>' will create directory `<SAMP>dir</SAMP>' and place
+`<SAMP>bar.c</SAMP>' inside.  Similarly, given a module
+`<SAMP>bar</SAMP>' which has subdirectory `<SAMP>baz</SAMP>' wherein
+there is a file `<SAMP>quux.c</SAMP>', the command `<SAMP>cvs co
+-d dir bar/baz</SAMP>' will create directory `<SAMP>dir</SAMP>' and
+place `<SAMP>quux.c</SAMP>' inside.
+</P>
+<P>
+
+Using the `<SAMP>-N</SAMP>' flag will defeat this behavior.
+Given the same module definitions above, `<SAMP>cvs co
+-N -d dir foo</SAMP>' will create directories `<SAMP>dir/foo</SAMP>'
+and place `<SAMP>bar.c</SAMP>' inside, while `<SAMP>cvs co -N -d
+dir bar/baz</SAMP>' will create directories `<SAMP>dir/bar/baz</SAMP>'
+and place `<SAMP>quux.c</SAMP>' inside.
+</P>
+<P>
+
+</P>
+<DT><CODE>-j <VAR>tag</VAR></CODE>
+<DD>With two `<SAMP>-j</SAMP>' options, merge changes from the
+revision specified with the first `<SAMP>-j</SAMP>' option to
+the revision specified with the second `<SAMP>j</SAMP>' option,
+into the working directory.
+<P>
+
+With one `<SAMP>-j</SAMP>' option, merge changes from the
+ancestor revision to the revision specified with the
+`<SAMP>-j</SAMP>' option, into the working directory.  The
+ancestor revision is the common ancestor of the
+revision which the working directory is based on, and
+the revision specified in the `<SAMP>-j</SAMP>' option.
+</P>
+<P>
+
+In addition, each -j option can contain an optional
+date specification which, when used with branches, can
+limit the chosen revision to one within a specific
+date.  An optional date is specified by adding a colon
+(:) to the tag:
+`<SAMP>-j<VAR>Symbolic_Tag</VAR>:<VAR>Date_Specifier</VAR></SAMP>'.
+</P>
+<P>
+
+See section <A HREF="cvs_5.html#SEC54">5. Branching and merging</A>.
+</P>
+<P>
+
+</P>
+<DT><CODE>-N</CODE>
+<DD>Only useful together with `<SAMP>-d <VAR>dir</VAR></SAMP>'.  With
+this option, CVS will not &quot;shorten&quot; module paths
+in your working directory when you check out a single
+module.  See the `<SAMP>-d</SAMP>' flag for examples and a
+discussion.
+<P>
+
+</P>
+<DT><CODE>-s</CODE>
+<DD>Like `<SAMP>-c</SAMP>', but include the status of all modules,
+and sort it by the status string.  See section <A HREF="cvs_18.html#SEC157">C.1 The modules file</A>, for
+info about the `<SAMP>-s</SAMP>' option that is used inside the
+modules file to set the module status.
+</DL>
+<P>
+
+<A NAME="checkout examples"></A>
+<HR SIZE="6">
+<A NAME="SEC123"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC122"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC124"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC121"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.7.2 checkout examples </H3>
+<!--docid::SEC123::-->
+<P>
+
+Get a copy of the module `<SAMP>tc</SAMP>':
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs checkout tc
+</pre></td></tr></table><P>
+
+Get a copy of the module `<SAMP>tc</SAMP>' as it looked one day
+ago:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs checkout -D yesterday tc
+</pre></td></tr></table><P>
+
+<A NAME="commit"></A>
+<HR SIZE="6">
+<A NAME="SEC124"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC123"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC125"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.8 commit--Check files into the repository </H2>
+<!--docid::SEC124::-->
+<P>
+
+<UL>
+<LI>
+Synopsis: commit [-lnRf] [-m 'log_message' |
+-F file] [-r revision] [files<small>...</small>]
+<LI>
+Requires: working directory, repository.
+<LI>
+Changes: repository.
+<LI>
+Synonym: ci
+</UL>
+<P>
+
+Use <CODE>commit</CODE> when you want to incorporate changes
+from your working source files into the source
+repository.
+</P>
+<P>
+
+If you don't specify particular files to commit, all of
+the files in your working current directory are
+examined.  <CODE>commit</CODE> is careful to change in the
+repository only those files that you have really
+changed.  By default (or if you explicitly specify the
+`<SAMP>-R</SAMP>' option), files in subdirectories are also
+examined and committed if they have changed; you can
+use the `<SAMP>-l</SAMP>' option to limit <CODE>commit</CODE> to the
+current directory only.
+</P>
+<P>
+
+<CODE>commit</CODE> verifies that the selected files are up
+to date with the current revisions in the source
+repository; it will notify you, and exit without
+committing, if any of the specified files must be made
+current first with <CODE>update</CODE> (see section <A HREF="cvs_16.html#SEC152">A.16 update--Bring work tree in sync with repository</A>).
+<CODE>commit</CODE> does not call the <CODE>update</CODE> command
+for you, but rather leaves that for you to do when the
+time is right.
+</P>
+<P>
+
+When all is well, an editor is invoked to allow you to
+enter a log message that will be written to one or more
+logging programs (see section <A HREF="cvs_18.html#SEC157">C.1 The modules file</A>, and see section <A HREF="cvs_18.html#SEC171">C.3.5 Loginfo</A>)
+and placed in the RCS file inside the
+repository.  This log message can be retrieved with the
+<CODE>log</CODE> command; see <A HREF="cvs_16.html#SEC142">A.13 log--Print out log information for files</A>.  You can specify the
+log message on the command line with the `<SAMP>-m
+<VAR>message</VAR></SAMP>' option, and thus avoid the editor invocation,
+or use the `<SAMP>-F <VAR>file</VAR></SAMP>' option to specify
+that the argument file contains the log message.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC125">A.8.1 commit options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC126">A.8.2 commit examples</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="commit options"></A>
+<HR SIZE="6">
+<A NAME="SEC125"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC124"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC126"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC124"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.8.1 commit options </H3>
+<!--docid::SEC125::-->
+<P>
+
+These standard options are supported by <CODE>commit</CODE>
+(see section <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>, for a complete description of
+them):
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.
+<P>
+
+</P>
+<DT><CODE>-n</CODE>
+<DD>Do not run any module program.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Commit directories recursively.  This is on by default.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>revision</VAR></CODE>
+<DD>Commit to <VAR>revision</VAR>.  <VAR>revision</VAR> must be
+either a branch, or a revision on the main trunk that
+is higher than any existing revision number
+(see section <A HREF="cvs_4.html#SEC47">4.3 Assigning revisions</A>).  You
+cannot commit to a specific revision on a branch.
+</DL>
+<P>
+
+<CODE>commit</CODE> also supports these options:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-F <VAR>file</VAR></CODE>
+<DD>Read the log message from <VAR>file</VAR>, instead
+of invoking an editor.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Note that this is not the standard behavior of
+the `<SAMP>-f</SAMP>' option as defined in <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+Force CVS to commit a new revision even if you haven't
+made any changes to the file.  If the current revision
+of <VAR>file</VAR> is 1.7, then the following two commands
+are equivalent:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs commit -f <VAR>file</VAR>
+$ cvs commit -r 1.8 <VAR>file</VAR>
+</pre></td></tr></table><P>
+
+The `<SAMP>-f</SAMP>' option disables recursion (i.e., it
+implies `<SAMP>-l</SAMP>').  To force CVS to commit a new
+revision for all files in all subdirectories, you must
+use `<SAMP>-f -R</SAMP>'.
+</P>
+<P>
+
+</P>
+<DT><CODE>-m <VAR>message</VAR></CODE>
+<DD>Use <VAR>message</VAR> as the log message, instead of
+invoking an editor.
+</DL>
+<P>
+
+<A NAME="commit examples"></A>
+<HR SIZE="6">
+<A NAME="SEC126"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC125"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC127"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC124"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.8.2 commit examples </H3>
+<!--docid::SEC126::-->
+<P>
+
+<HR SIZE="6">
+<A NAME="SEC127"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC126"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC128"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC126"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H4> A.8.2.1 Committing to a branch </H4>
+<!--docid::SEC127::-->
+<P>
+
+You can commit to a branch revision (one that has an
+even number of dots) with the `<SAMP>-r</SAMP>' option.  To
+create a branch revision, use the `<SAMP>-b</SAMP>' option
+of the <CODE>rtag</CODE> or <CODE>tag</CODE> commands
+(see section <A HREF="cvs_5.html#SEC54">5. Branching and merging</A>).  Then, either <CODE>checkout</CODE> or
+<CODE>update</CODE> can be used to base your sources on the
+newly created branch.  From that point on, all
+<CODE>commit</CODE> changes made within these working sources
+will be automatically added to a branch revision,
+thereby not disturbing main-line development in any
+way.  For example, if you had to create a patch to the
+1.2 version of the product, even though the 2.0 version
+is already under development, you might do:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs rtag -b -r FCS1_2 FCS1_2_Patch product_module
+$ cvs checkout -r FCS1_2_Patch product_module
+$ cd product_module
+[[ hack away ]]
+$ cvs commit
+</pre></td></tr></table><P>
+
+This works automatically since the `<SAMP>-r</SAMP>' option is
+sticky.
+</P>
+<P>
+
+<HR SIZE="6">
+<A NAME="SEC128"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC127"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC129"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC126"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H4> A.8.2.2 Creating the branch after editing </H4>
+<!--docid::SEC128::-->
+<P>
+
+Say you have been working on some extremely
+experimental software, based on whatever revision you
+happened to checkout last week.  If others in your
+group would like to work on this software with you, but
+without disturbing main-line development, you could
+commit your change to a new branch.  Others can then
+checkout your experimental stuff and utilize the full
+benefit of CVS conflict resolution.  The scenario might
+look like:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>[[ hacked sources are present ]]
+$ cvs tag -b EXPR1
+$ cvs update -r EXPR1
+$ cvs commit
+</pre></td></tr></table><P>
+
+The <CODE>update</CODE> command will make the `<SAMP>-r
+EXPR1</SAMP>' option sticky on all files.  Note that your
+changes to the files will never be removed by the
+<CODE>update</CODE> command.  The <CODE>commit</CODE> will
+automatically commit to the correct branch, because the
+`<SAMP>-r</SAMP>' is sticky.  You could also do like this:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>[[ hacked sources are present ]]
+$ cvs tag -b EXPR1
+$ cvs commit -r EXPR1
+</pre></td></tr></table><P>
+
+but then, only those files that were changed by you
+will have the `<SAMP>-r EXPR1</SAMP>' sticky flag.  If you hack
+away, and commit without specifying the `<SAMP>-r EXPR1</SAMP>'
+flag, some files may accidentally end up on the main
+trunk.
+</P>
+<P>
+
+To work with you on the experimental change, others
+would simply do
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs checkout -r EXPR1 whatever_module
+</pre></td></tr></table><P>
+
+<A NAME="diff"></A>
+<HR SIZE="6">
+<A NAME="SEC129"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC128"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC130"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.9 diff--Show differences between revisions </H2>
+<!--docid::SEC129::-->
+<P>
+
+<UL>
+<LI>
+Synopsis: diff [-lR] [-k kflag] [format_options] [[-r rev1 | -D date1] [-r rev2 |  -D date2]] [files<small>...</small>]
+<LI>
+Requires: working directory, repository.
+<LI>
+Changes: nothing.
+</UL>
+<P>
+
+The <CODE>diff</CODE> command is used to compare different
+revisions of files.  The default action is to compare
+your working files with the revisions they were based
+on, and report any differences that are found.
+</P>
+<P>
+
+If any file names are given, only those files are
+compared.  If any directories are given, all files
+under them will be compared.
+</P>
+<P>
+
+The exit status for diff is different than for other
+CVS commands; for details <A HREF="cvs_16.html#SEC115">A.2 CVS's exit status</A>.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC130">A.9.1 diff options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC133">A.9.2 diff examples</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="diff options"></A>
+<HR SIZE="6">
+<A NAME="SEC130"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC129"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC131"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC129"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.9.1 diff options </H3>
+<!--docid::SEC130::-->
+<P>
+
+These standard options are supported by <CODE>diff</CODE>
+(see section <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>, for a complete description of
+them):
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Use the most recent revision no later than <VAR>date</VAR>.
+See `<SAMP>-r</SAMP>' for how this affects the comparison.
+<P>
+
+</P>
+<DT><CODE>-k <VAR>kflag</VAR></CODE>
+<DD>Process keywords according to <VAR>kflag</VAR>.  See
+<A HREF="cvs_12.html#SEC98">12. Keyword substitution</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Examine directories recursively.  This option is on by
+default.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>tag</VAR></CODE>
+<DD>Compare with revision <VAR>tag</VAR>.  Zero, one or two
+`<SAMP>-r</SAMP>' options can be present.  With no `<SAMP>-r</SAMP>'
+option, the working file will be compared with the
+revision it was based on.  With one `<SAMP>-r</SAMP>', that
+revision will be compared to your current working file.
+With two `<SAMP>-r</SAMP>' options those two revisions will be
+compared (and your working file will not affect the
+outcome in any way).
+<P>
+
+One or both `<SAMP>-r</SAMP>' options can be replaced by a
+`<SAMP>-D <VAR>date</VAR></SAMP>' option, described above.
+</DL>
+<P>
+
+The following options specify the format of the
+output.  They have the same meaning as in GNU diff.
+Most options have two equivalent names, one of which is a single letter
+preceded by `<SAMP>-</SAMP>', and the other of which is a long name preceded by
+`<SAMP>--</SAMP>'.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT>`<SAMP>-<VAR>lines</VAR></SAMP>'
+<DD>Show <VAR>lines</VAR> (an integer) lines of context.  This option does not
+specify an output format by itself; it has no effect unless it is
+combined with `<SAMP>-c</SAMP>' or `<SAMP>-u</SAMP>'.  This option is obsolete.  For proper
+operation, <CODE>patch</CODE> typically needs at least two lines of context.
+<P>
+
+</P>
+<DT>`<SAMP>-a</SAMP>'
+<DD>Treat all files as text and compare them line-by-line, even if they
+do not seem to be text.
+<P>
+
+</P>
+<DT>`<SAMP>-b</SAMP>'
+<DD>Ignore trailing white space and consider all other sequences of one or
+more white space characters to be equivalent.
+<P>
+
+</P>
+<DT>`<SAMP>-B</SAMP>'
+<DD>Ignore changes that just insert or delete blank lines.
+<P>
+
+</P>
+<DT>`<SAMP>--binary</SAMP>'
+<DD>Read and write data in binary mode.
+<P>
+
+</P>
+<DT>`<SAMP>--brief</SAMP>'
+<DD>Report only whether the files differ, not the details of the
+differences.
+<P>
+
+</P>
+<DT>`<SAMP>-c</SAMP>'
+<DD>Use the context output format.
+<P>
+
+</P>
+<DT>`<SAMP>-C <VAR>lines</VAR></SAMP>'
+<DD><DT>`<SAMP>--context[=<VAR>lines</VAR>]</SAMP>'
+<DD>Use the context output format, showing <VAR>lines</VAR> (an integer) lines of
+context, or three if <VAR>lines</VAR> is not given.
+For proper operation, <CODE>patch</CODE> typically needs at least two lines of
+context.
+<P>
+
+</P>
+<DT>`<SAMP>--changed-group-format=<VAR>format</VAR></SAMP>'
+<DD>Use <VAR>format</VAR> to output a line group containing differing lines from
+both files in if-then-else format.  See section <A HREF="cvs_16.html#SEC131">A.9.1.1 Line group formats</A>.
+<P>
+
+</P>
+<DT>`<SAMP>-d</SAMP>'
+<DD>Change the algorithm to perhaps find a smaller set of changes.  This makes
+<CODE>diff</CODE> slower (sometimes much slower).
+<P>
+
+</P>
+<DT>`<SAMP>-e</SAMP>'
+<DD><DT>`<SAMP>--ed</SAMP>'
+<DD>Make output that is a valid <CODE>ed</CODE> script.
+<P>
+
+</P>
+<DT>`<SAMP>--expand-tabs</SAMP>'
+<DD>Expand tabs to spaces in the output, to preserve the alignment of tabs
+in the input files.
+<P>
+
+</P>
+<DT>`<SAMP>-f</SAMP>'
+<DD>Make output that looks vaguely like an <CODE>ed</CODE> script but has changes
+in the order they appear in the file.
+<P>
+
+</P>
+<DT>`<SAMP>-F <VAR>regexp</VAR></SAMP>'
+<DD>In context and unified format, for each hunk of differences, show some
+of the last preceding line that matches <VAR>regexp</VAR>.
+<P>
+
+</P>
+<DT>`<SAMP>--forward-ed</SAMP>'
+<DD>Make output that looks vaguely like an <CODE>ed</CODE> script but has changes
+in the order they appear in the file.
+<P>
+
+</P>
+<DT>`<SAMP>-H</SAMP>'
+<DD>Use heuristics to speed handling of large files that have numerous
+scattered small changes.
+<P>
+
+</P>
+<DT>`<SAMP>--horizon-lines=<VAR>lines</VAR></SAMP>'
+<DD>Do not discard the last <VAR>lines</VAR> lines of the common prefix
+and the first <VAR>lines</VAR> lines of the common suffix.
+<P>
+
+</P>
+<DT>`<SAMP>-i</SAMP>'
+<DD>Ignore changes in case; consider upper- and lower-case letters
+equivalent.
+<P>
+
+</P>
+<DT>`<SAMP>-I <VAR>regexp</VAR></SAMP>'
+<DD>Ignore changes that just insert or delete lines that match <VAR>regexp</VAR>.
+<P>
+
+</P>
+<DT>`<SAMP>--ifdef=<VAR>name</VAR></SAMP>'
+<DD>Make merged if-then-else output using <VAR>name</VAR>.
+<P>
+
+</P>
+<DT>`<SAMP>--ignore-all-space</SAMP>'
+<DD>Ignore white space when comparing lines.
+<P>
+
+</P>
+<DT>`<SAMP>--ignore-blank-lines</SAMP>'
+<DD>Ignore changes that just insert or delete blank lines.
+<P>
+
+</P>
+<DT>`<SAMP>--ignore-case</SAMP>'
+<DD>Ignore changes in case; consider upper- and lower-case to be the same.
+<P>
+
+</P>
+<DT>`<SAMP>--ignore-matching-lines=<VAR>regexp</VAR></SAMP>'
+<DD>Ignore changes that just insert or delete lines that match <VAR>regexp</VAR>.
+<P>
+
+</P>
+<DT>`<SAMP>--ignore-space-change</SAMP>'
+<DD>Ignore trailing white space and consider all other sequences of one or
+more white space characters to be equivalent.
+<P>
+
+</P>
+<DT>`<SAMP>--initial-tab</SAMP>'
+<DD>Output a tab rather than a space before the text of a line in normal or
+context format.  This causes the alignment of tabs in the line to look
+normal.
+<P>
+
+</P>
+<DT>`<SAMP>-L <VAR>label</VAR></SAMP>'
+<DD>Use <VAR>label</VAR> instead of the file name in the context format
+and unified format headers.
+<P>
+
+</P>
+<DT>`<SAMP>--label=<VAR>label</VAR></SAMP>'
+<DD>Use <VAR>label</VAR> instead of the file name in the context format
+and unified format headers.
+<P>
+
+</P>
+<DT>`<SAMP>--left-column</SAMP>'
+<DD>Print only the left column of two common lines in side by side format.
+<P>
+
+</P>
+<DT>`<SAMP>--line-format=<VAR>format</VAR></SAMP>'
+<DD>Use <VAR>format</VAR> to output all input lines in if-then-else format.
+See section <A HREF="cvs_16.html#SEC132">A.9.1.2 Line formats</A>.
+<P>
+
+</P>
+<DT>`<SAMP>--minimal</SAMP>'
+<DD>Change the algorithm to perhaps find a smaller set of changes.  This
+makes <CODE>diff</CODE> slower (sometimes much slower).
+<P>
+
+</P>
+<DT>`<SAMP>-n</SAMP>'
+<DD>Output RCS-format diffs; like `<SAMP>-f</SAMP>' except that each command
+specifies the number of lines affected.
+<P>
+
+</P>
+<DT>`<SAMP>-N</SAMP>'
+<DD><DT>`<SAMP>--new-file</SAMP>'
+<DD>In directory comparison, if a file is found in only one directory,
+treat it as present but empty in the other directory.
+<P>
+
+</P>
+<DT>`<SAMP>--new-group-format=<VAR>format</VAR></SAMP>'
+<DD>Use <VAR>format</VAR> to output a group of lines taken from just the second
+file in if-then-else format.  See section <A HREF="cvs_16.html#SEC131">A.9.1.1 Line group formats</A>.
+<P>
+
+</P>
+<DT>`<SAMP>--new-line-format=<VAR>format</VAR></SAMP>'
+<DD>Use <VAR>format</VAR> to output a line taken from just the second file in
+if-then-else format.  See section <A HREF="cvs_16.html#SEC132">A.9.1.2 Line formats</A>.
+<P>
+
+</P>
+<DT>`<SAMP>--old-group-format=<VAR>format</VAR></SAMP>'
+<DD>Use <VAR>format</VAR> to output a group of lines taken from just the first
+file in if-then-else format.  See section <A HREF="cvs_16.html#SEC131">A.9.1.1 Line group formats</A>.
+<P>
+
+</P>
+<DT>`<SAMP>--old-line-format=<VAR>format</VAR></SAMP>'
+<DD>Use <VAR>format</VAR> to output a line taken from just the first file in
+if-then-else format.  See section <A HREF="cvs_16.html#SEC132">A.9.1.2 Line formats</A>.
+<P>
+
+</P>
+<DT>`<SAMP>-p</SAMP>'
+<DD>Show which C function each change is in.
+<P>
+
+</P>
+<DT>`<SAMP>--rcs</SAMP>'
+<DD>Output RCS-format diffs; like `<SAMP>-f</SAMP>' except that each command
+specifies the number of lines affected.
+<P>
+
+</P>
+<DT>`<SAMP>--report-identical-files</SAMP>'
+<DD><DT>`<SAMP>-s</SAMP>'
+<DD>Report when two files are the same.
+<P>
+
+</P>
+<DT>`<SAMP>--show-c-function</SAMP>'
+<DD>Show which C function each change is in.
+<P>
+
+</P>
+<DT>`<SAMP>--show-function-line=<VAR>regexp</VAR></SAMP>'
+<DD>In context and unified format, for each hunk of differences, show some
+of the last preceding line that matches <VAR>regexp</VAR>.
+<P>
+
+</P>
+<DT>`<SAMP>--side-by-side</SAMP>'
+<DD>Use the side by side output format.
+<P>
+
+</P>
+<DT>`<SAMP>--speed-large-files</SAMP>'
+<DD>Use heuristics to speed handling of large files that have numerous
+scattered small changes.
+<P>
+
+</P>
+<DT>`<SAMP>--suppress-common-lines</SAMP>'
+<DD>Do not print common lines in side by side format.
+<P>
+
+</P>
+<DT>`<SAMP>-t</SAMP>'
+<DD>Expand tabs to spaces in the output, to preserve the alignment of tabs
+in the input files.
+<P>
+
+</P>
+<DT>`<SAMP>-T</SAMP>'
+<DD>Output a tab rather than a space before the text of a line in normal or
+context format.  This causes the alignment of tabs in the line to look
+normal.
+<P>
+
+</P>
+<DT>`<SAMP>--text</SAMP>'
+<DD>Treat all files as text and compare them line-by-line, even if they
+do not appear to be text.
+<P>
+
+</P>
+<DT>`<SAMP>-u</SAMP>'
+<DD>Use the unified output format.
+<P>
+
+</P>
+<DT>`<SAMP>--unchanged-group-format=<VAR>format</VAR></SAMP>'
+<DD>Use <VAR>format</VAR> to output a group of common lines taken from both files
+in if-then-else format.  See section <A HREF="cvs_16.html#SEC131">A.9.1.1 Line group formats</A>.
+<P>
+
+</P>
+<DT>`<SAMP>--unchanged-line-format=<VAR>format</VAR></SAMP>'
+<DD>Use <VAR>format</VAR> to output a line common to both files in if-then-else
+format.  See section <A HREF="cvs_16.html#SEC132">A.9.1.2 Line formats</A>.
+<P>
+
+</P>
+<DT>`<SAMP>-U <VAR>lines</VAR></SAMP>'
+<DD><DT>`<SAMP>--unified[=<VAR>lines</VAR>]</SAMP>'
+<DD>Use the unified output format, showing <VAR>lines</VAR> (an integer) lines of
+context, or three if <VAR>lines</VAR> is not given.
+For proper operation, <CODE>patch</CODE> typically needs at least two lines of
+context.
+<P>
+
+</P>
+<DT>`<SAMP>-w</SAMP>'
+<DD>Ignore white space when comparing lines.
+<P>
+
+</P>
+<DT>`<SAMP>-W <VAR>columns</VAR></SAMP>'
+<DD><DT>`<SAMP>--width=<VAR>columns</VAR></SAMP>'
+<DD>Use an output width of <VAR>columns</VAR> in side by side format.
+<P>
+
+</P>
+<DT>`<SAMP>-y</SAMP>'
+<DD>Use the side by side output format.
+</DL>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC131">A.9.1.1 Line group formats</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC132">A.9.1.2 Line formats</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="Line group formats"></A>
+<HR SIZE="6">
+<A NAME="SEC131"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC130"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC132"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC130"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H4> A.9.1.1 Line group formats </H4>
+<!--docid::SEC131::-->
+<P>
+
+Line group formats let you specify formats suitable for many
+applications that allow if-then-else input, including programming
+languages and text formatting languages.  A line group format specifies
+the output format for a contiguous group of similar lines.
+</P>
+<P>
+
+For example, the following command compares the TeX file `<TT>myfile</TT>'
+with the original version from the repository,
+and outputs a merged file in which old regions are
+surrounded by `<SAMP>\begin{em}</SAMP>'-`<SAMP>\end{em}</SAMP>' lines, and new
+regions are surrounded by `<SAMP>\begin{bf}</SAMP>'-`<SAMP>\end{bf}</SAMP>' lines.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs diff \
+   --old-group-format='\begin{em}
+%&lt;\end{em}
+' \
+   --new-group-format='\begin{bf}
+%&gt;\end{bf}
+' \
+   myfile
+</pre></td></tr></table><P>
+
+The following command is equivalent to the above example, but it is a
+little more verbose, because it spells out the default line group formats.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs diff \
+   --old-group-format='\begin{em}
+%&lt;\end{em}
+' \
+   --new-group-format='\begin{bf}
+%&gt;\end{bf}
+' \
+   --unchanged-group-format='%=' \
+   --changed-group-format='\begin{em}
+%&lt;\end{em}
+\begin{bf}
+%&gt;\end{bf}
+' \
+   myfile
+</pre></td></tr></table><P>
+
+Here is a more advanced example, which outputs a diff listing with
+headers containing line numbers in a &quot;plain English&quot; style.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs diff \
+   --unchanged-group-format='' \
+   --old-group-format='-------- %dn line%(n=1?:s) deleted at %df:
+%&lt;' \
+   --new-group-format='-------- %dN line%(N=1?:s) added after %de:
+%&gt;' \
+   --changed-group-format='-------- %dn line%(n=1?:s) changed at %df:
+%&lt;-------- to:
+%&gt;' \
+   myfile
+</pre></td></tr></table><P>
+
+To specify a line group format, use one of the options
+listed below.  You can specify up to four line group formats, one for
+each kind of line group.  You should quote <VAR>format</VAR>, because it
+typically contains shell metacharacters.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT>`<SAMP>--old-group-format=<VAR>format</VAR></SAMP>'
+<DD>These line groups are hunks containing only lines from the first file.
+The default old group format is the same as the changed group format if
+it is specified; otherwise it is a format that outputs the line group as-is.
+<P>
+
+</P>
+<DT>`<SAMP>--new-group-format=<VAR>format</VAR></SAMP>'
+<DD>These line groups are hunks containing only lines from the second
+file.  The default new group format is same as the the changed group
+format if it is specified; otherwise it is a format that outputs the
+line group as-is.
+<P>
+
+</P>
+<DT>`<SAMP>--changed-group-format=<VAR>format</VAR></SAMP>'
+<DD>These line groups are hunks containing lines from both files.  The
+default changed group format is the concatenation of the old and new
+group formats.
+<P>
+
+</P>
+<DT>`<SAMP>--unchanged-group-format=<VAR>format</VAR></SAMP>'
+<DD>These line groups contain lines common to both files.  The default
+unchanged group format is a format that outputs the line group as-is.
+</DL>
+<P>
+
+In a line group format, ordinary characters represent themselves;
+conversion specifications start with `<SAMP>%</SAMP>' and have one of the
+following forms.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT>`<SAMP>%&lt;</SAMP>'
+<DD>stands for the lines from the first file, including the trailing newline.
+Each line is formatted according to the old line format (see section <A HREF="cvs_16.html#SEC132">A.9.1.2 Line formats</A>).
+<P>
+
+</P>
+<DT>`<SAMP>%&gt;</SAMP>'
+<DD>stands for the lines from the second file, including the trailing newline.
+Each line is formatted according to the new line format.
+<P>
+
+</P>
+<DT>`<SAMP>%=</SAMP>'
+<DD>stands for the lines common to both files, including the trailing newline.
+Each line is formatted according to the unchanged line format.
+<P>
+
+</P>
+<DT>`<SAMP>%%</SAMP>'
+<DD>stands for `<SAMP>%</SAMP>'.
+<P>
+
+</P>
+<DT>`<SAMP>%c'<VAR>C</VAR>'</SAMP>'
+<DD>where <VAR>C</VAR> is a single character, stands for <VAR>C</VAR>.
+<VAR>C</VAR> may not be a backslash or an apostrophe.
+For example, `<SAMP>%c':'</SAMP>' stands for a colon, even inside
+the then-part of an if-then-else format, which a colon would
+normally terminate.
+<P>
+
+</P>
+<DT>`<SAMP>%c'\<VAR>O</VAR>'</SAMP>'
+<DD>where <VAR>O</VAR> is a string of 1, 2, or 3 octal digits,
+stands for the character with octal code <VAR>O</VAR>.
+For example, `<SAMP>%c'\0'</SAMP>' stands for a null character.
+<P>
+
+</P>
+<DT>`<SAMP><VAR>F</VAR><VAR>n</VAR></SAMP>'
+<DD>where <VAR>F</VAR> is a <CODE>printf</CODE> conversion specification and <VAR>n</VAR> is one
+of the following letters, stands for <VAR>n</VAR>'s value formatted with <VAR>F</VAR>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT>`<SAMP>e</SAMP>'
+<DD>The line number of the line just before the group in the old file.
+<P>
+
+</P>
+<DT>`<SAMP>f</SAMP>'
+<DD>The line number of the first line in the group in the old file;
+equals <VAR>e</VAR> + 1.
+<P>
+
+</P>
+<DT>`<SAMP>l</SAMP>'
+<DD>The line number of the last line in the group in the old file.
+<P>
+
+</P>
+<DT>`<SAMP>m</SAMP>'
+<DD>The line number of the line just after the group in the old file;
+equals <VAR>l</VAR> + 1.
+<P>
+
+</P>
+<DT>`<SAMP>n</SAMP>'
+<DD>The number of lines in the group in the old file; equals <VAR>l</VAR> - <VAR>f</VAR> + 1.
+<P>
+
+</P>
+<DT>`<SAMP>E, F, L, M, N</SAMP>'
+<DD>Likewise, for lines in the new file.
+<P>
+
+</DL>
+<P>
+
+The <CODE>printf</CODE> conversion specification can be `<SAMP>%d</SAMP>',
+`<SAMP>%o</SAMP>', `<SAMP>%x</SAMP>', or `<SAMP>%X</SAMP>', specifying decimal, octal,
+lower case hexadecimal, or upper case hexadecimal output
+respectively.  After the `<SAMP>%</SAMP>' the following options can appear in
+sequence: a `<SAMP>-</SAMP>' specifying left-justification; an integer
+specifying the minimum field width; and a period followed by an
+optional integer specifying the minimum number of digits.
+For example, `<SAMP>%5dN</SAMP>' prints the number of new lines in the group
+in a field of width 5 characters, using the <CODE>printf</CODE> format <CODE>&quot;%5d&quot;</CODE>.
+</P>
+<P>
+
+</P>
+<DT>`<SAMP>(<VAR>A</VAR>=<VAR>B</VAR>?<VAR>T</VAR>:<VAR>E</VAR>)</SAMP>'
+<DD>If <VAR>A</VAR> equals <VAR>B</VAR> then <VAR>T</VAR> else <VAR>E</VAR>.
+<VAR>A</VAR> and <VAR>B</VAR> are each either a decimal constant
+or a single letter interpreted as above.
+This format spec is equivalent to <VAR>T</VAR> if
+<VAR>A</VAR>'s value equals <VAR>B</VAR>'s; otherwise it is equivalent to <VAR>E</VAR>.
+<P>
+
+For example, `<SAMP>%(N=0?no:%dN) line%(N=1?:s)</SAMP>' is equivalent to
+`<SAMP>no lines</SAMP>' if <VAR>N</VAR> (the number of lines in the group in the the
+new file) is 0, to `<SAMP>1 line</SAMP>' if <VAR>N</VAR> is 1, and to `<SAMP>%dN lines</SAMP>'
+otherwise.
+</DL>
+<P>
+
+<A NAME="Line formats"></A>
+<HR SIZE="6">
+<A NAME="SEC132"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC131"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC133"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC130"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H4> A.9.1.2 Line formats </H4>
+<!--docid::SEC132::-->
+<P>
+
+Line formats control how each line taken from an input file is
+output as part of a line group in if-then-else format.
+</P>
+<P>
+
+For example, the following command outputs text with a one-column
+change indicator to the left of the text.  The first column of output
+is `<SAMP>-</SAMP>' for deleted lines, `<SAMP>|</SAMP>' for added lines, and a space
+for unchanged lines.  The formats contain newline characters where
+newlines are desired on output.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs diff \
+   --old-line-format='-%l
+' \
+   --new-line-format='|%l
+' \
+   --unchanged-line-format=' %l
+' \
+   myfile
+</pre></td></tr></table><P>
+
+To specify a line format, use one of the following options.  You should
+quote <VAR>format</VAR>, since it often contains shell metacharacters.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT>`<SAMP>--old-line-format=<VAR>format</VAR></SAMP>'
+<DD>formats lines just from the first file.
+<P>
+
+</P>
+<DT>`<SAMP>--new-line-format=<VAR>format</VAR></SAMP>'
+<DD>formats lines just from the second file.
+<P>
+
+</P>
+<DT>`<SAMP>--unchanged-line-format=<VAR>format</VAR></SAMP>'
+<DD>formats lines common to both files.
+<P>
+
+</P>
+<DT>`<SAMP>--line-format=<VAR>format</VAR></SAMP>'
+<DD>formats all lines; in effect, it sets all three above options simultaneously.
+</DL>
+<P>
+
+In a line format, ordinary characters represent themselves;
+conversion specifications start with `<SAMP>%</SAMP>' and have one of the
+following forms.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT>`<SAMP>%l</SAMP>'
+<DD>stands for the the contents of the line, not counting its trailing
+newline (if any).  This format ignores whether the line is incomplete.
+<P>
+
+</P>
+<DT>`<SAMP>%L</SAMP>'
+<DD>stands for the the contents of the line, including its trailing newline
+(if any).  If a line is incomplete, this format preserves its
+incompleteness.
+<P>
+
+</P>
+<DT>`<SAMP>%%</SAMP>'
+<DD>stands for `<SAMP>%</SAMP>'.
+<P>
+
+</P>
+<DT>`<SAMP>%c'<VAR>C</VAR>'</SAMP>'
+<DD>where <VAR>C</VAR> is a single character, stands for <VAR>C</VAR>.
+<VAR>C</VAR> may not be a backslash or an apostrophe.
+For example, `<SAMP>%c':'</SAMP>' stands for a colon.
+<P>
+
+</P>
+<DT>`<SAMP>%c'\<VAR>O</VAR>'</SAMP>'
+<DD>where <VAR>O</VAR> is a string of 1, 2, or 3 octal digits,
+stands for the character with octal code <VAR>O</VAR>.
+For example, `<SAMP>%c'\0'</SAMP>' stands for a null character.
+<P>
+
+</P>
+<DT>`<SAMP><VAR>F</VAR>n</SAMP>'
+<DD>where <VAR>F</VAR> is a <CODE>printf</CODE> conversion specification,
+stands for the line number formatted with <VAR>F</VAR>.
+For example, `<SAMP>%.5dn</SAMP>' prints the line number using the
+<CODE>printf</CODE> format <CODE>&quot;%.5d&quot;</CODE>.  See section <A HREF="cvs_16.html#SEC131">A.9.1.1 Line group formats</A>, for
+more about printf conversion specifications.
+<P>
+
+</DL>
+<P>
+
+The default line format is `<SAMP>%l</SAMP>' followed by a newline character.
+</P>
+<P>
+
+If the input contains tab characters and it is important that they line
+up on output, you should ensure that `<SAMP>%l</SAMP>' or `<SAMP>%L</SAMP>' in a line
+format is just after a tab stop (e.g. by preceding `<SAMP>%l</SAMP>' or
+`<SAMP>%L</SAMP>' with a tab character), or you should use the `<SAMP>-t</SAMP>' or
+`<SAMP>--expand-tabs</SAMP>' option.
+</P>
+<P>
+
+Taken together, the line and line group formats let you specify many
+different formats.  For example, the following command uses a format
+similar to <CODE>diff</CODE>'s normal format.  You can tailor this command
+to get fine control over <CODE>diff</CODE>'s output.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs diff \
+   --old-line-format='&lt; %l
+' \
+   --new-line-format='&gt; %l
+' \
+   --old-group-format='%df%(f=l?:,%dl)d%dE
+%&lt;' \
+   --new-group-format='%dea%dF%(F=L?:,%dL)
+%&gt;' \
+   --changed-group-format='%df%(f=l?:,%dl)c%dF%(F=L?:,%dL)
+%&lt;---
+%&gt;' \
+   --unchanged-group-format='' \
+   myfile
+</pre></td></tr></table><P>
+
+<A NAME="diff examples"></A>
+<HR SIZE="6">
+<A NAME="SEC133"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC132"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC134"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC129"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.9.2 diff examples </H3>
+<!--docid::SEC133::-->
+<P>
+
+The following line produces a Unidiff (`<SAMP>-u</SAMP>' flag)
+between revision 1.14 and 1.19 of
+`<TT>backend.c</TT>'.  Due to the `<SAMP>-kk</SAMP>' flag no
+keywords are substituted, so differences that only depend
+on keyword substitution are ignored.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs diff -kk -u -r 1.14 -r 1.19 backend.c
+</pre></td></tr></table><P>
+
+Suppose the experimental branch EXPR1 was based on a
+set of files tagged RELEASE_1_0.  To see what has
+happened on that branch, the following can be used:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs diff -r RELEASE_1_0 -r EXPR1
+</pre></td></tr></table><P>
+
+A command like this can be used to produce a context
+diff between two releases:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs diff -c -r RELEASE_1_0 -r RELEASE_1_1 &gt; diffs
+</pre></td></tr></table><P>
+
+If you are maintaining ChangeLogs, a command like the following
+just before you commit your changes may help you write
+the ChangeLog entry.  All local modifications that have
+not yet been committed will be printed.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs diff -u | less
+</pre></td></tr></table><P>
+
+<A NAME="export"></A>
+<HR SIZE="6">
+<A NAME="SEC134"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC133"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC135"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.10 export--Export sources from CVS, similar to checkout </H2>
+<!--docid::SEC134::-->
+<P>
+
+<UL>
+<LI>
+Synopsis: export [-flNnR] [-r rev|-D date] [-k subst] [-d dir] module<small>...</small>
+<LI>
+Requires: repository.
+<LI>
+Changes: current directory.
+</UL>
+<P>
+
+This command is a variant of <CODE>checkout</CODE>; use it
+when you want a copy of the source for module without
+the CVS administrative directories.  For example, you
+might use <CODE>export</CODE> to prepare source for shipment
+off-site.  This command requires that you specify a
+date or tag (with `<SAMP>-D</SAMP>' or `<SAMP>-r</SAMP>'), so that you
+can count on reproducing the source you ship to others
+(and thus it always prunes empty directories).
+</P>
+<P>
+
+One often would like to use `<SAMP>-kv</SAMP>' with <CODE>cvs
+export</CODE>.  This causes any keywords to be
+expanded such that an import done at some other site
+will not lose the keyword revision information.  But be
+aware that doesn't handle an export containing binary
+files correctly.  Also be aware that after having used
+`<SAMP>-kv</SAMP>', one can no longer use the <CODE>ident</CODE>
+command (which is part of the RCS suite--see
+ident(1)) which looks for keyword strings.  If
+you want to be able to use <CODE>ident</CODE> you must not
+use `<SAMP>-kv</SAMP>'.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC135">A.10.1 export options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="export options"></A>
+<HR SIZE="6">
+<A NAME="SEC135"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC134"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC136"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC134"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.10.1 export options </H3>
+<!--docid::SEC135::-->
+<P>
+
+These standard options are supported by <CODE>export</CODE>
+(see section <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>, for a complete description of
+them):
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Use the most recent revision no later than <VAR>date</VAR>.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>If no matching revision is found, retrieve the most
+recent revision (instead of ignoring the file).
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.
+<P>
+
+</P>
+<DT><CODE>-n</CODE>
+<DD>Do not run any checkout program.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Export directories recursively.  This is on by default.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>tag</VAR></CODE>
+<DD>Use revision <VAR>tag</VAR>.
+</DL>
+<P>
+
+In addition, these options (that are common to
+<CODE>checkout</CODE> and <CODE>export</CODE>) are also supported:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-d <VAR>dir</VAR></CODE>
+<DD>Create a directory called <VAR>dir</VAR> for the working
+files, instead of using the module name.
+See section <A HREF="cvs_16.html#SEC122">A.7.1 checkout options</A>, for complete details on how
+CVS handles this flag.
+<P>
+
+</P>
+<DT><CODE>-k <VAR>subst</VAR></CODE>
+<DD>Set keyword expansion mode (see section <A HREF="cvs_12.html#SEC102">12.4 Substitution modes</A>).
+<P>
+
+</P>
+<DT><CODE>-N</CODE>
+<DD>Only useful together with `<SAMP>-d <VAR>dir</VAR></SAMP>'.
+See section <A HREF="cvs_16.html#SEC122">A.7.1 checkout options</A>, for complete details on how
+CVS handles this flag.
+</DL>
+<P>
+
+<A NAME="history"></A>
+<HR SIZE="6">
+<A NAME="SEC136"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC135"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC137"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.11 history--Show status of files and users </H2>
+<!--docid::SEC136::-->
+<P>
+
+<UL>
+<LI>
+Synopsis:     history [-report] [-flags] [-options args] [files<small>...</small>]
+<LI>
+Requires: the file `<TT>$CVSROOT/CVSROOT/history</TT>'
+<LI>
+Changes: nothing.
+</UL>
+<P>
+
+CVS can keep a history file that tracks each use of the
+<CODE>checkout</CODE>, <CODE>commit</CODE>, <CODE>rtag</CODE>,
+<CODE>update</CODE>, and <CODE>release</CODE> commands.  You can
+use <CODE>history</CODE> to display this information in
+various formats.
+</P>
+<P>
+
+Logging must be enabled by creating the file
+`<TT>$CVSROOT/CVSROOT/history</TT>'.
+</P>
+<P>
+
+<STRONG>Warning:</STRONG> <CODE>history</CODE> uses `<SAMP>-f</SAMP>', `<SAMP>-l</SAMP>',
+`<SAMP>-n</SAMP>', and `<SAMP>-p</SAMP>' in ways that conflict with the
+normal use inside CVS (see section <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>).
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC137">A.11.1 history options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="history options"></A>
+<HR SIZE="6">
+<A NAME="SEC137"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC136"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC138"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC136"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.11.1 history options </H3>
+<!--docid::SEC137::-->
+<P>
+
+Several options (shown above as `<SAMP>-report</SAMP>')  control  what
+kind of report is generated:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-c</CODE>
+<DD>Report on each time commit was used (i.e., each time
+the repository was modified).
+<P>
+
+</P>
+<DT><CODE>-e</CODE>
+<DD>Everything (all record types).  Equivalent to
+specifying `<SAMP>-x</SAMP>' with all record types.  Of course,
+`<SAMP>-e</SAMP>' will also include record types which are
+added in a future version of CVS; if you are
+writing a script which can only handle certain record
+types, you'll want to specify `<SAMP>-x</SAMP>'.
+<P>
+
+</P>
+<DT><CODE>-m <VAR>module</VAR></CODE>
+<DD>Report on a particular module.  (You can meaningfully
+use `<SAMP>-m</SAMP>' more than once on the command line.)
+<P>
+
+</P>
+<DT><CODE>-o</CODE>
+<DD>Report on checked-out modules.  This is the default report type.
+<P>
+
+</P>
+<DT><CODE>-T</CODE>
+<DD>Report on all tags.
+<P>
+
+</P>
+<DT><CODE>-x <VAR>type</VAR></CODE>
+<DD>Extract a particular set of record types <VAR>type</VAR> from the CVS
+history.  The types are indicated by single letters,
+which you may specify in combination.
+<P>
+
+Certain commands have a single record type:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>F</CODE>
+<DD>release
+<DT><CODE>O</CODE>
+<DD>checkout
+<DT><CODE>E</CODE>
+<DD>export
+<DT><CODE>T</CODE>
+<DD>rtag
+</DL>
+<P>
+
+One of four record types may result from an update:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>C</CODE>
+<DD>A merge was necessary but collisions were
+detected (requiring manual merging).
+<DT><CODE>G</CODE>
+<DD>A merge was necessary and it succeeded.
+<DT><CODE>U</CODE>
+<DD>A working file was copied from the repository.
+<DT><CODE>W</CODE>
+<DD>The working copy of a file was deleted during
+update (because it was gone from the repository).
+</DL>
+<P>
+
+One of three record types results from commit:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>A</CODE>
+<DD>A file was added for the first time.
+<DT><CODE>M</CODE>
+<DD>A file was modified.
+<DT><CODE>R</CODE>
+<DD>A file was removed.
+</DL>
+</DL>
+<P>
+
+The options shown as `<SAMP>-flags</SAMP>' constrain or expand
+the report without requiring option arguments:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-a</CODE>
+<DD>Show data for all users (the default is to show data
+only for the user executing <CODE>history</CODE>).
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Show last modification only.
+<P>
+
+</P>
+<DT><CODE>-w</CODE>
+<DD>Show only the records for modifications done from the
+same working directory where <CODE>history</CODE> is
+executing.
+</DL>
+<P>
+
+The options shown as `<SAMP>-options <VAR>args</VAR></SAMP>' constrain the report
+based on an argument:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-b <VAR>str</VAR></CODE>
+<DD>Show data back to a record containing  the  string
+<VAR>str</VAR>  in  either the module name, the file name, or
+the repository path.
+<P>
+
+</P>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Show data since <VAR>date</VAR>.  This is slightly different
+from the normal use of `<SAMP>-D <VAR>date</VAR></SAMP>', which
+selects the newest revision older than <VAR>date</VAR>.
+<P>
+
+</P>
+<DT><CODE>-f <VAR>file</VAR></CODE>
+<DD>Show data for a particular file
+(you can specify several `<SAMP>-f</SAMP>' options on the same command line).
+This is equivalent to specifying the file on the command line.
+<P>
+
+</P>
+<DT><CODE>-n <VAR>module</VAR></CODE>
+<DD>Show data for a particular module
+(you can specify several `<SAMP>-n</SAMP>' options on the same command line).
+<P>
+
+</P>
+<DT><CODE>-p <VAR>repository</VAR></CODE>
+<DD>Show data for a particular source repository  (you
+can specify several `<SAMP>-p</SAMP>' options on the same command
+line).
+<P>
+
+</P>
+<DT><CODE>-r <VAR>rev</VAR></CODE>
+<DD>Show records referring to revisions since the revision
+or tag named <VAR>rev</VAR> appears in individual RCS
+files.  Each RCS file is searched for the revision or
+tag.
+<P>
+
+</P>
+<DT><CODE>-t <VAR>tag</VAR></CODE>
+<DD>Show records since tag <VAR>tag</VAR> was last added to the
+history file.  This differs from the `<SAMP>-r</SAMP>' flag
+above in that it reads only the history file, not the
+RCS files, and is much faster.
+<P>
+
+</P>
+<DT><CODE>-u <VAR>name</VAR></CODE>
+<DD>Show records for user <VAR>name</VAR>.
+<P>
+
+</P>
+<DT><CODE>-z <VAR>timezone</VAR></CODE>
+<DD>Show times in the selected records using the specified
+time zone instead of UTC.
+</DL>
+<P>
+
+<A NAME="import"></A>
+<HR SIZE="6">
+<A NAME="SEC138"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC137"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC139"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.12 import--Import sources into CVS, using vendor branches </H2>
+<!--docid::SEC138::-->
+<P>
+
+<UL>
+<LI>
+Synopsis: import [-options] repository vendortag releasetag<small>...</small>
+<LI>
+Requires: Repository, source distribution directory.
+<LI>
+Changes: repository.
+</UL>
+<P>
+
+Use <CODE>import</CODE> to incorporate an entire source
+distribution from an outside source (e.g., a source
+vendor) into your source repository directory.  You can
+use this command both for initial creation of a
+repository, and for wholesale updates to the module
+from the outside source.  See section <A HREF="cvs_13.html#SEC104">13. Tracking third-party sources</A>, for
+a discussion on this subject.
+</P>
+<P>
+
+The <VAR>repository</VAR> argument gives a directory name
+(or a path to a directory) under the CVS root directory
+for repositories; if the directory did not exist,
+import creates it.
+</P>
+<P>
+
+When you use import for updates to source that has been
+modified in your source repository (since a prior
+import), it will notify you of any files that conflict
+in the two branches of development; use `<SAMP>checkout
+-j</SAMP>' to reconcile the differences, as import instructs
+you to do.
+</P>
+<P>
+
+If CVS decides a file should be ignored
+(see section <A HREF="cvs_18.html#SEC175">C.5 Ignoring files via cvsignore</A>), it does not import it and prints
+`<SAMP>I </SAMP>' followed by the filename (see section <A HREF="cvs_16.html#SEC140">A.12.2 import output</A>, for a
+complete description of the output).
+</P>
+<P>
+
+If the file `<TT>$CVSROOT/CVSROOT/cvswrappers</TT>' exists,
+any file whose names match the specifications in that
+file will be treated as packages and the appropriate
+filtering will be performed on the file/directory
+before being imported.  See section <A HREF="cvs_18.html#SEC164">C.2 The cvswrappers file</A>.
+</P>
+<P>
+
+The outside source is saved in a first-level
+branch, by default 1.1.1.  Updates are leaves of this
+branch; for example, files from the first imported
+collection of source will be revision 1.1.1.1, then
+files from the first imported update will be revision
+1.1.1.2, and so on.
+</P>
+<P>
+
+At least three arguments are required.
+<VAR>repository</VAR> is needed to identify the collection
+of source.  <VAR>vendortag</VAR> is a tag for the entire
+branch (e.g., for 1.1.1).  You must also specify at
+least one <VAR>releasetag</VAR> to identify the files at
+the leaves created each time you execute <CODE>import</CODE>.
+</P>
+<P>
+
+Note that <CODE>import</CODE> does <EM>not</EM> change the
+directory in which you invoke it.  In particular, it
+does not set up that directory as a CVS working
+directory; if you want to work with the sources import
+them first and then check them out into a different
+directory (see section <A HREF="cvs_1.html#SEC5">1.3.1 Getting the source</A>).
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC139">A.12.1 import options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC140">A.12.2 import output</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC141">A.12.3 import examples</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="import options"></A>
+<HR SIZE="6">
+<A NAME="SEC139"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC138"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC140"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC138"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.12.1 import options </H3>
+<!--docid::SEC139::-->
+<P>
+
+This standard option is supported by <CODE>import</CODE>
+(see section <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>, for a complete description):
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-m <VAR>message</VAR></CODE>
+<DD>Use <VAR>message</VAR> as log information, instead of
+invoking an editor.
+</DL>
+<P>
+
+There are the following additional special options.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-b <VAR>branch</VAR></CODE>
+<DD>See <A HREF="cvs_13.html#SEC110">13.6 Multiple vendor branches</A>.
+<P>
+
+</P>
+<DT><CODE>-k <VAR>subst</VAR></CODE>
+<DD>Indicate the keyword expansion mode desired.  This
+setting will apply to all files created during the
+import, but not to any files that previously existed in
+the repository.  See <A HREF="cvs_12.html#SEC102">12.4 Substitution modes</A>, for a
+list of valid `<SAMP>-k</SAMP>' settings.
+<P>
+
+</P>
+<DT><CODE>-I <VAR>name</VAR></CODE>
+<DD>Specify file names that should be ignored during
+import.  You can use this option repeatedly.  To avoid
+ignoring any files at all (even those ignored by
+default), specify `-I !'.
+<P>
+
+<VAR>name</VAR> can be a file name pattern of the same type
+that you can specify in the `<TT>.cvsignore</TT>' file.
+See section <A HREF="cvs_18.html#SEC175">C.5 Ignoring files via cvsignore</A>.
+</P>
+<P>
+
+</P>
+<DT><CODE>-W <VAR>spec</VAR></CODE>
+<DD>Specify file names that should be filtered during
+import.  You can use this option repeatedly.
+<P>
+
+<VAR>spec</VAR> can be a file name pattern of the same type
+that you can specify in the `<TT>.cvswrappers</TT>'
+file. See section <A HREF="cvs_18.html#SEC164">C.2 The cvswrappers file</A>.
+</DL>
+<P>
+
+<A NAME="import output"></A>
+<HR SIZE="6">
+<A NAME="SEC140"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC139"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC141"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC138"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.12.2 import output </H3>
+<!--docid::SEC140::-->
+<P>
+
+<CODE>import</CODE> keeps you informed of its progress by printing a line
+for each file, preceded by one character indicating the status of the file:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>U <VAR>file</VAR></CODE>
+<DD>The file already exists in the repository and has not been locally
+modified; a new revision has been created (if necessary).
+<P>
+
+</P>
+<DT><CODE>N <VAR>file</VAR></CODE>
+<DD>The file is a new file which has been added to the repository.
+<P>
+
+</P>
+<DT><CODE>C <VAR>file</VAR></CODE>
+<DD>The file already exists in the repository but has been locally modified;
+you will have to merge the changes.
+<P>
+
+</P>
+<DT><CODE>I <VAR>file</VAR></CODE>
+<DD>The file is being ignored (see section <A HREF="cvs_18.html#SEC175">C.5 Ignoring files via cvsignore</A>).
+<P>
+
+<A NAME="IDX269"></A>
+<A NAME="IDX270"></A>
+</P>
+<DT><CODE>L <VAR>file</VAR></CODE>
+<DD>The file is a symbolic link; <CODE>cvs import</CODE> ignores symbolic links.
+People periodically suggest that this behavior should
+be changed, but if there is a consensus on what it
+should be changed to, it doesn't seem to be apparent.
+(Various options in the `<TT>modules</TT>' file can be used
+to recreate symbolic links on checkout, update, etc.;
+see section <A HREF="cvs_18.html#SEC157">C.1 The modules file</A>.)
+</DL>
+<P>
+
+<A NAME="import examples"></A>
+<HR SIZE="6">
+<A NAME="SEC141"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC140"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC142"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC138"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.12.3 import examples </H3>
+<!--docid::SEC141::-->
+<P>
+
+See <A HREF="cvs_13.html#SEC104">13. Tracking third-party sources</A>, and <A HREF="cvs_3.html#SEC40">3.1.1 Creating a directory tree from a number of files</A>.
+</P>
+<P>
+
+<A NAME="log"></A>
+<HR SIZE="6">
+<A NAME="SEC142"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC141"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC143"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.13 log--Print out log information for files </H2>
+<!--docid::SEC142::-->
+<P>
+
+<UL>
+<LI>
+Synopsis: log [options] [files<small>...</small>]
+<LI>
+Requires: repository, working directory.
+<LI>
+Changes: nothing.
+</UL>
+<P>
+
+Display log information for files.  <CODE>log</CODE> used to
+call the RCS utility <CODE>rlog</CODE>.  Although this
+is no longer true in the current sources, this history
+determines the format of the output and the options,
+which are not quite in the style of the other CVS
+commands.
+</P>
+<P>
+
+<A NAME="IDX271"></A>
+<A NAME="IDX272"></A>
+The output includes the location of the RCS file,
+the <EM>head</EM> revision (the latest revision on the
+trunk), all symbolic names (tags) and some other
+things.  For each revision, the revision number, the
+author, the number of lines added/deleted and the log
+message are printed.  All times are displayed in
+Coordinated Universal Time (UTC).  (Other parts of
+CVS print times in the local timezone).
+</P>
+<P>
+
+<STRONG>Warning:</STRONG> <CODE>log</CODE> uses `<SAMP>-R</SAMP>' in a way that conflicts
+with the normal use inside CVS (see section <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>).
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC143">A.13.1 log options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC144">A.13.2 log examples</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="log options"></A>
+<HR SIZE="6">
+<A NAME="SEC143"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC142"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC144"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC142"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.13.1 log options </H3>
+<!--docid::SEC143::-->
+<P>
+
+By default, <CODE>log</CODE> prints all information that is
+available.  All other options restrict the output.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-b</CODE>
+<DD>Print information about the revisions on the default
+branch, normally the highest branch on the trunk.
+<P>
+
+</P>
+<DT><CODE>-d <VAR>dates</VAR></CODE>
+<DD>Print information about revisions with a checkin
+date/time in the range given by the
+semicolon-separated list of dates.  The date formats
+accepted are those accepted by the `<SAMP>-D</SAMP>' option to
+many other CVS commands (see section <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>).
+Dates can be combined into ranges as follows:
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE><VAR>d1</VAR>&lt;<VAR>d2</VAR></CODE>
+<DD><DT><CODE><VAR>d2</VAR>&gt;<VAR>d1</VAR></CODE>
+<DD>Select the revisions that were deposited between
+<VAR>d1</VAR> and <VAR>d2</VAR>.
+<P>
+
+</P>
+<DT><CODE>&lt;<VAR>d</VAR></CODE>
+<DD><DT><CODE><VAR>d</VAR>&gt;</CODE>
+<DD>Select all revisions dated <VAR>d</VAR> or earlier.
+<P>
+
+</P>
+<DT><CODE><VAR>d</VAR>&lt;</CODE>
+<DD><DT><CODE>&gt;<VAR>d</VAR></CODE>
+<DD>Select all revisions dated <VAR>d</VAR> or later.
+<P>
+
+</P>
+<DT><CODE><VAR>d</VAR></CODE>
+<DD>Select the single, latest revision dated <VAR>d</VAR> or
+earlier.
+</DL>
+<P>
+
+The `<SAMP>&gt;</SAMP>' or `<SAMP>&lt;</SAMP>' characters may be followed by
+`<SAMP>=</SAMP>' to indicate an inclusive range rather than an
+exclusive one.
+</P>
+<P>
+
+Note that the separator is a semicolon (;).
+</P>
+<P>
+
+</P>
+<DT><CODE>-h</CODE>
+<DD>Print only the name of the RCS file, name
+of the file in the working directory, head,
+default branch, access list, locks, symbolic names, and
+suffix.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  (Default
+is to run recursively).
+<P>
+
+</P>
+<DT><CODE>-N</CODE>
+<DD>Do not print the list of tags for this file.  This
+option can be very useful when your site uses a lot of
+tags, so rather than &quot;more&quot;'ing over 3 pages of tag
+information, the log information is presented without
+tags at all.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Print only the name of the RCS file.
+<P>
+
+</P>
+<DT><CODE>-r<VAR>revisions</VAR></CODE>
+<DD>Print information about revisions given in the
+comma-separated list <VAR>revisions</VAR> of revisions and
+ranges.  The following table explains the available
+range formats:
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE><VAR>rev1</VAR>:<VAR>rev2</VAR></CODE>
+<DD>Revisions <VAR>rev1</VAR> to <VAR>rev2</VAR> (which must be on
+the same branch).
+<P>
+
+</P>
+<DT><CODE><VAR>rev1</VAR>::<VAR>rev2</VAR></CODE>
+<DD>The same, but excluding <VAR>rev1</VAR>.
+<P>
+
+</P>
+<DT><CODE>:<VAR>rev</VAR></CODE>
+<DD><DT><CODE>::<VAR>rev</VAR></CODE>
+<DD>Revisions from the beginning of the branch up to
+and including <VAR>rev</VAR>.
+<P>
+
+</P>
+<DT><CODE><VAR>rev</VAR>:</CODE>
+<DD>Revisions starting with <VAR>rev</VAR> to the end of the
+branch containing <VAR>rev</VAR>.
+<P>
+
+</P>
+<DT><CODE><VAR>rev</VAR>::</CODE>
+<DD>Revisions starting just after <VAR>rev</VAR> to the end of the
+branch containing <VAR>rev</VAR>.
+<P>
+
+</P>
+<DT><CODE><VAR>branch</VAR></CODE>
+<DD>An argument that is a branch means all revisions on
+that branch.
+<P>
+
+</P>
+<DT><CODE><VAR>branch1</VAR>:<VAR>branch2</VAR></CODE>
+<DD><DT><CODE><VAR>branch1</VAR>::<VAR>branch2</VAR></CODE>
+<DD>A range of branches means all revisions
+on the branches in that range.
+<P>
+
+</P>
+<DT><CODE><VAR>branch</VAR>.</CODE>
+<DD>The latest revision in <VAR>branch</VAR>.
+</DL>
+<P>
+
+A bare `<SAMP>-r</SAMP>' with no revisions means the latest
+revision on the default branch, normally the trunk.
+There can be no space between the `<SAMP>-r</SAMP>' option and
+its argument.
+</P>
+<P>
+
+</P>
+<DT><CODE>-S</CODE>
+<DD>Suppress the header if no revisions are selected.
+<P>
+
+</P>
+<DT><CODE>-s <VAR>states</VAR></CODE>
+<DD>Print information about revisions whose state
+attributes match one of the states given in the
+comma-separated list <VAR>states</VAR>.
+<P>
+
+</P>
+<DT><CODE>-t</CODE>
+<DD>Print the same as `<SAMP>-h</SAMP>', plus the descriptive text.
+<P>
+
+</P>
+<DT><CODE>-w<VAR>logins</VAR></CODE>
+<DD>Print information about revisions checked in by users
+with login names appearing in the comma-separated list
+<VAR>logins</VAR>.  If <VAR>logins</VAR> is omitted, the user's
+login is assumed.  There can be no space between the
+`<SAMP>-w</SAMP>' option and its argument.
+</DL>
+<P>
+
+<CODE>log</CODE> prints the intersection of the revisions
+selected with the options `<SAMP>-d</SAMP>', `<SAMP>-s</SAMP>', and
+`<SAMP>-w</SAMP>', intersected with the union of the revisions
+selected by `<SAMP>-b</SAMP>' and `<SAMP>-r</SAMP>'.
+</P>
+<P>
+
+<A NAME="log examples"></A>
+<HR SIZE="6">
+<A NAME="SEC144"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC143"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC145"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC142"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.13.2 log examples </H3>
+<!--docid::SEC144::-->
+<P>
+
+Contributed examples are gratefully accepted.
+</P>
+<P>
+
+<A NAME="rdiff"></A>
+<HR SIZE="6">
+<A NAME="SEC145"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC144"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC146"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.14 rdiff---'patch' format diffs between releases </H2>
+<!--docid::SEC145::-->
+<P>
+
+<UL>
+<LI>
+rdiff [-flags] [-V vn] [-r t|-D d [-r t2|-D d2]] modules<small>...</small>
+<LI>
+Requires: repository.
+<LI>
+Changes: nothing.
+<LI>
+Synonym: patch
+</UL>
+<P>
+
+Builds a Larry Wall format patch(1) file between two
+releases, that can be fed directly into the <CODE>patch</CODE>
+program to bring an old release up-to-date with the new
+release.  (This is one of the few CVS commands that
+operates directly from the repository, and doesn't
+require a prior checkout.) The diff output is sent to
+the standard output device.
+</P>
+<P>
+
+You can specify (using the standard `<SAMP>-r</SAMP>' and
+`<SAMP>-D</SAMP>' options) any combination of one or two
+revisions or dates.  If only one revision or date is
+specified, the patch file reflects differences between
+that revision or date and the current head revisions in
+the RCS file.
+</P>
+<P>
+
+Note that if the software release affected is contained
+in more than one directory, then it may be necessary to
+specify the `<SAMP>-p</SAMP>' option to the <CODE>patch</CODE> command when
+patching the old sources, so that <CODE>patch</CODE> is able to find
+the files that are located in other directories.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC146">A.14.1 rdiff options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC147">A.14.2 rdiff examples</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="rdiff options"></A>
+<HR SIZE="6">
+<A NAME="SEC146"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC145"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC147"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC145"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.14.1 rdiff options </H3>
+<!--docid::SEC146::-->
+<P>
+
+These standard options are supported by <CODE>rdiff</CODE>
+(see section <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>, for a complete description of
+them):
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Use the most recent revision no later than <VAR>date</VAR>.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>If no matching revision is found, retrieve the most
+recent revision (instead of ignoring the file).
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; don't descend subdirectories.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Examine directories recursively.  This option is on by default.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>tag</VAR></CODE>
+<DD>Use revision <VAR>tag</VAR>.
+</DL>
+<P>
+
+In addition to the above, these options are available:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-c</CODE>
+<DD>Use the context diff format.  This is the default format.
+<P>
+
+</P>
+<DT><CODE>-s</CODE>
+<DD>Create a summary change report instead of a patch.  The
+summary includes information about files that were
+changed or added between the releases.  It is sent to
+the standard output device.  This is useful for finding
+out, for example, which files have changed between two
+dates or revisions.
+<P>
+
+</P>
+<DT><CODE>-t</CODE>
+<DD>A diff of the top two revisions is sent to the standard
+output device.  This is most useful for seeing what the
+last change to a file was.
+<P>
+
+</P>
+<DT><CODE>-u</CODE>
+<DD>Use the unidiff format for the context diffs.
+Remember that old versions
+of the <CODE>patch</CODE> program can't handle the unidiff
+format, so if you plan to post this patch to the net
+you should probably not use `<SAMP>-u</SAMP>'.
+<P>
+
+</P>
+<DT><CODE>-V <VAR>vn</VAR></CODE>
+<DD>Expand keywords according to the rules current in
+RCS version <VAR>vn</VAR> (the expansion format changed with
+RCS version 5).  Note that this option is no
+longer accepted.  CVS will always expand keywords the
+way that RCS version 5 does.
+</DL>
+<P>
+
+<A NAME="rdiff examples"></A>
+<HR SIZE="6">
+<A NAME="SEC147"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC146"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC148"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC145"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.14.2 rdiff examples </H3>
+<!--docid::SEC147::-->
+<P>
+
+Suppose you receive mail from <TT>foo@example.net</TT> asking for an
+update from release 1.2 to 1.4 of the tc compiler.  You
+have no such patches on hand, but with CVS that can
+easily be fixed with a command such as this:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs rdiff -c -r FOO1_2 -r FOO1_4 tc | \
+$$ Mail -s 'The patches you asked for' foo@example.net
+</pre></td></tr></table><P>
+
+Suppose you have made release 1.3, and forked a branch
+called `<SAMP>R_1_3fix</SAMP>' for bugfixes.  `<SAMP>R_1_3_1</SAMP>'
+corresponds to release 1.3.1, which was made some time
+ago.  Now, you want to see how much development has been
+done on the branch.  This command can be used:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs patch -s -r R_1_3_1 -r R_1_3fix module-name
+cvs rdiff: Diffing module-name
+File ChangeLog,v changed from revision 1.52.2.5 to 1.52.2.6
+File foo.c,v changed from revision 1.52.2.3 to 1.52.2.4
+File bar.h,v changed from revision 1.29.2.1 to 1.2
+</pre></td></tr></table><P>
+
+<A NAME="release"></A>
+<HR SIZE="6">
+<A NAME="SEC148"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC147"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC149"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.15 release--Indicate that a Module is no longer in use </H2>
+<!--docid::SEC148::-->
+<P>
+
+<UL>
+<LI>
+release [-d] directories<small>...</small>
+<LI>
+Requires: Working directory.
+<LI>
+Changes: Working directory, history log.
+</UL>
+<P>
+
+This command is meant to safely cancel the effect of
+`<SAMP>cvs checkout</SAMP>'.  Since CVS doesn't lock files, it
+isn't strictly necessary to use this command.  You can
+always simply delete your working directory, if you
+like; but you risk losing changes you may have
+forgotten, and you leave no trace in the CVS history
+file (see section <A HREF="cvs_18.html#SEC177">C.7 The history file</A>) that you've abandoned your
+checkout.
+</P>
+<P>
+
+Use `<SAMP>cvs release</SAMP>' to avoid these problems.  This
+command checks that no uncommitted changes are
+present; that you are executing it from immediately
+above a CVS working directory; and that the repository
+recorded for your files is the same as the repository
+defined in the module database.
+</P>
+<P>
+
+If all these conditions are true, `<SAMP>cvs release</SAMP>'
+leaves a record of its execution (attesting to your
+intentionally abandoning your checkout) in the CVS
+history log.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC149">A.15.1 release options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC150">A.15.2 release output</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC151">A.15.3 release examples</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="release options"></A>
+<HR SIZE="6">
+<A NAME="SEC149"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC148"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC150"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC148"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.15.1 release options </H3>
+<!--docid::SEC149::-->
+<P>
+
+The <CODE>release</CODE> command supports one command option:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-d</CODE>
+<DD>Delete your working copy of the file if the release
+succeeds.  If this flag is not given your files will
+remain in your working directory.
+<P>
+
+<STRONG>Warning:</STRONG>  The <CODE>release</CODE> command deletes
+all directories and files recursively.  This
+has the very serious side-effect that any directory
+that you have created inside your checked-out sources,
+and not added to the repository (using the <CODE>add</CODE>
+command; see section <A HREF="cvs_7.html#SEC67">7.1 Adding files to a directory</A>) will be silently deleted--even
+if it is non-empty!
+</DL>
+<P>
+
+<A NAME="release output"></A>
+<HR SIZE="6">
+<A NAME="SEC150"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC149"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC151"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC148"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.15.2 release output </H3>
+<!--docid::SEC150::-->
+<P>
+
+Before <CODE>release</CODE> releases your sources it will
+print a one-line message for any file that is not
+up-to-date.
+</P>
+<P>
+
+<STRONG>Warning:</STRONG>  Any new directories that you have
+created, but not added to the CVS directory hierarchy
+with the <CODE>add</CODE> command (see section <A HREF="cvs_7.html#SEC67">7.1 Adding files to a directory</A>) will be
+silently ignored (and deleted, if `<SAMP>-d</SAMP>' is
+specified), even if they contain files.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>U <VAR>file</VAR></CODE>
+<DD><DT><CODE>P <VAR>file</VAR></CODE>
+<DD>There exists a newer revision of this file in the
+repository, and you have not modified your local copy
+of the file (`<SAMP>U</SAMP>' and `<SAMP>P</SAMP>' mean the same thing).
+<P>
+
+</P>
+<DT><CODE>A <VAR>file</VAR></CODE>
+<DD>The file has been added to your private copy of the
+sources, but has not yet been committed to the
+repository.  If you delete your copy of the sources
+this file will be lost.
+<P>
+
+</P>
+<DT><CODE>R <VAR>file</VAR></CODE>
+<DD>The file has been removed from your private copy of the
+sources, but has not yet been removed from the
+repository, since you have not yet committed the
+removal.  See section <A HREF="cvs_16.html#SEC124">A.8 commit--Check files into the repository</A>.
+<P>
+
+</P>
+<DT><CODE>M <VAR>file</VAR></CODE>
+<DD>The file is modified in your working directory.  There
+might also be a newer revision inside the repository.
+<P>
+
+</P>
+<DT><CODE>? <VAR>file</VAR></CODE>
+<DD><VAR>file</VAR> is in your working directory, but does not
+correspond to anything in the source repository, and is
+not in the list of files for CVS to ignore (see the
+description of the `<SAMP>-I</SAMP>' option, and
+see section <A HREF="cvs_18.html#SEC175">C.5 Ignoring files via cvsignore</A>).  If you remove your working
+sources, this file will be lost.
+</DL>
+<P>
+
+<A NAME="release examples"></A>
+<HR SIZE="6">
+<A NAME="SEC151"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC150"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC152"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC148"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.15.3 release examples </H3>
+<!--docid::SEC151::-->
+<P>
+
+Release the `<TT>tc</TT>' directory, and delete your local working copy
+of the files.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cd ..         # You must stand immediately above the
+                # sources when you issue `<SAMP>cvs release</SAMP>'.
+$ cvs release -d tc
+You have [0] altered files in this repository.
+Are you sure you want to release (and delete) directory `tc': y
+$
+</pre></td></tr></table><P>
+
+<A NAME="update"></A>
+<HR SIZE="6">
+<A NAME="SEC152"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC151"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC153"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> A.16 update--Bring work tree in sync with repository </H2>
+<!--docid::SEC152::-->
+<P>
+
+<UL>
+<LI>
+update [-ACdflPpR] [-I name] [-j rev [-j rev]] [-k kflag] [-r tag|-D date] [-W spec] files<small>...</small>
+<LI>
+Requires: repository, working directory.
+<LI>
+Changes: working directory.
+</UL>
+<P>
+
+After you've run checkout to create your private copy
+of source from the common repository, other developers
+will continue changing the central source.  From time
+to time, when it is convenient in your development
+process, you can use the <CODE>update</CODE> command from
+within your working directory to reconcile your work
+with any revisions applied to the source repository
+since your last checkout or update.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC153">A.16.1 update options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_16.html#SEC154">A.16.2 update output</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="update options"></A>
+<HR SIZE="6">
+<A NAME="SEC153"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC152"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC154"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC152"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.16.1 update options </H3>
+<!--docid::SEC153::-->
+<P>
+
+These standard options are available with <CODE>update</CODE>
+(see section <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>, for a complete description of
+them):
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-D date</CODE>
+<DD>Use the most recent revision no later than <VAR>date</VAR>.
+This option is sticky, and implies `<SAMP>-P</SAMP>'.
+See <A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A>, for more information on sticky tags/dates.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Only useful with the `<SAMP>-D <VAR>date</VAR></SAMP>' or `<SAMP>-r
+<VAR>tag</VAR></SAMP>' flags.  If no matching revision is found,
+retrieve the most recent revision (instead of ignoring
+the file).
+<P>
+
+</P>
+<DT><CODE>-k <VAR>kflag</VAR></CODE>
+<DD>Process keywords according to <VAR>kflag</VAR>.  See
+<A HREF="cvs_12.html#SEC98">12. Keyword substitution</A>.
+This option is sticky; future updates of
+this file in this working directory will use the same
+<VAR>kflag</VAR>.  The <CODE>status</CODE> command can be viewed
+to see the sticky options.  See <A HREF="cvs_17.html#SEC155">B. Quick reference to CVS commands</A>, for
+more information on the <CODE>status</CODE> command.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-P</CODE>
+<DD>Prune empty directories.  See <A HREF="cvs_7.html#SEC74">7.5 Moving and renaming directories</A>.
+<P>
+
+</P>
+<DT><CODE>-p</CODE>
+<DD>Pipe files to the standard output.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Update directories recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-r rev</CODE>
+<DD>Retrieve revision/tag <VAR>rev</VAR>.  This option is sticky,
+and implies `<SAMP>-P</SAMP>'.
+See <A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A>, for more information on sticky tags/dates.
+</DL>
+<P>
+
+These special options are also available with
+<CODE>update</CODE>.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-A</CODE>
+<DD>Reset any sticky tags, dates, or `<SAMP>-k</SAMP>' options.
+See <A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A>, for more information on sticky tags/dates.
+<P>
+
+</P>
+<DT><CODE>-C</CODE>
+<DD>Overwrite locally modified files with clean copies from
+the repository (the modified file is saved in
+`<TT>.#<VAR>file</VAR>.<VAR>revision</VAR></TT>', however).
+<P>
+
+</P>
+<DT><CODE>-d</CODE>
+<DD>Create any directories that exist in the repository if
+they're missing from the working directory.  Normally,
+<CODE>update</CODE> acts only on directories and files that
+were already enrolled in your working directory.
+<P>
+
+This is useful for updating directories that were
+created in the repository since the initial checkout;
+but it has an unfortunate side effect.  If you
+deliberately avoided certain directories in the
+repository when you created your working directory
+(either through use of a module name or by listing
+explicitly the files and directories you wanted on the
+command line), then updating with `<SAMP>-d</SAMP>' will create
+those directories, which may not be what you want.
+</P>
+<P>
+
+</P>
+<DT><CODE>-I <VAR>name</VAR></CODE>
+<DD>Ignore files whose names match <VAR>name</VAR> (in your
+working directory) during the update.  You can specify
+`<SAMP>-I</SAMP>' more than once on the command line to specify
+several files to ignore.  Use `<SAMP>-I !</SAMP>' to avoid
+ignoring any files at all.  See section <A HREF="cvs_18.html#SEC175">C.5 Ignoring files via cvsignore</A>, for other
+ways to make CVS ignore some files.
+<P>
+
+</P>
+<DT><CODE>-W<VAR>spec</VAR></CODE>
+<DD>Specify file names that should be filtered during
+update.  You can use this option repeatedly.
+<P>
+
+<VAR>spec</VAR> can be a file name pattern of the same type
+that you can specify in the `<TT>.cvswrappers</TT>'
+file. See section <A HREF="cvs_18.html#SEC164">C.2 The cvswrappers file</A>.
+</P>
+<P>
+
+</P>
+<DT><CODE>-j<VAR>revision</VAR></CODE>
+<DD>With two `<SAMP>-j</SAMP>' options, merge changes from the
+revision specified with the first `<SAMP>-j</SAMP>' option to
+the revision specified with the second `<SAMP>j</SAMP>' option,
+into the working directory.
+<P>
+
+With one `<SAMP>-j</SAMP>' option, merge changes from the
+ancestor revision to the revision specified with the
+`<SAMP>-j</SAMP>' option, into the working directory.  The
+ancestor revision is the common ancestor of the
+revision which the working directory is based on, and
+the revision specified in the `<SAMP>-j</SAMP>' option.
+</P>
+<P>
+
+Note that using a single `<SAMP>-j <VAR>tagname</VAR></SAMP>' option rather than
+`<SAMP>-j <VAR>branchname</VAR></SAMP>' to merge changes from a branch will
+often not remove files which were removed on the branch.
+See section <A HREF="cvs_5.html#SEC63">5.9 Merging can add or remove files</A>, for more.
+</P>
+<P>
+
+In addition, each `<SAMP>-j</SAMP>' option can contain an optional
+date specification which, when used with branches, can
+limit the chosen revision to one within a specific
+date.  An optional date is specified by adding a colon
+(:) to the tag:
+`<SAMP>-j<VAR>Symbolic_Tag</VAR>:<VAR>Date_Specifier</VAR></SAMP>'.
+</P>
+<P>
+
+See section <A HREF="cvs_5.html#SEC54">5. Branching and merging</A>.
+</P>
+<P>
+
+</DL>
+<P>
+
+<A NAME="update output"></A>
+<HR SIZE="6">
+<A NAME="SEC154"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC153"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC152"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> A.16.2 update output </H3>
+<!--docid::SEC154::-->
+<P>
+
+<CODE>update</CODE> and <CODE>checkout</CODE> keep you informed of
+their progress by printing a line for each file, preceded
+by one character indicating the status of the file:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>U <VAR>file</VAR></CODE>
+<DD>The file was brought up to date with respect to the
+repository.  This is done for any file that exists in
+the repository but not in your source, and for files
+that you haven't changed but are not the most recent
+versions available in the repository.
+<P>
+
+</P>
+<DT><CODE>P <VAR>file</VAR></CODE>
+<DD>Like `<SAMP>U</SAMP>', but the CVS server sends a patch instead of an entire
+file.  This accomplishes the same thing as `<SAMP>U</SAMP>' using less bandwidth.
+<P>
+
+</P>
+<DT><CODE>A <VAR>file</VAR></CODE>
+<DD>The file has been added to your private copy of the
+sources, and will be added to the source repository
+when you run <CODE>commit</CODE> on the file.  This is a
+reminder to you that the file needs to be committed.
+<P>
+
+</P>
+<DT><CODE>R <VAR>file</VAR></CODE>
+<DD>The file has been removed from your private copy of the
+sources, and will be removed from the source repository
+when you run <CODE>commit</CODE> on the file.  This is a
+reminder to you that the file needs to be committed.
+<P>
+
+</P>
+<DT><CODE>M <VAR>file</VAR></CODE>
+<DD>The file is modified in  your  working  directory.
+<P>
+
+`<SAMP>M</SAMP>' can indicate one of two states for a file
+you're working on: either there were no modifications
+to the same file in the repository, so that your file
+remains as you last saw it; or there were modifications
+in the repository as well as in your copy, but they
+were merged successfully, without conflict, in your
+working directory.
+</P>
+<P>
+
+CVS will print some messages if it merges your work,
+and a backup copy of your working file (as it looked
+before you ran <CODE>update</CODE>) will be made.  The exact
+name of that file is printed while <CODE>update</CODE> runs.
+</P>
+<P>
+
+</P>
+<DT><CODE>C <VAR>file</VAR></CODE>
+<DD><A NAME="IDX273"></A>
+<A NAME="IDX274"></A>
+A conflict was detected while trying to merge your
+changes to <VAR>file</VAR> with changes from the source
+repository.  <VAR>file</VAR> (the copy in your working
+directory) is now the result of attempting to merge
+the two revisions; an unmodified copy of your file
+is also in your working directory, with the name
+`<TT>.#<VAR>file</VAR>.<VAR>revision</VAR></TT>' where <VAR>revision</VAR>
+is the revision that your modified file started
+from.  Resolve the conflict as described in
+<A HREF="cvs_10.html#SEC86">10.3 Conflicts example</A>.
+(Note that some systems automatically purge
+files that begin with `<TT>.#</TT>' if they have not been
+accessed for a few days.  If you intend to keep a copy
+of your original file, it is a very good idea to rename
+it.)  Under VMS, the file name starts with
+`<TT>__</TT>' rather than `<TT>.#</TT>'.
+<P>
+
+</P>
+<DT><CODE>? <VAR>file</VAR></CODE>
+<DD><VAR>file</VAR> is in your working directory, but does not
+correspond to anything in the source repository, and is
+not in the list of files for CVS to ignore (see the
+description of the `<SAMP>-I</SAMP>' option, and
+see section <A HREF="cvs_18.html#SEC175">C.5 Ignoring files via cvsignore</A>).
+</DL>
+<P>
+
+<A NAME="Invoking CVS"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_17.html#SEC155"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>
+<FONT SIZE="-1">
+This document was generated
+by <I>Derek Robert Price</I> on <I>April, 18 2002</I>
+using <A HREF="http://texi2html.cvshome.org"><I>texi2html</I></A>
+</FONT>
+
+</BODY>
+</HTML>

@@ -1,0 +1,4 @@
+base referer
+rect $classCov.html#a14 230,8 374,32
+rect $classCov.html#a8 266,56 338,80
+rect $classCov.html#a18 252,104 353,128

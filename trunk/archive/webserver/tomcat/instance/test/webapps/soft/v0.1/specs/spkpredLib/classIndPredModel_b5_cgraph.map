@@ -1,0 +1,4 @@
+base referer
+rect $classCov.html#a8 335,8 407,32
+rect $classIndPredModel.html#b10 261,56 482,80
+rect $classIndPredModel.html#b9 530,56 709,80

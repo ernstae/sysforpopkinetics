@@ -1,0 +1,60 @@
+<html><head>
+<title>Set Population Parameter</title>
+<meta name="description" id="description" content="Set Population Parameter">
+<meta name="keywords" id="keywords" content=" Spkmodel dosetpoppar() setpoppar() User-provided Model set population parameter "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="spkmodel_setpoppar.htm" target="_top">section</a>, <a href="spkmodel_setpoppar_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Required for population analysis.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><code><font color="blue"><span style='white-space: nowrap'>doSetPopPar(&nbsp;SPK_VA::valarray&lt;Scalar&gt;&nbsp;</span></font></code><i><span style='white-space: nowrap'>popPar</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)</span></font></code> sets <i>popPar</i> as the current
+population parameter value and guarantees that subsequent attempts for evaluating the mathematical models
+expressed by SpkModel virtual member functions are evaluated at the point.  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><code><font color="blue"><span style='white-space: nowrap'>doSetPopPar()</span></font></code> shall be only called via its corresponding
+public interface, <code><font color="blue"><span style='white-space: nowrap'>setPopPar()</span></font></code>.  The public interface
+shall be called only by the SPK library components unless when it is being unit-tested,
+or SPK cannot guarantee any of the computational results.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The public interface, <code><font color="blue">setPopPar()</font></code> catches any exception thrown by the private interface,
+<code><font color="blue">doSetPopPar()</font></code>, implemented by the user.
+If the exception is an instance of <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+, 
+an additional <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+ object will be appended to the list of errors
+maintained within the object.  The new SpkError object will have error code set
+to <code><font color="blue">SpkError::SPK_MODEL_SET_POP_ERR</font></code>.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+popPar<br>
+</span></font></code>is a population parameter vector of size <code><span style='white-space: nowrap'><i>nPopPar</i></span></code>, where <code><span style='white-space: nowrap'><i>nPopPar</i>&nbsp;&gt;&nbsp;0</span></code>.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+See <a href="spkmodel_frame1.htm#Example" target="frame1"><i><span style='white-space: nowrap'>Example</span></i></a>
+
+
+
+<hr>Input File: ../../spk/SpkModel.cpp
+
+</body>
+</html>

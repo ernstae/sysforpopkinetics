@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.245
+----------------------------------
+USER VISIBLE CHANGES
+
+Added support for ICALL.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  992
+
+BY: Mitch Watrous
+
+WHEN:  September 12, 2008

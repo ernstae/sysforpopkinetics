@@ -1,0 +1,46 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.34
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+A fundamental logic flaw was found within a loop in mapTilde.cpp
+so that it never go out of the loop and exhausted the maximum
+number of iterations.  Fixed it so that it will not get stuck
+in a forever loop.
+
+RELATED BUG REPORTS: 148
+
+BY: Brad & Mitch
+
+WHEN: January 20, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.35
+----------------------------------
+USER VISIBLE CHANGES
+The users can see the final estimate of population parameters and its
+profiling information from likelihood evaluations
+in NONMEM's notation (ie. Monte Carlo, Miser, Grid).
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 145
+
+BY: Sachiko Honda
+
+WHEN: January 20, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.36
+----------------------------------
+USER VISIBLE CHANGES
+Most recent computational values, instead of 0's,
+for theta, Omega and Sigma are now
+returned back to the user.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 146
+
+BY: Sachiko Honda
+
+WHEN: January 21, 2005

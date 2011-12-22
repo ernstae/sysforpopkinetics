@@ -1,0 +1,42 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.12
+----------------------------------
+USER VISIBLE CHANGES
+Error messages are reported back to MDA in a way MDA can easily manipulate the contents if necessarily.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 100
+
+BY: Sachiko Honda
+
+WHEN: 11/02/2004
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.13
+----------------------------------
+USER VISIBLE CHANGES
+This is a fix to the previous release, 0.1.12, 
+which did not include a correct version of SpkException.h.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: 11/03/2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.14
+----------------------------------
+USER VISIBLE CHANGES
+Fixed the bug introduced by the previous release.
+The previous release did not have a correct version of a header,
+SpkException.h, in particular.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: 11/09/2004

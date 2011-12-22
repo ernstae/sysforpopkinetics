@@ -1,0 +1,175 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>SPK Mixed Effects Model</TITLE>
+<META NAME="description" CONTENT="SPK Mixed Effects Model">
+<META NAME="keywords" CONTENT="modelCap">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="modelCap.css">
+
+<LINK REL="next" HREF="node58.html">
+<LINK REL="previous" HREF="node56.html">
+<LINK REL="up" HREF="node56.html">
+<LINK REL="next" HREF="node58.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html830"
+  HREF="node58.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html826"
+  HREF="node56.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html820"
+  HREF="node56.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html828"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html831"
+  HREF="node58.html">NONMEM Mixed Effects Model</A>
+<B> Up:</B> <A NAME="tex2html827"
+  HREF="node56.html">Appendix: Population Level Models</A>
+<B> Previous:</B> <A NAME="tex2html821"
+  HREF="node56.html">Appendix: Population Level Models</A>
+ &nbsp; <B>  <A NAME="tex2html829"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00091000000000000000">
+SPK Mixed Effects Model</A>
+</H2>
+<P>
+<FONT SIZE="+1">SPK's mixed effects model for the <IMG
+ WIDTH="27" HEIGHT="42" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.png"
+ ALT="$j^{\mbox{th}}$"> value of the
+<IMG
+ WIDTH="25" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img37.png"
+ ALT="$i^{\mbox{th}}$"> individual's data is 
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+y_{i(j)} = f_{i(j)}(\alpha, b_i) + e_{i(j)} ,
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="173" HEIGHT="30" BORDER="0"
+ SRC="img171.png"
+ ALT="\begin{displaymath}
+y_{i(j)} = f_{i(j)}(\alpha, b_i) + e_{i(j)} ,
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(51)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+where
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+R_{i(j,k)}(\alpha, b_i) = \mbox{cov}[e_{i(j)},e_{i(k)}] ,
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="208" HEIGHT="30" BORDER="0"
+ SRC="img172.png"
+ ALT="\begin{displaymath}
+R_{i(j,k)}(\alpha, b_i) = \mbox{cov}[e_{i(j)},e_{i(k)}] ,
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(52)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+D_{(p,q)}(\alpha) = \mbox{cov}[b_{i(p)},b_{i(q)}] ,
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="184" HEIGHT="30" BORDER="0"
+ SRC="img173.png"
+ ALT="\begin{displaymath}
+D_{(p,q)}(\alpha) = \mbox{cov}[b_{i(p)},b_{i(q)}] ,
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(53)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+<IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img41.png"
+ ALT="$\alpha$"> is a vector of fixed effects parameters, 
+and <IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img42.png"
+ ALT="$b_i$"> is the individual's vector of random effects parameters.
+</FONT>
+<P>
+<FONT SIZE="+1">The output of SPK's population level estimation is
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+\left\{ \alpha^{\mbox{Out}}, 
+      \{ b_i^{\mbox{Out}} ( \alpha^{\mbox{Out}} ) \} \right\} ,
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="174" HEIGHT="34" BORDER="0"
+ SRC="img174.png"
+ ALT="\begin{displaymath}
+\left\{ \alpha^{\mbox{Out}},
+\{ b_i^{\mbox{Out}} ( \alpha^{\mbox{Out}} ) \} \right\} ,
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(54)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+which are estimates for the optimal values for the fixed 
+effects parameters along with estimate for the optimal values
+for each individual's random effects parameters.
+</FONT>
+<P>
+<BR><HR>
+<ADDRESS>
+Mitch Watrous
+2007-12-17
+</ADDRESS>
+</BODY>
+</HTML>

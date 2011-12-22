@@ -1,0 +1,420 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Downloading and Burning ISOs</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Downloading and Burning ISOs</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	A reliable method for downloading ISO images and burning them
+	onto CD-R is presented.
+      </P
+><P
+>&#13;	The information in this document is targeted primarily toward
+	the RFPK Software Team and associates and is specific to the
+	computer systems and network installed in the RFPK Laboratory
+	of the Department of Bioengineering of the University of Washington.  RFPK is the Resource for
+	Population Kinetics.  Its work is supported, in part, by grant
+	P41 EB-001975 of the National Institutes of Health (NIH) of
+	the U.S.  Department of Health and Human Services.
+      </P
+><P
+>&#13;	<A
+HREF="#AEN75"
+>Copyright</A
+> (c) 2004, by the University of Washington.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>July 4, 1776</TD
+><TD
+ALIGN="LEFT"
+>Revised by: </TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+></TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN15"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN19"
+>Downloading</A
+></DT
+><DT
+><A
+HREF="#AEN36"
+>Burning</A
+></DT
+><DT
+><A
+HREF="#AEN75"
+>Copyright Notice</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN15"
+></A
+>Introduction</H2
+><P
+>&#13;      The RedHat Linux operating software and many other software products
+      are made available for download as a set of ISO images.  Each
+      image, typically presented as a file whose name ends with the
+      suffix <TT
+CLASS="filename"
+>.iso</TT
+>, represents the contents of a 
+      CDROM.  If the installation set for the product consists of four
+      CDROMs, you need to download four ISO image files and then burn
+      each of them onto CD-R.  Because these files are so large, an 
+      efficient process is required.  Because the reliability of the 
+      software to be installed from these ISOs is of critical importance,
+      there must be a way to test that the process of downloaded and
+      burning was error-free.  This document presents a reliable method
+      for creating installation CDROMs from downloaded ISOs.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN19"
+></A
+>Downloading</H2
+><P
+>&#13;      The files are first downloaded from a web site or from an ftp server.
+      The ftp protocol is normally used, although other protocols, including
+      html, are often available and can do the job.  
+    </P
+><P
+>&#13;      At the download site, you need to find two pieces of information:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    The file or files to be downloaded.  The file name typically
+	    indicates the name of the product and the version, and the
+	    suffix is normally <TT
+CLASS="filename"
+>.iso</TT
+>.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    An MD5 checksum for each file.
+	  </P
+></LI
+></OL
+>
+    </P
+><P
+>&#13;      Proceed to download the file or files.  After the download is complete,
+      use <I
+CLASS="emphasis"
+>md5sum</I
+> to compute the MD5 checksum for each
+      file you have received.  For example, if a file that was downloaded 
+      was called <TT
+CLASS="filename"
+>KNOPPIX_V3.6-2004-08-16-EN.iso</TT
+>,
+      you would compute the checksum as follows:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;md5sum KNOPPIX_V3.6-2004-08-16-EN.iso
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      In this example based on Knoppix, a version of Linux contained on a single
+      bootable CDROM, the MD5 checksum at the 
+      download site is actually in a file called
+      <TT
+CLASS="filename"
+>KNOPPIX_V3.6-2004-08-16-EN.iso.md5</TT
+>, which
+      can be easily downloaded and checked against the value computed
+      by <I
+CLASS="emphasis"
+>md5sum</I
+>.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN36"
+></A
+>Burning</H2
+><P
+>&#13;      Once you have downloaded your ISOs and have verified their integrity using
+      <I
+CLASS="emphasis"
+>md5sum</I
+>, you are ready to burn CDROMs.  In the following
+      example, we burn the single Knoppix CDROM:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    Place a blank CDR in your CD burner.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If a GUI cd burning program starts automatically, close the window.
+	    We will use <I
+CLASS="emphasis"
+>cdrecord</I
+> from the command line.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Open a shell window and use <B
+CLASS="command"
+>su</B
+> to become the root
+	    user.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Enter the following command at the commandline prompt:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cdrecord -v dev=0,0,0 speed=40 driveropts=burnfree -dao -eject /opt/incoming/KNOPPIX_V3.6-2004-08-16-EN.iso
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    Note that the device triplet, <I
+CLASS="emphasis"
+>0,0,0</I
+> may not be correct for your
+	    system.  Determine the correct values by running the command
+	    <B
+CLASS="command"
+>cdrecord --scanbus</B
+>
+	  </P
+><P
+>&#13;	    Note that the following options are essential:
+	    <P
+></P
+><UL
+><LI
+><P
+>&#13;		  <I
+CLASS="emphasis"
+>driveropts=burnfree</I
+> enables buffer underflow protection
+		  in the drive.
+		</P
+></LI
+><LI
+><P
+>&#13;		  <I
+CLASS="emphasis"
+>-dao</I
+>, or "disk at once", causes the entire disk
+		  to be written. Without this, subsequent running of <I
+CLASS="emphasis"
+>md5sum</I
+>
+		  on the device may hang.
+		</P
+></LI
+></UL
+>
+	  </P
+><P
+>&#13;	    You will, of course, change the filename at the end of the command to
+	    whatever is appropriate for the software you have downloaded.
+	    You may also want to change the speed to accord with the lesser of the 
+	    speed of your cd burner and the speed capability of your blank CDR.  
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If all goes well, your CDROM will be written without any error detected 
+	    by <I
+CLASS="emphasis"
+>cdrecord</I
+> and the disk will eject.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Without removing the CDROM you have just burned, close the drive.
+	  </P
+><P
+>&#13;	    Compute the MD5 checksum for the CDROM:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;md5sum /dev/cdrom
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    This may take five minutes or more, because the entire CDROM must be
+	    read.
+	  </P
+><P
+>&#13;	    The value computed must be identical to that obtained previously from
+	    the ISO and to that published on the download site.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Unmount the CDROM. If the checksum was correct, the CDROM is 
+	    ready to use.
+	  </P
+></LI
+></OL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN75"
+></A
+>Copyright Notice</H2
+><P
+>&#13;      Copyright (c) 2004,  by the University of Washington.
+      This material may be distributed only subject to the terms and conditions 
+      set forth in the Open Publication License, V1.0 or later
+      (the latest version is presently available
+      <A
+HREF="http://www.opencontent.org/openpub/"
+TARGET="_top"
+>here</A
+>.
+    </P
+><P
+>&#13;    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

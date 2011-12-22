@@ -1,0 +1,20 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.149
+----------------------------------
+USER VISIBLE CHANGES
+Automatic system recovery of running jobs after daemon failure has been added into 
+the job queue eserver and the run-time daemon.  A flag to specify if the checkpoint 
+file should be used is passed to the SPK computation driver. 
+
+OTHER CHANGES
+When the compilation process failed and a core dump was generated. The core dump 
+was archived and placed into the production database.  This problem was fixed by 
+making the compiler daemon not place cpp_source into the database when a core dump 
+was generated.
+
+RELATED BUG REPORTS: 523
+
+BY: Jiaji Du
+
+WHEN: December 19, 2005
+

@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html40/loose.dtd">
+<HTML>
+<!-- Created on April, 18 2002 by texi2html 1.66 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<HEAD>
+<TITLE>CVS--Concurrent Versions System v1.11.2: History browsing</TITLE>
+
+<META NAME="description" CONTENT="CVS--Concurrent Versions System v1.11.2: History browsing">
+<META NAME="keywords" CONTENT="CVS--Concurrent Versions System v1.11.2: History browsing">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.66">
+
+</HEAD>
+
+<BODY LANG="en" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC75"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_7.html#SEC74"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC76"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_7.html#SEC66"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_9.html#SEC80"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> 8. History browsing </H1>
+<!--docid::SEC75::-->
+<P>
+
+Once you have used CVS to store a version control
+history--what files have changed when, how, and by
+whom, there are a variety of mechanisms for looking
+through the history.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_8.html#SEC76">8.1 Log messages</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_8.html#SEC77">8.2 The history database</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_8.html#SEC78">8.3 User-defined logging</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_8.html#SEC79">8.4 Annotate command</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">What revision modified each line of a file?</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="log messages"></A>
+<HR SIZE="6">
+<A NAME="SEC76"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC75"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC77"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC75"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC75"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_9.html#SEC80"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 8.1 Log messages </H2>
+<!--docid::SEC76::-->
+<P>
+
+Whenever you commit a file you specify a log message.
+</P>
+<P>
+
+To look through the log messages which have been
+specified for every revision which has been committed,
+use the <CODE>cvs log</CODE> command (see section <A HREF="cvs_16.html#SEC142">A.13 log--Print out log information for files</A>).
+</P>
+<P>
+
+<A NAME="history database"></A>
+<HR SIZE="6">
+<A NAME="SEC77"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC76"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC78"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC75"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC75"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_9.html#SEC80"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 8.2 The history database </H2>
+<!--docid::SEC77::-->
+<P>
+
+You can use the history file (see section <A HREF="cvs_18.html#SEC177">C.7 The history file</A>) to
+log various CVS actions.  To retrieve the
+information from the history file, use the <CODE>cvs
+history</CODE> command (see section <A HREF="cvs_16.html#SEC136">A.11 history--Show status of files and users</A>).
+</P>
+<P>
+
+Note: you can control what is logged to this file by using the
+`<SAMP>LogHistory</SAMP>' keyword in the `<TT>CVSROOT/config</TT>' file
+(see section <A HREF="cvs_18.html#SEC179">C.9 The CVSROOT/config configuration file</A>).
+</P>
+<P>
+
+<A NAME="user-defined logging"></A>
+<HR SIZE="6">
+<A NAME="SEC78"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC77"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC79"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC75"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC75"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_9.html#SEC80"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 8.3 User-defined logging </H2>
+<!--docid::SEC78::-->
+<P>
+
+You can customize CVS to log various kinds of
+actions, in whatever manner you choose.  These
+mechanisms operate by executing a script at various
+times.  The script might append a message to a file
+listing the information and the programmer who created
+it, or send mail to a group of developers, or, perhaps,
+post a message to a particular newsgroup.  To log
+commits, use the `<TT>loginfo</TT>' file (see section <A HREF="cvs_18.html#SEC171">C.3.5 Loginfo</A>).
+To log commits, checkouts, exports, and tags,
+respectively, you can also use the `<SAMP>-i</SAMP>',
+`<SAMP>-o</SAMP>', `<SAMP>-e</SAMP>', and `<SAMP>-t</SAMP>' options in the
+modules file.  For a more flexible way of giving
+notifications to various users, which requires less in
+the way of keeping centralized scripts up to date, use
+the <CODE>cvs watch add</CODE> command (see section <A HREF="cvs_10.html#SEC91">10.6.2 Telling CVS to notify you</A>); this command is useful even if you are not
+using <CODE>cvs watch on</CODE>.
+</P>
+<P>
+
+<A NAME="IDX155"></A>
+<A NAME="IDX156"></A>
+The `<TT>taginfo</TT>' file defines programs to execute
+when someone executes a <CODE>tag</CODE> or <CODE>rtag</CODE>
+command.  The `<TT>taginfo</TT>' file has the standard form
+for administrative files (see section <A HREF="cvs_18.html#SEC156">C. Reference manual for Administrative files</A>), where each line is a regular expression
+followed by a command to execute.  The arguments passed
+to the command are, in order, the <VAR>tagname</VAR>,
+<VAR>operation</VAR> (<CODE>add</CODE> for <CODE>tag</CODE>,
+<CODE>mov</CODE> for <CODE>tag -F</CODE>, and <CODE>del</CODE> for
+<CODE>tag -d</CODE>), <VAR>repository</VAR>, and any remaining are
+pairs of <VAR>filename</VAR> <VAR>revision</VAR>.  A non-zero
+exit of the filter program will cause the tag to be
+aborted.
+</P>
+<P>
+
+Here is an example of using taginfo to log tag and rtag
+commands.  In the taginfo file put:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>ALL /usr/local/cvsroot/CVSROOT/loggit
+</pre></td></tr></table><P>
+
+Where `<TT>/usr/local/cvsroot/CVSROOT/loggit</TT>' contains the
+following script:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>#!/bin/sh
+echo &quot;$@&quot; &gt;&gt;/home/kingdon/cvsroot/CVSROOT/taglog
+</pre></td></tr></table><P>
+
+<A NAME="annotate"></A>
+<HR SIZE="6">
+<A NAME="SEC79"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC78"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_9.html#SEC80"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC75"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC75"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_9.html#SEC80"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 8.4 Annotate command </H2>
+<!--docid::SEC79::-->
+<P>
+
+<A NAME="IDX157"></A>
+</P>
+<DL>
+<DT><U>Command:</U> <B>cvs annotate</B> <I>[<CODE>-FflR</CODE>] [<CODE>-r rev</CODE>|<CODE>-D date</CODE>] files <small>...</small></I>
+<DD><P>
+
+For each file in <VAR>files</VAR>, print the head revision
+of the trunk, together with information on the last
+modification for each line.  For example:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs annotate ssfile
+Annotations for ssfile
+***************
+1.1          (mary     27-Mar-96): ssfile line 1
+1.2          (joe      28-Mar-96): ssfile line 2
+</pre></td></tr></table><P>
+
+The file `<TT>ssfile</TT>' currently contains two lines.
+The <CODE>ssfile line 1</CODE> line was checked in by
+<CODE>mary</CODE> on March 27.  Then, on March 28, <CODE>joe</CODE>
+added a line <CODE>ssfile line 2</CODE>, without modifying
+the <CODE>ssfile line 1</CODE> line.  This report doesn't
+tell you anything about lines which have been deleted
+or replaced; you need to use <CODE>cvs diff</CODE> for that
+(see section <A HREF="cvs_16.html#SEC129">A.9 diff--Show differences between revisions</A>).
+</P>
+<P>
+
+</P>
+</DL>
+<P>
+
+The options to <CODE>cvs annotate</CODE> are listed in
+<A HREF="cvs_17.html#SEC155">B. Quick reference to CVS commands</A>, and can be used to select the files
+and revisions to annotate.  The options are described
+in more detail there and in <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+</P>
+<P>
+
+<A NAME="Binary files"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_8.html#SEC75"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_9.html#SEC80"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>
+<FONT SIZE="-1">
+This document was generated
+by <I>Derek Robert Price</I> on <I>April, 18 2002</I>
+using <A HREF="http://texi2html.cvshome.org"><I>texi2html</I></A>
+</FONT>
+
+</BODY>
+</HTML>

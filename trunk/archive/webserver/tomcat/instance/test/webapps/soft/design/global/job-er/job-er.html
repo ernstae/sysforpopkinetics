@@ -1,0 +1,349 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Job Entity Relationship Model</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Job Entity Relationship Model</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	An entity relationship model for Spk jobs is presented.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>August 6, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN12"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN15"
+>Entity Relationship Diagram</A
+></DT
+><DT
+><A
+HREF="#AEN34"
+>Entities</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN37"
+>Job</A
+></DT
+><DT
+><A
+HREF="#AEN40"
+>History Segment</A
+></DT
+><DT
+><A
+HREF="#AEN43"
+>Model</A
+></DT
+><DT
+><A
+HREF="#AEN46"
+>Report</A
+></DT
+><DT
+><A
+HREF="#AEN49"
+>User</A
+></DT
+><DT
+><A
+HREF="#AEN52"
+>Version</A
+></DT
+></DL
+></DD
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN12"
+></A
+>Introduction</H2
+><P
+>&#13;      In Spk, job status and history are maintained in a relational
+      database.  This database is available for query by the
+      MDA, and is available for update by the ASPK and CSPK. 
+      Entity relationship (ER) modeling is a fundamental technique of
+      relational database design.  This document presents the ER
+      model for the Spk Job database.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN15"
+></A
+>Entity Relationship Diagram</H2
+><P
+>&#13;      The following diagram represents the data entities and their
+      relationships:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    Entities are represented by boxes that are divided
+	    into sections, vertically.  The name of the entity appears in the
+	    first box.  A list of the most important attributes 
+	    appear in the second box.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Relationships between entities are represented by arrows:
+	    <P
+></P
+><UL
+><LI
+><P
+>&#13;		  The role of the relationship is indicated by text.  For
+		  example, a job <I
+CLASS="emphasis"
+>has a</I
+> version.
+		</P
+></LI
+><LI
+><P
+>&#13;		  The sense of the role is indicated by the direction
+		  of the arrow.  In the example just cited, it is
+		  the job which has a version and not the version
+		  which has a job.
+		</P
+></LI
+><LI
+><P
+>&#13;		  The multiplicity of the relationship is represented
+		  by numbers or ranges of numbers at the ends of the
+		  relationship arrow.  For example, the relationship
+		  between Job and History Segment is 1-to-many.  To
+		  be more specific, each job must have one or more
+		  history segments. 
+		</P
+></LI
+></UL
+>
+	  </P
+></LI
+></UL
+>
+      <DIV
+CLASS="figure"
+><A
+NAME="AEN31"
+></A
+><P
+><IMG
+SRC="job-er.png"></P
+><P
+><B
+>Figure 1. Entity Relationship Diagram</B
+></P
+></DIV
+>
+      </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN34"
+></A
+>Entities</H2
+><P
+>&#13;      In this section, each entity will be described briefly.  It should
+      me noted that entities are more abstract than relational tables.
+      Consequently, there is not a one-to-one correspondence between
+      entities names and table names.  For example, User is an entity
+      in this model.  However, Spk has a User database, in which 
+      User is the principal table.  In the Job database, User is simply
+      implemented as a foreign key.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN37"
+></A
+>Job</H3
+><P
+>&#13;	Job represents the principal unit of work for Spk.  A user
+	combines a version of a model with a data file to create
+	a job.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN40"
+></A
+>History Segment</H3
+><P
+>&#13;	A history segment contains a state which the job assumed and
+	the time that it entered that state.  (See the Spk design
+	document "Job History Model").
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN43"
+></A
+>Model</H3
+><P
+>&#13;	Model represents the PK model created by the user with the
+	aid of the MDA.  A model is stored as a source control
+	archive file, in rcs format.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN46"
+></A
+>Report</H3
+><P
+>&#13;	Every job creates a report before it is complete. The report
+	is not available until the job reaches its End state
+	(see the Spk design document "Job History Model").
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN49"
+></A
+>User</H3
+><P
+>&#13;	User represents the user of Spk.  The user combines a version
+	of a model with a data file to create a job, using the MDA
+	to submit it for processing.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN52"
+></A
+>Version</H3
+><P
+>&#13;	A model has one or more versions.  A scientist creates the
+	initial version along with its source control archive.  Subsequent
+	versions are created when an author (either the original
+	author or another scientist) makes changes to the model and
+	adds those changes to the model's source control archive.
+      </P
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

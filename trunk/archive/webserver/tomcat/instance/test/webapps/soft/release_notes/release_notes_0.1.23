@@ -1,0 +1,57 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.18
+----------------------------------
+USER VISIBLE CHANGES
+When the number of data records does not match with the value
+specified in an XML attribute (ie. <table::rows>),
+it now throws an exception instead of tripping an assertion
+so that a more informative error message is returned to the user.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 101
+
+BY: Sachiko Honda
+
+WHEN: 11/18/2004
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.19
+----------------------------------
+USER VISIBLE CHANGES
+Improved SPK-Compiler error messages.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: November 22, 2004
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.22
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Restart capabilities were added to the SPK computational library.
+
+RELATED BUG REPORTS:
+
+BY:  Mitch Watrous
+
+WHEN:  December 8, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.23
+----------------------------------
+USER VISIBLE CHANGES
+Post-analysis (ie. integrals such as Monte Carlo) returns
+information about the nature of the final estimate of 
+population parameter.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Brad Bell (, Sachiko Honda)
+
+WHEN: December 10, 2004

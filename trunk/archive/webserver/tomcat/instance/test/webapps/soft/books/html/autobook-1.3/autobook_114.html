@@ -1,0 +1,226 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: C Endianness</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: C Endianness">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: C Endianness">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC114"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_113.html#SEC113" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: C Data Type Sizes" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_115.html#SEC115" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: C Structure Layout" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_115.html#SEC115" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: C Structure Layout" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_111.html#SEC111" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: C Language Portability" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_118.html#SEC118" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Cross-Unix Portability" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 15.1.3 C Endianness </H3>
+<!--docid::SEC114::-->
+<P>
+
+When a number longer than a single byte is stored in memory, it must be
+stored in some particular format.  Modern systems do this by storing the
+number byte by byte such that the bytes can simply be concatenated into
+the final number.  However, the order of storage varies: some systems
+store the least significant byte at the lowest address in memory, while
+some store the most significant byte there.  These are referred to as
+<EM>little-endian</EM> and <EM>big-endian</EM> systems,
+respectively.<A NAME="DOCF32" HREF="autobook_fot.html#FOOT32">(32)</A>
+</P><P>
+
+This difference means that portable code may not make any assumptions
+about the order of storage of a number.  For example, code like this
+will act differently on different systems:
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>  /* Example of non-portable code; don't do this */
+  int i = 4;
+  char c = *(char *) i;
+</FONT></pre></td></tr></table></P><P>
+
+Although that was a contrived example, real problems arise when writing
+numeric data in a file or across a network connection.  If the file or
+network connection may be read on a different type of system, numeric
+data must be written in a format which can be uambiguously recovered.
+It is not portable to simply do something like
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>  /* Example of non-portable code; don't do this */
+  write (fd, &#38;i, sizeof i);
+</FONT></pre></td></tr></table>This example is non-portable both because of endianness and because it
+assumes that the size of the type of <CODE>i</CODE> are the same on both
+systems.
+</P><P>
+
+Instead, do something like this:
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>  int j;
+  char buf[4];
+  for (j = 0; j &#60; 4; ++j)
+    buf[j] = (i &#62;&#62; (j * 8)) &#38; 0xff;
+  write (fd, buf, 4); /* In real code, check the return value */
+</FONT></pre></td></tr></table>This unambiguously writes out a little endian 4 byte value.  The code
+will work on any system, and the result can be read unambiguously on any
+system.
+</P><P>
+
+Another approach to handling endianness is to use the <CODE>hton<VAR>s</VAR></CODE>
+and <CODE>ntoh<VAR>s</VAR></CODE> functions available on most systems.  These
+functions convert between <EM>network endianness</EM> and host endianness.
+Network endianness is big-endian; it has that name because the standard
+TCP/IP network protocols use big-endian ordering.
+</P><P>
+
+These functions come in two sizes: <CODE>htonl</CODE> and <CODE>ntohl</CODE> operate
+on 4-byte quantities, and <CODE>htons</CODE> and <CODE>ntohs</CODE> operate on
+2-byte quantities.  The <CODE>hton</CODE> functions convert host endianness to
+network endianness.  The <CODE>ntoh</CODE> functions convert network
+endianness to host endianness.  On big-endian systems, these functions
+simply return their arguments; on little-endian systems, they return
+their arguments after swapping the bytes.
+</P><P>
+
+Although these functions are used in a lot of existing code, they can be
+difficult to use in highly portable code, because they require knowing
+the exact size of your data types.  If you know that the type <CODE>int</CODE>
+is exactly 4 bytes long, then it is possible to write code like the
+following:
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>  int j;
+  j = htonl (i);
+  write (fd, &#38;j, 4);
+</FONT></pre></td></tr></table>However, if <CODE>int</CODE> is not exactly 4 bytes long, this example will
+not work correctly on all systems.
+</P><P>
+
+<A NAME="C Structure Layout"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

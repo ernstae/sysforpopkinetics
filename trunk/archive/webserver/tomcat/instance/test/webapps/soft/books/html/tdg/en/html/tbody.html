@@ -1,0 +1,274 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+  <head>
+    <meta name="generator" content=
+    "HTML Tidy for Linux/x86 (vers 1st March 2002), see www.w3.org">
+    <meta http-equiv="Content-Type" content=
+    "text/html; charset=ISO-8859-1">
+
+    <title>tbody</title>
+    <link rel="stylesheet" href="defguide.css" type="text/css">
+    <meta name="generator" content=
+    "DocBook XSL Stylesheets V1.59.0">
+    <link rel="home" href="docbook.html" title="DocBook">
+    <link rel="up" href="ref-elements.html" title=
+    "DocBook Element Reference">
+    <link rel="previous" href="table.html" title="table">
+    <link rel="next" href="term.html" title="term">
+  </head>
+
+  <body>
+    <div class="navheader">
+      <table border="0" cellpadding="0" cellspacing="0" width=
+      "100%" summary="Navigation table">
+        <tr>
+          <td align="left">&#160;<a title="DocBook" href=
+          "docbook.html"><img src="figures/nav-home.png" alt="Home"
+          border="0"></a>&#160;<a title="table" href=
+          "table.html"><img src="figures/nav-prev.png" alt="Prev"
+          border="0"></a>&#160;<a title="DocBook Element Reference"
+          href="ref-elements.html"><img src="figures/nav-up.png"
+          alt="Up" border="0"></a>&#160;<a title="term" href=
+          "term.html"><img src="figures/nav-next.png" alt="Next"
+          border="0"></a></td>
+
+          <td align="right"><i>DocBook: The Definitive Guide</i>
+          Version 2.0.8 <span class="alpha-version">(<a href=
+          "co01.html"><em>Alpha</em></a>)</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="refentry" lang="en">
+      <a name="tbody.element"></a>
+
+      <div class="titlepage">
+        <div>
+          <h1 class="title">tbody</h1>
+        </div>
+
+        <div>
+          <p class="releaseinfo">$Revision: 1.3 $</p>
+        </div>
+
+        <div>
+          <p class="pubdate">$Date: 2002/06/12 11:18:40 $</p>
+        </div>
+      </div>
+
+      <div class="refnamediv">
+        <p>tbody &#8212; A wrapper for the rows of a table or
+        informal table</p>
+      </div>
+
+      <div class="refsynopsisdiv">
+        <h2>Synopsis</h2>
+
+        <h3><span class="bold"><b>Content Model</b></span></h3>
+<pre class="synopsis">
+tbody ::=
+(<a href="row.html"><tt class="sgmltag-element">row</tt></a>+)
+</pre>
+
+        <h3><span class="bold"><b>Attributes</b></span></h3>
+
+        <p><a href="ref-elements.html#common.attributes" title=
+        "Common Attributes">Common attributes</a></p>
+
+        <table border="0" width="100%" cellpadding="2" style=
+        "border-collapse: collapse; border-left: 0.5pt solid;"
+        summary="Attributes">
+          <thead>
+            <tr style="border-bottom: 0.5pt solid;">
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+                <p><span class="bold"><b>Name</b></span></p>
+              </td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+                <p><span class="bold"><b>Type</b></span></p>
+              </td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+                <p><span class="bold"><b>Default</b></span></p>
+              </td>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">valign</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">
+                <table class="simplelist" border="0" summary=
+                "Simple list">
+                  <tr>
+                    <td><i>Enumeration:</i></td>
+                  </tr>
+
+                  <tr>
+                    <td>bottom</td>
+                  </tr>
+
+                  <tr>
+                    <td>middle</td>
+                  </tr>
+
+                  <tr>
+                    <td>top</td>
+                  </tr>
+                </table>
+              </td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top"><span class=
+              "emphasis"><em>None</em></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="refsect1" lang="en">
+        <h2>Description</h2>
+
+        <p>The <a href="tbody.html"><tt class=
+        "sgmltag-element">TBody</tt></a> wrapper identifies the <a
+        href="row.html"><tt class="sgmltag-element">Row</tt></a>s
+        of a table that form the body of the table, as distinct
+        from the header (<a href="thead.html"><tt class=
+        "sgmltag-element">THead</tt></a>) and footer (<a href=
+        "tfoot.html"><tt class="sgmltag-element">TFoot</tt></a>)
+        rows.</p>
+
+        <p>In most tables, the <a href="tbody.html"><tt class=
+        "sgmltag-element">TBody</tt></a> contains most of the
+        rows.</p>
+
+        <div class="refsect2" lang="en">
+          <h3>Processing expectations</h3>
+
+          <p>This element is expected to obey the semantics of the
+          <a href="appd.html#calsdtd"><i>CALS Table Model Document
+          Type Definition</i></a>, as specified by <i><a href=
+          "http://www.oasis-open.org/html/a502.htm" target=
+          "_top">OASIS Technical Memorandum TM 9502:1995</a></i>
+          .</p>
+        </div>
+
+        <div class="refsect2" lang="en">
+          <h3>Parents</h3>
+
+          <p>These elements contain tbody: <span class=
+          "simplelist"><a href="entrytbl.html"><tt class=
+          "sgmltag-element">entrytbl</tt></a>, <a href=
+          "tgroup.html"><tt class=
+          "sgmltag-element">tgroup</tt></a></span>.</p>
+        </div>
+
+        <div class="refsect2" lang="en">
+          <h3>Children</h3>
+
+          <p>The following elements occur in tbody: <span class=
+          "simplelist"><a href="row.html"><tt class=
+          "sgmltag-element">row</tt></a></span>.</p>
+        </div>
+      </div>
+
+      <div class="refsect1" lang="en">
+        <h2>Attributes</h2>
+
+        <div class="variablelist">
+          <dl>
+            <dt><span class="term">valign</span></dt>
+
+            <dd>
+              <p><tt class="sgmltag-attribute">VAlign</tt>
+              specifies the vertical alignment of text (and other
+              elements) within the cells of this <a href=
+              "tbody.html"><tt class=
+              "sgmltag-element">TBody</tt></a>.</p>
+            </dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="refsect1" lang="en">
+        <h2>See Also</h2>
+
+        <p><span class="simplelist"><a href="colspec.html"><tt
+        class="sgmltag-element">colspec</tt></a>, <a href=
+        "entry.html"><tt class="sgmltag-element">entry</tt></a>, <a
+        href="entrytbl.html"><tt class=
+        "sgmltag-element">entrytbl</tt></a>, <a href=
+        "informaltable.html"><tt class=
+        "sgmltag-element">informaltable</tt></a>, <a href=
+        "row.html"><tt class="sgmltag-element">row</tt></a>, <a
+        href="spanspec.html"><tt class=
+        "sgmltag-element">spanspec</tt></a>, <a href=
+        "table.html"><tt class="sgmltag-element">table</tt></a>, <a
+        href="tfoot.html"><tt class=
+        "sgmltag-element">tfoot</tt></a>, <a href="tgroup.html"><tt
+        class="sgmltag-element">tgroup</tt></a>, <a href=
+        "thead.html"><tt class=
+        "sgmltag-element">thead</tt></a></span>.</p>
+      </div>
+
+      <div class="refsect1" lang="en">
+        <h2>Examples</h2>
+
+        <p>For examples, see <span class="simplelist"><a href=
+        "entrytbl.html"><tt class=
+        "sgmltag-element">entrytbl</tt></a>, <a href=
+        "footnoteref.html"><tt class=
+        "sgmltag-element">footnoteref</tt></a>, <a href=
+        "informaltable.html"><tt class=
+        "sgmltag-element">informaltable</tt></a>, <a href=
+        "table.html"><tt class=
+        "sgmltag-element">table</tt></a></span>.</p>
+      </div>
+    </div>
+
+    <div class="navfooter">
+      <table width="100%" summary="Navigation table">
+        <tr>
+          <td width="40%" align="left"><a title="table" href=
+          "table.html"><img src="figures/nav-prev.png" alt="Prev"
+          border="0"></a>&#160;</td>
+
+          <td width="20%" align="center"><a title="DocBook" href=
+          "docbook.html"><img src="figures/nav-home.png" alt="Home"
+          border="0"></a></td>
+
+          <td width="40%" align="right">&#160;<a title="term" href=
+          "term.html"><img src="figures/nav-next.png" alt="Next"
+          border="0"></a></td>
+        </tr>
+
+        <tr>
+          <td width="40%" align="left">table&#160;</td>
+
+          <td width="20%" align="center"><a title=
+          "DocBook Element Reference" href="ref-elements.html"><img
+          src="figures/nav-up.png" alt="Up" border="0"></a></td>
+
+          <td width="40%" align="right">&#160;term</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="copyrightfooter">
+      <p><a href="dbcpyright.html">Copyright</a> &#169; 1999, 2000,
+      2001, 2002 <a href="http://www.oreilly.com/">O'Reilly &amp;
+      Associates, Inc.</a> All rights reserved.</p>
+    </div>
+  </body>
+</html>
+
