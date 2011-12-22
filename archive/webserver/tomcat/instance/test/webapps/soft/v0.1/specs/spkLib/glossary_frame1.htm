@@ -1,0 +1,402 @@
+<html><head>
+<title>Glossary</title>
+<meta name="description" id="description" content="Glossary">
+<meta name="keywords" id="keywords" content=" affine derivative column major exception handling policy gradient projected individual notation ordering of vectors population model functions depend on i - alp b and only row "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="warningsmanager_getallwarnings.htm" target="_top">previous</a>
+&nbsp;&nbsp;<a href="_reference.htm" target="_top">next</a>
+&nbsp;&nbsp;<a href="_contents.htm" target="_top">contents</a>
+&nbsp;&nbsp;<a href="_reference.htm" target="_top">reference</a>
+&nbsp;&nbsp;<a href="_index.htm" target="_top">index</a>
+&nbsp;&nbsp;<a href="_search.htm" target="_top">search</a>
+&nbsp;&nbsp;<a href="_external.htm" target="_top">external</a>
+&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="glossary.htm" target="_top">section</a>, <a href="glossary_frame1.htm" target="_top">frame</a></div>
+<hr>
+
+
+
+
+
+
+<center><b><big><big>Glossary</big></big></b></center>
+<br>
+<b><big><a name="Affine" id="Affine">Affine</a></big></b>
+<br>
+A function is affine if its second derivative is zero for all argument values.
+
+<br>
+<br>
+<b><big><a name="Derivative" id="Derivative">Derivative</a></big></b>
+<br>
+A scalar or vector valued function is a special case
+of a matrix valued function.
+In general, if <code><span style='white-space: nowrap'><i>A</i>(<i>x</i>)</span></code> is a matrix valued function 
+of a column vector <code><span style='white-space: nowrap'><i>x</i></span></code>, 
+its derivative with respect to <code><span style='white-space: nowrap'><i>x</i></span></code> is denoted by <code><span style='white-space: nowrap'><i>A</i>_<i>x</i>(<i>x</i>)</span></code>. 
+The derivative of the <i>(m, n)</i>-th element of <code><span style='white-space: nowrap'><i>A</i>(<i>x</i>)</span></code>
+with respect to the <i>k</i>-th element of <code><span style='white-space: nowrap'><i>x</i></span></code> is equal to the element of 
+<code><span style='white-space: nowrap'><i>A</i>_<i>x</i>(<i>x</i>)</span></code> with row index <code><span style='white-space: nowrap'><i>n</i>&nbsp;+&nbsp;(<i>m</i>&nbsp;-&nbsp;1)&nbsp;*&nbsp;<i>rowdim</i>(<i>A</i>(<i>x</i>))</span></code> and with 
+column index <code><span style='white-space: nowrap'><i>k</i></span></code>. The row dimension <code><span style='white-space: nowrap'><i>A</i>_<i>x</i>(<i>x</i>)</span></code> is equal to the 
+product of the row and column dimension of <code><span style='white-space: nowrap'><i>A</i>_<i>x</i>(<i>x</i>)</span></code>. 
+The column dimension of <code><span style='white-space: nowrap'><i>A</i>_<i>x</i>(<i>x</i>)</span></code> is equal to the row dimension of <code><span style='white-space: nowrap'><i>x</i></span></code>.
+
+<br>
+<br>
+<b><big><a name="Column major" id="Column major">Column major</a></big></b>
+<br>
+The elements of a matrix can be stored in a vector in two different orders.
+When the matrix elements are read vertically, it is said to be 
+<i>column major</i>.  In particular, a 2 by 3 matrix, <code><span style='white-space: nowrap'><br>
+[<i>a</i>11&nbsp;<i>a</i>12&nbsp;<i>a</i>13]<br>
+[<i>a</i>21&nbsp;<i>a</i>22&nbsp;<i>a</i>23]<br>
+</span></code>would be stored in a vector in the following way:
+<code><span style='white-space: nowrap'><br>
+{<i>a</i>11,&nbsp;<i>a</i>21,&nbsp;<i>a</i>12,&nbsp;<i>a</i>22,&nbsp;<i>a</i>13,&nbsp;<i>a</i>23}.<br>
+</span></code>Fortran, O-Matrix, and SPK adapt this ordering.
+
+<br>
+<br>
+<b><big><a name="Exception Handling Policy" id="Exception Handling Policy">Exception Handling Policy</a></big></b>
+<br>
+When a function throws an exception, the state of the function is
+undefined.  It tries to return to the initial state at which
+the function was called upon throwing an exception but it is
+not guaranteed.  It guarantees, however, no resource leak.
+
+<br>
+<br>
+<b><big><a name="Gradient" id="Gradient">Gradient</a></big></b>
+<br>
+The gradient of a vector valued function is the transpose of its derivative.
+
+<br>
+<br>
+<b><big><a name="Projected Gradient" id="Projected Gradient">Projected Gradient</a></big></b>
+<br>
+Suppose that <code><span style='white-space: nowrap'><i>g</i>(<i>x</i>)</span></code> is the gradient of an objective function
+that is being minimized subject to the constraint that <code><span style='white-space: nowrap'><i>xLow</i>&nbsp;<u>&lt;</u>&nbsp;<i>x</i>&nbsp;<u>&lt;</u>&nbsp;<i>xUp</i></span></code>.
+The project gradient <code><span style='white-space: nowrap'><i>p</i>(<i>x</i>)</span></code> is defined by
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;<i>xLow</i>&nbsp;&nbsp;=&nbsp;<i>x</i>&nbsp;&nbsp;and&nbsp;<i>g</i>&nbsp;(<i>x</i>)&nbsp;&gt;=&nbsp;0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>p</i>&nbsp;(<i>x</i>)&nbsp;=&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;<i>xUp</i>&nbsp;&nbsp;=&nbsp;<i>x</i>&nbsp;&nbsp;and&nbsp;<i>g</i>&nbsp;(<i>x</i>)&nbsp;&lt;=&nbsp;0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<i>g</i>&nbsp;(<i>x</i>)&nbsp;&nbsp;otherwise<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i><br>
+</span></code><br>
+<b><big><a name="Individual Notation" id="Individual Notation">Individual Notation</a></big></b>
+<br>
+Individual notation refers to the following convention:
+<table><tr><td align='left'  valign='top'>
+
+<b>Notation</b> </td><td align='left'  valign='top'>
+ <b>Description</b> </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>alp</i></span></code>     </td><td align='left'  valign='top'>
+ fixed population parameter vector    </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>b</i></span></code>       </td><td align='left'  valign='top'>
+ random population parameter vector for one individual  </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>y</i></span></code>           </td><td align='left'  valign='top'>
+ data vector for one individual                     </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>f</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code>   </td><td align='left'  valign='top'>
+ model for mean of <code><span style='white-space: nowrap'><i>y</i></span></code> given <code><span style='white-space: nowrap'><i>b</i></span></code>      </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>R</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code>   </td><td align='left'  valign='top'>
+ model for variance of <code><span style='white-space: nowrap'><i>y</i></span></code> given <code><span style='white-space: nowrap'><i>b</i></span></code>  </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>D</i>(<i>alp</i>)</span></code>      </td><td align='left'  valign='top'>
+ model for variance of prior distribution on <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+</td></tr>
+</table>
+The fixed population parameter <code><span style='white-space: nowrap'><i>alp</i></span></code> is sometimes not included in
+individual notation. To be specific, in this case we have:
+<table><tr><td align='left'  valign='top'>
+
+<b>Notation</b> </td><td align='left'  valign='top'>
+ <b>Description</b> </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>f</i>(<i>b</i>)</span></code>   </td><td align='left'  valign='top'>
+ model for mean of <code><span style='white-space: nowrap'><i>y</i></span></code>     </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>R</i>(<i>b</i>)</span></code>   </td><td align='left'  valign='top'>
+ model for variance of <code><span style='white-space: nowrap'><i>y</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>D</i></span></code>      </td><td align='left'  valign='top'>
+ variance of prior distribution on <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+</td></tr>
+</table>
+<br>
+<b><big><a name="Ordering Of Vectors" id="Ordering Of Vectors">Ordering Of Vectors</a></big></b>
+<br>
+If <code><span style='white-space: nowrap'><i>x</i></span></code> and  <code><span style='white-space: nowrap'><i>y</i></span></code> are vector with the same length, 
+<code><span style='white-space: nowrap'><i>x</i>&nbsp;&lt;=&nbsp;<i>y</i>&nbsp;</span></code> if and only if 
+<code><span style='white-space: nowrap'><i>x</i>(<i>j</i>)&nbsp;&lt;=&nbsp;<i>y</i>(<i>j</i>)&nbsp;</span></code>
+for all index values <code><span style='white-space: nowrap'><i>j</i></span></code> between one and the length of the vectors.
+
+<br>
+<br>
+<b><big><a name="Population Notation" id="Population Notation">Population Notation</a></big></b>
+<br>
+Population notation refers to the following convention:
+<table><tr><td align='left'  valign='top'>
+
+<b>Notation</b>     </td><td align='left'  valign='top'>
+ <b>Description</b> </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>alp</i></span></code>         </td><td align='left'  valign='top'>
+ fixed population parameter vector    </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>b</i></span></code>           </td><td align='left'  valign='top'>
+ random population parameter vector for one individual  </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>y</i>_<i>i</i></span></code>         </td><td align='left'  valign='top'>
+ data vector for individual number i                    </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>f</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> </td><td align='left'  valign='top'>
+ model for mean of <code><span style='white-space: nowrap'><i>y</i>_<i>i</i></span></code> given <code><span style='white-space: nowrap'><i>b</i></span></code>        </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>R</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> </td><td align='left'  valign='top'>
+ model for variance of <code><span style='white-space: nowrap'><i>y</i>_<i>i</i></span></code> given <code><span style='white-space: nowrap'><i>b</i></span></code>    </td></tr><tr><td align='left'  valign='top'>
+
+<code><span style='white-space: nowrap'><i>D</i>(<i>alp</i>)</span></code>      </td><td align='left'  valign='top'>
+ model for variance of prior distribution on <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+</td></tr>
+</table>
+<br>
+<b><big><a name="Model Functions Depend on i - alp - b" id="Model Functions Depend on i - alp - b">Model Functions Depend on i - alp - b</a></big></b>
+<br>
+If the individual state setting function of a 
+<i>model</i> is called with the value <i>i</i>,
+and if the population parameter state setting function of  
+that <i>model</i> is called with the value <i>alp</i>,
+and if the individual parameter state setting function of 
+that <i>model</i> is called with the value <i>b</i>,
+then the values returned by the <i>model</i>
+member functions correspond to the values in the following table.
+Note that this table uses 
+<a href="glossary_frame1.htm#Population Notation" target="frame1"><i><span style='white-space: nowrap'>population&nbsp;notation</span></i></a>
+.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><center><table><tr><td align='left'  valign='top'>
+<b>Member Function</b>
+	</td><td align='left'  valign='top'>
+ <b>Value</b> 
+	</td><td align='left'  valign='top'>
+ <b>Comments</b> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">void dataMean( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code>
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>f</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ model for the mean of <code><span style='white-space: nowrap'><i>y</i></span></code> given <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">bool dataMean_popPar( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>f</i>_<i>i</i>_<i>alp</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ derivative of <code><span style='white-space: nowrap'><i>f</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>alp</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">bool dataMean_indPar( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>f</i>_<i>i</i>_<i>b</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ derivative of <code><span style='white-space: nowrap'><i>f</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">void dataVariance( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>R</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ model for the covariance of <code><span style='white-space: nowrap'><i>y</i></span></code> given <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">bool dataVariance_popPar( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code>
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>R</i>_<i>i</i>_<i>alp</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ derivative of <code><span style='white-space: nowrap'><i>R</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>alp</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">bool dataVariance_indPar( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code>
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>R</i>_<i>i</i>_<i>b</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ derivative of <code><span style='white-space: nowrap'><i>R</i>_<i>i</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">void indParVariance( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>D</i>(<i>alp</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ model for the covariance of <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">bool indParVariance_popPar( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code>
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>D</i>_<i>alp</i>(<i>alp</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ derivative of <code><span style='white-space: nowrap'><i>D</i>(<i>alp</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>alp</i></span></code>
+</td></tr>
+</table>
+</center><b><big><a name="Model Functions Depend on alp and b" id="Model Functions Depend on alp and b">Model Functions Depend on alp and b</a></big></b>
+<br>
+It is possible to make the model functions depend on 
+<i>alp</i> and <i>b</i> only.
+First, if the values that will be returned by the model functions depend 
+on the value for <i>i</i>, then the individual state 
+setting function should be called with that value and then
+not called again.
+After that, if the population parameter state setting function of a 
+<i>model</i> is called with the value <i>alp</i>,
+and if the individual parameter state setting function of 
+that <i>model</i> is called with the value <i>b</i>,
+then the values returned by the <i>model</i>
+member functions correspond to the values in the following table.
+Note that this table uses 
+<a href="glossary_frame1.htm#Individual Notation" target="frame1"><i><span style='white-space: nowrap'>individual&nbsp;notation</span></i></a>
+.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><center><table><tr><td align='left'  valign='top'>
+<b>Member Function</b>
+	</td><td align='left'  valign='top'>
+ <b>Value</b> 
+	</td><td align='left'  valign='top'>
+ <b>Comments</b> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">void dataMean( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code>
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>f</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ model for the mean of <code><span style='white-space: nowrap'><i>y</i></span></code> given <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">bool dataMean_popPar( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>f</i>_<i>alp</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ derivative of <code><span style='white-space: nowrap'><i>f</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>alp</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">bool dataMean_indPar( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>f</i>_<i>b</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ derivative of <code><span style='white-space: nowrap'><i>f</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">void dataVariance( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>R</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ model for the covariance of <code><span style='white-space: nowrap'><i>y</i></span></code> given <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">bool dataVariance_popPar( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code>
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>R</i>_<i>alp</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ derivative of <code><span style='white-space: nowrap'><i>R</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>alp</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">bool dataVariance_indPar( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code>
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>R</i>_<i>b</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ derivative of <code><span style='white-space: nowrap'><i>R</i>(<i>alp</i>,&nbsp;<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">void indParVariance( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>D</i>(<i>alp</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ model for the covariance of <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">bool indParVariance_popPar( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code>
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>D</i>_<i>alp</i>(<i>alp</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ derivative of <code><span style='white-space: nowrap'><i>D</i>(<i>alp</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>alp</i></span></code>
+</td></tr>
+</table>
+</center><b><big><a name="Model Functions Depend on only b" id="Model Functions Depend on only b">Model Functions Depend on only b</a></big></b>
+<br>
+It is possible to make the model functions depend on 
+<i>b</i> only.
+First, if the values that will be returned by the model functions depend 
+on the value for <i>i</i> or <i>alp</i>, then the individual state 
+setting function should be called with these values and then
+not called again.
+After that, if the individual parameter state setting function of 
+that <i>model</i> is called with the value <i>b</i>,
+then the values returned by the <i>model</i>
+member functions correspond to the values in the following table.
+Note that this table uses 
+<a href="glossary_frame1.htm#Individual Notation" target="frame1"><i><span style='white-space: nowrap'>individual&nbsp;notation</span></i></a>
+.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><center><table><tr><td align='left'  valign='top'>
+<b>Member Function</b>
+	</td><td align='left'  valign='top'>
+ <b>Value</b> 
+	</td><td align='left'  valign='top'>
+ <b>Comments</b> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">void dataMean( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code>
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>f</i>(<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ model for the mean of <code><span style='white-space: nowrap'><i>y</i></span></code> given <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">bool dataMean_indPar( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>f</i>_<i>b</i>(<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ derivative of <code><span style='white-space: nowrap'><i>f</i>(<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">void dataVariance( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>R</i>(<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ model for the covariance of <code><span style='white-space: nowrap'><i>y</i></span></code> given <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">bool dataVariance_indPar( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code>
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>R</i>_<i>b</i>(<i>b</i>)</span></code> 
+	</td><td align='left'  valign='top'>
+ derivative of <code><span style='white-space: nowrap'><i>R</i>(<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">void indParVariance( SPK_VA::valarray&lt;double&gt;&amp; result )</font></code> 
+	</td><td align='left'  valign='top'>
+ <code><span style='white-space: nowrap'><i>D</i></span></code> 
+	</td><td align='left'  valign='top'>
+ model for the covariance of <code><span style='white-space: nowrap'><i>b</i></span></code> </td></tr><tr><td align='left'  valign='top'>
+
+</td></tr>
+</table>
+</center><b><big><a name="Row major" id="Row major">Row major</a></big></b>
+<br>
+The elements of a matrix can be stored in a vector in two different orders.
+When the matrix elements are read horizontally, it is said to be 
+<i>row major</i>.  In particular, a 2 by 3 matrix, <code><span style='white-space: nowrap'><br>
+[<i>a</i>11&nbsp;<i>a</i>12&nbsp;<i>a</i>13]<br>
+[<i>a</i>21&nbsp;<i>a</i>22&nbsp;<i>a</i>23]<br>
+</span></code>would be stored in a vector in the following way:
+<code><span style='white-space: nowrap'><br>
+{<i>a</i>11,&nbsp;<i>a</i>12,&nbsp;<i>a</i>13,&nbsp;<i>a</i>21,&nbsp;<i>a</i>22,&nbsp;<i>a</i>23}.<br>
+</span></code>C compilers adapt this ordering.
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+
+</i>
+</center>
+<hr>Input File: glossary.omh
+
+</body>
+</html>

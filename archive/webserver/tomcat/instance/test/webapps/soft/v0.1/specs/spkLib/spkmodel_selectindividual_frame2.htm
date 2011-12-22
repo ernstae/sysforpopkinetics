@@ -1,0 +1,66 @@
+<html><head>
+<title>Select Individual</title>
+<meta name="description" id="description" content="Select Individual">
+<meta name="keywords" id="keywords" content=" Spkmodel doselectindividual() selectindividual() User-provided Model select an individual in a population "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="spkmodel_selectindividual.htm" target="_top">section</a>, <a href="spkmodel_selectindividual_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Required for population analysis.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><code><font color="blue"><span style='white-space: nowrap'>doSelectIndividual(&nbsp;int&nbsp;</span></font></code><i><span style='white-space: nowrap'>i</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)</span></font></code> selects <i>i</i>-th individual in the
+population and guarantees that subsequent attempts for evaluating the mathematical models
+expressed by SpkModel virtual member functions yield to the corresponding individual's
+values at the current parameters.  The valid value range for <i>i</i> is 0 to
+N-1, where N is the number of individuals in the population.  <code><span style='white-space: nowrap'><i>i</i>=0</span></code> shall
+select the first individual.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><code><font color="blue"><span style='white-space: nowrap'>doSelectIndividual()</span></font></code> shall be only called via its corresponding
+public interface, <code><font color="blue"><span style='white-space: nowrap'>selectIndividual()</span></font></code>.  The public interface
+shall be called only by the SPK library components unless when it is being unit-tested,
+or SPK cannot guarantee any of the computational results.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The public interface, <code><font color="blue">selectIndividual()</font></code> catches any exception thrown by the private interface,
+<code><font color="blue">doSelectIndividual()</font></code>, implemented by the user.
+If the exception is an instance of <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+, 
+an additional <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+ object will be appended to the list of errors
+maintained within the object.  The new SpkError object will have error code set
+to <code><font color="blue">SpkError::SPK_MODEL_SET_INDEX_ERR</font></code>.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+i<br>
+</span></font></code>An integer indicating the individual to be selected.
+The valid value range is from 0 to N-1, where N is the number of
+individuals in the population.  
+0 shall point to the first individual in the population.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+See <a href="spkmodel_frame1.htm#Example" target="frame1"><i><span style='white-space: nowrap'>Example</span></i></a>
+
+
+
+<hr>Input File: ../../spk/SpkModel.cpp
+
+</body>
+</html>

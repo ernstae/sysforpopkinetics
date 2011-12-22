@@ -1,0 +1,15 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.32
+----------------------------------
+USER VISIBLE CHANGES
+The Monte Carlo's output now contains #of evaluations, the estimation method
+and time elapsed to complete the estimation process.
+
+OTHER CHANGES
+<pop_monte_result::seconds> -> <pop_monte_result::elapsedtime>.
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: January 7, 2005

@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.243
+----------------------------------
+USER VISIBLE CHANGES
+
+Warm start now works.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  954
+
+BY:  Mitch Watrous
+
+WHEN:  September 2, 2008.

@@ -1,0 +1,2212 @@
+<?xml version="1.0"?>
+<spkreport>
+   <pop_analysis_result>
+         <pop_opt_result>
+            <pop_obj_out>
+               <value>104.561</value>
+            </pop_obj_out>
+            <theta_out length="3">
+               <value>2.77E00</value>
+               <value>7.81E-02</value>
+               <value>3.63E-02</value>
+            </theta_out>
+            <omega_out struct="block" dimension="3">
+               <value>5.55E00</value>
+               <value>5.24E-03</value><value>2.40E-04</value>
+               <value>-1.28E01</value><value>9.11E-03</value><value>5.15E-01</value>
+            </omega_out>
+            <sigma_out struct="diagonal" dimension="1">
+               <value>3.88E01</value>
+            </sigma_out>
+         </pop_opt_result>
+         <pop_stat_result>
+            <pop_stderr_out length="10">
+               <value>7.08E01</value>
+               <value>7.26E03</value>
+               <value>4.53E03</value>
+               <value>4.83E00</value>
+               <value>1.40E-02</value><value>1.22E04</value>
+               <value>4.74E-01</value><value>3.72E03</value><value>2.12E01</value>
+               <value>1.05E01</value>
+            </pop_stderr_out>
+            <pop_covariance_out struct="block" dimension="10">
+               <value>5.01E+01</value>
+               <value>1.16E-03</value><value>5.27E-05</value>
+               <value>4.38E-05</value><value>3.12E-05</value><value>2.05E-05</value>
+               <value>3.31E+00</value><value>6.24E-03</value><value>-3.92E-04</value><value>2.33E+01</value>
+               <value>4.31E-03</value><value>7.23E-05</value><value>3.77E-05</value><value>2.15E-02</value><value>1.96E-04</value>
+               <value>2.50E-03</value><value>1.58E-03</value><value>1.03E-03</value><value>-3.19E-01</value><value>5.01E-03</value><value>2.24E-01</value>
+               <value>7.29E-06</value><value>4.18E-07</value><value>2.14E-07</value><value>-7.56E-06</value><value>1.41E-06</value><value>4.08E-05</value><value>1.50E-08</value>
+               <value>1.85E-05</value><value>-1.55E-06</value><value>-8.42E-07</value><value>-2.34E-03</value><value>2.28E-05</value><value>1.17E-03</value><value>3.13E-07</value><value>1.39E-05</value>
+               <value>6.10E-03</value><value>-3.73E-04</value><value>-1.65E-04</value><value>-8.64E-02</value><value>5.76E-04</value><value>5.11E-02</value><value>8.51E-06</value><value>7.05E-04</value><value>4.48E-02</value>
+               <value>-1.27E-02</value><value>2.00E-04</value><value>6.06E-05</value><value>-1.36E-01</value><value>6.69E-04</value><value>1.75E-02</value><value>7.53E-06</value><value>9.47E-05</value><value>9.47E-05</value><value>-1.51E-03</value><value>1.11E-02</value>
+            </pop_covariance_out>
+            <pop_inverse_covariance_out struct="block" dimension="10">
+               <value>7.39e+02</value>
+               <value>-2.95e+-4</value><value>2.40e+06</value>
+               <value>4.12e+04</value><value>-3.55e+06</value><value>5.45e+06</value>
+               <value>-6.84e+01</value><value>2.37e+03</value><value>-3.18e+03</value><value>6.74e00</value>
+               <value>-3.60e+04</value><value>1.26e+06</value><value>3.13e+03</value><value>2.05e+06</value>
+               <value>3.46e+02</value><value>-1.18e+04</value><value>1.57e+04</value><value>-2.05e+04</value><value>2.22e+02</value>
+               <value>5.49e+06</value><value>-1.74e+08</value><value>2.26e+08</value><value>-4.95e+05</value><value>-3.10e+08</value><value>4.93e+10</value>
+               <value>-2.26e+05</value><value>6.37e+06</value><value>-7.89e+06</value><value>2.06</value><value>1.30e+07</value><value>-1.31e+05</value><value>-2.10e+09</value><value>9.16e+07</value>
+               <value>2.27e+03</value><value>-5.56e+04</value><value>6.64e+04</value><value>-2.07e+02</value><value>-1.35e+05</value><value>1.35e+05</value><value>2.21e+07</value><value>-9.72e+05</value><value>1.05e+04</value>
+               <value>4.48e+02</value><value>-2.99e+04</value><value>4.66e+04</value><value>-3.10e+01</value><value>-2.59e+04</value><value>2.51e+02</value><value>3.47e+06</value><value>-1.42e+05</value><value>1.45e+03</value><value>7.30e+02</value>
+            </pop_inverse_covariance_out>
+            <pop_correlation_out struct="block" dimension="10">
+               <value>1.00e00</value>
+               <value>2.26E-01</value><value>1.00E+00</value>
+               <value>1.37E-02</value><value>9.47E-01</value><value>1.00E+00</value>
+               <value>9.69E-01</value><value>1.78E-01</value><value>-1.79E-02</value><value>1.00E+00</value>
+               <value>4.35E-01</value><value>7.12E-01</value><value>5.95E-01</value><value>3.18E-01</value><value>1.00E+00</value>
+               <value>7.44E-03</value><value>4.60E-01</value><value>4.78E-01</value><value>-1.40E-01</value><value>7.56E-01</value><value>1.00E+00</value>
+               <value>8.41E-02</value><value>4.71E-01</value><value>3.86E-01</value><value>-1.28e-02</value><value>8.22e-01</value><value>7.04e-01</value><value>1.00E+00</value>
+               <value>7.00e-03</value><value>-5.75e-02</value><value>-4.99e-02</value><value>-1.3e-01</value><value>4.38e-01</value><value>6.64e-01</value><value>6.88e-01</value><value>1.00e+00</value>
+               <value>4.07e-02</value><value>-2.43e-01</value><value>-1.72e-01</value><value>-8.45e-02</value><value>1.95e-01</value><value>5.10e-01</value><value>8.95e-01</value><value>1.00e+00</value>
+               <value>-1.71e001</value><value>2.61e-01</value><value>1.27e-01</value><value>-2.68e-01</value><value>4.55e-01</value><value>3.51e-01</value><value>5.85e-01</value><value>2.42e-01</value><value>-6.79e-02</value><value>1e00</value>
+            </pop_correlation_out>
+         </pop_stat_result>
+         <presentation_data columns="14" rows="133">
+            <row position="1">
+               <value type="string">ID</value>
+               <value type="string">DOSE</value>
+               <value type="string">TIME</value>
+               <value type="string">CP</value>
+               <value type="string">WT</value>
+               <value type="string">PRED</value>
+               <value type="string">RES</value>
+               <value type="string">WRES</value>
+               <value type="string">DS</value>
+               <value type="string">KA</value>
+               <value type="string">KE</value>
+               <value type="string">CL</value>
+               <value type="string">D</value>
+               <value type="string">E</value>
+            </row>
+            <!-- ============ 1st subject ============================ -->
+            <row position="2">
+               <!-- ID -->      <value type="string">1</value>
+               <!-- DOSE/AMT --><value>4.02</value>
+               <!-- TIME -->    <value>0.00</value>
+               <!-- CP/DV -->   <value>0.74</value>
+               <!-- WT/W -->    <value>79.6</value>
+               <!-- PRED -->    <value>0.00</value>
+               <!-- RES -->     <value>0.74</value>
+               <!-- WRES -->    <value>1.19</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.89</value>
+               <!-- D -->       <value>0.00</value>
+               <!-- E -->       <value>7.79</value>
+            </row>
+            <row position="3">
+               <!-- ID -->      <value type="string">1</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.25</value>
+               <!-- CP/DV -->   <value>2.84</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>4.28</value>
+               <!-- RES -->     <value>-1.44</value>
+               <!-- WRES -->    <value>-1.35</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.89</value>
+               <!-- D -->       <value>0.481</value>
+               <!-- E -->       <value>7.79</value>
+            </row>
+            <row position="4">
+               <!-- ID -->      <value type="string">1</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.57</value>
+               <!-- CP/DV -->   <value>6.57</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>6.68</value>
+               <!-- RES -->     <value>-0.112</value>
+               <!-- WRES -->    <value>-0.259</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.89</value>
+               <!-- D -->       <value>0.751</value>
+               <!-- E -->       <value>7.79</value>
+            </row>
+            <row position="5">
+               <!-- ID -->      <value type="string">1</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>1.12</value>
+               <!-- CP/DV -->   <value>10.5</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.76</value>
+               <!-- RES -->     <value>2.74</value>
+               <!-- WRES -->    <value>2.50</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.89</value>
+               <!-- D -->       <value>0.871</value>
+               <!-- E -->       <value>7.79</value>
+            </row>
+            <row position="6">
+               <!-- ID -->      <value type="string">1</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>2.02</value>
+               <!-- CP/DV -->   <value>9.66</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.57</value>
+               <!-- RES -->     <value>2.09</value>
+               <!-- WRES -->    <value>0.45</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.89</value>
+               <!-- D -->       <value>0.85</value>
+7               <!-- E -->       <value>7.79</value>
+            </row>
+            <row position="7">
+               <!-- ID -->      <value type="string">1</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>3.82</value>
+               <!-- CP/DV -->   <value>8.58</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>6.60</value>
+               <!-- RES -->     <value>1.98</value>
+               <!-- WRES -->    <value>0.0926</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.89</value>
+               <!-- D -->       <value>0.742</value>
+               <!-- E -->       <value>7.79</value>
+            </row>
+            <row position="8">
+               <!-- ID -->      <value type="string">1</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>5.10</value>
+               <!-- CP/DV -->   <value>8.36</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.98</value>
+               <!-- RES -->     <value>2.38</value>
+               <!-- WRES -->    <value>0.77</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.89</value>
+               <!-- D -->       <value>0.671</value>
+               <!-- E -->       <value>7.79</value>
+            </row>
+            <row position="9">
+               <!-- ID -->      <value type="string">1</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>7.03</value>
+               <!-- CP/DV -->   <value>7.47</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.14</value>
+               <!-- RES -->     <value>2.33</value>
+               <!-- WRES -->    <value>0.763</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.89</value>
+               <!-- D -->       <value>0.577</value>
+               <!-- E -->       <value>7.79</value>
+           </row>
+            <row position="10">
+               <!-- ID -->      <value type="string">1</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>9.05</value>
+               <!-- CP/DV -->   <value>6.89</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>4.39</value>
+               <!-- RES -->     <value>2.50</value>
+               <!-- WRES -->    <value>1.16</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.89</value>
+               <!-- D -->       <value>0.493</value>
+               <!-- E -->       <value>7.79</value>
+            </row>
+            <row position="11">
+               <!-- ID -->      <value type="string">1</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>12.1</value>
+               <!-- CP/DV -->   <value>5.94</value>
+               <!-- WT/W -->    <value>0.0</value>
+               <!-- PRED -->    <value>3.45</value>
+               <!-- RES -->     <value>2.49</value>
+               <!-- WRES -->    <value>1.37</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.89</value>
+               <!-- D -->       <value>0.388</value>
+               <!-- E -->       <value>7.79</value>
+            </row>
+            <row position="12">
+               <!-- ID -->      <value type="string">1</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.244</value>
+               <!-- CP/DV -->   <value>3.28</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>1.33</value>
+               <!-- RES -->     <value>1.95</value>
+               <!-- WRES -->    <value>1.56</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.89</value>
+               <!-- D -->       <value>0.149</value>
+               <!-- E -->       <value>7.79</value>
+            </row>
+            <!-- ============ 2nd subject ============================ -->
+            <row position="13">
+               <!-- ID -->      <value type="string">2</value>
+               <!-- DOSE/AMT --><value>4.40</value>
+               <!-- TIME -->    <value>0.00</value>
+               <!-- CP/DV -->   <value>0.00</value>
+               <!-- WT/W -->    <value>72.4</value>
+               <!-- PRED -->    <value>0.0</value>
+               <!-- RES -->     <value>0.0</value>
+               <!-- WRES -->    <value>0.0</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.63</value>
+               <!-- D -->       <value>0.00</value>
+               <!-- E -->       <value>7.09</value>
+            </row>
+            <row position="14">
+               <!-- ID -->      <value type="string">2</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.27</value>
+               <!-- CP/DV -->   <value>1.72</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>4.93</value>
+               <!-- RES -->     <value>-3.21</value>
+               <!-- WRES -->    <value>-3.63</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.63</value>
+               <!-- D -->       <value>0.506</value>
+               <!-- E -->       <value>7.09</value>
+            </row>
+            <row position="15">
+               <!-- ID -->      <value type="string">2</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.52</value>
+               <!-- CP/DV -->   <value>7.91</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.05</value>
+               <!-- RES -->     <value>0.858</value>
+               <!-- WRES -->    <value>2.85</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.63</value>
+               <!-- D -->       <value>0.724</value>
+               <!-- E -->       <value>7.09</value>
+            </row>
+            <row position="16">
+               <!-- ID -->      <value type="string">2</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>1.00</value>
+               <!-- CP/DV -->   <value>8.31</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>8.40</value>
+               <!-- RES -->     <value>-0.0924</value>
+               <!-- WRES -->    <value>0.628</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.63</value>
+               <!-- D -->       <value>0.862</value>
+               <!-- E -->       <value>7.09</value>
+            </row>
+            <row position="17">
+               <!-- ID -->      <value type="string">2</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>1.92</value>
+               <!-- CP/DV -->   <value>8.33</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>8.34</value>
+               <!-- RES -->     <value>-0.00819</value>
+               <!-- WRES -->    <value>0.206</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.63</value>
+               <!-- D -->       <value>0.856</value>
+               <!-- E -->       <value>7.09</value>
+            </row>
+            <row position="18">
+               <!-- ID -->      <value type="string">2</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>3.50</value>
+               <!-- CP/DV -->   <value>6.85</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.41</value>
+               <!-- RES -->     <value>-0.561</value>
+               <!-- WRES -->    <value>-0.663</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.63</value>
+               <!-- D -->       <value>0.761</value>
+               <!-- E -->       <value>7.09</value>
+            </row>
+            <row position="19">
+               <!-- ID -->      <value type="string">2</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>5.02</value>
+               <!-- CP/DV -->   <value>6.08</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>6.58</value>
+               <!-- RES -->     <value>-0.502</value>
+               <!-- WRES -->    <value>-0.475</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.63</value>
+               <!-- D -->       <value>0.676</value>
+               <!-- E -->       <value>7.09</value>
+            </row>
+            <row position="20">
+               <!-- ID -->      <value type="string">2</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>7.03</value>
+               <!-- CP/DV -->   <value>5.40</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.63</value>
+               <!-- RES -->     <value>-0.225</value>
+               <!-- WRES -->    <value>0.0594</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.63</value>
+               <!-- D -->       <value>0.577</value>
+               <!-- E -->       <value>7.09</value>
+            </row>
+            <row position="21">
+               <!-- ID -->      <value type="string">2</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>9.00</value>
+               <!-- CP/DV -->   <value>4.55</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>4.82</value>
+               <!-- RES -->     <value>-0.273</value>
+               <!-- WRES -->    <value>0.039</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.63</value>
+               <!-- D -->       <value>0.495</value>
+               <!-- E -->       <value>7.09</value>
+            </row>
+            <row position="22">
+               <!-- ID -->      <value type="string">2</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>12.0</value>
+               <!-- CP/DV -->   <value>3.01</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>3.82</value>
+               <!-- RES -->     <value>-0.805</value>
+               <!-- WRES -->    <value>-0.776</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.63</value>
+               <!-- D -->       <value>0.392</value>
+               <!-- E -->       <value>7.09</value>
+            </row>
+            <row position="23">
+               <!-- ID -->      <value type="string">2</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>24.3</value>
+               <!-- CP/DV -->   <value>0.90</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>1.46</value>
+               <!-- RES -->     <value>-0.559</value>
+               <!-- WRES -->    <value>-0.481</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.63</value>
+               <!-- D -->       <value>0.15</value>
+               <!-- E -->       <value>7.09</value>
+            </row>
+            <!-- ============ 3rd subject ============================ -->
+            <row position="24">
+               <!-- ID -->      <value type="string">3</value>
+               <!-- DOSE/AMT --><value>4.53</value>
+               <!-- TIME -->    <value>0.00</value>
+               <!-- CP/DV -->   <value>0.00</value>
+               <!-- WT/W -->    <value>70.5</value>
+               <!-- PRED -->    <value>0.00</value>
+               <!-- RES -->     <value>0.00</value>
+               <!-- WRES -->    <value>0.00</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.00</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="25">
+               <!-- ID -->      <value type="string">3</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.27</value>
+               <!-- CP/DV -->   <value>4.40</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.08</value>
+               <!-- RES -->     <value>-0.678</value>
+               <!-- WRES -->    <value>-0.18</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.506</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="26">
+               <!-- ID -->      <value type="string">3</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.58</value>
+               <!-- CP/DV -->   <value>6.90</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.58</value>
+               <!-- RES -->     <value>-0.679</value>
+               <!-- WRES -->    <value>-0.0843</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.756</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="27">
+               <!-- ID -->      <value type="string">3</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>1.02</value>
+               <!-- CP/DV -->   <value>8.20</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>8.67</value>
+               <!-- RES -->     <value>-0.47</value>
+               <!-- WRES -->    <value>0.0595</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.864</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="28">
+               <!-- ID -->      <value type="string">3</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>2.02</value>
+               <!-- CP/DV -->   <value>7.80</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>8.53</value>
+               <!-- RES -->     <value>-0.729</value>
+               <!-- WRES -->    <value>-0.592</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.85</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="29">
+               <!-- ID -->      <value type="string">3</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>3.62</value>
+               <!-- CP/DV -->   <value>7.50</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.56</value>
+               <!-- RES -->     <value>-0.0591</value>
+               <!-- WRES -->    <value>0.427</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.754</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="30">
+               <!-- ID -->      <value type="string">3</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>5.08</value>
+               <!-- CP/DV -->   <value>6.20</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>6.74</value>
+               <!-- RES -->     <value>-0.545</value>
+               <!-- WRES -->    <value>-0.378</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.671</value>
+               <!-- E -->       <value>6.90</value>
+           </row>
+            <row position="31">
+               <!-- ID -->      <value type="string">3</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>7.07</value>
+               <!-- CP/DV -->   <value>5.30</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.77</value>
+               <!-- RES -->     <value>-0.473</value>
+               <!-- WRES -->    <value>-0.298</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.576</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="32">
+               <!-- ID -->      <value type="string">3</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>9.00</value>
+               <!-- CP/DV -->   <value>4.90</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>4.97</value>
+               <!-- RES -->     <value>-0.0654</value>
+               <!-- WRES -->    <value>0.324</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.495</value>
+               <!-- E -->       <value>6.90</value>
+           </row>
+            <row position="33">
+               <!-- ID -->      <value type="string">3</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>12.1</value>
+               <!-- CP/DV -->   <value>3.70</value>
+               <!-- WT/W -->    <value>0.0</value>
+               <!-- PRED -->    <value>3.88</value>
+               <!-- RES -->     <value>-0.182</value>
+               <!-- WRES -->    <value>-0.0822</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.387</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="34">
+               <!-- ID -->      <value type="string">3</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>24.2</value>
+               <!-- CP/DV -->   <value>1.05</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>1.52</value>
+               <!-- RES -->     <value>-0.468</value>
+               <!-- WRES -->    <value>-0.546</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.151</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <!-- ============ 4th subject ============================ -->
+            <row position="35">
+               <!-- ID -->      <value type="string">4</value>
+               <!-- DOSE/AMT --><value>4.40</value>
+               <!-- TIME -->    <value>0.00</value>
+               <!-- CP/DV -->   <value>0.00</value>
+               <!-- WT/W -->    <value>72.7</value>
+               <!-- PRED -->    <value>0.00</value>
+               <!-- RES -->     <value>0.00</value>
+               <!-- WRES -->    <value>0.00</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.64</value>
+               <!-- D -->       <value>0.00</value>
+               <!-- E -->       <value>7.12</value>
+            </row>
+            <row position="36">
+               <!-- ID -->      <value type="string">4</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.35</value>
+               <!-- CP/DV -->   <value>1.89</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.79</value>
+               <!-- RES -->     <value>-3.90</value>
+               <!-- WRES -->    <value>-1.62</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.64</value>
+               <!-- D -->       <value>0.594</value>
+               <!-- E -->       <value>7.12</value>
+           </row>
+            <row position="37">
+               <!-- ID -->      <value type="string">4</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.60</value>
+               <!-- CP/DV -->   <value>4.60</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.45</value>
+               <!-- RES -->     <value>-2.85</value>
+               <!-- WRES -->    <value>-0.743</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.64</value>
+               <!-- D -->       <value>0.765</value>
+               <!-- E -->       <value>7.12</value>
+            </row>
+            <row position="38">
+               <!-- ID -->      <value type="string">4</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>1.07</value>
+               <!-- CP/DV -->   <value>8.60</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>8.46</value>
+               <!-- RES -->     <value>0.139</value>
+               <!-- WRES -->    <value>1.81</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.64</value>
+               <!-- D -->       <value>0.868</value>
+               <!-- E -->       <value>7.12</value>
+            </row>
+            <row position="39">
+               <!-- ID -->      <value type="string">4</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>2.13</value>
+               <!-- CP/DV -->   <value>8.38</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>8.22</value>
+               <!-- RES -->     <value>0.157</value>
+               <!-- WRES -->    <value>-0.00468</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.64</value>
+               <!-- D -->       <value>0.844</value>
+               <!-- E -->       <value>7.12</value>
+            </row>
+            <row position="40">
+               <!-- ID -->      <value type="string">4</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>3.50</value>
+               <!-- CP/DV -->   <value>7.54</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.41</value>
+               <!-- RES -->     <value>0.129</value>
+               <!-- WRES -->    <value>-0.239</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.64</value>
+               <!-- D -->       <value>0.761</value>
+               <!-- E -->       <value>7.12</value>
+            </row>
+            <row position="41">
+               <!-- ID -->      <value type="string">4</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>5.02</value>
+               <!-- CP/DV -->   <value>6.88</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>6.58</value>
+               <!-- RES -->     <value>0.298</value>
+               <!-- WRES -->    <value>0.0498</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.64</value>
+               <!-- D -->       <value>0.676</value>
+               <!-- E -->       <value>7.12</value>
+            </row>
+            <row position="42">
+               <!-- ID -->      <value type="string">4</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>7.02</value>
+               <!-- CP/DV -->   <value>5.78</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.63</value>
+               <!-- RES -->     <value>0.15</value>
+               <!-- WRES -->    <value>-0.156</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.64</value>
+               <!-- D -->       <value>0.578</value>
+               <!-- E -->       <value>7.12</value>
+            </row>
+            <row position="43">
+               <!-- ID -->      <value type="string">4</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>9.02</value>
+               <!-- CP/DV -->   <value>5.33</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>4.82</value>
+               <!-- RES -->     <value>0.515</value>
+               <!-- WRES -->    <value>0.462</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.64</value>
+               <!-- D -->       <value>0.494</value>
+               <!-- E -->       <value>7.12</value>
+           </row>
+            <row position="44">
+               <!-- ID -->      <value type="string">4</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>12.0</value>
+               <!-- CP/DV -->   <value>4.19</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>3.82</value>
+               <!-- RES -->     <value>0.369</value>
+               <!-- WRES -->    <value>0.273</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.64</value>
+               <!-- D -->       <value>0.392</value>
+               <!-- E -->       <value>7.12</value>
+            </row>
+            <row position="45">
+               <!-- ID -->      <value type="string">4</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>24.6</value>
+               <!-- CP/DV -->   <value>1.15</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>1.42</value>
+               <!-- RES -->     <value>-0.27</value>
+               <!-- WRES -->    <value>-0.60</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.64</value>
+               <!-- D -->       <value>0.146</value>
+               <!-- E -->       <value>7.12</value>
+            </row>
+            <!-- ============ 5th subject ============================ -->
+            <row position="46">
+               <!-- ID -->      <value type="string">5</value>
+               <!-- DOSE/AMT --><value>5.86</value>
+               <!-- TIME -->    <value>0.00</value>
+               <!-- CP/DV -->   <value>0.00</value>
+               <!-- WT/W -->    <value>54.6</value>
+               <!-- PRED -->    <value>0.00</value>
+               <!-- RES -->     <value>0.00</value>
+               <!-- WRES -->    <value>0.00</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>1.98</value>
+               <!-- D -->       <value>0.00</value>
+               <!-- E -->       <value>5.34</value>
+            </row>
+            <row position="47">
+               <!-- ID -->      <value type="string">5</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.30</value>
+               <!-- CP/DV -->   <value>2.02</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.03</value>
+               <!-- RES -->     <value>-5.01</value>
+               <!-- WRES -->    <value>-2.46</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>1.98</value>
+               <!-- D -->       <value>0.542</value>
+               <!-- E -->       <value>5.34</value>
+            </row>
+            <row position="48">
+               <!-- ID -->      <value type="string">5</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.52</value>
+               <!-- CP/DV -->   <value>5.63</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>9.39</value>
+               <!-- RES -->     <value>-3.76</value>
+               <!-- WRES -->    <value>-0.544</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>1.98</value>
+               <!-- D -->       <value>0.724</value>
+               <!-- E -->       <value>5.34</value>
+            </row>
+            <row position="49">
+               <!-- ID -->      <value type="string">5</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>1.00</value>
+               <!-- CP/DV -->   <value>1.14</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>11.2</value>
+               <!-- RES -->     <value>0.21</value>
+               <!-- WRES -->    <value>3.70</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>1.98</value>
+               <!-- D -->       <value>0.862</value>
+               <!-- E -->       <value>5.34</value>
+            </row>
+            <row position="50">
+               <!-- ID -->      <value type="string">5</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>2.02</value>
+               <!-- CP/DV -->   <value>9.33</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>11.0</value>
+               <!-- RES -->     <value>-1.70</value>
+               <!-- WRES -->    <value>-1.42</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>1.98</value>
+               <!-- D -->       <value>0.850</value>
+               <!-- E -->       <value>5.34</value>
+            </row>
+            <row position="51">
+               <!-- ID -->      <value type="string">5</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>3.50</value>
+               <!-- CP/DV -->   <value>8.74</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>9.87</value>
+               <!-- RES -->     <value>-1.13</value>
+               <!-- WRES -->    <value>-0.775</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>1.98</value>
+               <!-- D -->       <value>0.761</value>
+               <!-- E -->       <value>5.34</value>
+            </row>
+            <row position="52">
+               <!-- ID -->      <value type="string">5</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>5.02</value>
+               <!-- CP/DV -->   <value>7.56</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>8.77</value>
+               <!-- RES -->     <value>-1.21</value>
+               <!-- WRES -->    <value>-0.922</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>1.98</value>
+               <!-- D -->       <value>0.676</value>
+               <!-- E -->       <value>5.34</value>
+            </row>
+            <row position="53">
+               <!-- ID -->      <value type="string">5</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>7.02</value>
+               <!-- CP/DV -->   <value>7.09</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.50</value>
+               <!-- RES -->     <value>-0.408</value>
+               <!-- WRES -->    <value>0.324</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>1.98</value>
+               <!-- D -->       <value>0.578</value>
+               <!-- E -->       <value>5.34</value>
+            </row>
+            <row position="54">
+               <!-- ID -->      <value type="string">5</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>9.10</value>
+               <!-- CP/DV -->   <value>5.90</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>6.37</value>
+               <!-- RES -->     <value>-0.473</value>
+               <!-- WRES -->    <value>0.17</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>1.98</value>
+               <!-- D -->       <value>0.491</value>
+               <!-- E -->       <value>5.34</value>
+            </row>
+            <row position="55">
+               <!-- ID -->      <value type="string">5</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>12.0</value>
+               <!-- CP/DV -->   <value>4.37</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.08</value>
+               <!-- RES -->     <value>-0.711</value>
+               <!-- WRES -->    <value>-0.293</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>1.98</value>
+               <!-- D -->       <value>0.392</value>
+               <!-- E -->       <value>5.34</value>
+            </row>
+            <row position="56">
+               <!-- ID -->      <value type="string">5</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>24.4</value>
+               <!-- CP/DV -->   <value>1.57</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>1.94</value>
+               <!-- RES -->     <value>-0.366</value>
+               <!-- WRES -->    <value>-0.088</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>1.98</value>
+               <!-- D -->       <value>0.149</value>
+               <!-- E -->       <value>5.34</value>
+            </row>
+            <!-- ============ 6th subject ============================ -->
+            <row position="57">
+               <!-- ID -->      <value type="string">6</value>
+               <!-- DOSE/AMT --><value>4.00</value>
+               <!-- TIME -->    <value>0.00</value>
+               <!-- CP/DV -->   <value>0.00</value>
+               <!-- WT/W -->    <value>80.0</value>
+               <!-- PRED -->    <value>0.00</value>
+               <!-- RES -->     <value>0.00</value>
+               <!-- WRES -->    <value>0.00</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.90</value>
+               <!-- D -->       <value>0.00</value>
+               <!-- E -->       <value>7.83</value>
+            </row>
+            <row position="58">
+               <!-- ID -->      <value type="string">6</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.27</value>
+               <!-- CP/DV -->   <value>1.29</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>4.48</value>
+               <!-- RES -->     <value>-3.19</value>
+               <!-- WRES -->    <value>-0.643</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.90</value>
+               <!-- D -->       <value>0.506</value>
+               <!-- E -->       <value>7.83</value>
+            </row>
+            <row position="59">
+               <!-- ID -->      <value type="string">6</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.58</value>
+               <!-- CP/DV -->   <value>3.08</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>6.69</value>
+               <!-- RES -->     <value>-3.61</value>
+               <!-- WRES -->    <value>-1.27</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.90</value>
+               <!-- D -->       <value>0.756</value>
+               <!-- E -->       <value>7.83</value>
+            </row>
+            <row position="60">
+               <!-- ID -->      <value type="string">6</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>1.15</value>
+               <!-- CP/DV -->   <value>6.44</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.73</value>
+               <!-- RES -->     <value>-1.29</value>
+               <!-- WRES -->    <value>0.657</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.90</value>
+               <!-- D -->       <value>0.873</value>
+               <!-- E -->       <value>7.83</value>
+            </row>
+            <row position="61">
+               <!-- ID -->      <value type="string">6</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>2.03</value>
+               <!-- CP/DV -->   <value>6.32</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.53</value>
+               <!-- RES -->     <value>-1.21</value>
+               <!-- WRES -->    <value>-0.36</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.90</value>
+               <!-- D -->       <value>0.850</value>
+               <!-- E -->       <value>7.83</value>
+            </row>
+            <row position="62">
+               <!-- ID -->      <value type="string">6</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>3.57</value>
+               <!-- CP/DV -->   <value>5.53</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>6.70</value>
+               <!-- RES -->     <value>-1.17</value>
+               <!-- WRES -->    <value>-0.573</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.90</value>
+               <!-- D -->       <value>0.757</value>
+               <!-- E -->       <value>7.83</value>
+            </row>
+            <row position="63">
+               <!-- ID -->      <value type="string">6</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>5.00</value>
+               <!-- CP/DV -->   <value>4.94</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.99</value>
+               <!-- RES -->     <value>-1.05</value>
+               <!-- WRES -->    <value>-0.453</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.90</value>
+               <!-- D -->       <value>0.677</value>
+               <!-- E -->       <value>7.83</value>
+            </row>
+            <row position="64">
+               <!-- ID -->      <value type="string">6</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>7.00</value>
+               <!-- CP/DV -->   <value>4.02</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.13</value>
+               <!-- RES -->     <value>-1.11</value>
+               <!-- WRES -->    <value>-0.63</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.90</value>
+               <!-- D -->       <value>0.579</value>
+               <!-- E -->       <value>7.83</value>
+            </row>
+            <row position="65">
+               <!-- ID -->      <value type="string">6</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>9.22</value>
+               <!-- CP/DV -->   <value>3.46</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>4.31</value>
+               <!-- RES -->     <value>-0.85</value>
+               <!-- WRES -->    <value>-0.319</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.90</value>
+               <!-- D -->       <value>0.487</value>
+               <!-- E -->       <value>7.83</value>
+            </row>
+            <row position="66">
+               <!-- ID -->      <value type="string">6</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>12.1</value>
+               <!-- CP/DV -->   <value>2.78</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>3.44</value>
+               <!-- RES -->     <value>-0.661</value>
+               <!-- WRES -->    <value>-0.142</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.90</value>
+               <!-- D -->       <value>0.389</value>
+               <!-- E -->       <value>7.83</value>
+            </row>
+            <row position="67">
+               <!-- ID -->      <value type="string">6</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>23.9</value>
+               <!-- CP/DV -->   <value>0.92</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>1.37</value>
+               <!-- RES -->     <value>-0.454</value>
+               <!-- WRES -->    <value>-0.224</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.90</value>
+               <!-- D -->       <value>0.155</value>
+               <!-- E -->       <value>7.83</value>
+            </row>
+            <!-- ============ 7th subject ============================ -->
+            <row position="68">
+               <!-- ID -->      <value type="string">7</value>
+               <!-- DOSE/AMT --><value>4.95</value>
+               <!-- TIME -->    <value>0.00</value>
+               <!-- CP/DV -->   <value>0.15</value>
+               <!-- WT/W -->    <value>6.46</value>
+               <!-- PRED -->    <value>0.00</value>
+               <!-- RES -->     <value>0.15</value>
+               <!-- WRES -->    <value>0.241</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.35</value>
+               <!-- D -->       <value>0.00</value>
+               <!-- E -->       <value>6.32</value>
+            </row>
+            <row position="69">
+               <!-- ID -->      <value type="string">7</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.25</value>
+               <!-- CP/DV -->   <value>0.85</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.27</value>
+               <!-- RES -->     <value>-4.42</value>
+               <!-- WRES -->    <value>-0.0709</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.35</value>
+               <!-- D -->       <value>0.481</value>
+               <!-- E -->       <value>6.32</value>
+            </row>
+            <row position="70">
+               <!-- ID -->      <value type="string">7</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.50</value>
+               <!-- CP/DV -->   <value>2.35</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.80</value>
+               <!-- RES -->     <value>-5.45</value>
+               <!-- WRES -->    <value>-0.995</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.35</value>
+               <!-- D -->       <value>0.712</value>
+               <!-- E -->       <value>6.32</value>
+            </row>
+            <row position="71">
+               <!-- ID -->      <value type="string">7</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>1.02</value>
+               <!-- CP/DV -->   <value>5.02</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>9.47</value>
+               <!-- RES -->     <value>-4.45</value>
+               <!-- WRES -->    <value>-1.76</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.35</value>
+               <!-- D -->       <value>0.864</value>
+               <!-- E -->       <value>6.32</value>
+            </row>
+            <row position="72">
+               <!-- ID -->      <value type="string">7</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>2.02</value>
+               <!-- CP/DV -->   <value>6.58</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>9.32</value>
+               <!-- RES -->     <value>-2.74</value>
+               <!-- WRES -->    <value>-1.38</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.35</value>
+               <!-- D -->       <value>0.850</value>
+               <!-- E -->       <value>6.32</value>
+            </row>
+            <row position="73">
+               <!-- ID -->      <value type="string">7</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>3.48</value>
+               <!-- CP/DV -->   <value>7.09</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>8.35</value>
+               <!-- RES -->     <value>-1.26</value>
+               <!-- WRES -->    <value>3.80</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.35</value>
+               <!-- D -->       <value>0.762</value>
+               <!-- E -->       <value>6.32</value>
+            </row>
+            <row position="74">
+               <!-- ID -->      <value type="string">7</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>5.00</value>
+               <!-- CP/DV -->   <value>6.66</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.42</value>
+               <!-- RES -->     <value>-0.756</value>
+               <!-- WRES -->    <value>0.896</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.35</value>
+               <!-- D -->       <value>0.677</value>
+               <!-- E -->       <value>6.32</value>
+            </row>
+            <row position="75">
+               <!-- ID -->      <value type="string">7</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>6.98</value>
+               <!-- CP/DV -->   <value>5.25</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>6.35</value>
+               <!-- RES -->     <value>-1.10</value>
+               <!-- WRES -->    <value>0.0175</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.35</value>
+               <!-- D -->       <value>0.580</value>
+               <!-- E -->       <value>6.32</value>
+            </row>
+            <row position="76">
+               <!-- ID -->      <value type="string">7</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>9.00</value>
+               <!-- CP/DV -->   <value>4.39</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.43</value>
+               <!-- RES -->     <value>-1.04</value>
+               <!-- WRES -->    <value>-0.151</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.35</value>
+               <!-- D -->       <value>0.495</value>
+               <!-- E -->       <value>6.32</value>
+            </row>
+            <row position="77">
+               <!-- ID -->      <value type="string">7</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>12.1</value>
+               <!-- CP/DV -->   <value>3.53</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>4.28</value>
+               <!-- RES -->     <value>-0.745</value>
+               <!-- WRES -->    <value>-0.0246</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.35</value>
+               <!-- D -->       <value>0.390</value>
+               <!-- E -->       <value>6.32</value>
+            </row>
+            <row position="78">
+               <!-- ID -->      <value type="string">7</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>24.2</value>
+               <!-- CP/DV -->   <value>1.15</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>1.65</value>
+               <!-- RES -->     <value>-0.502</value>
+               <!-- WRES -->    <value>-0.383</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.35</value>
+               <!-- D -->       <value>0.151</value>
+               <!-- E -->       <value>6.32</value>
+            </row>
+            <!-- ============ 8th subject ============================ -->
+            <row position="79">
+               <!-- ID -->      <value type="string">8</value>
+               <!-- DOSE/AMT --><value>4.53</value>
+               <!-- TIME -->    <value>0.00</value>
+               <!-- CP/DV -->   <value>0.00</value>
+               <!-- WT/W -->    <value>70.5</value>
+               <!-- PRED -->    <value>0.00</value>
+               <!-- RES -->     <value>0.00</value>
+               <!-- WRES -->    <value>0.00</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.00</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="80">
+               <!-- ID -->      <value type="string">8</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.25</value>
+               <!-- CP/DV -->   <value>3.05</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>48.2</value>
+               <!-- RES -->     <value>-1.77</value>
+               <!-- WRES -->    <value>0.959</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.481</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="81">
+               <!-- ID -->      <value type="string">8</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.52</value>
+               <!-- CP/DV -->   <value>3.05</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.26</value>
+               <!-- RES -->     <value>-4.21</value>
+               <!-- WRES -->    <value>-2.64</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.724</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="82">
+               <!-- ID -->      <value type="string">8</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.98</value>
+               <!-- CP/DV -->   <value>7.31</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>8.63</value>
+               <!-- RES -->     <value>-1.32</value>
+               <!-- WRES -->    <value>0.78</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.860</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="83">
+               <!-- ID -->      <value type="string">8</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>2.02</value>
+               <!-- CP/DV -->   <value>7.56</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>8.53</value>
+               <!-- RES -->     <value>-0.969</value>
+               <!-- WRES -->    <value>-0.042</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.850</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="84">
+               <!-- ID -->      <value type="string">8</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>3.53</value>
+               <!-- CP/DV -->   <value>6.59</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.61</value>
+               <!-- RES -->     <value>-1.02</value>
+               <!-- WRES -->    <value>-0.382</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.759</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="85">
+               <!-- ID -->      <value type="string">8</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>5.05</value>
+               <!-- CP/DV -->   <value>5.88</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>6.76</value>
+               <!-- RES -->     <value>-0.88</value>
+               <!-- WRES -->    <value>-0.239</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.674</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="86">
+               <!-- ID -->      <value type="string">8</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>7.15</value>
+               <!-- CP/DV -->   <value>4.73</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.74</value>
+               <!-- RES -->     <value>-1.01</value>
+               <!-- WRES -->    <value>-0.55</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.572</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="87">
+               <!-- ID -->      <value type="string">8</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>9.07</value>
+               <!-- CP/DV -->   <value>4.57</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>4.94</value>
+               <!-- RES -->     <value>-0.368</value>
+               <!-- WRES -->    <value>0.384</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.492</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="88">
+               <!-- ID -->      <value type="string">8</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>12.1</value>
+               <!-- CP/DV -->   <value>3.00</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>3.90</value>
+               <!-- RES -->     <value>-0.897</value>
+               <!-- WRES -->    <value>-0.601</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.389</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <row position="89">
+               <!-- ID -->      <value type="string">8</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>24.1</value>
+               <!-- CP/DV -->   <value>1.25</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>1.52</value>
+               <!-- RES -->     <value>-0.274</value>
+               <!-- WRES -->    <value>-0.003</value>
+               <!-- DS -->      <value>319</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.56</value>
+               <!-- D -->       <value>0.152</value>
+               <!-- E -->       <value>6.90</value>
+            </row>
+            <!-- ============ 9th subject ============================ -->
+            <row position="90">
+               <!-- ID -->      <value type="string">9</value>
+               <!-- DOSE/AMT --><value>3.10</value>
+               <!-- TIME -->    <value>0.00</value>
+               <!-- CP/DV -->   <value>0.00</value>
+               <!-- WT/W -->    <value>86.4</value>
+               <!-- PRED -->    <value>0.00</value>
+               <!-- RES -->     <value>0.00</value>
+               <!-- WRES -->    <value>0.00</value>
+               <!-- DS -->      <value>268</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>3.14</value>
+               <!-- D -->       <value>0.00</value>
+               <!-- E -->       <value>8.46</value>
+            </row>
+            <row position="91">
+               <!-- ID -->      <value type="string">9</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.30</value>
+               <!-- CP/DV -->   <value>7.37</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>3.72</value>
+               <!-- RES -->     <value>3.65</value>
+               <!-- WRES -->    <value>1.13</value>
+               <!-- DS -->      <value>268</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>3.14</value>
+               <!-- D -->       <value>0.542</value>
+               <!-- E -->       <value>8.46</value>
+            </row>
+            <row position="92">
+               <!-- ID -->      <value type="string">9</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.63</value>
+               <!-- CP/DV -->   <value>9.03</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.34</value>
+               <!-- RES -->     <value>3.69</value>
+               <!-- WRES -->    <value>1.68</value>
+               <!-- DS -->      <value>268</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>3.14</value>
+               <!-- D -->       <value>0.078</value>
+               <!-- E -->       <value>8.46</value>
+            </row>
+            <row position="93">
+               <!-- ID -->      <value type="string">9</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>1.05</value>
+               <!-- CP/DV -->   <value>7.14</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.95</value>
+               <!-- RES -->     <value>1.19</value>
+               <!-- WRES -->    <value>-0.69</value>
+               <!-- DS -->      <value>268</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>3.14</value>
+               <!-- D -->       <value>0.867</value>
+               <!-- E -->       <value>8.46</value>
+            </row>
+            <row position="94">
+               <!-- ID -->      <value type="string">9</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>2.02</value>
+               <!-- CP/DV -->   <value>6.33</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.84</value>
+               <!-- RES -->     <value>0.493</value>
+               <!-- WRES -->    <value>-0.179</value>
+               <!-- DS -->      <value>268</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>3.14</value>
+               <!-- D -->       <value>0.850</value>
+               <!-- E -->       <value>8.46</value>
+            </row>
+            <row position="95">
+               <!-- ID -->      <value type="string">9</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>3.53</value>
+               <!-- CP/DV -->   <value>5.66</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.21</value>
+               <!-- RES -->     <value>0.451</value>
+               <!-- WRES -->    <value>0.0464</value>
+               <!-- DS -->      <value>268</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>3.14</value>
+               <!-- D -->       <value>0.759</value>
+               <!-- E -->       <value>8.46</value>
+            </row>
+            <row position="96">
+               <!-- ID -->      <value type="string">9</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>5.02</value>
+               <!-- CP/DV -->   <value>5.67</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>4.64</value>
+               <!-- RES -->     <value>1.03</value>
+               <!-- WRES -->    <value>1.04</value>
+               <!-- DS -->      <value>268</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>3.14</value>
+               <!-- D -->       <value>0.676</value>
+               <!-- E -->       <value>8.46</value>
+            </row>
+            <row position="97">
+               <!-- ID -->      <value type="string">9</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>7.17</value>
+               <!-- CP/DV -->   <value>4.24</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>3.92</value>
+               <!-- RES -->     <value>0.32</value>
+               <!-- WRES -->    <value>-0.0321</value>
+               <!-- DS -->      <value>268</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>3.14</value>
+               <!-- D -->       <value>0.571</value>
+               <!-- E -->       <value>8.46</value>
+            </row>
+            <row position="98">
+               <!-- ID -->      <value type="string">9</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>8.80</value>
+               <!-- CP/DV -->   <value>4.11</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>3.45</value>
+               <!-- RES -->     <value>0.659</value>
+               <!-- WRES -->    <value>0.561</value>
+               <!-- DS -->      <value>268</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>3.14</value>
+               <!-- D -->       <value>0.503</value>
+               <!-- E -->       <value>8.46</value>
+            </row>
+            <row position="99">
+               <!-- ID -->      <value type="string">9</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>11.6</value>
+               <!-- CP/DV -->   <value>3.16</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>2.77</value>
+               <!-- RES -->     <value>0.387</value>
+               <!-- WRES -->    <value>0.20</value>
+               <!-- DS -->      <value>268</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>3.14</value>
+               <!-- D -->       <value>0.404</value>
+               <!-- E -->       <value>8.46</value>
+            </row>
+            <row position="100">
+               <!-- ID -->      <value type="string">9</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>24.4</value>
+               <!-- CP/DV -->   <value>1.12</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>1.02</value>
+               <!-- RES -->     <value>0.102</value>
+               <!-- WRES -->    <value>-0.0278</value>
+               <!-- DS -->      <value>268</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>3.14</value>
+               <!-- D -->       <value>0.148</value>
+               <!-- E -->       <value>8.46</value>
+            </row>
+            <!-- ============ 10th subject ============================ -->
+            <row position="101">
+               <!-- ID -->      <value type="string">10</value>
+               <!-- DOSE/AMT --><value>5.50</value>
+               <!-- TIME -->    <value>0.00</value>
+               <!-- CP/DV -->   <value>0.24</value>
+               <!-- WT/W -->    <value>58.2</value>
+               <!-- PRED -->    <value>0.00</value>
+               <!-- RES -->     <value>0.24</value>
+               <!-- WRES -->    <value>0.386</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.11</value>
+               <!-- D -->       <value>0.00</value>
+               <!-- E -->       <value>5.70</value>
+            </row>
+            <row position="102">
+               <!-- ID -->      <value type="string">10</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.37</value>
+               <!-- CP/DV -->   <value>2.89</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.47</value>
+               <!-- RES -->     <value>-4.58</value>
+               <!-- WRES -->    <value>0.646</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.11</value>
+               <!-- D -->       <value>0.613</value>
+               <!-- E -->       <value>5.70</value>
+            </row>
+            <row position="103">
+               <!-- ID -->      <value type="string">10</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.77</value>
+               <!-- CP/DV -->   <value>5.22</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>10.0</value>
+               <!-- RES -->     <value>-4.81</value>
+               <!-- WRES -->    <value>-1.69</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.11</value>
+               <!-- D -->       <value>0.823</value>
+               <!-- E -->       <value>5.70</value>
+            </row>
+            <row position="104">
+               <!-- ID -->      <value type="string">10</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>1.02</value>
+               <!-- CP/DV -->   <value>6.41</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>10.5</value>
+               <!-- RES -->     <value>-4.12</value>
+               <!-- WRES -->    <value>-2.22</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.11</value>
+               <!-- D -->       <value>0.864</value>
+               <!-- E -->       <value>5.70</value>
+            </row>
+            <row position="105">
+               <!-- ID -->      <value type="string">10</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>2.05</value>
+               <!-- CP/DV -->   <value>7.83</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>10.3</value>
+               <!-- RES -->     <value>-2.50</value>
+               <!-- WRES -->    <value>-2.79</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.11</value>
+               <!-- D -->       <value>0.846</value>
+               <!-- E -->       <value>5.70</value>
+            </row>
+            <row position="106">
+               <!-- ID -->      <value type="string">10</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>3.55</value>
+               <!-- CP/DV -->   <value>10.2</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>9.23</value>
+               <!-- RES -->     <value>0.982</value>
+               <!-- WRES -->    <value>1.95</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.11</value>
+               <!-- D -->       <value>0.758</value>
+               <!-- E -->       <value>5.70</value>
+            </row>
+            <row position="107">
+               <!-- ID -->      <value type="string">10</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>5.05</value>
+               <!-- CP/DV -->   <value>9.18</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>8.21</value>
+               <!-- RES -->     <value>0.972</value>
+               <!-- WRES -->    <value>1.51</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.11</value>
+               <!-- D -->       <value>0.674</value>
+               <!-- E -->       <value>5.70</value>
+            </row>
+            <row position="108">
+               <!-- ID -->      <value type="string">10</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>7.08</value>
+               <!-- CP/DV -->   <value>8.02</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.00</value>
+               <!-- RES -->     <value>1.02</value>
+               <!-- WRES -->    <value>1.16</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.11</value>
+               <!-- D -->       <value>0.575</value>
+               <!-- E -->       <value>5.70</value>
+            </row>
+            <row position="109">
+               <!-- ID -->      <value type="string">10</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>9.38</value>
+               <!-- CP/DV -->   <value>7.14</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.85</value>
+               <!-- RES -->     <value>1.29</value>
+               <!-- WRES -->    <value>1.26</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.11</value>
+               <!-- D -->       <value>0.481</value>
+               <!-- E -->       <value>5.70</value>
+            </row>
+            <row position="110">
+               <!-- ID -->      <value type="string">10</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>12.1</value>
+               <!-- CP/DV -->   <value>5.68</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>4.73</value>
+               <!-- RES -->     <value>0.948</value>
+               <!-- WRES -->    <value>0.484</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.11</value>
+               <!-- D -->       <value>0.389</value>
+               <!-- E -->       <value>5.70</value>
+            </row>
+            <row position="111">
+               <!-- ID -->      <value type="string">10</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>23.7</value>
+               <!-- CP/DV -->   <value>2.42</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>1.91</value>
+               <!-- RES -->     <value>0.508</value>
+               <!-- WRES -->    <value>-0.275</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.11</value>
+               <!-- D -->       <value>0.157</value>
+               <!-- E -->       <value>5.70</value>
+            </row>
+            <!-- ============ 11th subject ============================ -->
+            <row position="112">
+               <!-- ID -->      <value type="string">11</value>
+               <!-- DOSE/AMT --><value>4.92</value>
+               <!-- TIME -->    <value>0.00</value>
+               <!-- CP/DV -->   <value>0.00</value>
+               <!-- WT/W -->    <value>65.0</value>
+               <!-- PRED -->    <value>0.00</value>
+               <!-- RES -->     <value>0.00</value>
+               <!-- WRES -->    <value>0.00</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.36</value>
+               <!-- D -->       <value>0.00</value>
+               <!-- E -->       <value>6.36</value>
+            </row>
+            <row position="113">
+               <!-- ID -->      <value type="string">11</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.25</value>
+               <!-- CP/DV -->   <value>4.86</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.24</value>
+               <!-- RES -->     <value>-0.378</value>
+               <!-- WRES -->    <value>-0.232</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.36</value>
+               <!-- D -->       <value>0.481</value>
+               <!-- E -->       <value>6.36</value>
+            </row>
+            <row position="114">
+               <!-- ID -->      <value type="string">11</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.50</value>
+               <!-- CP/DV -->   <value>7.24</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.75</value>
+               <!-- RES -->     <value>-0.515</value>
+               <!-- WRES -->    <value>0.33</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.36</value>
+               <!-- D -->       <value>0.712</value>
+               <!-- E -->       <value>6.36</value>
+            </row>
+            <row position="115">
+               <!-- ID -->      <value type="string">11</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.98</value>
+               <!-- CP/DV -->   <value>8.00</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>9.37</value>
+               <!-- RES -->     <value>-1.37</value>
+               <!-- WRES -->    <value>0.0889</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.36</value>
+               <!-- D -->       <value>0.860</value>
+               <!-- E -->       <value>6.36</value>
+            </row>
+            <row position="116">
+               <!-- ID -->      <value type="string">11</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>1.98</value>
+               <!-- CP/DV -->   <value>6.81</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>9.29</value>
+               <!-- RES -->     <value>-2.48</value>
+               <!-- WRES -->    <value>-1.02</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.36</value>
+               <!-- D -->       <value>0.853</value>
+               <!-- E -->       <value>6.36</value>
+            </row>
+            <row position="117">
+               <!-- ID -->      <value type="string">11</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>3.60</value>
+               <!-- CP/DV -->   <value>5.87</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>8.22</value>
+               <!-- RES -->     <value>-2.35</value>
+               <!-- WRES -->    <value>-0.857</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.36</value>
+               <!-- D -->       <value>0.755</value>
+               <!-- E -->       <value>6.36</value>
+            </row>
+            <row position="118">
+               <!-- ID -->      <value type="string">11</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>5.02</value>
+               <!-- CP/DV -->   <value>5.22</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.36</value>
+               <!-- RES -->     <value>-2.14</value>
+               <!-- WRES -->    <value>-0.638</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.36</value>
+               <!-- D -->       <value>0.676</value>
+               <!-- E -->       <value>6.36</value>
+            </row>
+            <row position="119">
+               <!-- ID -->      <value type="string">11</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>7.03</value>
+               <!-- CP/DV -->   <value>4.45</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>6.29</value>
+               <!-- RES -->     <value>-1.84</value>
+               <!-- WRES -->    <value>-0.343</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.36</value>
+               <!-- D -->       <value>0.577</value>
+               <!-- E -->       <value>6.36</value>
+            </row>
+            <row position="120">
+               <!-- ID -->      <value type="string">11</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>9.03</value>
+               <!-- CP/DV -->   <value>3.62</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.38</value>
+               <!-- RES -->     <value>-1.76</value>
+               <!-- WRES -->    <value>-0.405</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.36</value>
+               <!-- D -->       <value>0.494</value>
+               <!-- E -->       <value>6.36</value>
+            </row>
+            <row position="121">
+               <!-- ID -->      <value type="string">11</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>12.1</value>
+               <!-- CP/DV -->   <value>2.69</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>4.23</value>
+               <!-- RES -->     <value>-1.54</value>
+               <!-- WRES -->    <value>-0.337</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.36</value>
+               <!-- D -->       <value>0.388</value>
+               <!-- E -->       <value>6.36</value>
+            </row>
+            <row position="122">
+               <!-- ID -->      <value type="string">11</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>24.1</value>
+               <!-- CP/DV -->   <value>0.86</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>1.66</value>
+               <!-- RES -->     <value>-0.80</value>
+               <!-- WRES -->    <value>-0.102</value>
+               <!-- DS -->      <value>320</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.36</value>
+               <!-- D -->       <value>0.152</value>
+               <!-- E -->       <value>6.36</value>
+            </row>
+            <!-- ============ 12th subject ============================ -->
+            <row position="123">
+               <!-- ID -->      <value type="string">12</value>
+               <!-- DOSE/AMT --><value>5.30</value>
+               <!-- TIME -->    <value>0.00</value>
+               <!-- CP/DV -->   <value>0.00</value>
+               <!-- WT/W -->    <value>60.5</value>
+               <!-- PRED -->    <value>0.00</value>
+               <!-- RES -->     <value>0.00</value>
+               <!-- WRES -->    <value>0.00</value>
+               <!-- DS -->      <value>321</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.20</value>
+               <!-- D -->       <value>0.00</value>
+               <!-- E -->       <value>5.92</value>
+            </row>
+            <row position="124">
+               <!-- ID -->      <value type="string">12</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.25</value>
+               <!-- CP/DV -->   <value>1.25</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.64</value>
+               <!-- RES -->     <value>-4.39</value>
+               <!-- WRES -->    <value>-0.745</value>
+               <!-- DS -->      <value>321</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.20</value>
+               <!-- D -->       <value>0.481</value>
+               <!-- E -->       <value>5.92</value>
+            </row>
+            <row position="125">
+               <!-- ID -->      <value type="string">12</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>0.50</value>
+               <!-- CP/DV -->   <value>3.96</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>8.35</value>
+               <!-- RES -->     <value>-4.39</value>
+               <!-- WRES -->    <value>-0.782</value>
+               <!-- DS -->      <value>321</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.20</value>
+               <!-- D -->       <value>0.712</value>
+               <!-- E -->       <value>5.92</value>
+            </row>
+            <row position="126">
+               <!-- ID -->      <value type="string">12</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>1.00</value>
+               <!-- CP/DV -->   <value>7.82</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>10.1</value>
+               <!-- RES -->     <value>-2.30</value>
+               <!-- WRES -->    <value>-0.635</value>
+               <!-- DS -->      <value>321</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.20</value>
+               <!-- D -->       <value>0.862</value>
+               <!-- E -->       <value>5.92</value>
+            </row>
+            <row position="127">
+               <!-- ID -->      <value type="string">12</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>2.00</value>
+               <!-- CP/DV -->   <value>9.72</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>9.99</value>
+               <!-- RES -->     <value>-2.72</value>
+               <!-- WRES -->    <value>-0.179</value>
+               <!-- DS -->      <value>321</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.20</value>
+               <!-- D -->       <value>0.851</value>
+               <!-- E -->       <value>5.92</value>
+            </row>
+            <row position="128">
+               <!-- ID -->      <value type="string">12</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>3.52</value>
+               <!-- CP/DV -->   <value>9.75</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>8.91</value>
+               <!-- RES -->     <value>0.837</value>
+               <!-- WRES -->    <value>1.20</value>
+               <!-- DS -->      <value>321</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.20</value>
+               <!-- D -->       <value>0.760</value>
+               <!-- E -->       <value>5.92</value>
+            </row>
+            <row position="129">
+               <!-- ID -->      <value type="string">12</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>5.07</value>
+               <!-- CP/DV -->   <value>8.57</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>7.90</value>
+               <!-- RES -->     <value>0.673</value>
+               <!-- WRES -->    <value>0.919</value>
+               <!-- DS -->      <value>321</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.20</value>
+               <!-- D -->       <value>0.673</value>
+               <!-- E -->       <value>5.92</value>
+            </row>
+            <row position="130">
+               <!-- ID -->      <value type="string">12</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>7.07</value>
+               <!-- CP/DV -->   <value>6.59</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>6.75</value>
+               <!-- RES -->     <value>-0.165</value>
+               <!-- WRES -->    <value>-0.432</value>
+               <!-- DS -->      <value>321</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.20</value>
+               <!-- D -->       <value>0.576</value>
+               <!-- E -->       <value>5.92</value>
+            </row>
+            <row position="131">
+               <!-- ID -->      <value type="string">12</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>9.03</value>
+               <!-- CP/DV -->   <value>6.11</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>5.80</value>
+               <!-- RES -->     <value>0.314</value>
+               <!-- WRES -->    <value>0.337</value>
+               <!-- DS -->      <value>321</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.20</value>
+               <!-- D -->       <value>0.494</value>
+               <!-- E -->       <value>5.92</value>
+            </row>
+            <row position="132">
+               <!-- ID -->      <value type="string">12</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>12.1</value>
+               <!-- CP/DV -->   <value>4.57</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>4.58</value>
+               <!-- RES -->     <value>-0.00765</value>
+               <!-- WRES -->    <value>-0.174</value>
+               <!-- DS -->      <value>321</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.20</value>
+               <!-- D -->       <value>0.390</value>
+               <!-- E -->       <value>5.92</value>
+            </row>
+            <row position="133">
+               <!-- ID -->      <value type="string">12</value>
+               <!-- DOSE/AMT --><value>0.00</value>
+               <!-- TIME -->    <value>24.1</value>
+               <!-- CP/DV -->   <value>1.17</value>
+               <!-- WT/W -->    <value>0.00</value>
+               <!-- PRED -->    <value>1.78</value>
+               <!-- RES -->     <value>-0.609</value>
+               <!-- WRES -->    <value>-1.09</value>
+               <!-- DS -->      <value>321</value>
+               <!-- KA -->      <value>2.77</value>
+               <!-- KE -->      <value>0.0781</value>
+               <!-- CL -->      <value>2.20</value>
+               <!-- D -->       <value>0.152</value>
+               <!-- E -->       <value>5.92</value>
+            </row> 
+      </presentation_data>
+   </pop_analysis_result>
+</spkreport>

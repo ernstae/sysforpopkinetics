@@ -1,0 +1,168 @@
+<html><head>
+<title>Add a New Test to the Regression Tests</title>
+<meta name="description" content="Add a New Test to the Regression Tests">
+<meta name="keywords" content=" "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="add-regression.htm" target="_top">section</a>, <a href="add-regression_frame1.htm" target="_top">frame</a></div>
+<center><b><big><big>Add a New Test to the Regression Tests</big></big></b></center>
+<br>
+<b><big><a name="Purpose">Purpose</a></big></b>
+<br>
+This guide lists the steps in creating a new regression test.
+It only considers jobs that run to completion; i.e.,
+jobs that terminate with the <code><font color="blue">srun</font></code> status.
+
+<br>
+<br>
+<b><big><a name="Steps">Steps</a></big></b>
+
+<ol type="1"><li>
+Download the current model design agent from
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></code>
+<a href="https://spk.rfpk.washington.edu/user/usermain.jsp" target="_top"><span style='white-space: nowrap'>https://spk.rfpk.washington.edu/user/usermain.jsp</span></a>
+
+<code><span style='white-space: nowrap'><br>
+</span></code>Use the model design agent (MDA) to
+create a job that runs to completion with out errors and
+generates correct answers.
+We refer to the corresponding <i>number</i> below.
+
+</li><li>
+
+Wait for the test environment to be free and then send e-mail to
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Andrew&nbsp;Ernst&nbsp;&lt;ernst@u.washington.edu&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Brad&nbsp;Bell&nbsp;&lt;bradbell@apl.washington.edu&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;David&nbsp;Salinger&nbsp;&lt;salinger@u.washington.edu&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jiaji&nbsp;Du&nbsp;&lt;jjdu@u.washington.edu&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mitch&nbsp;Watrous&nbsp;&lt;watrous@u.washington.edu&gt;<br>
+</span>
+</font></code>
+with the following subject field:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;test&nbsp;environment&nbsp;is&nbsp;in&nbsp;use.<br>
+</span>
+</font></code>
+</li><li>
+Follow the system testing guide
+<code><span style='white-space: nowrap'><br>
+</span></code><a href="http://spk.rfpk.washington.edu:8080/soft/guide/system_test/system_test.html" target="_top"><span style='white-space: nowrap'>http://spk.rfpk.washington.edu:8080/soft/guide/system_test/system_test.html</span></a>
+
+<code><span style='white-space: nowrap'><br>
+</span></code>using <i>number</i> mentioned above as one of the jobs
+included in the <code><font color="blue">take_snapshot</font></code> command.
+<b>Do not execute</b> <code><font color="blue">stage_candidate.pl</font></code>
+during this process,
+keep the test environment,
+and proceed to the next step.
+
+</li><li>
+
+On the <code><font color="blue">cskpserver</font></code> machine,
+the directory 
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/tmp/spkruntest-job-</span></font></code><i><span style='white-space: nowrap'>number</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>should now exist and contain results of running
+the job in the test environment.
+You can check some values in the file
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/tmp/spkruntest-job-</span></font></code><i><span style='white-space: nowrap'>number</span></i><code><font color="blue"><span style='white-space: nowrap'>/result.xml<br>
+</span></font></code>to verify that the result are the same as when 
+you ran the job in the MDA.
+
+</li><li>
+
+As root on the <code><font color="blue">cskpserver</font></code> machine,
+copy the directory
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/tmp/spkruntest-job-</span></font></code><i><span style='white-space: nowrap'>number</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>to the directory
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/usr/local/spk/ops/regression_test/srun/spkruntest-job-</span></font></code><i><span style='white-space: nowrap'>number</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code></li><li>
+On <code><font color="blue">aspkserver</font></code>,
+the regression test configuration file is
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r2/src/utils/ops/regression_test.xml<br>
+</span>
+</font></code>
+where <code><font color="blue">r2</font></code> corresponds to the cvs r2 repository.
+In this file, as a normal user on <code><font color="blue">aspkserver</font></code>,
+add the line
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;job&gt;</span></font></code><i><span style='white-space: nowrap'>number</span></i><code><font color="blue"><span style='white-space: nowrap'>&lt;/job&gt;&lt;!--&nbsp;</span></font></code><i><span style='white-space: nowrap'>comment</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;--&gt;<br>
+</span></font></code>between the line containing
+<code><font color="blue">&lt;srun&gt;</font></code> and the line containing <code><font color="blue">&lt;/srun&gt;</font></code>.
+The value <i>comment</i> is your comments describing the test case.
+
+</li><li>
+
+As root on <code><font color="blue">aspkserver</font></code> in the directory
+<code><font color="blue">r2/src/utils/ops</font></code> execute the commands
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;install<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;regression_test<br>
+</span>
+</font></code>
+All the regression tests,
+including the new one you added,
+should run successfully.
+
+</li><li>
+
+
+<ul type="disk"><li>
+If every thing goes successfully,
+as a normal user on <code><font color="blue">aspkserver</font></code>,
+check in you changes to
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;r2/src/utils/ops/regression_test.xml<br>
+</span>
+</font></code>
+</li><li>
+If an error occurs and you want to undo your changes 
+to the regression tests, execute the following commands
+as a normal user on <code><font color="blue">aspkserver</font></code>:
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cd&nbsp;r2/src/utils/ops<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rm&nbsp;regression_test.xml<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cvs&nbsp;update&nbsp;regression_test.xml<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;su<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>root&nbsp;password</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;install<br>
+</span></font></code>As root on <code><font color="blue">cskpserver</font></code>,
+execute the following command:
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rm&nbsp;-r&nbsp;/usr/local/spk/ops/regression_test/srun/spkruntest-job-</span></font></code><i><span style='white-space: nowrap'>number</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code></li></ul>
+</li><li>
+Send an e-mail message to
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mitch&nbsp;Watrous&nbsp;&lt;watrous@u.washington.edu&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jiaji&nbsp;Du&nbsp;&lt;jjdu@u.washington.edu&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;David&nbsp;Salinger&nbsp;&lt;salinger@u.washington.edu&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Brad&nbsp;Bell&nbsp;&lt;bradbell@apl.washington.edu&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Andrew&nbsp;Ernst&nbsp;&lt;ernst@u.washington.edu&gt;<br>
+</span>
+</font></code>
+with the following subject field:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The&nbsp;test&nbsp;environment&nbsp;is&nbsp;free.<br>
+</span>
+</font></code>
+</li></ol>
+
+</body>
+</html>

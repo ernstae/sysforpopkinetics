@@ -1,0 +1,18 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.171
+----------------------------------
+USER VISIBLE CHANGES
+
+None.
+
+OTHER CHANGES
+
+Fixed make file generated for the production version of the Monte Carlo
+likelihood drivers.
+
+RELATED BUG REPORTS:  561, 565, 568, 581
+
+BY:  Mitch Watrous
+
+WHEN: June 23, 2006
+

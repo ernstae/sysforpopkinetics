@@ -1,0 +1,171 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Footnotes</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Footnotes">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Footnotes">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="emacs_fot.html"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1>Footnotes</H1>
+<H3><A NAME="FOOT1" HREF="emacs_7.html#DOCF1">(1)</A></H3>
+<P>On terminals that support
+Latin-1 characters, the character shown after <SAMP>`Char:'</SAMP> is displayed
+as the actual glyph of A with grave accent.
+<H3><A NAME="FOOT2" HREF="emacs_19.html#DOCF2">(2)</A></H3>
+<P>Some systems use <KBD>Mouse-3</KBD> for a mode-specific
+menu.  We took a survey of users, and found they preferred to keep
+<KBD>Mouse-3</KBD> for selecting and killing regions.  Hence the decision to
+use <KBD>C-Mouse-3</KBD> for this menu.
+<H3><A NAME="FOOT3" HREF="emacs_19.html#DOCF3">(3)</A></H3>
+<P>Placing it at the left is usually more
+useful with overlapping frames with text starting at the left margin.
+<H3><A NAME="FOOT4" HREF="emacs_20.html#DOCF4">(4)</A></H3>
+<P>If
+you run Emacs on X, you need to inform the X server about the location
+of the newly installed fonts with the following commands:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre> xset fp+ /usr/local/share/emacs/fonts
+ xset fp rehash
+</pre></td></tr></table>
+<H3><A NAME="FOOT5" HREF="emacs_20.html#DOCF5">(5)</A></H3>
+<P>If more than one of these is
+set, the first one that is nonempty specifies your locale for this
+purpose.
+<H3><A NAME="FOOT6" HREF="emacs_20.html#DOCF6">(6)</A></H3>
+<P>It is also specified for MIME <SAMP>`text/*'</SAMP>
+bodies and in other network transport contexts.  It is different
+from the SGML reference syntax record-start/record-end format which
+Emacs doesn't support directly.
+<H3><A NAME="FOOT7" HREF="emacs_20.html#DOCF7">(7)</A></H3>
+<P>The Emacs installation instructions have information on
+additional font support.
+<H3><A NAME="FOOT8" HREF="emacs_23.html#DOCF8">(8)</A></H3>
+<P>SliTeX is obsoleted by the <SAMP>`slides'</SAMP>
+document class in recent LaTeX versions.
+<H3><A NAME="FOOT9" HREF="emacs_24.html#DOCF9">(9)</A></H3>
+<P>The word "sexp" is used to refer to an
+expression in Lisp.
+<H3><A NAME="FOOT10" HREF="emacs_24.html#DOCF10">(10)</A></H3>
+<P>On some systems, the <CODE>man</CODE> program
+accepts a <SAMP>`-a'</SAMP> command-line option which tells it to display all
+the man pages for the specified topic.  If you want this behavior, you
+can add this option to the value of the variable <CODE>Man-switches</CODE>.
+<H3><A NAME="FOOT11" HREF="emacs_24.html#DOCF11">(11)</A></H3>
+<P>The name of the command, <CODE>woman</CODE>, is an acronym
+for "w/o (without) man," since it doesn't use the <CODE>man</CODE>
+program.
+<H3><A NAME="FOOT12" HREF="emacs_25.html#DOCF12">(12)</A></H3>
+<P>Under a window system the arrow is
+displayed in the marginal area of the Emacs window.
+<H3><A NAME="FOOT13" HREF="emacs_29.html#DOCF13">(13)</A></H3>
+<P>The US National Security Agency.
+<H3><A NAME="FOOT14" HREF="emacs_32.html#DOCF14">(14)</A></H3>
+<P>You should not suspend the shell process.
+Suspending a subjob of the shell is a completely different matter--that
+is normal practice, but you must use the shell to continue the subjob;
+this command won't do it.
+<H3><A NAME="FOOT15" HREF="emacs_32.html#DOCF15">(15)</A></H3>
+<P>This
+dissociword actually appeared during the Vietnam War, when it was very
+appropriate.
+<H3><A NAME="FOOT16" HREF="emacs_33.html#DOCF16">(16)</A></H3>
+<P>Note that you
+should avoid the string syntax for binding 8-bit characters, since
+they will be interpreted as meta keys.  See section `Strings of Events' in <CITE>The Emacs Lisp Reference Manual</CITE>.
+<H3><A NAME="FOOT17" HREF="emacs_34.html#DOCF17">(17)</A></H3>
+<P>
+Here and below, whenever we say "colon-separated list of directories",
+it pertains to Unix and GNU/Linux systems.  On MS-DOS and MS-Windows,
+the directories are separated by semi-colons instead, since DOS/Windows
+file names might include a colon after a drive letter.
+<H3><A NAME="FOOT18" HREF="emacs_37.html#DOCF18">(18)</A></H3>
+<P>
+Note that the <SAMP>`net use'</SAMP> command requires the UNC share name to be
+typed with the Windows-style backslashes, while the value of
+<CODE>printer-name</CODE> can be set with either forward- or backslashes.
+<H3><A NAME="FOOT19" HREF="emacs_37.html#DOCF19">(19)</A></H3>
+<P>Normally, one particular codepage is burnt into the display
+memory, while other codepages can be installed by modifying system
+configuration files, such as <TT>`CONFIG.SYS'</TT>, and rebooting.  While
+third-party software is known to exist that allows to change the
+codepage without rebooting, we describe here how a stock MS-DOS system
+behaves.
+<H3><A NAME="FOOT20" HREF="emacs_37.html#DOCF20">(20)</A></H3>
+<P>The standard Emacs coding
+systems for ISO 8859 are not quite right for the purpose, because
+typically the DOS codepage does not match the standard ISO character
+codes.  For example, the letter <SAMP>`&ccedil;'</SAMP> (<SAMP>`c'</SAMP> with cedilla) has
+code 231 in the standard Latin-1 character set, but the corresponding
+DOS codepage 850 uses code 135 for this glyph.
+<H3><A NAME="FOOT21" HREF="emacs_38.html#DOCF21">(21)</A></H3>
+<P>The wording here was
+careless.  The intention was that nobody would have to pay for
+<EM>permission</EM> to use the GNU system.  But the words don't make this
+clear, and people often interpret them as saying that copies of GNU
+should always be distributed at little or no charge.  That was never the
+intent; later on, the manifesto mentions the possibility of companies
+providing the service of distribution for a profit.  Subsequently I have
+learned to distinguish carefully between "free" in the sense of
+freedom and "free" in the sense of price.  Free software is software
+that users have the freedom to distribute and change.  Some users may
+obtain copies at no charge, while others pay to obtain copies--and if
+the funds help support improving the software, so much the better.  The
+important thing is that everyone who has a copy has the freedom to
+cooperate with others in using it.
+<H3><A NAME="FOOT22" HREF="emacs_38.html#DOCF22">(22)</A></H3>
+<P>This is another place I failed to
+distinguish carefully between the two different meanings of "free."
+The statement as it stands is not false--you can get copies of GNU
+software at no charge, from your friends or over the net.  But it does
+suggest the wrong idea.
+<H3><A NAME="FOOT23" HREF="emacs_38.html#DOCF23">(23)</A></H3>
+<P>Several such companies now exist.
+<H3><A NAME="FOOT24" HREF="emacs_38.html#DOCF24">(24)</A></H3>
+<P>The Free Software
+Foundation raises most of its funds from a distribution service,
+although it is a charity rather than a company.  If <EM>no one</EM>
+chooses to obtain copies by ordering from the FSF, it will be unable
+to do its work.  But this does not mean that proprietary restrictions
+are justified to force every user to pay.  If a small fraction of all
+the users order copies from the FSF, that is sufficient to keep the FSF
+afloat.  So we ask users to choose to support us in this way.  Have you
+done your part?
+<H3><A NAME="FOOT25" HREF="emacs_38.html#DOCF25">(25)</A></H3>
+<P>A group of
+computer companies recently pooled funds to support maintenance of the
+GNU C Compiler.
+<HR SIZE=1>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

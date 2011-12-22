@@ -1,0 +1,268 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Extra Macros for Libtool</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Extra Macros for Libtool">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Extra Macros for Libtool">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC86"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_85.html#SEC85" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Extra Configure Options" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_87.html#SEC87" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Integration with Makefile.am" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_83.html#SEC83" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Using GNU Libtool" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_84.html#SEC84" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Integration with configure.in" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_87.html#SEC87" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Integration with Makefile.am" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 11.1.2 Extra Macros for Libtool </H3>
+<!--docid::SEC86::-->
+<P>
+
+There are several macros which can be added to <TT>`configure.in'</TT> which 
+will change the default behaviour of <CODE>libtool</CODE>.  If they are
+used they must appear before the call to the <SAMP>`AC_PROG_LIBTOOL'</SAMP>
+macro.  Note that these macros only change the default behaviour, and
+options passed in to <CODE>configure</CODE> on the command line will always
+override the defaults.  The most up to date information about these
+macros is available from the Libtool Manual.
+</P><P>
+
+<DL COMPACT>
+<A NAME="IDX15"></A>
+<DT><SAMP>`AC_DISABLE_FAST_INSTALL'</SAMP>
+<DD>This macro tells <CODE>libtool</CODE> that on platforms which require
+relinking at install time, it should build executables so that they can
+be run from the build tree at the expense of relinking during
+installation, as if <SAMP>`--disable-fast-install'</SAMP> had been passed on
+the command line.
+<P>
+
+<A NAME="IDX16"></A>
+<A NAME="IDX17"></A>
+<DT><SAMP>`AC_DISABLE_SHARED'</SAMP>
+<DD><DT><SAMP>`AC_DISABLE_STATIC'</SAMP>
+<DD>These macros tell <CODE>libtool</CODE> to <EM>not</EM> try and build either
+shared or static libraries respectively.  <CODE>libtool</CODE> will always
+try to build <EM>something</EM> however, so even if you turn off static
+library building in <TT>`configure.in'</TT>, building your package for a
+target host without shared library support will fallback to building
+static archives.
+</DL>
+<P>
+
+The time spent waiting for builds during development can be reduced a
+little by including these macros temporarily.  Don't forget to remove
+them before you release the project though!
+</P><P>
+
+In addition to the macros provided with <SAMP>`AC_PROG_LIBTOOL'</SAMP>, there
+are a few shell variables that you may need to set yourself, depending
+on the structure of your project:
+</P><P>
+
+<DL COMPACT>
+<A NAME="IDX18"></A>
+<DT><SAMP>`LTLIBOBJS'</SAMP>
+<DD>If your project uses the <SAMP>`AC_REPLACE_FUNCS'</SAMP> macro, or any of the
+other macros which add object names to the <SAMP>`LIBOBJS'</SAMP> variable, you
+will also need to provide an equivalent <SAMP>`LTLIBOBJS'</SAMP> definition.  At
+the moment, you must do it manually, but needing to do that is
+considered to be a bug and will fixed in a future release of Autoconf.
+The manual generation of <SAMP>`LTLIBOBJS'</SAMP> is a simple matter of
+replacing the names of the objects mentioned in <SAMP>`LIBOBJS'</SAMP> with
+equivalent <CODE>.lo</CODE> suffixed Libtool object names.  The easiest way to
+do this is to add the following snippet to your <TT>`configure.in'</TT> near
+the end, just before the call to <SAMP>`AC_OUTPUT'</SAMP>.
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Xsed="sed -e s/^X//"
+LTLIBOBJS=`echo X"$LIBOBJS"|\
+           [$Xsed -e "s,\.[^.]* ,.lo ,g;s,\.[^.]*$,.lo,"]`
+AC_SUBST(LTLIBOBJS)
+</FONT></pre></td></tr></table></P><P>
+
+The <CODE>Xsed</CODE> is not usually necessary, though it can prevent problems
+with the <CODE>echo</CODE> command in the event that one of the <SAMP>`LIBOBJS'</SAMP>
+files begins with a <SAMP>`-'</SAMP> character.  It is also a good habit to
+write shell code like this, as it will avoid problems in your programs.
+</P><P>
+
+<A NAME="IDX19"></A>
+<DT><SAMP>`LTALLOCA'</SAMP>
+<DD>If your project uses the <SAMP>`AC_FUNC_ALLOCA'</SAMP> macro, you will need to
+provide a definition of <SAMP>`LTALLOCA'</SAMP> equivalent to the <SAMP>`ALLOCA'</SAMP>
+value provided by the macro.
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Xsed="sed -e s/^X//"
+LTALLOCA=`echo X"$ALLOCA"|[$Xsed -e "s,\.$[^.]*,.lo,g"]`
+AC_SUBST(LTALLOCA)
+</FONT></pre></td></tr></table></P><P>
+
+Obviously you don't need to redefine <CODE>Xsed</CODE> if you already use it
+for <SAMP>`LTLIBOBJS'</SAMP> above.
+</P><P>
+
+<A NAME="IDX20"></A>
+<DT><SAMP>`LIBTOOL_DEPS'</SAMP>
+<DD>To help you write <CODE>make</CODE> rules for automatic updating of the
+Libtool configuration files, you can use the value of
+<SAMP>`LIBTOOL_DEPS'</SAMP> after the call to <SAMP>`AC_PROG_LIBTOOL'</SAMP>:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>AC_PROG_LIBTOOL
+AC_SUBST(LIBTOOL_DEPS)
+</pre></td></tr></table></P><P>
+
+Then add the following to the top level <TT>`Makefile.in'</TT>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>libtool: @LIBTOOL_DEPS@
+        cd $(srcdir) &#38;&#38; \
+          $(SHELL) ./config.status --recheck
+</pre></td></tr></table></P><P>
+
+If you are using <CODE>automake</CODE> in your project, it will generate
+equivalent rules automatically.  You don't need to use this except in
+circumstances where you want to use <CODE>libtool</CODE> and
+<CODE>autoconf</CODE>, but not <CODE>automake</CODE>.
+</DL>
+<P>
+
+<A NAME="Integration with Makefile.am"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

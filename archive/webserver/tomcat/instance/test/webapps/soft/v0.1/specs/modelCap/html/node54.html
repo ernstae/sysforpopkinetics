@@ -1,0 +1,168 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>NONMEM Model for an Individual's Data</TITLE>
+<META NAME="description" CONTENT="NONMEM Model for an Individual's Data">
+<META NAME="keywords" CONTENT="modelCap">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="modelCap.css">
+
+<LINK REL="next" HREF="node55.html">
+<LINK REL="previous" HREF="node53.html">
+<LINK REL="up" HREF="node52.html">
+<LINK REL="next" HREF="node55.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html793"
+  HREF="node55.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html789"
+  HREF="node52.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html783"
+  HREF="node53.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html791"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html794"
+  HREF="node55.html">Comparison of the Models</A>
+<B> Up:</B> <A NAME="tex2html790"
+  HREF="node52.html">Appendix: Individual Level Models</A>
+<B> Previous:</B> <A NAME="tex2html784"
+  HREF="node53.html">SPK Model for an</A>
+ &nbsp; <B>  <A NAME="tex2html792"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00082000000000000000">
+NONMEM Model for an Individual's Data</A>
+</H2>
+<P>
+<FONT SIZE="+1">NONMEM's model 
+<A NAME="tex2html4"
+  HREF="footnode.html#foot979"><SUP>4</SUP></A> 
+for the <IMG
+ WIDTH="27" HEIGHT="42" ALIGN="MIDDLE" BORDER="0"
+ SRC="img1.png"
+ ALT="$j^{\mbox{th}}$"> value of an individual's data is 
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+y_{(j)} = f(x_{j}, \theta) + 
+      \sum_{m=1}^{n_{\Omega}} h_{(m)}(x_{j}, \theta) \eta_{(m)} .
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="255" HEIGHT="53" BORDER="0"
+ SRC="img161.png"
+ ALT="\begin{displaymath}
+y_{(j)} = f(x_{j}, \theta) +
+\sum_{m=1}^{n_{\Omega}} h_{(m)}(x_{j}, \theta) \eta_{(m)} .
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(48)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+where
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+\Omega_{(m,n)} = \mbox{cov}[\eta_{(m)},\eta_{(n)}] ,
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="166" HEIGHT="30" BORDER="0"
+ SRC="img162.png"
+ ALT="\begin{displaymath}
+\Omega_{(m,n)} = \mbox{cov}[\eta_{(m)},\eta_{(n)}] ,
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(49)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+<IMG
+ WIDTH="12" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img138.png"
+ ALT="$\theta$"> and <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img163.png"
+ ALT="$\Omega$"> are a vector and diagonal matrix of 
+the individual's parameters, 
+<IMG
+ WIDTH="20" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img164.png"
+ ALT="$x_{j}$"> is a vector of known quantities for the individual
+such as times and covariates,
+and <IMG
+ WIDTH="23" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img165.png"
+ ALT="$n_{\Omega}$"> is the number of elements along the diagonal
+of <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img163.png"
+ ALT="$\Omega$">.
+NONMEM does not support the MAP Bayesian objective function
+at the individual level.
+</FONT>
+<P>
+<FONT SIZE="+1">The output of NONMEM's individual level estimation is
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+\left\{ \theta^{\mbox{Out}}, \Omega^{\mbox{Out}} \right\} ,
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="108" HEIGHT="34" BORDER="0"
+ SRC="img166.png"
+ ALT="\begin{displaymath}
+\left\{ \theta^{\mbox{Out}}, \Omega^{\mbox{Out}} \right\} ,
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(50)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+which are estimates for the optimal values for the individual's
+parameters.
+</FONT>
+<P>
+<BR><HR>
+<ADDRESS>
+Mitch Watrous
+2007-12-17
+</ADDRESS>
+</BODY>
+</HTML>

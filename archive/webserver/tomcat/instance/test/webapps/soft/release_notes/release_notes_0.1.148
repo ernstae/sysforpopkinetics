@@ -1,0 +1,27 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.147
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+SPK Compiler is now stricktly case sensitive.
+
+RELATED BUG REPORTS: 307
+
+BY: Sachiko Honda
+
+WHEN: Decebmer 15, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.148
+----------------------------------
+USER VISIBLE CHANGES
+
+Improved tracing during optimization.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:  125
+
+BY:  Mitch Watrous
+
+WHEN:  December 16, 2005

@@ -1,0 +1,730 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Autoconf Macro Reference</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Autoconf Macro Reference">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Autoconf Macro Reference">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC283"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_282.html#SEC282" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: make process" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_284.html#SEC284" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: OPL" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_284.html#SEC284" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: OPL" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Top" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_284.html#SEC284" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: OPL" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H1> D. Autoconf Macro Reference </H1>
+<!--docid::SEC283::-->
+<P>
+
+This is an alphabetical list of each Autoconf macro used in this book,
+along with a description of what each does.  They are provided for your
+reference while reading this book.  The descriptions are only brief; see
+the appropriate reference manual for a complete description.
+</P><P>
+
+<DL COMPACT>
+<DT><CODE>AC_ARG_ENABLE(<VAR>feature</VAR>, <VAR>help-text</VAR>, [<VAR>if-given</VAR>], [<VAR>if-not-given</VAR>])</CODE>
+<DD>This macro allows the maintainer to specify additional package options
+accepted by <TT>`configure'</TT>--for example, <SAMP>`--enable-zlib'</SAMP>.  The
+action shell code may access any arguments to the option in the shell
+variable <CODE>enableval</CODE>.  For example, <SAMP>`--enable-buffers=128'</SAMP>
+would cause <TT>`configure'</TT> to set <CODE>enableval</CODE> to <SAMP>`128'</SAMP>.
+<P>
+
+<DT><CODE>AC_ARG_PROGRAM</CODE>
+<DD>This macro places a <CODE>sed</CODE> transformation program into the output
+variable <CODE>program_transform_name</CODE> that can be used to transform the
+filenames of installed programs.  If the <SAMP>`--program-prefix'</SAMP>,
+<SAMP>`--program-suffix'</SAMP> or<BR> <SAMP>`--program-transform-name'</SAMP> options
+are passed to <TT>`configure'</TT>, an appropriate transformation program
+will be generated.  If no options are given, but the type of the host
+system differs from the type of the target system, program names are
+transformed by prefixing them with the type of the target
+(eg. <CODE>arm-elf-gcc</CODE>).
+<P>
+
+<DT><CODE>AC_ARG_WITH(<VAR>package</VAR>, <VAR>help-text</VAR>, [<VAR>if-given</VAR>], [<VAR>if-not-given</VAR>])</CODE>
+<DD>This macro allows the maintainer to specify additional packages that
+this package should work with (for example, a library to manipulate
+shadow passwords).  The user indicates this preference by invoking
+<TT>`configure'</TT> with an option such as <SAMP>`--with-shadow'</SAMP>.  If an
+optional argument is given, this value is available to shell code in the
+shell variable <CODE>withval</CODE>.
+<P>
+
+<DT><CODE>AC_CACHE_CHECK(<VAR>message</VAR>, <VAR>cache-variable</VAR>, <VAR>commands</VAR>)</CODE>
+<DD>This macro is a convenient front-end to the <CODE>AC_CACHE_VAL</CODE> macro
+that takes care of printing messages to the user, including whether or
+not the result was found in the cache.  It should be used in preference
+to <CODE>AC_CACHE_VAL</CODE>.
+<P>
+
+<DT><CODE>AC_CACHE_VAL(<VAR>cache-variable</VAR>, <VAR>commands</VAR>)</CODE>
+<DD>This is a low-level macro which implements the Autoconf cache feature.
+If the named variable is set at runtime (for instance, if it was read
+from <TT>`config.cache'</TT>), then this macro does nothing.  Otherwise, it
+runs the shell code in <VAR>commands</VAR>, which is assumed to set the cache
+variable.
+<P>
+
+<DT><CODE>AC_CANONICAL_HOST</CODE>
+<DD>This macro determines the type of the host system and sets the output
+variable <SAMP>`host'</SAMP>, as well as other more obscure variables.
+<P>
+
+<DT><CODE>AC_CANONICAL_SYSTEM</CODE>
+<DD>This macro determines the type of the build, host and target systems and
+sets the output variables <SAMP>`build'</SAMP>, <SAMP>`host'</SAMP> and <SAMP>`target'</SAMP>,
+amongst other more obscure variables.
+<P>
+
+<DT><CODE>AC_CHECK_FILE(<VAR>file</VAR>, [<VAR>if-found</VAR>], [<VAR>if-not-found</VAR>])</CODE>
+<DD>This macro tests for the existence of a file in the file system of the
+build system, and runs the appropriate shell code depending on whether
+or not the file is found.
+<P>
+
+<DT><CODE>AC_CHECK_FUNCS(<VAR>function-list</VAR>, [<VAR>if-found</VAR>], [<VAR>if-not-found</VAR>])</CODE>
+<DD>This looks for a series of functions.  If the function <CODE>quux</CODE> is
+found, the C preprocessor macro <CODE>HAVE_QUUX</CODE> will be defined.  In
+addition, if the <VAR>if-found</VAR> argument is given, it will be run (as
+shell code) when a function is found -- this code can use the <CODE>sh</CODE>
+<CODE>break</CODE> command to prevent <CODE>AC_CHECK_FUNCS</CODE> from looking for
+the remaining functions in the list.  The shell code in
+<VAR>if-not-found</VAR> is run if a function is not found.
+<P>
+
+<DT><CODE>AC_CHECK_HEADER(<VAR>header</VAR>, [<VAR>if-found</VAR>], [<VAR>if-not-found</VAR>])</CODE>
+<DD>This macro executes some specified shell code if a header file exists.
+If it is not present, alternative shell code is executed instead.
+<P>
+
+<DT><CODE>AC_CHECK_HEADERS(<VAR>header-list</VAR>, [<VAR>if-found</VAR>], [<VAR>if-not-found</VAR>])</CODE>
+<DD>This looks for a series of headers.  If the header <CODE>quux.h</CODE> is
+found, the C preprocessor macro <CODE>HAVE_QUUX_H</CODE> will be defined.  In
+addition, if the <VAR>if-found</VAR> argument is given, it will be run (as
+shell code) when a header is found -- this code can use the <CODE>sh</CODE>
+<CODE>break</CODE> command to prevent <CODE>AC_CHECK_HEADERS</CODE> from looking for
+the remaining headers in the list.  The shell code in <VAR>if-not-found</VAR>
+is run if a header is not found.
+<P>
+
+<DT><CODE>AC_CHECK_LIB(<VAR>library</VAR>, <VAR>function</VAR>, [<VAR>if-found</VAR>], [<VAR>if-not-found</VAR>], [<VAR>other-libraries</VAR>])</CODE>
+<DD>This looks for the named function in the named library specified by its
+base name.  For instance the math library, <TT>`libm.a'</TT>, would be named
+simply <SAMP>`m'</SAMP>.  If the function is found in the library <SAMP>`foo'</SAMP>,
+then the C preprocessor macro <CODE>HAVE_LIBFOO</CODE> is defined.
+<P>
+
+<DT><CODE>AC_CHECK_PROG(<VAR>variable</VAR>, <VAR>program-name</VAR>, <VAR>value-if-found</VAR>, [<VAR>value-if-not-found</VAR>], [<VAR>path</VAR>], [<VAR>reject</VAR>])</CODE>
+<DD>Checks to see if the program named by <VAR>program-name</VAR> exists in the
+path <VAR>path</VAR>.  If found, it sets the shell variable <VAR>variable</VAR> to
+the value <VAR>value-if-found</VAR>; if not it uses the value
+<VAR>value-if-not-found</VAR>.  If <VAR>variable</VAR> is already set at runtime,
+this macro does nothing.
+<P>
+
+<DT><CODE>AC_CHECK_SIZEOF(<VAR>type</VAR>, [<VAR>size-if-cross-compiling</VAR>])</CODE>
+<DD>This macro determines the size of C and C++ built-in types and defines
+<CODE>SIZEOF_type</CODE> to the size, where <CODE>type</CODE> is transformed--all
+characters to upper case, spaces to underscores and <SAMP>`*'</SAMP> to
+<SAMP>`P'</SAMP>.  If the type is unknown to the compiler, the size is set to 0.
+An optional argument specifies a default size when cross-compiling.  The
+<TT>`configure'</TT> script will abort with an error message if it tries to
+cross-compile without this default size.
+<P>
+
+<DT><CODE>AC_CONFIG_AUX_DIR(<VAR>directory</VAR>)</CODE>
+<DD>This macro allows an alternative directory to be specified for the
+location of auxiliary scripts such as <TT>`config.guess'</TT>,
+<TT>`config.sub'</TT> and <TT>`install-sh'</TT>.  By default, <TT>`$srcdir'</TT>,
+<TT>`$srcdir/..'</TT> and <TT>`$srcdir/../..'</TT> are searched for these files.
+<P>
+
+<DT><CODE>AC_CONFIG_HEADER(<VAR>header-list</VAR>)</CODE>
+<DD>This indicates that you want to use a config header, as opposed to
+having all the C preprocessor macros defined via <CODE>-D</CODE> options in
+the <CODE>DEFS</CODE> <TT>`Makefile'</TT> variable.  Each header named in
+<VAR>header-list</VAR> is created at runtime by <TT>`configure'</TT> (via
+<CODE>AC_OUTPUT</CODE>).  There are a variety of optional features for use
+with config headers (different naming schemes and so forth); see the
+reference manual for more information.
+<P>
+
+<DT><CODE>AC_C_CONST</CODE>
+<DD>This macro defines the C preprocessor macro <CODE>const</CODE> to the string
+<CODE>const</CODE> if the C compiler supports the <CODE>const</CODE> keyword.
+Otherwise it is defined to be the empty string.
+<P>
+
+<DT><CODE>AC_C_INLINE</CODE>
+<DD>This macro tests if the C compiler can accept the <CODE>inline</CODE> keyword.
+It defines the C preprocessor macro <CODE>inline</CODE> to be the keyword
+accepted by the compiler or the empty string if it is not accepted at
+all.
+<P>
+
+<DT><CODE>AC_DEFINE(<VAR>variable</VAR>, [<VAR>value</VAR>], [<VAR>description</VAR>])</CODE>
+<DD>This is used to define C preprocessor macros.  The first argument is the
+name of the macro to define.  The <VAR>value</VAR> argument, if given, is the
+value of the macro.  The final argument can be used to avoid adding an
+<SAMP>`#undef'</SAMP> for the macro to <TT>`acconfig.h'</TT>.
+<P>
+
+<DT><CODE>AC_DEFINE_UNQUOTED(<VAR>variable</VAR>, [<VAR>value</VAR>], [<VAR>description</VAR>])</CODE>
+<DD>This is like <CODE>AC_DEFINE</CODE>, but it handles the quoting of <VAR>value</VAR>
+differently.  This macro is used when you want to compute the value
+instead of having it used verbatim.
+<P>
+
+<DT><CODE>AC_DEFUN(<VAR>name</VAR>, <VAR>body</VAR>)</CODE>
+<DD>This macro is used to define new macros.  It is similar to M4's
+<CODE>define</CODE> macro, except that it performs additional internal
+functions.
+<P>
+
+<DT><CODE>AC_DISABLE_FAST_INSTALL</CODE>
+<DD>This macro can be used to disable Libtool's `fast install' feature.
+<P>
+
+<DT><CODE>AC_DISABLE_SHARED</CODE>
+<DD>This macro changes the default behavior of <CODE>AC_PROG_LIBTOOL</CODE> so
+that shared libraries will not be built by default.  The user can still
+override this new default by using <SAMP>`--enable-shared'</SAMP>.
+<P>
+
+<DT><CODE>AC_DISABLE_STATIC</CODE>
+<DD>This macro changes the default behavior of <CODE>AC_PROG_LIBTOOL</CODE> so
+that static libraries will not be built by default.  The user can still
+override this new default by using <SAMP>`--enable-static'</SAMP>.
+<P>
+
+<DT><CODE>AC_EXEEXT</CODE>
+<DD>Sets the output variable <CODE>EXEEXT</CODE> to the extension of executables
+produced by the compiler.  It is usually set to the empty string on Unix
+systems and <SAMP>`.exe'</SAMP> on Windows.
+<P>
+
+<DT><CODE>AC_FUNC_ALLOCA</CODE>
+<DD>This macro defines the C preprocessor macro <CODE>HAVE_ALLOCA</CODE> if the
+various tests indicate that the C compiler has built-in <CODE>alloca</CODE>
+support.  If there is an <TT>`alloca.h'</TT> header file, this macro defines
+<CODE>HAVE_ALLOCA_H</CODE>.  If, instead, the <CODE>alloca</CODE> function is found
+in the standard C library, this macro defines <CODE>C_ALLOCA</CODE> and sets
+the output variable <CODE>ALLOCA</CODE> to <CODE>alloca.o</CODE>.
+<P>
+
+<DT><CODE>AC_FUNC_GETPGRP</CODE>
+<DD>This macro tests if the <CODE>getpgrp</CODE> function takes a process ID as an
+argument or not.  If it does not, the C preprocessor macro
+<CODE>GETPGRP_VOID</CODE> is defined.
+<P>
+
+<DT><CODE>AC_FUNC_MEMCMP</CODE>
+<DD>This macro tests for a working version of the <CODE>memcmp</CODE> function.
+If absent, or it does not work correctly, <TT>`memcmp.o'</TT> is added to
+the <CODE>LIBOBJS</CODE> output variable.
+<P>
+
+<DT><CODE>AC_FUNC_MMAP</CODE>
+<DD>Defines the C preprocessor macro <CODE>HAVE_MMAP</CODE> if the <CODE>mmap</CODE>
+function exists and works.
+<P>
+
+<DT><CODE>AC_FUNC_SETVBUF_REVERSED</CODE>
+<DD>On some systems, the order of the <CODE>mode</CODE> and <CODE>buf</CODE> arguments
+is reversed with respect to the ANSI C standard.  If so, this macro
+defines the C preprocessor macro <CODE>SETVBUF_REVERSED</CODE>.
+<P>
+
+<DT><CODE>AC_FUNC_UTIME_NULL</CODE>
+<DD>Defines the C preprocessor macro <CODE>HAVE_UTIME_NULL</CODE> if a call to
+<CODE>utime</CODE> with a NULL <CODE>utimbuf</CODE> pointer sets the file's
+timestamp to the current time.
+<P>
+
+<DT><CODE>AC_FUNC_VPRINTF</CODE>
+<DD>Defines the C preprocessor macro <CODE>HAVE_VPRINTF</CODE> if the
+<CODE>vprintf</CODE> function is available.  If not and the <CODE>_doprnt</CODE>
+function is available instead, this macro defines <CODE>HAVE_DOPRNT</CODE>.
+<P>
+
+<DT><CODE>AC_HEADER_DIRENT</CODE>
+<DD>This macro searches a number of specific header files for a declaration
+of the C type <CODE>DIR</CODE>.  Depending on which header file the
+declaration is found in, this macro may define one of the C preprocessor
+macros <CODE>HAVE_DIRENT_H</CODE>, <CODE>HAVE_SYS_NDIR_H</CODE>,
+<CODE>HAVE_SYS_DIR_H</CODE> or <CODE>HAVE_NDIR_H</CODE>.  Refer to the Autoconf
+manual for an example of how these macros should be used in your source
+code.
+<P>
+
+<DT><CODE>AC_HEADER_STDC</CODE>
+<DD>This macro defines the C preprocessor macro <CODE>STDC_HEADERS</CODE> if the
+system has the ANSI standard C header files.  It determines this by
+testing for the existence of the <TT>`stdlib.h'</TT>, <TT>`stdarg.h'</TT>,
+<TT>`string.h'</TT> and <TT>`float.h'</TT> header files and testing if
+<TT>`string.h'</TT> declares <CODE>memchr</CODE>, <TT>`stdlib.h'</TT> declares
+<CODE>free</CODE>, and <TT>`ctype.h'</TT> macros such as <CODE>isdigit</CODE> work with
+8-bit characters.
+<P>
+
+<DT><CODE>AC_INIT(<VAR>filename</VAR>)</CODE>
+<DD>This macro performs essential initialization for the generated
+<TT>`configure'</TT> script.  An optional argument may provide the name of a
+file from the source directory to ensure that the directory has been
+specified correctly.
+<P>
+
+<DT><CODE>AC_LIBTOOL_DLOPEN</CODE>
+<DD>Call this macro before <CODE>AC_PROG_LIBTOOL</CODE> to indicate that your
+package wants to use Libtool's support for <CODE>dlopen</CODE>ed modules.
+<P>
+
+<DT><CODE>AC_LIBTOOL_WIN32_DLL</CODE>
+<DD>Call this macro before <CODE>AC_PROG_LIBTOOL</CODE> to indicate that your
+package has been written to build DLLs on Windows.  If this macro
+is not called, Libtool will only build static libraries on Windows.
+<P>
+
+<DT><CODE>AC_LIB_LTDL</CODE>
+<DD>This macro does the <CODE>configure</CODE>-time checks needed to cause
+<TT>`ltdl.c'</TT> to be compiled correctly.  That is, this is used to enable
+dynamic loading via <CODE>libltdl</CODE>.
+<P>
+
+<DT><CODE>AC_LINK_FILES(<VAR>source-list</VAR>, <VAR>dest-list</VAR>)</CODE>
+<DD>Use this macro to create a set of links; if possible, symlinks are made.
+The two arguments are parallel lists: the first element of
+<VAR>dest-list</VAR> is the name of a to-be-created link whose target is the
+first element of <VAR>source-list</VAR>.
+<P>
+
+<DT><CODE>AC_MSG_CHECKING(<VAR>message</VAR>)</CODE>
+<DD>This macro outputs a message to the user in the usual style of
+<TT>`configure'</TT> scripts: leading with the word <SAMP>`checking'</SAMP> and
+ending in <SAMP>`...'</SAMP>.  This message gives the user an indication that
+the <TT>`configure'</TT> script is still working.  A subsequent invocation
+of <CODE>AC_MSG_RESULT</CODE> should be used to output the result of a test.
+<P>
+
+<DT><CODE>AC_MSG_ERROR(<VAR>message</VAR>)</CODE>
+<DD>This macro outputs an error message to standard error and aborts the
+<TT>`configure'</TT> script.  It should only be used for fatal error
+conditions.
+<P>
+
+<DT><CODE>AC_MSG_RESULT(<VAR>message</VAR>)</CODE>
+<DD>This macro should be invoked after a corresponding invocation of
+<CODE>AC_MSG_CHECKING</CODE> with the result of a test.  Often the result
+string can be as simple as <SAMP>`yes'</SAMP> or <SAMP>`no'</SAMP>.
+<P>
+
+<DT><CODE>AC_MSG_WARN(<VAR>message</VAR>)</CODE>
+<DD>This macro outputs a warning to standard error, but allows the
+<TT>`configure'</TT> script to continue.  It should be used to notify the
+user of abnormal, but non-fatal, conditions.
+<P>
+
+<DT><CODE>AC_OBJEXT</CODE>
+<DD>Sets the output variable <CODE>OBJEXT</CODE> to the extension of object files
+produced by the compiler.  Usually, it is set to <SAMP>`.o'</SAMP> on Unix
+systems and <SAMP>`.obj'</SAMP> on Windows.
+<P>
+
+<DT><CODE>AC_OUTPUT(<VAR>files</VAR>, [<VAR>extra-commands</VAR>], [<VAR>init-commands</VAR>])</CODE>
+<DD>This macro must be called at the end of every <TT>`configure.in'</TT>.  It
+creates each file listed in <VAR>files</VAR>.  For a given file, by default,
+<CODE>configure</CODE> reads the template file whose name is the name of the
+input file with <SAMP>`.in'</SAMP> appended -- for instance, <TT>`Makefile'</TT> is
+generated from <TT>`Makefile.in'</TT>.  This default can be overridden by
+using a special naming convention for the file.
+<P>
+
+For each name <SAMP>`foo'</SAMP> given as an argument to <CODE>AC_SUBST</CODE>,
+<CODE>configure</CODE> will replace any occurrence of <SAMP>`@foo@'</SAMP> in the
+template file with the value of the shell variable <SAMP>`foo'</SAMP> in the
+generated file.  This macro also generates the config header, if
+<CODE>AC_CONFIG_HEADER</CODE> was called, and any links, if
+<CODE>AC_LINK_FILES</CODE> was called.  The additional arguments can be used
+to further tailor the output processing.
+</P><P>
+
+<DT><CODE>AC_OUTPUT_COMMANDS(<VAR>extra-commands</VAR>, [<VAR>init-commands</VAR>])</CODE>
+<DD>This macro works like the optional final arguments of <CODE>AC_OUTPUT</CODE>,
+except that it can be called more than once from <TT>`configure.in'</TT>.
+(This makes it possible for macros to use this feature and yet remain
+modular.)  See the reference manual for the precise definition of this
+macro.
+<P>
+
+<DT><CODE>AC_PROG_AWK</CODE>
+<DD>This macro searches for an <CODE>awk</CODE> program and sets the output
+variable <CODE>AWK</CODE> to be the best one it finds.
+<P>
+
+<DT><CODE>AC_PROG_CC</CODE>
+<DD>This checks for the C compiler to use and sets the shell variable
+<CODE>CC</CODE> to the value.  If the GNU C compiler is being used, this
+sets the shell variable <CODE>GCC</CODE> to <SAMP>`yes'</SAMP>.  This macro sets the
+shell variable <CODE>CFLAGS</CODE> if it has not already been set.  It also
+calls <CODE>AC_SUBST</CODE> on <CODE>CC</CODE> and <CODE>CFLAGS</CODE>.
+<P>
+
+<DT><CODE>AC_PROG_CC_STDC</CODE>
+<DD>This macro attempts to discover a necessary command line option to have
+the C compiler accept ANSI C.  If so, it adds the option to the
+<CODE>CC</CODE>.  If it was not possible to get the C compiler to accept
+ANSI, the shell variable <CODE>ac_cv_prog_cc_stdc</CODE> will be set to
+<SAMP>`no'</SAMP>.
+<P>
+
+<DT><CODE>AC_PROG_CPP</CODE>
+<DD>This macro sets the output variable <CODE>CPP</CODE> to a command that runs
+the C preprocessor.  If <SAMP>`$CC -E'</SAMP> does not work, it will set the
+variable to <TT>`/lib/cpp'</TT>.
+<P>
+
+<DT><CODE>AC_PROG_CXX</CODE>
+<DD>This is like <CODE>AC_PROG_CC</CODE>, but it checks for the C++ compiler, and
+sets the variables <CODE>CXX</CODE>, <CODE>GXX</CODE> and <CODE>CXXFLAGS</CODE>.
+<P>
+
+<DT><CODE>AC_PROG_GCC_TRADITIONAL</CODE>
+<DD>This macro determines if GCC requires the <SAMP>`-traditional'</SAMP>
+option in order to compile code that uses <CODE>ioctl</CODE> and, if so, adds
+<SAMP>`-traditional'</SAMP> to the <CODE>CC</CODE> output variable.  This condition is
+rarely encountered, thought mostly on old systems.
+<P>
+
+<DT><CODE>AC_PROG_INSTALL</CODE>
+<DD>This looks for an <CODE>install</CODE> program and sets the output variables
+<CODE>INSTALL</CODE>, <CODE>INSTALL_DATA</CODE>, <CODE>INSTALL_PROGRAM</CODE>, and
+<CODE>INSTALL_SCRIPT</CODE>.  This macro assumes that if an <CODE>install</CODE>
+program cannot be found on the system, your package will have
+<TT>`install-sh'</TT> available in the directory chosen by
+<CODE>AC_CONFIG_AUX_DIR</CODE>.
+<P>
+
+<DT><CODE>AC_PROG_LEX</CODE>
+<DD>This looks for a <CODE>lex</CODE>-like program and sets the <TT>`Makefile'</TT>
+variable <CODE>LEX</CODE> to the result.  It also sets <CODE>LEXLIB</CODE> to
+whatever might be needed to link against <CODE>lex</CODE> output.
+<P>
+
+<DT><CODE>AC_PROG_LIBTOOL</CODE>
+<DD>This macro is the primary way to integrate Libtool support into
+<TT>`configure'</TT>.  If you are using Libtool, you should call this macro
+in <TT>`configure.in'</TT>.  Among other things, it adds support for the
+<SAMP>`--enable-shared'</SAMP> <CODE>configure</CODE> flag.
+<P>
+
+<DT><CODE>AC_PROG_LN_S</CODE>
+<DD>This sets the <TT>`Makefile'</TT> variable <CODE>LN_S</CODE> to <SAMP>`ln -s'</SAMP> if
+symbolic links work in the current working directory.  Otherwise it sets
+<CODE>LN_S</CODE> to just <SAMP>`ln'</SAMP>.
+<P>
+
+<DT><CODE>AC_PROG_MAKE_SET</CODE>
+<DD>Some versions of <CODE>make</CODE> need to have the <TT>`Makefile'</TT> variable
+<CODE>MAKE</CODE> set in <TT>`Makefile'</TT> in order for recursive builds to
+work.  This macro checks whether this is needed, and, if so, it sets the
+<TT>`Makefile'</TT> variable <CODE>SET_MAKE</CODE> to the result.
+<CODE>AM_INIT_AUTOMAKE</CODE> calls this macro, so if you are using Automake,
+you don't need to call it or use <CODE>SET_MAKE</CODE> in <TT>`Makefile.am'</TT>.
+<P>
+
+<DT><CODE>AC_PROG_RANLIB</CODE>
+<DD>This searches for the <CODE>ranlib</CODE> program.  It sets the
+<TT>`Makefile'</TT> variable <CODE>RANLIB</CODE> to the result.  If <CODE>ranlib</CODE> is
+not found, or not needed on the system, then the result is <CODE>:</CODE>.
+<P>
+
+<DT><CODE>AC_PROG_YACC</CODE>
+<DD>This searches for the <CODE>yacc</CODE> program -- it tries <CODE>bison</CODE>,
+<CODE>byacc</CODE>, and <CODE>yacc</CODE>.  It sets the <TT>`Makefile'</TT> variable
+<CODE>YACC</CODE> to the result.
+<P>
+
+<DT><CODE>AC_REPLACE_FUNCS(<VAR>function list</VAR>)</CODE>
+<DD>This macro takes a single argument, which is a list of functions.  For a
+given function <SAMP>`func'</SAMP>, <TT>`configure'</TT> will do a link test to try
+to find it.  If the function cannot be found, then <SAMP>`func.o'</SAMP> will be
+added to <CODE>LIBOBJS</CODE>.  If function can be found, then
+<TT>`configure'</TT> will define the C preprocessor symbol <CODE>HAVE_FUNC</CODE>.
+<P>
+
+<DT><CODE>AC_REQUIRE(<VAR>macro-name</VAR>)</CODE>
+<DD>This macro takes a single argument, which is the name of another macro.
+(Note that you must quote the argument correctly:
+<CODE>AC_REQUIRE([FOO])</CODE> is correct, while <CODE>AC_REQUIRE(FOO)</CODE> is
+not.)  If the named macro has already been invoked, then
+<CODE>AC_REQUIRE</CODE> does nothing.  Otherwise, it invokes the named macro
+with no arguments.
+<P>
+
+<DT><CODE>AC_REVISION(<VAR>revision</VAR>)</CODE>
+<DD>This macro takes a single argument, a version string.  Autoconf will
+copy this string into the generated <TT>`configure'</TT> file.
+<P>
+
+<DT><CODE>AC_STRUCT_ST_BLKSIZE</CODE>
+<DD>Defines the C preprocessor macro <CODE>HAVE_ST_BLKSIZE</CODE> if <CODE>struct
+stat</CODE> has an <CODE>st_blksize</CODE> member.
+<P>
+
+<DT><CODE>AC_STRUCT_ST_BLOCKS</CODE>
+<DD>Defines the C preprocessor macro <CODE>HAVE_ST_BLOCKS</CODE> if <CODE>struct
+stat</CODE> has an <CODE>st_blocks</CODE> member.
+<P>
+
+<DT><CODE>AC_STRUCT_ST_RDEV</CODE>
+<DD>Defines the C preprocessor macro <CODE>HAVE_ST_RDEV</CODE> if <CODE>struct
+stat</CODE> has an <CODE>st_rdev</CODE> member.
+<P>
+
+<DT><CODE>AC_STRUCT_TM</CODE>
+<DD>This macro looks for <CODE>struct tm</CODE> in <TT>`time.h'</TT> and defines
+<CODE>TM_IN_SYS_TIME</CODE> if it is not found there.
+<P>
+
+<DT><CODE>AC_SUBST(<VAR>name</VAR>)</CODE>
+<DD>This macro takes a single argument, which is the name of a shell
+variable.  When <CODE>configure</CODE> generates the files listed in
+<CODE>AC_OUTPUT</CODE> (e.g., <TT>`Makefile'</TT>), it will substitute the
+variable's value (at the end of the <CODE>configure</CODE> run -- the value
+can be changed after <CODE>AC_SUBST</CODE> is called) anywhere a string of the
+form <SAMP>`@<VAR>name</VAR>@'</SAMP> is seen.
+<P>
+
+<DT><CODE>AC_TRY_COMPILE(<VAR>includes</VAR>, <VAR>body</VAR>, [<VAR>if-ok</VAR>], [<VAR>if-not-ok</VAR>])</CODE>
+<DD>This macro is used to try to compile a given function, whose body is
+given in <VAR>body</VAR>.  <VAR>includes</VAR> lists any <SAMP>`#include'</SAMP>
+statements needed to compile the function.  If the code compiles
+correctly, the shell commands in <VAR>if-ok</VAR> are run; if not,
+<VAR>if-not-ok</VAR> is run.  Note that this macro will not try to link the
+test program -- it will only try to compile it.
+<P>
+
+<DT><CODE>AC_TRY_LINK(<VAR>includes</VAR>, <VAR>body</VAR>, [<VAR>if-found</VAR>], [<VAR>if-not-found</VAR>])</CODE>
+<DD>This is used like <CODE>AC_TRY_COMPILE</CODE>, but it tries to link the
+resulting program.  The libraries and options in the <CODE>LIBS</CODE> shell
+variable are passed to the link.
+<P>
+
+<DT><CODE>AC_TRY_RUN(<VAR>program</VAR>, [<VAR>if-true</VAR>, [<VAR>if-false</VAR>], [<VAR>if-cross-compiling</VAR>])</CODE>
+<DD>This macro tries to compile and link the program whose text is in
+<VAR>program</VAR>.  If the program compiles, links, and runs successfully,
+the shell code <VAR>if-true</VAR> is run.  Otherwise, the shell code
+<VAR>if-false</VAR> is run.  If the current configure is a cross-configure,
+then the program is not run, and on a successful compile and link, the
+shell code <VAR>if-cross-compiling</VAR> is run.
+<P>
+
+<DT><CODE>AC_TYPE_SIGNAL</CODE>
+<DD>This macro defines the C preprocessor macro <CODE>RETSIGTYPE</CODE> to be the
+correct return type of signal handlers.  For instance, it might be
+<SAMP>`void'</SAMP> or <SAMP>`int'</SAMP>.
+<P>
+
+<DT><CODE>AC_TYPE_SIZE_T</CODE>
+<DD>This macro looks for the type <CODE>size_t</CODE>.  If not defined on the
+system, it defines it (as a macro) to be <SAMP>`unsigned'</SAMP>.
+<P>
+
+<DT><CODE>AM_CONDITIONAL(<VAR>name</VAR>, <VAR>testcode</VAR>)</CODE>
+<DD>This Automake macro takes two arguments: the name of a conditional and a
+shell statement that is used to determine whether the conditional should
+be true or false.  If the shell code returns a successful (0) status,
+then the conditional will be true.  Any conditional in your
+<TT>`configure.in'</TT> is automatically available for use in any
+<TT>`Makefile.am'</TT> in that project.
+<P>
+
+<DT><CODE>AM_CONFIG_HEADER(<VAR>header</VAR>)</CODE>
+<DD>This is just like <CODE>AC_CONFIG_HEADER</CODE>, but does some additional
+setup required by Automake.  If you are using Automake, use this macro.
+Otherwise, use <CODE>AC_CONFIG_HEADER</CODE>.
+<P>
+
+<DT><CODE>AM_INIT_AUTOMAKE(<VAR>package</VAR>, <VAR>version</VAR>, [<VAR>nodefine</VAR>])</CODE>
+<DD>This macro is used to do all the standard initialization required by
+Automake.  It has two required arguments: the package name and the
+version number.  This macro sets and calls <CODE>AC_SUBST</CODE> on the shell
+variables <CODE>PACKAGE</CODE> and <CODE>VERSION</CODE>.  By default it also defines
+these variables (via <CODE>AC_DEFINE_UNQUOTED</CODE>).  However, this macro
+also accepts an optional third argument which, if not empty, means that
+the <CODE>AC_DEFINE_UNQUOTED</CODE> calls for <CODE>PACKAGE</CODE> and
+<CODE>VERSION</CODE> should be suppressed.
+<P>
+
+<DT><CODE>AM_MAINTAINER_MODE</CODE>
+<DD>This macro is used to enable a special Automake feature, maintainer
+mode, which we've documented elsewhere (see section <A HREF="autobook_26.html#SEC26">5.3 Maintaining Input Files</A>).
+<P>
+
+<DT><CODE>AM_PROG_CC_STDC</CODE>
+<DD>This macro takes no arguments.  It is used to try to get the C compiler
+to be ANSI compatible.  It does this by adding different options
+known to work with various system compilers.  This macro is most
+typically used in conjunction with Automake when you want to use the
+automatic de-ANSI-fication feature.
+<P>
+
+<DT><CODE>AM_PROG_LEX</CODE>
+<DD>This is like <CODE>AC_PROG_LEX</CODE>, but it does some additional processing
+used by Automake-generated <TT>`Makefile'</TT>s.  If you are using Automake,
+then you should use this.  Otherwise, you should use <CODE>AC_PROG_LEX</CODE>
+(and perhaps <CODE>AC_DECL_YYTEXT</CODE>, which <CODE>AM_PROG_LEX</CODE> calls).
+<P>
+
+<DT><CODE>AM_WITH_DMALLOC</CODE>
+<DD>This macro adds support for the <SAMP>`--with-dmalloc'</SAMP> flag to
+<CODE>configure</CODE>.  If the user chooses to enable <CODE>dmalloc</CODE> support,
+then this macro will define the preprocessor symbol <SAMP>`WITH_DMALLOC'</SAMP>
+and will add <SAMP>`-ldmalloc'</SAMP> to the <TT>`Makefile'</TT> variable
+<SAMP>`LIBS'</SAMP>.
+<P>
+
+</DL>
+<P>
+
+<A NAME="OPL"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

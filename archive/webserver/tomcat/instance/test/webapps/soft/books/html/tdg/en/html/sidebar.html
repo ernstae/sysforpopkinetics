@@ -1,0 +1,447 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+  <head>
+    <meta name="generator" content=
+    "HTML Tidy for Linux/x86 (vers 1st March 2002), see www.w3.org">
+    <meta http-equiv="Content-Type" content=
+    "text/html; charset=ISO-8859-1">
+
+    <title>sidebar</title>
+    <link rel="stylesheet" href="defguide.css" type="text/css">
+    <meta name="generator" content=
+    "DocBook XSL Stylesheets V1.59.0">
+    <link rel="home" href="docbook.html" title="DocBook">
+    <link rel="up" href="ref-elements.html" title=
+    "DocBook Element Reference">
+    <link rel="previous" href="shortcut.html" title="shortcut">
+    <link rel="next" href="sidebarinfo.html" title="sidebarinfo">
+  </head>
+
+  <body>
+    <div class="navheader">
+      <table border="0" cellpadding="0" cellspacing="0" width=
+      "100%" summary="Navigation table">
+        <tr>
+          <td align="left">&#160;<a title="DocBook" href=
+          "docbook.html"><img src="figures/nav-home.png" alt="Home"
+          border="0"></a>&#160;<a title="shortcut" href=
+          "shortcut.html"><img src="figures/nav-prev.png" alt=
+          "Prev" border="0"></a>&#160;<a title=
+          "DocBook Element Reference" href="ref-elements.html"><img
+          src="figures/nav-up.png" alt="Up" border="0"></a>&#160;<a
+          title="sidebarinfo" href="sidebarinfo.html"><img src=
+          "figures/nav-next.png" alt="Next" border="0"></a></td>
+
+          <td align="right"><i>DocBook: The Definitive Guide</i>
+          Version 2.0.8 <span class="alpha-version">(<a href=
+          "co01.html"><em>Alpha</em></a>)</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="refentry" lang="en">
+      <a name="sidebar.element"></a>
+
+      <div class="titlepage">
+        <div>
+          <h1 class="title">sidebar</h1>
+        </div>
+
+        <div>
+          <p class="releaseinfo">$Revision: 1.3 $</p>
+        </div>
+
+        <div>
+          <p class="pubdate">$Date: 2002/06/12 11:18:36 $</p>
+        </div>
+      </div>
+
+      <div class="refnamediv">
+        <p>sidebar &#8212; A portion of a document that is isolated
+        from the main narrative flow</p>
+      </div>
+
+      <div class="refsynopsisdiv">
+        <h2>Synopsis</h2>
+
+        <h3><span class="bold"><b>Content Model</b></span></h3>
+<pre class="synopsis">
+sidebar ::=
+(<a href="sidebarinfo.html"><tt class=
+"sgmltag-element">sidebarinfo</tt></a>?,
+ (<a href="title.html"><tt class=
+"sgmltag-element">title</tt></a>,<a href="titleabbrev.html"><tt
+class="sgmltag-element">titleabbrev</tt></a>?)?,
+ (<a href="calloutlist.html"><tt class=
+"sgmltag-element">calloutlist</tt></a>|<a href="glosslist.html"><tt
+class="sgmltag-element">glosslist</tt></a>|<a href=
+"itemizedlist.html"><tt class=
+"sgmltag-element">itemizedlist</tt></a>|<a href=
+"orderedlist.html"><tt class=
+"sgmltag-element">orderedlist</tt></a>|<a href=
+"segmentedlist.html"><tt class=
+"sgmltag-element">segmentedlist</tt></a>|
+  <a href="simplelist.html"><tt class=
+"sgmltag-element">simplelist</tt></a>|<a href=
+"variablelist.html"><tt class=
+"sgmltag-element">variablelist</tt></a>|<a href="caution.html"><tt
+class="sgmltag-element">caution</tt></a>|<a href=
+"important.html"><tt class="sgmltag-element">important</tt></a>|<a
+href="note.html"><tt class="sgmltag-element">note</tt></a>|<a href=
+"tip.html"><tt class="sgmltag-element">tip</tt></a>|<a href=
+"warning.html"><tt class="sgmltag-element">warning</tt></a>|
+  <a href="literallayout.html"><tt class=
+"sgmltag-element">literallayout</tt></a>|<a href=
+"programlisting.html"><tt class=
+"sgmltag-element">programlisting</tt></a>|<a href=
+"programlistingco.html"><tt class=
+"sgmltag-element">programlistingco</tt></a>|<a href=
+"screen.html"><tt class="sgmltag-element">screen</tt></a>|<a href=
+"screenco.html"><tt class="sgmltag-element">screenco</tt></a>|
+  <a href="screenshot.html"><tt class=
+"sgmltag-element">screenshot</tt></a>|<a href="synopsis.html"><tt
+class="sgmltag-element">synopsis</tt></a>|<a href=
+"cmdsynopsis.html"><tt class=
+"sgmltag-element">cmdsynopsis</tt></a>|<a href=
+"funcsynopsis.html"><tt class=
+"sgmltag-element">funcsynopsis</tt></a>|<a href=
+"classsynopsis.html"><tt class=
+"sgmltag-element">classsynopsis</tt></a>|
+  <a href="fieldsynopsis.html"><tt class=
+"sgmltag-element">fieldsynopsis</tt></a>|<a href=
+"constructorsynopsis.html"><tt class=
+"sgmltag-element">constructorsynopsis</tt></a>|<a href=
+"destructorsynopsis.html"><tt class=
+"sgmltag-element">destructorsynopsis</tt></a>|
+  <a href="methodsynopsis.html"><tt class=
+"sgmltag-element">methodsynopsis</tt></a>|<a href=
+"formalpara.html"><tt class=
+"sgmltag-element">formalpara</tt></a>|<a href="para.html"><tt
+class="sgmltag-element">para</tt></a>|<a href="simpara.html"><tt
+class="sgmltag-element">simpara</tt></a>|<a href="address.html"><tt
+class="sgmltag-element">address</tt></a>|<a href=
+"blockquote.html"><tt class="sgmltag-element">blockquote</tt></a>|
+  <a href="graphic.html"><tt class=
+"sgmltag-element">graphic</tt></a>|<a href="graphicco.html"><tt
+class="sgmltag-element">graphicco</tt></a>|<a href=
+"mediaobject.html"><tt class=
+"sgmltag-element">mediaobject</tt></a>|<a href=
+"mediaobjectco.html"><tt class=
+"sgmltag-element">mediaobjectco</tt></a>|<a href=
+"informalequation.html"><tt class=
+"sgmltag-element">informalequation</tt></a>|
+  <a href="informalexample.html"><tt class=
+"sgmltag-element">informalexample</tt></a>|<a href=
+"informalfigure.html"><tt class=
+"sgmltag-element">informalfigure</tt></a>|<a href=
+"informaltable.html"><tt class=
+"sgmltag-element">informaltable</tt></a>|<a href=
+"equation.html"><tt class="sgmltag-element">equation</tt></a>|<a
+href="example.html"><tt class="sgmltag-element">example</tt></a>|
+  <a href="figure.html"><tt class=
+"sgmltag-element">figure</tt></a>|<a href="table.html"><tt class=
+"sgmltag-element">table</tt></a>|<a href="procedure.html"><tt
+class="sgmltag-element">procedure</tt></a>|<a href=
+"anchor.html"><tt class="sgmltag-element">anchor</tt></a>|<a href=
+"bridgehead.html"><tt class=
+"sgmltag-element">bridgehead</tt></a>|<a href="remark.html"><tt
+class="sgmltag-element">remark</tt></a>|<a href=
+"highlights.html"><tt class="sgmltag-element">highlights</tt></a>|
+  <a href="indexterm.html"><tt class=
+"sgmltag-element">indexterm</tt></a>|<a href="beginpage.html"><tt
+class="sgmltag-element">beginpage</tt></a>)+)
+</pre>
+
+        <h3><span class="bold"><b>Attributes</b></span></h3>
+
+        <p><a href="ref-elements.html#common.attributes" title=
+        "Common Attributes">Common attributes</a></p>
+      </div>
+
+      <div class="refsect1" lang="en">
+        <h2>Description</h2>
+
+        <p>A <a href="sidebar.html"><tt class=
+        "sgmltag-element">Sidebar</tt></a> is a short piece of
+        text, rarely longer than a single column or page, that is
+        presented outside the narrative flow of the main text.</p>
+
+        <p>Sidebars are often used for digressions or interesting
+        observations that are related, but not directly relevant,
+        to the main text.</p>
+
+        <div class="refsect2" lang="en">
+          <h3>Processing expectations</h3>
+
+          <p>Formatted as a displayed block. <a href=
+          "sidebar.html"><tt class=
+          "sgmltag-element">Sidebar</tt></a>s are sometimes
+          boxed.</p>
+
+          <p>DocBook does not specify the location of the <a href=
+          "sidebar.html"><tt class=
+          "sgmltag-element">Sidebar</tt></a> within the final
+          displayed flow of text. The wrapper may float or remain
+          where it is located.</p>
+        </div>
+
+        <div class="refsect2" lang="en">
+          <h3>Parents</h3>
+
+          <p>These elements contain sidebar: <span class=
+          "simplelist"><a href="appendix.html"><tt class=
+          "sgmltag-element">appendix</tt></a>, <a href=
+          "article.html"><tt class=
+          "sgmltag-element">article</tt></a>, <a href=
+          "bibliodiv.html"><tt class=
+          "sgmltag-element">bibliodiv</tt></a>, <a href=
+          "bibliography.html"><tt class=
+          "sgmltag-element">bibliography</tt></a>, <a href=
+          "blockquote.html"><tt class=
+          "sgmltag-element">blockquote</tt></a>, <a href=
+          "callout.html"><tt class=
+          "sgmltag-element">callout</tt></a>, <a href=
+          "caution.html"><tt class=
+          "sgmltag-element">caution</tt></a>, <a href=
+          "chapter.html"><tt class=
+          "sgmltag-element">chapter</tt></a>, <a href=
+          "constraintdef.html"><tt class=
+          "sgmltag-element">constraintdef</tt></a>, <a href=
+          "glossary.html"><tt class=
+          "sgmltag-element">glossary</tt></a>, <a href=
+          "glossdiv.html"><tt class=
+          "sgmltag-element">glossdiv</tt></a>, <a href=
+          "important.html"><tt class=
+          "sgmltag-element">important</tt></a>, <a href=
+          "index.html"><tt class="sgmltag-element">index</tt></a>,
+          <a href="listitem.html"><tt class=
+          "sgmltag-element">listitem</tt></a>, <a href=
+          "msgexplan.html"><tt class=
+          "sgmltag-element">msgexplan</tt></a>, <a href=
+          "msgtext.html"><tt class=
+          "sgmltag-element">msgtext</tt></a>, <a href=
+          "note.html"><tt class="sgmltag-element">note</tt></a>, <a
+          href="partintro.html"><tt class=
+          "sgmltag-element">partintro</tt></a>, <a href=
+          "preface.html"><tt class=
+          "sgmltag-element">preface</tt></a>, <a href=
+          "procedure.html"><tt class=
+          "sgmltag-element">procedure</tt></a>, <a href=
+          "refsect1.html"><tt class=
+          "sgmltag-element">refsect1</tt></a>, <a href=
+          "refsect2.html"><tt class=
+          "sgmltag-element">refsect2</tt></a>, <a href=
+          "refsect3.html"><tt class=
+          "sgmltag-element">refsect3</tt></a>, <a href=
+          "refsection.html"><tt class=
+          "sgmltag-element">refsection</tt></a>, <a href=
+          "refsynopsisdiv.html"><tt class=
+          "sgmltag-element">refsynopsisdiv</tt></a>, <a href=
+          "sect1.html"><tt class="sgmltag-element">sect1</tt></a>,
+          <a href="sect2.html"><tt class=
+          "sgmltag-element">sect2</tt></a>, <a href=
+          "sect3.html"><tt class="sgmltag-element">sect3</tt></a>,
+          <a href="sect4.html"><tt class=
+          "sgmltag-element">sect4</tt></a>, <a href=
+          "sect5.html"><tt class="sgmltag-element">sect5</tt></a>,
+          <a href="section.html"><tt class=
+          "sgmltag-element">section</tt></a>, <a href=
+          "setindex.html"><tt class=
+          "sgmltag-element">setindex</tt></a>, <a href=
+          "simplesect.html"><tt class=
+          "sgmltag-element">simplesect</tt></a>, <a href=
+          "step.html"><tt class="sgmltag-element">step</tt></a>, <a
+          href="tip.html"><tt class="sgmltag-element">tip</tt></a>,
+          <a href="warning.html"><tt class=
+          "sgmltag-element">warning</tt></a></span>.</p>
+        </div>
+
+        <div class="refsect2" lang="en">
+          <h3>Children</h3>
+
+          <p>The following elements occur in sidebar: <span class=
+          "simplelist"><a href="address.html"><tt class=
+          "sgmltag-element">address</tt></a>, <a href=
+          "anchor.html"><tt class=
+          "sgmltag-element">anchor</tt></a>, <a href=
+          "beginpage.html"><tt class=
+          "sgmltag-element">beginpage</tt></a>, <a href=
+          "blockquote.html"><tt class=
+          "sgmltag-element">blockquote</tt></a>, <a href=
+          "bridgehead.html"><tt class=
+          "sgmltag-element">bridgehead</tt></a>, <a href=
+          "calloutlist.html"><tt class=
+          "sgmltag-element">calloutlist</tt></a>, <a href=
+          "caution.html"><tt class=
+          "sgmltag-element">caution</tt></a>, <a href=
+          "classsynopsis.html"><tt class=
+          "sgmltag-element">classsynopsis</tt></a>, <a href=
+          "cmdsynopsis.html"><tt class=
+          "sgmltag-element">cmdsynopsis</tt></a>, <a href=
+          "constructorsynopsis.html"><tt class=
+          "sgmltag-element">constructorsynopsis</tt></a>, <a href=
+          "destructorsynopsis.html"><tt class=
+          "sgmltag-element">destructorsynopsis</tt></a>, <a href=
+          "equation.html"><tt class=
+          "sgmltag-element">equation</tt></a>, <a href=
+          "example.html"><tt class=
+          "sgmltag-element">example</tt></a>, <a href=
+          "fieldsynopsis.html"><tt class=
+          "sgmltag-element">fieldsynopsis</tt></a>, <a href=
+          "figure.html"><tt class=
+          "sgmltag-element">figure</tt></a>, <a href=
+          "formalpara.html"><tt class=
+          "sgmltag-element">formalpara</tt></a>, <a href=
+          "funcsynopsis.html"><tt class=
+          "sgmltag-element">funcsynopsis</tt></a>, <a href=
+          "glosslist.html"><tt class=
+          "sgmltag-element">glosslist</tt></a>, <a href=
+          "graphic.html"><tt class=
+          "sgmltag-element">graphic</tt></a>, <a href=
+          "graphicco.html"><tt class=
+          "sgmltag-element">graphicco</tt></a>, <a href=
+          "highlights.html"><tt class=
+          "sgmltag-element">highlights</tt></a>, <a href=
+          "important.html"><tt class=
+          "sgmltag-element">important</tt></a>, <a href=
+          "indexterm.html"><tt class=
+          "sgmltag-element">indexterm</tt></a>, <a href=
+          "informalequation.html"><tt class=
+          "sgmltag-element">informalequation</tt></a>, <a href=
+          "informalexample.html"><tt class=
+          "sgmltag-element">informalexample</tt></a>, <a href=
+          "informalfigure.html"><tt class=
+          "sgmltag-element">informalfigure</tt></a>, <a href=
+          "informaltable.html"><tt class=
+          "sgmltag-element">informaltable</tt></a>, <a href=
+          "itemizedlist.html"><tt class=
+          "sgmltag-element">itemizedlist</tt></a>, <a href=
+          "literallayout.html"><tt class=
+          "sgmltag-element">literallayout</tt></a>, <a href=
+          "mediaobject.html"><tt class=
+          "sgmltag-element">mediaobject</tt></a>, <a href=
+          "mediaobjectco.html"><tt class=
+          "sgmltag-element">mediaobjectco</tt></a>, <a href=
+          "methodsynopsis.html"><tt class=
+          "sgmltag-element">methodsynopsis</tt></a>, <a href=
+          "note.html"><tt class="sgmltag-element">note</tt></a>, <a
+          href="orderedlist.html"><tt class=
+          "sgmltag-element">orderedlist</tt></a>, <a href=
+          "para.html"><tt class="sgmltag-element">para</tt></a>, <a
+          href="procedure.html"><tt class=
+          "sgmltag-element">procedure</tt></a>, <a href=
+          "programlisting.html"><tt class=
+          "sgmltag-element">programlisting</tt></a>, <a href=
+          "programlistingco.html"><tt class=
+          "sgmltag-element">programlistingco</tt></a>, <a href=
+          "remark.html"><tt class=
+          "sgmltag-element">remark</tt></a>, <a href=
+          "screen.html"><tt class=
+          "sgmltag-element">screen</tt></a>, <a href=
+          "screenco.html"><tt class=
+          "sgmltag-element">screenco</tt></a>, <a href=
+          "screenshot.html"><tt class=
+          "sgmltag-element">screenshot</tt></a>, <a href=
+          "segmentedlist.html"><tt class=
+          "sgmltag-element">segmentedlist</tt></a>, <a href=
+          "sidebarinfo.html"><tt class=
+          "sgmltag-element">sidebarinfo</tt></a>, <a href=
+          "simpara.html"><tt class=
+          "sgmltag-element">simpara</tt></a>, <a href=
+          "simplelist.html"><tt class=
+          "sgmltag-element">simplelist</tt></a>, <a href=
+          "synopsis.html"><tt class=
+          "sgmltag-element">synopsis</tt></a>, <a href=
+          "table.html"><tt class="sgmltag-element">table</tt></a>,
+          <a href="tip.html"><tt class=
+          "sgmltag-element">tip</tt></a>, <a href="title.html"><tt
+          class="sgmltag-element">title</tt></a>, <a href=
+          "titleabbrev.html"><tt class=
+          "sgmltag-element">titleabbrev</tt></a>, <a href=
+          "variablelist.html"><tt class=
+          "sgmltag-element">variablelist</tt></a>, <a href=
+          "warning.html"><tt class=
+          "sgmltag-element">warning</tt></a></span>.</p>
+        </div>
+      </div>
+
+      <div class="refsect1" lang="en">
+        <h2>See Also</h2>
+
+        <p><span class="simplelist"><a href="abstract.html"><tt
+        class="sgmltag-element">abstract</tt></a>, <a href=
+        "blockquote.html"><tt class=
+        "sgmltag-element">blockquote</tt></a>, <a href=
+        "epigraph.html"><tt class=
+        "sgmltag-element">epigraph</tt></a>, <a href=
+        "highlights.html"><tt class=
+        "sgmltag-element">highlights</tt></a></span>.</p>
+      </div>
+
+      <div class="refsect1" lang="en">
+        <h2>Examples</h2>
+
+        <div class="informalexample">
+<pre class="programlisting">
+&lt;!DOCTYPE sect1 PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+          "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd"&gt;
+&lt;sect1&gt;&lt;title&gt;An Example Section&lt;/title&gt;
+
+&lt;para&gt;
+Some narrative text.
+&lt;/para&gt;
+
+&lt;sidebar&gt;&lt;title&gt;A Sidebar&lt;/title&gt;
+&lt;para&gt;
+Sidebar content.
+&lt;/para&gt;
+&lt;/sidebar&gt;
+
+&lt;para&gt;
+The continuing flow of the narrative text, as if the
+sidebar was not present.
+&lt;/para&gt;
+
+&lt;/sect1&gt;
+</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="navfooter">
+      <table width="100%" summary="Navigation table">
+        <tr>
+          <td width="40%" align="left"><a title="shortcut" href=
+          "shortcut.html"><img src="figures/nav-prev.png" alt=
+          "Prev" border="0"></a>&#160;</td>
+
+          <td width="20%" align="center"><a title="DocBook" href=
+          "docbook.html"><img src="figures/nav-home.png" alt="Home"
+          border="0"></a></td>
+
+          <td width="40%" align="right">&#160;<a title=
+          "sidebarinfo" href="sidebarinfo.html"><img src=
+          "figures/nav-next.png" alt="Next" border="0"></a></td>
+        </tr>
+
+        <tr>
+          <td width="40%" align="left">shortcut&#160;</td>
+
+          <td width="20%" align="center"><a title=
+          "DocBook Element Reference" href="ref-elements.html"><img
+          src="figures/nav-up.png" alt="Up" border="0"></a></td>
+
+          <td width="40%" align="right">&#160;sidebarinfo</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="copyrightfooter">
+      <p><a href="dbcpyright.html">Copyright</a> &#169; 1999, 2000,
+      2001, 2002 <a href="http://www.oreilly.com/">O'Reilly &amp;
+      Associates, Inc.</a> All rights reserved.</p>
+    </div>
+  </body>
+</html>
+

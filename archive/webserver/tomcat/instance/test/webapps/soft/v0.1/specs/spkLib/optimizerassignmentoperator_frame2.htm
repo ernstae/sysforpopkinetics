@@ -1,0 +1,35 @@
+<html><head>
+<title>Assignment Operator</title>
+<meta name="description" id="description" content="Assignment Operator">
+<meta name="keywords" id="keywords" content=" Optimizer assignment operator "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="optimizerassignmentoperator.htm" target="_top">section</a>, <a href="optimizerassignmentoperator_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Copies information from <i>right</i> to <i>*this</i> and
+returns <i>this</i>, where <i>*this</i> is the <code><font color="blue">Optimizer</font></code>
+object on the left side of the = sign.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The <i>*this</i> object will be identical to the <i>right</i>, 
+except for the <code><font color="blue">freeXMLMemory</font></code> flag, which is set equal to false,
+and except for the following pointers, which are all set equal to zero:
+the pointer to the objective function, <code><font color="blue">pObjFunc</font></code>;
+the pointer to the current XML element in the restart file,
+<code><font color="blue">pCurrElement</font></code>;
+and the pointer to the XML parser, <code><font color="blue">pParser</font></code>.
+
+
+<hr>Input File: ../../spk/Optimizer.cpp
+
+</body>
+</html>

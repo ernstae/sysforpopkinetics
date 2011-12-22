@@ -1,0 +1,934 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Java Webstart Configuration</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Java Webstart Configuration</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	A simple configuration that supports the Spk 
+	MDA security model is described.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>August 6, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN12"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN47"
+>Prerequisites</A
+></DT
+><DT
+><A
+HREF="#AEN59"
+>Obtaining a Certificate</A
+></DT
+><DT
+><A
+HREF="#AEN72"
+>Configuring and Running a Secure Web Server</A
+></DT
+><DT
+><A
+HREF="#AEN82"
+>Browser Configuration</A
+></DT
+><DT
+><A
+HREF="#AEN109"
+>Directories and Access Privileges</A
+></DT
+><DT
+><A
+HREF="#AEN130"
+>Demonstration</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN12"
+></A
+>Introduction</H2
+><P
+>&#13;      MDA security depends on the following sequence of actions:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    Using a web browser, the user visits the home page
+	    of an Spk site.  The URL for the home page specifies the
+	    ordinary, insecure, http protocol.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    The user selects a link to a login page.  The URL
+	    for this link specifies the secure https protocol.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    The user's browser verifies the authenticity  of the
+	    remote server.  If the server does not present a 
+	    certificate cryptographically signed by a trusted 
+	    third party, the browser warns the user.  This way, the
+	    user knows that he is logging in to the service that
+	    he intends to connect to, rather than an impostor.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Assuming that the server's credentials are accepted,
+	    the browser presents the login page to the user.
+	    The user fills in name and password and sends the 
+	    information back to the server, using the encrypted
+	    https protocol.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    The server checks the username and password against
+	    values in its user database.  If these are correct,
+	    the user is linked to his personal, mySpk, page.
+	  </P
+><P
+>&#13;	    Note: at this point, the server has proved its authenticity
+	    to the user by means of a certificate and the user has
+	    proved his authenticity by means of username and password.
+	    All communications required for this mutual authentication
+	    were encrypted.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    On his mySpk page, the user is presented with a link to
+	    start an MDA.  The URL references a 
+	    <TT
+CLASS="filename"
+>.jnlp</TT
+> file on the server, and specifies
+	    the https protocol.
+	  </P
+><P
+>&#13;	    A <TT
+CLASS="filename"
+>.jnlp</TT
+> file is a special configuration
+	    file for a Java Webstart application.  In our case, that
+	    application is an MDA and the file specifies three
+	    critical pieces of information:
+	    <P
+></P
+><UL
+><LI
+><P
+>&#13;		  A URL to the location on the server of the Java
+		  files for this application.  The URL specifies that
+		  the secure https protocol will be used for the
+		  downloading of the application.
+		</P
+></LI
+><LI
+><P
+>&#13;		  A unique session number, which will be used to identify
+		  subsequent messages from the client as being associated
+		  with this session.
+		</P
+></LI
+><LI
+><P
+>&#13;		  A unique, session-specific
+		  128-bit integer which will be used as a
+		  symmetric encryption key for subsequent messages between
+		  the MDA and the server.
+		</P
+></LI
+></UL
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If the server has a more recent version of the MDA than is
+	    present on the user's machine, the browser downloads it.
+	    It then starts the MDA, providing the session number and
+	    encryption key as data.  
+	  </P
+><P
+>&#13;	    Note: the Java code for the MDA, the session number and the
+	    encryption key were all obtained by the browser via
+	    secure https.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    From this point onward, the MDA can communicate directly with
+	    the server without intervention of the browser.  Messages
+	    are identified by session number, and are encrypted and
+	    decrypted using the 128-bit encryption key, which is 
+	    known only to the MDA and the server.
+	  </P
+></LI
+></OL
+>
+    </P
+><P
+>&#13;      This document describes a process for setting up a server to
+      satisfy the security requirements of the MDA, for development
+      and testing purposes.  
+    </P
+><P
+>&#13;      Note to maintainers of this document: many of the details of this
+      process are taken from the 
+      <I
+CLASS="emphasis"
+>Red Hat Linux Customization Guide</I
+>.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN47"
+></A
+>Prerequisites</H2
+><P
+>&#13;      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    RedHat, version 8.0 or later, on the server.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Apache installed on the server as rpm package
+	    httpd-2.0.40-11.5, or later.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    SSL capability added to Apache as rpm package
+	    mod_ssl-2.0.40-11.5, or later.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Java SDK installed on Linux client: j2sdk1.4.2, or later.
+	  </P
+></LI
+></UL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN59"
+></A
+>Obtaining a Certificate</H2
+><P
+>&#13;      We will need a certificate for the Apache web server.  In a 
+      production system, this must be cryptographically signed by a 
+      trusted third party known as a Certificate Authority (CA).  
+      CAs recognized by all popular browsers include Verisign,
+      Thawte and Geotrust.  In a development and test environment,
+      however, it is more practical to use a self-signed certificate,
+      not only because a certificate signed by a CA costs several
+      hundred dollars per year, but because a certificate is issued
+      for a single domain name and cannot be transferred.
+    </P
+><P
+>&#13;      Procedure for creating a self-signed procedure:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    As root, generate a key:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /etc/httpd/conf
+rm ssl.key/server.key
+rm ssl.crt/server.crt
+
+/usr/bin/openssl genrsa 1024 &#62; ssl.key/server.key
+chmod go-rwx ssl.key/server.key
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Create the certificate:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /usr/share/ssl/certs
+make testcert
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;The program will ask you additional questions.  Here are
+the questions and sample answers:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;Country Name (2 letter code) [GB]:US
+State or Province Name (full name) [Berkshire]:Washington
+Locality Name (eg, city) [Newbury]:Seattle
+Organization Name (eg, company) [My Company Ltd]:University of Washington
+Organizational Unit Name (eg, section) []:RFPK
+Common Name (eg, your name or your server's hostname) []:jambutty.rfpk.washington.edu
+Email Address []:afw@u.washington.edu
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+></OL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN72"
+></A
+>Configuring and Running a Secure Web Server</H2
+><P
+>&#13;      If you installed the httpd and mod_ssl packages described above in
+      the <I
+CLASS="emphasis"
+>Prerequisites</I
+> section, the Apache
+      server is already configured. The existence of the certificate
+      created in the previous section is sufficient to enable its
+      secure features.
+    </P
+><P
+>&#13;      To start the Apache server, use the following command (as root):
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/etc/rc.d/init.d/httpd start
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      The server will run until you stop it like this (as root):
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/etc/rc.d/init.d/httpd stop
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      To configure the system initialization process so that it
+      automatically starts the server each time the system boots,
+      issue the following command (as root):
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;chkconfig --level 345 httpd on
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN82"
+></A
+>Browser Configuration</H2
+><P
+>&#13;      To use webstart, you may need to configure your browser. The following
+      instructions are for Mozilla, and the java configuration described
+      above.  Configuration for other browsers and other operating
+      system environments may be somewhat different.
+    </P
+><P
+>&#13;      Bring up the <I
+CLASS="emphasis"
+>Helper Applications</I
+> window by
+      following this menu sequence:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;<B
+CLASS="guimenu"
+>Edit</B
+> =&#62; <B
+CLASS="guimenu"
+>Preferences</B
+> =&#62; <B
+CLASS="guimenu"
+>Navigator</B
+> =&#62; <B
+CLASS="guimenu"
+>Helper Applications</B
+>
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      If <I
+CLASS="emphasis"
+>application/x-java-jnlp-file</I
+> does not 
+      appear in the <I
+CLASS="emphasis"
+>File types </I
+> list, press the
+      <B
+CLASS="guibutton"
+>New Type</B
+> button and fill out the resulting 
+      form as follows:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Description of type:</I
+>
+	    Java Network Launching Protocol
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>File extension:</I
+> jnlp
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>MIME type:</I
+>
+	    application/x-java-jnlp-file
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Application to use:</I
+>
+	    /usr/java/j2sdk1.4.2/jre/javaws/javaws
+	  </P
+></LI
+></UL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN109"
+></A
+>Directories and Access Privileges</H2
+><P
+>&#13;      Web site security is a complex topic, certainly beyond the scope
+      of this document.  We do need to set up some directories, however,
+      and will employ a strategy consistent with good security practices.
+    </P
+><P
+>&#13;      The basic idea is that each web maintenance function should be
+      performed by people who have been administratively assigned to
+      that function, and should not be accessible to others.  To do
+      this we will make use of the 
+      <A
+HREF="http://www.redhat.com/docs/manuals/linux/RHL-8.0-Manual/ref-guide/s1-users-groups-private-groups.html"
+TARGET="_top"
+>user private groups</A
+> (UPG)
+      scheme that is favored by RedHat.
+    </P
+><P
+>&#13;      We will need two new groups, if comparable groups have not already
+      been defined.  The groups are
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>webtext</I
+>: for those who are authorized
+	    to create or modify text on the web site.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>webjava</I
+>: for those who are authorized
+	    to create or modify java code on the web site.
+	  </P
+></LI
+></UL
+>
+    </P
+><P
+>&#13;      To accomplish the following configuration, you will need to be
+      the root user. Create the required groups as follows:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;groupadd -r webtext
+groupadd -r webjava
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      Next add some users to these groups.  For example:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;gpasswd -a tom  webtext
+gpasswd -a dick webtext
+gpasswd -a tom  webjava
+gpasswd -a jane webjava
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      You should be able to observe these changes by examining
+      <TT
+CLASS="filename"
+>/etc/group</TT
+>
+    </P
+><P
+>&#13;      Next, use these new groups to set group ownership and
+      mode bits in several web directories:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /var/www
+mkdir java
+chgrp webtext html
+chgrp webjava java
+chmod 2775 html
+chmod 2775 java
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN130"
+></A
+>Demonstration</H2
+><P
+>&#13;      This section describes a simple demonstration that illustrates
+      that the webstart configuration works. Note that the 
+      domain name <TT
+CLASS="filename"
+>jambutty.rfpk.washington.edu</TT
+>
+      occurs in the files below.  Replace this domain name with
+      your own.
+    </P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	  Copy the <TT
+CLASS="filename"
+>.jar</TT
+> file for the application
+	  into <TT
+CLASS="filename"
+>/var/www/java</TT
+>
+	</P
+></LI
+><LI
+><P
+>&#13;	  <TT
+CLASS="filename"
+>/var/www/html/index.html</TT
+> is the top-level file
+	  for our demonstration website:
+	  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;&#60;?xml version="1.0"?&#62;
+&#60;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "xhtml1-transitional.dtd"&#62;
+&#60;html&#62;
+&#60;head&#62;
+&#60;title&#62;Spk Home&#60;/title&#62;
+&#60;/head&#62;
+&#60;body&#62;
+&#60;h3&#62;Spk Home Page&#60;/h3&#62;
+&#60;p&#62;
+  Go
+  &#60;a href="https://jambutty.rfpk.washington.edu/login.html"&#62;
+    log in
+  &#60;/a&#62;
+&#60;/p&#62;
+&#60;/body&#62;
+&#60;/html&#62;
+	  </PRE
+></TD
+></TR
+></TABLE
+>
+	</P
+><P
+>&#13;	  Note that the URL to the next page utilizes https rather
+	  than http.  This shifts the protocol from the insecure
+	  http to the secure https.
+	</P
+></LI
+><LI
+><P
+>&#13;	  <TT
+CLASS="filename"
+>/var/www/html/login.html</TT
+> 
+	  is a place keeper for the
+	  page that would get the login name and password from the 
+	  user.
+	  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;&#60;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "xhtml1-transitional.dtd"&#62;
+&#60;html&#62;
+  &#60;head&#62;
+    &#60;title&#62;MySpk Login&#60;/title&#62;
+  &#60;/head&#62;
+  &#60;body&#62;
+    Go to
+    &#60;a href="myspk.html"&#62;MySpk&#60;/a&#62;
+  &#60;/body&#62;
+&#60;/html&#62;
+	  </PRE
+></TD
+></TR
+></TABLE
+>
+	</P
+><P
+>&#13;	  Note that the link to the next file does not require a
+	  full URL, because we are not changing protocol.
+	</P
+></LI
+><LI
+><P
+>&#13;	  <TT
+CLASS="filename"
+>/var/www/html/myspk.html</TT
+> represents the user's 
+	  personalized Spk page:
+	  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;
+&#60;!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "xhtml1-transitional.dtd"&#62;
+&#60;html&#62;
+  &#60;head&#62;
+    &#60;title&#62;My Spk&#60;/title&#62;
+  &#60;/head&#62;
+  &#60;body&#62;
+    &#60;p&#62;
+      Welcome to MySpk.
+    &#60;/p&#62;
+    &#60;p&#62;
+      &#60;a href=time.jnlp&#62;Launch the application&#60;/a&#62;
+    &#60;/p&#62;
+  &#60;/body&#62;
+&#60;/html&#62;
+	  </PRE
+></TD
+></TR
+></TABLE
+>
+	</P
+></LI
+><LI
+><P
+>&#13;	  <TT
+CLASS="filename"
+>/var/www/html/time.jnlp</TT
+> is the configuration
+	  file that provides webstart with information about a java application
+	  called <I
+CLASS="emphasis"
+>time</I
+>.
+	  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;&#60;?xml version="1.0" encoding="UTF-8"?&#62;
+&#60;jnlp spec="1.0+"
+  codebase="https://jambutty.rfpk.washington.edu/java"
+&#62;
+&#60;information&#62;
+  &#60;title&#62;Time Check&#60;/title&#62;
+  &#60;vendor&#62;2Java Developer Connection&#60;/vendor&#62;
+  &#60;homepage href="http://java.sun.com/jdc" /&#62;
+  &#60;description&#62;Demonstration of JNLP&#60;/description&#62;
+&#60;/information&#62;
+&#60;offline-allowed/&#62;
+&#60;security&#62;
+  &#60;j2ee-application-client-permissions/&#62;
+&#60;/security&#62;
+&#60;resources&#62;
+  &#60;j2se version="1.2+" /&#62;
+  &#60;jar href="../java/JNLPTime.jar"/&#62;
+&#60;/resources&#62;
+&#60;application-desc main-class="TheTime" /&#62;
+&#60;/jnlp&#62;
+	  </PRE
+></TD
+></TR
+></TABLE
+>
+	</P
+><P
+>&#13;	  Note the value assigned to the <I
+CLASS="emphasis"
+>codebase</I
+>
+	  variable.  It is a URL incorporating https, which will
+	  insure that webstart uses https to download the application.
+	</P
+></LI
+></OL
+><P
+>&#13;      To run the demonstration, just use a browser to access the 
+      web server.  In the above example, the URL would be
+      <TT
+CLASS="filename"
+>http://jambutty.rfpk.washington.edu</TT
+>
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

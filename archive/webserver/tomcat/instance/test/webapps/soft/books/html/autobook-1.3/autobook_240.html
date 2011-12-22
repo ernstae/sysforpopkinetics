@@ -1,0 +1,262 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: 24.3 Example: Quick And Dirty</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: 24.3 Example: Quick And Dirty">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: 24.3 Example: Quick And Dirty">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC240"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_239.html#SEC239" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: 24.2 Overview of the Two Approaches" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_241.html#SEC241" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: 24.4 Example: The Full Pull" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_241.html#SEC241" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: 24.4 Example: The Full Pull" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_237.html#SEC237" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Migrating Existing Packages" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_242.html#SEC242" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Integration with Cygnus Cygwin" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 24.3 Example: Quick And Dirty </H2>
+<!--docid::SEC240::-->
+<P>
+
+As part of the <CODE>libgcj</CODE> project <A NAME="DOCF55" HREF="autobook_fot.html#FOOT55">(55)</A>, I had to incorporate the
+<CODE>zip</CODE> program into our source tree.  Since this particular program
+is only used in one part of the build, and since this program was
+already fairly portable, I decided to take a quick-and-dirty approach to
+autoconfiscation.
+</P><P>
+
+First I read through the <TT>`README'</TT> and <TT>`install.doc'</TT> files to
+see how <CODE>zip</CODE> is ordinarily built.  From there I learned that
+<CODE>zip</CODE> came with a <TT>`Makefile'</TT> used to build all Unix ports
+(and, for the initial autoconfiscation, Unix was all I was interested
+in), so I read that.  This file indicated that <CODE>zip</CODE> had few
+configurability options.
+</P><P>
+
+Running <CODE>ifnames</CODE> on the sources, both Unix and generic, confirmed
+that the <CODE>zip</CODE> sources were mostly self-configuring, using
+system-specific <SAMP>`#defines'</SAMP>---a practice which we recommend against;
+however for a quicky-and-dirty port it is not worth cleaning up:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ ifnames *.[ch] unix/*.[ch] | grep ^__ | head
+__386BSD__ unix/unix.c
+__CYGWIN32__ unix/osdep.h
+__CYGWIN__ unix/osdep.h
+__DATE__ unix/unix.c zipcloak.c zipnote.c zipsplit.c
+__DEBUG_ALLOC__ zip.c
+__ELF__ unix/unix.c
+__EMX__ fileio.c ttyio.h util.c zip.c
+__FreeBSD__ unix/unix.c
+__G ttyio.h
+__GNUC__ unix/unix.c zipcloak.c zipnote.c zipsplit.c
+</pre></td></tr></table></P><P>
+
+Based on this information I wrote my initial <TT>`configure.in'</TT>, which
+is the one still in use today:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>
+AC_INIT(ziperr.h)
+AM_INIT_AUTOMAKE(zip, 2.1)
+AM_MAINTAINER_MODE
+
+AC_PROG_CC
+
+AC_HEADER_DIRENT
+AC_DEFINE(UNIX)
+
+AC_LINK_FILES(unix/unix.c, unix.c)
+
+AC_OUTPUT(Makefile)
+</pre></td></tr></table></P><P>
+
+The one mysterious part of this <TT>`configure.in'</TT> is the define of the
+<SAMP>`UNIX'</SAMP> preprocessor macro.  This define came directly from
+<CODE>zip</CODE>'s <TT>`unix/Makefile'</TT> file; <CODE>zip</CODE> uses this define to
+enable certain Unix-specific pieces of code.
+</P><P>
+
+In this particular situation, I lucked out.  <CODE>zip</CODE> was unusually
+easy to autoconficate.  Typically more actual checks are required in
+<TT>`configure.in'</TT>, and more than a single iteration is required to get
+a workable configuration system.
+</P><P>
+
+From <TT>`unix/Makefile'</TT> I also learned which files were expected to be
+built in order to produce the <CODE>zip</CODE> executable.  This information
+let me write my <TT>`Makefile.am'</TT>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>## Process this file with automake to create Makefile.in.
+
+## NOTE: this file doesn't really try to be complete.  In particular
+## `make dist' won't work at all.  We're just aiming to get the
+## program built.  We also don't bother trying to assemble code, or
+## anything like that.
+
+AUTOMAKE_OPTIONS = no-dependencies
+
+INCLUDES = -I$(srcdir)/unix
+
+bin_PROGRAMS = zip
+
+zip_SOURCES = zip.c zipfile.c zipup.c fileio.c util.c globals.c \
+    crypt.c ttyio.c unix.c crc32.c crctab.c deflate.c trees.c bits.c
+
+## This isn't really correct, but we don't care.
+$(zip_OBJECTS) : zip.h ziperr.h tailor.h unix/osdep.h crypt.h \
+		revision.h ttyio.h unix/zipup.h
+</pre></td></tr></table></P><P>
+
+This file provides a good look at some of the tradeoffs involved.  In my
+case, I didn't care about full correctness of the resulting
+<TT>`Makefile.am'</TT> -- I wasn't planning to maintain the project, I just
+wanted it to build in my particular set of environments.
+</P><P>
+
+So, I sacrificed <SAMP>`dist'</SAMP> capability to make my work easier.  Also, I
+decided to disable dependency tracking and instead make all the
+resulting object files depend on all the headers in the project.  This
+approach is inefficient, but in my situation perfectly reasonable, as I
+wasn't planning to do any actual development on this package -- I was
+simply looking to make it build so that it could be used to build the
+parts of the package I was actually hacking.
+</P><P>
+
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

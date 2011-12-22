@@ -1,0 +1,86 @@
+<html><head>
+<title>Matrix-Matrix Multiplication</title>
+<meta name="description" id="description" content="Matrix-Matrix Multiplication">
+<meta name="keywords" id="keywords" content=" multiply matrix multiplication Doublematrix "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="dmmultiply.htm" target="_top">section</a>, <a href="dmmultiply_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+
+<b><br>
+DEPLICATED!</b>  This routine merely wraps <a href="multiply.htm" target="_top"><span style='white-space: nowrap'>multiply()</span></a>
+.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Returns matrix product <i>A</i> times <i>B</i>
+where <i>A</i> is a m by p matrix and <i>B</i>
+is a p by n matrix, for m, n and p &gt;= 0.  
+The product is a m by n matrix if neither of A or B was empty.
+If either A or B was empty, an empty matrix will be returned.
+If A and B's dimensions do not match, then the program terminates.
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link and run the following program
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+<br>
+void&nbsp;main(){<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;A(2,&nbsp;2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;B(2,&nbsp;2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;C;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*pA&nbsp;=&nbsp;A.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*pB&nbsp;=&nbsp;B.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;i;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;A&nbsp;to&nbsp;a&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;1&nbsp;3&nbsp;5&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;2&nbsp;4&nbsp;6&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;set&nbsp;B&nbsp;to&nbsp;a&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;2&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;3&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i=0;&nbsp;i&lt;6;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pA[i]&nbsp;=&nbsp;i+1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(i=0;&nbsp;i&lt;3;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pB[i]&nbsp;=&nbsp;i+1;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Compute<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;22&nbsp;]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;3&nbsp;5&nbsp;]&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;[&nbsp;2&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;28&nbsp;]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;4&nbsp;6&nbsp;]&nbsp;&nbsp;&nbsp;[&nbsp;3&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;=&nbsp;multiply(A,&nbsp;B);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C.print();<br>
+<br>
+}<br>
+<br>
+</span>
+</font></code>
+the matrix 
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;22&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;28&nbsp;]<br>
+</span></code>will be printed.
+
+
+<hr>Input File: ../../spk/DoubleMatrix.cpp
+
+</body>
+</html>

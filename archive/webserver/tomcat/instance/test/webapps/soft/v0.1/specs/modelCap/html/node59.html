@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Comparison of the Mixed Effects Models</TITLE>
+<META NAME="description" CONTENT="Comparison of the Mixed Effects Models">
+<META NAME="keywords" CONTENT="modelCap">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="modelCap.css">
+
+<LINK REL="previous" HREF="node58.html">
+<LINK REL="up" HREF="node56.html">
+<LINK REL="next" HREF="node60.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html852"
+  HREF="node60.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html848"
+  HREF="node56.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html844"
+  HREF="node58.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html850"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html853"
+  HREF="node60.html">About this document ...</A>
+<B> Up:</B> <A NAME="tex2html849"
+  HREF="node56.html">Appendix: Population Level Models</A>
+<B> Previous:</B> <A NAME="tex2html845"
+  HREF="node58.html">NONMEM Mixed Effects Model</A>
+ &nbsp; <B>  <A NAME="tex2html851"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00093000000000000000">
+Comparison of the Mixed Effects Models</A>
+</H2>
+<P>
+<FONT SIZE="+1">In these two formulations, <IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img42.png"
+ ALT="$b_i$"> and <IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img139.png"
+ ALT="$\eta_i$"> are
+equivalent.
+Thus, the covariance matrices <IMG
+ WIDTH="40" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img181.png"
+ ALT="$D(\alpha)$"> and 
+<IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img163.png"
+ ALT="$\Omega$"> are equal to one another, and
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+D_{(p,q)}(\alpha) = \Omega_{(p,q)} .
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="127" HEIGHT="30" BORDER="0"
+ SRC="img182.png"
+ ALT="\begin{displaymath}
+D_{(p,q)}(\alpha) = \Omega_{(p,q)} .
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(59)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+<P>
+<FONT SIZE="+1">Although <IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img43.png"
+ ALT="$e_i$"> and <IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img140.png"
+ ALT="$\epsilon_i$"> are not equivalent, 
+the covariance matrices <!-- MATH
+ $R_i(\alpha, b_i)$
+ -->
+<IMG
+ WIDTH="63" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img53.png"
+ ALT="$R_i(\alpha, b_i)$"> and 
+<IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img178.png"
+ ALT="$\Sigma$"> are related as follows,
+  </FONT><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{eqnarray*}
+R_{i(j,k)}(\alpha, b_i) & = &  \mbox{cov} \left[
+      \sum_{m=1}^{n_{\Sigma}} h_{(m)}(x_{ij}, \theta, \eta_i) \epsilon_{i(m)},
+      \sum_{n=1}^{n_{\Sigma}} h_{(n)}(x_{ik}, \theta, \eta_i) \epsilon_{i(n)} \right] \\
+    & = & \sum_{m=1}^{n_{\Sigma}} \sum_{n=1}^{n_{\Sigma}} 
+      h_{(m)}(x_{ij}, \theta, \eta_i) 
+      \mbox{cov} [ \epsilon_{i(m)} , \epsilon_{i(n)} ]
+      h_{(n)}(x_{ik}, \theta, \eta_i)  \\
+    & = & \sum_{m=1}^{n_{\Sigma}} \sum_{n=1}^{n_{\Sigma}} 
+      h_{(m)}(x_{ij}, \theta, \eta_i) 
+      \Sigma_{(m,n)}
+      h_{(n)}(x_{ik}, \theta, \eta_i)
+\end{eqnarray*}
+ -->
+<IMG
+ WIDTH="491" HEIGHT="160" BORDER="0"
+ SRC="img183.png"
+ ALT="\begin{eqnarray*}
+R_{i(j,k)}(\alpha, b_i) &amp; = &amp; \mbox{cov} \left[
+\sum_{m=1}^{...
+...heta, \eta_i)
+\Sigma_{(m,n)}
+h_{(n)}(x_{ik}, \theta, \eta_i)
+\end{eqnarray*}"></DIV>
+<BR CLEAR="ALL"><P></P><FONT SIZE="+1">
+Note that <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img178.png"
+ ALT="$\Sigma$"> is the same for all of the individuals in
+the population.
+</FONT>
+<P>
+<BR><HR>
+<ADDRESS>
+Mitch Watrous
+2007-12-17
+</ADDRESS>
+</BODY>
+</HTML>

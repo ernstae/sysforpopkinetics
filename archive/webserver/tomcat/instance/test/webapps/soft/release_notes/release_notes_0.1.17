@@ -1,0 +1,37 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.16
+----------------------------------
+USER VISIBLE CHANGES
+Fixed a bug that the job status displayed in MDA stayed "running" when
+the job ended abnormally.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: 11/09/2004
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.17
+----------------------------------
+USER VISIBLE CHANGES
+Fixed: The number of maximum iteration (at population level) specified
+by the user had not replaced the system's default value (=100).
+
+OTHER CHANGES
+The SPK-Compiler generated driver returns more information when
+the program completes/terminates abnormally.  To be specific:
+  0 = successful completion
+  1 = optimization error
+  2 = file/directory access error
+  3 = post-integration error
+  4 = statistics error
+  5 = data simulation error
+  >5 = unknown
+
+RELATED BUG REPORTS: 101
+
+BY: Sachiko Honda
+
+WHEN: 11/12/2004

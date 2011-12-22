@@ -1,0 +1,548 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Database Entity-Relationship Model</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+>Database Entity-Relationship Model</A
+></H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	An entity relationship model for the Spk database
+	is presented.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.00</TD
+><TD
+ALIGN="LEFT"
+>November 17, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.01</TD
+><TD
+ALIGN="LEFT"
+>August 13, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added additional entities.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.02</TD
+><TD
+ALIGN="LEFT"
+>May 9, 2006</TD
+><TD
+ALIGN="LEFT"
+>Revised by: jd</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added entitie team.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.03</TD
+><TD
+ALIGN="LEFT"
+>June 27, 2008</TD
+><TD
+ALIGN="LEFT"
+>Revised by: jd</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added entity folder and folder_id in job.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN27"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN30"
+>Entity Relationship Diagram</A
+></DT
+><DT
+><A
+HREF="#AEN56"
+>Entities</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN59"
+>Job</A
+></DT
+><DT
+><A
+HREF="#AEN62"
+>Folder</A
+></DT
+><DT
+><A
+HREF="#AEN65"
+>History</A
+></DT
+><DT
+><A
+HREF="#AEN69"
+>Model</A
+></DT
+><DT
+><A
+HREF="#AEN73"
+>Dataset</A
+></DT
+><DT
+><A
+HREF="#AEN77"
+>User</A
+></DT
+><DT
+><A
+HREF="#AEN80"
+>Team</A
+></DT
+><DT
+><A
+HREF="#AEN83"
+>Method</A
+></DT
+><DT
+><A
+HREF="#AEN86"
+>Class</A
+></DT
+><DT
+><A
+HREF="#AEN89"
+>State</A
+></DT
+><DT
+><A
+HREF="#AEN92"
+>End</A
+></DT
+></DL
+></DD
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN27"
+>Introduction</A
+></H2
+><P
+>&#13;      In Spk, job status, job history, and user data
+      are maintained in a relational
+      database. The database is the sole means of communication
+      between the major components of the server side of the 
+      application: namely, the web server, the SPK compiler, and
+      the computational server.
+      This document presents the ER model for this database.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN30"
+>Entity Relationship Diagram</A
+></H2
+><P
+>&#13;      The following diagram represents the SPK database in terms of
+      data entities and relationships.  In the following diagram, 
+      note the following:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    Entities are represented by boxes that are divided
+	    into sections, vertically.  The name of the entity appears in the
+	    upper section. A list of the most important attributes 
+	    appears in the lower section.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Relationships between entities are represented by connector
+	    lines.
+	    <P
+></P
+><UL
+><LI
+><P
+>&#13;		  Each relationship is modeled as a <I
+CLASS="emphasis"
+>has-a</I
+>
+		  relationship.  For example, a user <I
+CLASS="emphasis"
+>has</I
+>
+		  zero or more jobs.  A job <I
+CLASS="emphasis"
+>has</I
+> a state.
+		</P
+></LI
+><LI
+><P
+>&#13;		  An arrow-head at one end of a connector line points to the
+		  entity which <I
+CLASS="emphasis"
+>has</I
+>.  In the example of
+		  the line that connects user and job, the arrow-head points
+		  toward user, because it is the user who has jobs and not
+		  the other way around.
+		</P
+></LI
+><LI
+><P
+>&#13;		  The <I
+CLASS="emphasis"
+>multiplicity</I
+> of the relationship
+		  is represented by the end of the connector opposite the 
+		  arrow-head.  For example, the "crow's-foot" symbol at the
+		  job end of the connector between user and job implies that
+		  the user may have multiple jobs.  The lack of a 
+		  crow's-foot in the connector between job and model implies
+		  that a job can have at most one model.
+		</P
+></LI
+></UL
+>
+	  </P
+></LI
+></UL
+>
+    </P
+><P
+>&#13;      The SPK database is implemented as a relational database. The 
+      high level design is documented in the
+      <A
+HREF="../dbSchema/dbSchema.html"
+TARGET="_top"
+>&#13;	Database Schema
+      </A
+>
+      specification. The entity-relationship model and the 
+      database schema are complementary and non-redundant. As implemented
+      in SPK, there is a one-to-one relationship between entities
+      and database tables as well as a one-to-one relationship between
+      entity attributes and table columns.  The connector lines in the
+      er-diagram clearly indicate the direction and multiplicity of
+      relationships.  This information is difficult or impossible to
+      infer from the schema alone.
+    </P
+><P
+>&#13;      <DIV
+CLASS="figure"
+><A
+NAME="AEN53"
+></A
+><P
+><IMG
+SRC="erModelDiagram.png"></P
+><P
+><B
+>Figure 1. Entity Relationship Diagram</B
+></P
+></DIV
+>
+      </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN56"
+>Entities</A
+></H2
+><P
+>&#13;      In this section, each entity will be described briefly.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN59"
+>Job</A
+></H3
+><P
+>&#13;	Job represents the principal unit of work for Spk.  A user
+	combines a model and a dataset to create
+	a job.  A user may have many jobs.  Some jobs contain a non-zero
+	parent link, which associates the job to another job that was
+	previously completed.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN62"
+>Folder</A
+></H3
+><P
+>&#13;	Each instance of folder entity represents a job folder.  A job 
+        folder belongs to a user.  Folder has name and its parent folder.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN65"
+>History</A
+></H3
+><P
+>&#13;	Each instance of a history entity represents one of the states
+	assumed by a job.  The date and time of transition into that
+	state is recorded.  For more information, see the
+	<A
+HREF="../jobHistory/jobHistory.html"
+TARGET="_top"
+>&#13;	  JobHistory Model
+	</A
+>
+	specification.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN69"
+>Model</A
+></H3
+><P
+>&#13;	Each instance of the model entity represents a PK model created by
+	a user with the aid of the MDA. The XML source for the 
+	model is contained in the <I
+CLASS="emphasis"
+>archive</I
+>
+	attribute as an rcs-compatible version controlled archive.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN73"
+>Dataset</A
+></H3
+><P
+>&#13;	Each instance of the dataset entity represents a set of data created 
+	or imported by
+	a user with the aid of the MDA. The XML source for the 
+	dataset is contained in the <I
+CLASS="emphasis"
+>archive</I
+>
+	attribute as an rcs-compatible version controlled archive.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN77"
+>User</A
+></H3
+><P
+>&#13;	User represents the user of Spk. A user may have many
+	jobs, many models and many datasets.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN80"
+>Team</A
+></H3
+><P
+>&#13;	Team represents the user group of Spk. A team may have many
+	users, but a user can only join one team.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN83"
+>Method</A
+></H3
+><P
+>&#13;	Spk supports various computational methods. Each job uses 
+	one such method.  Certain methods are available only to
+	users who have "test" privileges.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN86"
+>Class</A
+></H3
+><P
+>&#13;	Each method belongs to a method class.  Some methods can only
+	be applied to a job which has a non-zero parent attribute linking it to a
+	previously completed job.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN89"
+>State</A
+></H3
+><P
+>&#13;	At any given moment, a job is in exactly one state, which
+	must relate to an instance of the state entity.
+	Each instance of the state entity contains a state_code and
+	a longer state_name, which is English text.  In the future, there
+	may be versions of SPK that use languages other than English.
+	In that case, a name attribute will be added for
+	each additional language supported.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN92"
+>End</A
+></H3
+><P
+>&#13;        When a job reaches the 'end' state, its end attribute
+        is non-null and indicates the nature of its completion.
+	Each instance of the end entity contains an end-code and
+	a longer end_name, which is English text.  In the future, there
+	may be versions of SPK that use languages other than English.
+	In that case, a name attribute will be added for
+	each additional language supported.
+      </P
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

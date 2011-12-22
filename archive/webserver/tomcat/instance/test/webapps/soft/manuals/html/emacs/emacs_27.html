@@ -1,0 +1,635 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Abbrevs</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Abbrevs">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Abbrevs">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC350"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC349"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC351"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> X. Abbrevs </H1>
+<!--docid::SEC350::-->
+<P>
+
+  A defined <EM>abbrev</EM> is a word which <EM>expands</EM>, if you insert
+it, into some different text.  Abbrevs are defined by the user to expand
+in specific ways.  For example, you might define <SAMP>`foo'</SAMP> as an abbrev
+expanding to <SAMP>`find outer otter'</SAMP>.  Then you would be able to insert
+<SAMP>`find outer otter '</SAMP> into the buffer by typing <KBD>f o o
+<KBD>SPC</KBD></KBD>.
+</P><P>
+
+  A second kind of abbreviation facility is called <EM>dynamic abbrev
+expansion</EM>.  You use dynamic abbrev expansion with an explicit command
+to expand the letters in the buffer before point by looking for other
+words in the buffer that start with those letters.  See section <A HREF="emacs_27.html#SEC356">X.6 Dynamic Abbrev Expansion</A>.
+</P><P>
+
+"Hippie" expansion generalizes abbreviation expansion.  See section `Hippie Expansion' in <CITE>Features for Automatic Typing</CITE>.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_27.html#SEC351">X.1 Abbrev Concepts</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Fundamentals of defined abbrevs.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_27.html#SEC352">X.2 Defining Abbrevs</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Defining an abbrev, so it will expand when typed.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_27.html#SEC353">X.3 Controlling Abbrev Expansion</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Controlling expansion: prefixes, canceling expansion.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_27.html#SEC354">X.4 Examining and Editing Abbrevs</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Viewing or editing the entire list of defined abbrevs.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_27.html#SEC355">X.5 Saving Abbrevs</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Saving the entire list of abbrevs for another session.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_27.html#SEC356">X.6 Dynamic Abbrev Expansion</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Abbreviations for words already in the buffer.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_27.html#SEC357">X.7 Customizing Dynamic Abbreviation</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">What is a word, for dynamic abbrevs.  Case handling.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Abbrev Concepts"></A>
+<HR SIZE="6">
+<A NAME="SEC351"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC352"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> X.1 Abbrev Concepts </H2>
+<!--docid::SEC351::-->
+<P>
+
+  An <EM>abbrev</EM> is a word which has been defined to <EM>expand</EM> into
+a specified <EM>expansion</EM>.  When you insert a word-separator character
+following the abbrev, that expands the abbrev--replacing the abbrev
+with its expansion.  For example, if <SAMP>`foo'</SAMP> is defined as an abbrev
+expanding to <SAMP>`find outer otter'</SAMP>, then you can insert <SAMP>`find
+outer otter.'</SAMP> into the buffer by typing <KBD>f o o .</KBD>.
+</P><P>
+
+<A NAME="IDX1731"></A>
+<A NAME="IDX1732"></A>
+<A NAME="IDX1733"></A>
+<A NAME="IDX1734"></A>
+  Abbrevs expand only when Abbrev mode (a minor mode) is enabled.
+Disabling Abbrev mode does not cause abbrev definitions to be forgotten,
+but they do not expand until Abbrev mode is enabled again.  The command
+<KBD>M-x abbrev-mode</KBD> toggles Abbrev mode; with a numeric argument, it
+turns Abbrev mode on if the argument is positive, off otherwise.
+See section <A HREF="emacs_33.html#SEC476">AD.1 Minor Modes</A>.  <CODE>abbrev-mode</CODE> is also a variable; Abbrev mode is
+on when the variable is non-<CODE>nil</CODE>.  The variable <CODE>abbrev-mode</CODE>
+automatically becomes local to the current buffer when it is set.
+</P><P>
+
+  Abbrev definitions can be <EM>mode-specific</EM>---active only in one major
+mode.  Abbrevs can also have <EM>global</EM> definitions that are active in
+all major modes.  The same abbrev can have a global definition and various
+mode-specific definitions for different major modes.  A mode-specific
+definition for the current major mode overrides a global definition.
+</P><P>
+
+  Abbrevs can be defined interactively during the editing session.  Lists
+of abbrev definitions can also be saved in files and reloaded in later
+sessions.  Some users keep extensive lists of abbrevs that they load in
+every session.
+</P><P>
+
+<A NAME="Defining Abbrevs"></A>
+<HR SIZE="6">
+<A NAME="SEC352"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC351"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC353"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC353"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> X.2 Defining Abbrevs </H2>
+<!--docid::SEC352::-->
+<P>
+
+<DL COMPACT>
+<DT><KBD>C-x a g</KBD>
+<DD>Define an abbrev, using one or more words before point as its expansion
+(<CODE>add-global-abbrev</CODE>).
+<DT><KBD>C-x a l</KBD>
+<DD>Similar, but define an abbrev specific to the current major mode
+(<CODE>add-mode-abbrev</CODE>).
+<DT><KBD>C-x a i g</KBD>
+<DD>Define a word in the buffer as an abbrev (<CODE>inverse-add-global-abbrev</CODE>).
+<DT><KBD>C-x a i l</KBD>
+<DD>Define a word in the buffer as a mode-specific abbrev
+(<CODE>inverse-add-mode-abbrev</CODE>).
+<DT><KBD>M-x kill-all-abbrevs</KBD>
+<DD>This command discards all abbrev definitions currently in effect,
+leaving a blank slate.
+</DL>
+<P>
+
+<A NAME="IDX1735"></A>
+<A NAME="IDX1736"></A>
+  The usual way to define an abbrev is to enter the text you want the
+abbrev to expand to, position point after it, and type <KBD>C-x a g</KBD>
+(<CODE>add-global-abbrev</CODE>).  This reads the abbrev itself using the
+minibuffer, and then defines it as an abbrev for one or more words before
+point.  Use a numeric argument to say how many words before point should be
+taken as the expansion.  For example, to define the abbrev <SAMP>`foo'</SAMP> as
+mentioned above, insert the text <SAMP>`find outer otter'</SAMP> and then type
+<KBD>C-u 3 C-x a g f o o <KBD>RET</KBD></KBD>.
+</P><P>
+
+  An argument of zero to <KBD>C-x a g</KBD> means to use the contents of the
+region as the expansion of the abbrev being defined.
+</P><P>
+
+<A NAME="IDX1737"></A>
+<A NAME="IDX1738"></A>
+  The command <KBD>C-x a l</KBD> (<CODE>add-mode-abbrev</CODE>) is similar, but
+defines a mode-specific abbrev.  Mode-specific abbrevs are active only in a
+particular major mode.  <KBD>C-x a l</KBD> defines an abbrev for the major mode
+in effect at the time <KBD>C-x a l</KBD> is typed.  The arguments work the same
+as for <KBD>C-x a g</KBD>.
+</P><P>
+
+<A NAME="IDX1739"></A>
+<A NAME="IDX1740"></A>
+<A NAME="IDX1741"></A>
+<A NAME="IDX1742"></A>
+  If the text already in the buffer is the abbrev, rather than its
+expansion, use command <KBD>C-x a i g</KBD>
+(<CODE>inverse-add-global-abbrev</CODE>) instead of <KBD>C-x a g</KBD>, or use
+<KBD>C-x a i l</KBD> (<CODE>inverse-add-mode-abbrev</CODE>) instead of <KBD>C-x a
+l</KBD>.  These commands are called "inverse" because they invert the
+meaning of the two text strings they use (one from the buffer and one
+read with the minibuffer).
+</P><P>
+
+  To change the definition of an abbrev, just define a new definition.
+When the abbrev has a prior definition, the abbrev definition commands
+ask for confirmation before replacing it.
+</P><P>
+
+  To remove an abbrev definition, give a negative argument to the abbrev
+definition command: <KBD>C-u - C-x a g</KBD> or <KBD>C-u - C-x a l</KBD>.  The
+former removes a global definition, while the latter removes a
+mode-specific definition.
+</P><P>
+
+<A NAME="IDX1743"></A>
+  <KBD>M-x kill-all-abbrevs</KBD> removes all the abbrev definitions there
+are, both global and local.
+</P><P>
+
+<A NAME="Expanding Abbrevs"></A>
+<HR SIZE="6">
+<A NAME="SEC353"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC352"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC354"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC354"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> X.3 Controlling Abbrev Expansion </H2>
+<!--docid::SEC353::-->
+<P>
+
+  An abbrev expands whenever it is present in the buffer just before
+point and you type a self-inserting whitespace or punctuation character
+(<KBD>SPC</KBD>, comma, etc.).  More precisely, any character that is not a
+word constituent expands an abbrev, and any word-constituent character
+can be part of an abbrev.  The most common way to use an abbrev is to
+insert it and then insert a punctuation character to expand it.
+</P><P>
+
+<A NAME="IDX1744"></A>
+  Abbrev expansion preserves case; thus, <SAMP>`foo'</SAMP> expands into <SAMP>`find
+outer otter'</SAMP>; <SAMP>`Foo'</SAMP> into <SAMP>`Find outer otter'</SAMP>, and <SAMP>`FOO'</SAMP> into
+<SAMP>`FIND OUTER OTTER'</SAMP> or <SAMP>`Find Outer Otter'</SAMP> according to the
+variable <CODE>abbrev-all-caps</CODE> (a non-<CODE>nil</CODE> value chooses the first
+of the two expansions).
+</P><P>
+
+  These commands are used to control abbrev expansion:
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-'</KBD>
+<DD>Separate a prefix from a following abbrev to be expanded
+(<CODE>abbrev-prefix-mark</CODE>).
+<DT><KBD>C-x a e</KBD>
+<DD><A NAME="IDX1745"></A>
+Expand the abbrev before point (<CODE>expand-abbrev</CODE>).
+This is effective even when Abbrev mode is not enabled.
+<DT><KBD>M-x expand-region-abbrevs</KBD>
+<DD>Expand some or all abbrevs found in the region.
+</DL>
+<P>
+
+<A NAME="IDX1746"></A>
+<A NAME="IDX1747"></A>
+  You may wish to expand an abbrev with a prefix attached; for example,
+if <SAMP>`cnst'</SAMP> expands into <SAMP>`construction'</SAMP>, you might want to use
+it to enter <SAMP>`reconstruction'</SAMP>.  It does not work to type
+<KBD>recnst</KBD>, because that is not necessarily a defined abbrev.  What
+you can do is use the command <KBD>M-'</KBD> (<CODE>abbrev-prefix-mark</CODE>) in
+between the prefix <SAMP>`re'</SAMP> and the abbrev <SAMP>`cnst'</SAMP>.  First, insert
+<SAMP>`re'</SAMP>.  Then type <KBD>M-'</KBD>; this inserts a hyphen in the buffer to
+indicate that it has done its work.  Then insert the abbrev <SAMP>`cnst'</SAMP>;
+the buffer now contains <SAMP>`re-cnst'</SAMP>.  Now insert a non-word character
+to expand the abbrev <SAMP>`cnst'</SAMP> into <SAMP>`construction'</SAMP>.  This
+expansion step also deletes the hyphen that indicated <KBD>M-'</KBD> had been
+used.  The result is the desired <SAMP>`reconstruction'</SAMP>.
+</P><P>
+
+  If you actually want the text of the abbrev in the buffer, rather than
+its expansion, you can accomplish this by inserting the following
+punctuation with <KBD>C-q</KBD>.  Thus, <KBD>foo C-q ,</KBD> leaves <SAMP>`foo,'</SAMP> in
+the buffer.
+</P><P>
+
+<A NAME="IDX1748"></A>
+  If you expand an abbrev by mistake, you can undo the expansion and
+bring back the abbrev itself by typing <KBD>C-_</KBD> to undo (see section <A HREF="emacs_7.html#SEC23">D.4 Undoing Changes</A>).
+This also undoes the insertion of the non-word character that expanded
+the abbrev.  If the result you want is the terminating non-word
+character plus the unexpanded abbrev, you must reinsert the terminating
+character, quoting it with <KBD>C-q</KBD>.  You can also use the command
+<KBD>M-x unexpand-abbrev</KBD> to cancel the last expansion without
+deleting the terminating character.
+</P><P>
+
+<A NAME="IDX1749"></A>
+  <KBD>M-x expand-region-abbrevs</KBD> searches through the region for defined
+abbrevs, and for each one found offers to replace it with its expansion.
+This command is useful if you have typed in text using abbrevs but forgot
+to turn on Abbrev mode first.  It may also be useful together with a
+special set of abbrev definitions for making several global replacements at
+once.  This command is effective even if Abbrev mode is not enabled.
+</P><P>
+
+  Expanding an abbrev runs the hook <CODE>pre-abbrev-expand-hook</CODE>
+(see section <A HREF="emacs_33.html#SEC484">AD.2.3 Hooks</A>).
+</P><P>
+
+<A NAME="Editing Abbrevs"></A>
+<HR SIZE="6">
+<A NAME="SEC354"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC353"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC355"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC355"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> X.4 Examining and Editing Abbrevs </H2>
+<!--docid::SEC354::-->
+<P>
+
+<DL COMPACT>
+<DT><KBD>M-x list-abbrevs</KBD>
+<DD>Display a list of all abbrev definitions.  With a numeric argument, list
+only local abbrevs.
+<DT><KBD>M-x edit-abbrevs</KBD>
+<DD>Edit a list of abbrevs; you can add, alter or remove definitions.
+</DL>
+<P>
+
+<A NAME="IDX1750"></A>
+  The output from <KBD>M-x list-abbrevs</KBD> looks like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(lisp-mode-abbrev-table)
+"dk"	       0    "define-key"
+(global-abbrev-table)
+"dfn"	       0    "definition"
+</pre></td></tr></table></P><P>
+
+(Some blank lines of no semantic significance, and some other abbrev
+tables, have been omitted.)
+</P><P>
+
+  A line containing a name in parentheses is the header for abbrevs in a
+particular abbrev table; <CODE>global-abbrev-table</CODE> contains all the global
+abbrevs, and the other abbrev tables that are named after major modes
+contain the mode-specific abbrevs.
+</P><P>
+
+  Within each abbrev table, each nonblank line defines one abbrev.  The
+word at the beginning of the line is the abbrev.  The number that
+follows is the number of times the abbrev has been expanded.  Emacs
+keeps track of this to help you see which abbrevs you actually use, so
+that you can eliminate those that you don't use often.  The string at
+the end of the line is the expansion.
+</P><P>
+
+<A NAME="IDX1751"></A>
+<A NAME="IDX1752"></A>
+  <KBD>M-x edit-abbrevs</KBD> allows you to add, change or kill abbrev
+definitions by editing a list of them in an Emacs buffer.  The list has
+the same format described above.  The buffer of abbrevs is called
+<SAMP>`*Abbrevs*'</SAMP>, and is in Edit-Abbrevs mode.  Type <KBD>C-c C-c</KBD> in
+this buffer to install the abbrev definitions as specified in the
+buffer--and delete any abbrev definitions not listed.
+</P><P>
+
+  The command <CODE>edit-abbrevs</CODE> is actually the same as
+<CODE>list-abbrevs</CODE> except that it selects the buffer <SAMP>`*Abbrevs*'</SAMP>
+whereas <CODE>list-abbrevs</CODE> merely displays it in another window.
+</P><P>
+
+<A NAME="Saving Abbrevs"></A>
+<HR SIZE="6">
+<A NAME="SEC355"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC354"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC356"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC356"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> X.5 Saving Abbrevs </H2>
+<!--docid::SEC355::-->
+<P>
+
+  These commands allow you to keep abbrev definitions between editing
+sessions.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-x write-abbrev-file <KBD>RET</KBD> <VAR>file</VAR> <KBD>RET</KBD></KBD>
+<DD>Write a file <VAR>file</VAR> describing all defined abbrevs.
+<DT><KBD>M-x read-abbrev-file <KBD>RET</KBD> <VAR>file</VAR> <KBD>RET</KBD></KBD>
+<DD>Read the file <VAR>file</VAR> and define abbrevs as specified therein.
+<DT><KBD>M-x quietly-read-abbrev-file <KBD>RET</KBD> <VAR>file</VAR> <KBD>RET</KBD></KBD>
+<DD>Similar but do not display a message about what is going on.
+<DT><KBD>M-x define-abbrevs</KBD>
+<DD>Define abbrevs from definitions in current buffer.
+<DT><KBD>M-x insert-abbrevs</KBD>
+<DD>Insert all abbrevs and their expansions into current buffer.
+</DL>
+<P>
+
+<A NAME="IDX1753"></A>
+  <KBD>M-x write-abbrev-file</KBD> reads a file name using the minibuffer and
+then writes a description of all current abbrev definitions into that
+file.  This is used to save abbrev definitions for use in a later
+session.  The text stored in the file is a series of Lisp expressions
+that, when executed, define the same abbrevs that you currently have.
+</P><P>
+
+<A NAME="IDX1754"></A>
+<A NAME="IDX1755"></A>
+<A NAME="IDX1756"></A>
+  <KBD>M-x read-abbrev-file</KBD> reads a file name using the minibuffer and
+then reads the file, defining abbrevs according to the contents of the
+file.  <KBD>M-x quietly-read-abbrev-file</KBD> is the same except that it
+does not display a message in the echo area saying that it is doing its
+work; it is actually useful primarily in the <TT>`.emacs'</TT> file.  If an
+empty argument is given to either of these functions, they use the file
+name specified in the variable <CODE>abbrev-file-name</CODE>, which is by
+default <CODE>"~/.abbrev_defs"</CODE>.
+</P><P>
+
+<A NAME="IDX1757"></A>
+  Emacs will offer to save abbrevs automatically if you have changed any of
+them, whenever it offers to save all files (for <KBD>C-x s</KBD> or <KBD>C-x
+C-c</KBD>).  This feature can be inhibited by setting the variable
+<CODE>save-abbrevs</CODE> to <CODE>nil</CODE>.
+</P><P>
+
+<A NAME="IDX1758"></A>
+<A NAME="IDX1759"></A>
+  The commands <KBD>M-x insert-abbrevs</KBD> and <KBD>M-x define-abbrevs</KBD> are
+similar to the previous commands but work on text in an Emacs buffer.
+<KBD>M-x insert-abbrevs</KBD> inserts text into the current buffer before point,
+describing all current abbrev definitions; <KBD>M-x define-abbrevs</KBD> parses
+the entire current buffer and defines abbrevs accordingly.</P><P>
+
+<A NAME="Dynamic Abbrevs"></A>
+<HR SIZE="6">
+<A NAME="SEC356"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC355"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC357"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC357"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> X.6 Dynamic Abbrev Expansion </H2>
+<!--docid::SEC356::-->
+<P>
+
+  The abbrev facility described above operates automatically as you insert
+text, but all abbrevs must be defined explicitly.  By contrast,
+<EM>dynamic abbrevs</EM> allow the meanings of abbrevs to be determined
+automatically from the contents of the buffer, but dynamic abbrev expansion
+happens only when you request it explicitly.
+</P><P>
+
+<A NAME="IDX1760"></A>
+<A NAME="IDX1761"></A>
+<A NAME="IDX1762"></A>
+<A NAME="IDX1763"></A>
+<DL COMPACT>
+<DT><KBD>M-/</KBD>
+<DD>Expand the word in the buffer before point as a <EM>dynamic abbrev</EM>,
+by searching in the buffer for words starting with that abbreviation
+(<CODE>dabbrev-expand</CODE>).
+<P>
+
+<DT><KBD>C-M-/</KBD>
+<DD>Complete the word before point as a dynamic abbrev
+(<CODE>dabbrev-completion</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX1764"></A>
+  For example, if the buffer contains <SAMP>`does this follow '</SAMP> and you
+type <KBD>f o M-/</KBD>, the effect is to insert <SAMP>`follow'</SAMP> because that
+is the last word in the buffer that starts with <SAMP>`fo'</SAMP>.  A numeric
+argument to <KBD>M-/</KBD> says to take the second, third, etc. distinct
+expansion found looking backward from point.  Repeating <KBD>M-/</KBD>
+searches for an alternative expansion by looking farther back.  After
+scanning all the text before point, it searches the text after point.
+The variable <CODE>dabbrev-limit</CODE>, if non-<CODE>nil</CODE>, specifies how far
+in the buffer to search for an expansion.
+</P><P>
+
+<A NAME="IDX1765"></A>
+  After scanning the current buffer, <KBD>M-/</KBD> normally searches other
+buffers, unless you have set <CODE>dabbrev-check-all-buffers</CODE> to
+<CODE>nil</CODE>.
+</P><P>
+
+<A NAME="IDX1766"></A>
+  For finer control over which buffers to scan, customize the variable
+<CODE>dabbrev-ignored-buffer-regexps</CODE>.  Its value is a list of regular
+expressions.  If a buffer's name matches any of these regular
+expressions, dynamic abbrev expansion skips that buffer.
+</P><P>
+
+  A negative argument to <KBD>M-/</KBD>, as in <KBD>C-u - M-/</KBD>, says to
+search first for expansions after point, and second for expansions
+before point.  If you repeat the <KBD>M-/</KBD> to look for another
+expansion, do not specify an argument.  This tries all the expansions
+after point and then the expansions before point.
+</P><P>
+
+  After you have expanded a dynamic abbrev, you can copy additional
+words that follow the expansion in its original context.  Simply type
+<KBD><KBD>SPC</KBD> M-/</KBD> for each word you want to copy.  The spacing and
+punctuation between words is copied along with the words.
+</P><P>
+
+  The command <KBD>C-M-/</KBD> (<CODE>dabbrev-completion</CODE>) performs
+completion of a dynamic abbreviation.  Instead of trying the possible
+expansions one by one, it finds all of them, then inserts the text that
+they have in common.  If they have nothing in common, <KBD>C-M-/</KBD>
+displays a list of completions, from which you can select a choice in
+the usual manner.  See section <A HREF="emacs_8.html#SEC34">E.3 Completion</A>.
+</P><P>
+
+  Dynamic abbrev expansion is completely independent of Abbrev mode; the
+expansion of a word with <KBD>M-/</KBD> is completely independent of whether
+it has a definition as an ordinary abbrev.
+</P><P>
+
+<A NAME="Dabbrev Customization"></A>
+<HR SIZE="6">
+<A NAME="SEC357"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC356"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> X.7 Customizing Dynamic Abbreviation </H2>
+<!--docid::SEC357::-->
+<P>
+
+  Normally, dynamic abbrev expansion ignores case when searching for
+expansions.  That is, the expansion need not agree in case with the word
+you are expanding.
+</P><P>
+
+<A NAME="IDX1767"></A>
+  This feature is controlled by the variable
+<CODE>dabbrev-case-fold-search</CODE>.  If it is <CODE>t</CODE>, case is ignored in
+this search; if it is <CODE>nil</CODE>, the word and the expansion must match
+in case.  If the value of <CODE>dabbrev-case-fold-search</CODE> is
+<CODE>case-fold-search</CODE>, which is true by default, then the variable
+<CODE>case-fold-search</CODE> controls whether to ignore case while searching
+for expansions.
+</P><P>
+
+<A NAME="IDX1768"></A>
+  Normally, dynamic abbrev expansion preserves the case pattern <EM>of
+the abbrev you have typed</EM>, by converting the expansion to that case
+pattern.
+</P><P>
+
+<A NAME="IDX1769"></A>
+  The variable <CODE>dabbrev-case-replace</CODE> controls whether to preserve
+the case pattern of the abbrev.  If it is <CODE>t</CODE>, the abbrev's case
+pattern is preserved in most cases; if it is <CODE>nil</CODE>, the expansion is
+always copied verbatim.  If the value of <CODE>dabbrev-case-replace</CODE> is
+<CODE>case-replace</CODE>, which is true by default, then the variable
+<CODE>case-replace</CODE> controls whether to copy the expansion verbatim.
+</P><P>
+
+  However, if the expansion contains a complex mixed case pattern, and
+the abbrev matches this pattern as far as it goes, then the expansion is
+always copied verbatim, regardless of those variables.  Thus, for
+example, if the buffer contains <CODE>variableWithSillyCasePattern</CODE>, and
+you type <KBD>v a M-/</KBD>, it copies the expansion verbatim including its
+case pattern.
+</P><P>
+
+<A NAME="IDX1770"></A>
+  The variable <CODE>dabbrev-abbrev-char-regexp</CODE>, if non-<CODE>nil</CODE>,
+controls which characters are considered part of a word, for dynamic expansion
+purposes.  The regular expression must match just one character, never
+two or more.  The same regular expression also determines which
+characters are part of an expansion.  The value <CODE>nil</CODE> has a special
+meaning: abbreviations are made of word characters, but expansions are
+made of word and symbol characters.
+</P><P>
+
+<A NAME="IDX1771"></A>
+  In shell scripts and makefiles, a variable name is sometimes prefixed
+with <SAMP>`$'</SAMP> and sometimes not.  Major modes for this kind of text can
+customize dynamic abbreviation to handle optional prefixes by setting
+the variable <CODE>dabbrev-abbrev-skip-leading-regexp</CODE>.  Its value
+should be a regular expression that matches the optional prefix that
+dynamic abbreviation should ignore.
+<A NAME="Picture"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_28.html#SEC358"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

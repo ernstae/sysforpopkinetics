@@ -1,0 +1,40 @@
+<html><head>
+<title>Covariance::setCovIndPar</title>
+<meta name="description" id="description" content="Covariance::setCovIndPar">
+<meta name="keywords" id="keywords" content=" setcovindpar Set Current Individual Parameter "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="covariance_setcovindpar.htm" target="_top">section</a>, <a href="covariance_setcovindpar_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Sets the current value for the full individual parameter 
+vector equal to <i>indParNew</i>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If this covariance matrix only depends on a subset of the 
+elements in the full individual parameter vector, then 
+this function only sets the values for that subset.
+
+<br>
+<br>
+<b><big><a name="Note" id="Note">Note</a></big></b>
+<br>
+This function should never be called by the <code><font color="blue">Covariance</font></code> 
+member functions, neither directly nor indirectly. 
+The reason for this is that the <code><font color="blue">Covariance</font></code> member 
+functions must not modify the state of the <code><font color="blue">Covariance</font></code> 
+objects.
+
+
+<hr>Input File: ../../spk/Covariance.cpp
+
+</body>
+</html>

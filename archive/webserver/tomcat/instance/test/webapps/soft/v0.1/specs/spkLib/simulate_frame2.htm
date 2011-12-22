@@ -1,0 +1,454 @@
+<html><head><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head><body>
+<div align='right'><a href="simulate.htm" target="_top">this</a></div>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+
+  </i>
+  </center><code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></code>
+  <b><big><a name="Description">Description</a></big></b>
+<br>
+Generates a set of measurements and a set of random effects for the user 
+  based on <i>model</i> -- a user model which is derived from SpkModel -- 
+  given a vector of fixed effects <i>alp</i> and a set of measurements 
+  taken for each subject, <i>N</i>. 
+
+  <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></code>
+
+  The simulated measurements and random effects are controlled by the parameter
+  <i>alp</i>.  Once the fixed effects for the model are set, <i>simulate</i> 
+  then generates random effects from the distribution
+
+  <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;b[i]&nbsp;~&nbsp;N(0,&nbsp;D(alp)&nbsp;)<br>
+<br>
+&nbsp;&nbsp;</span></code>
+
+  where D(alp) is the model's D function, evaluating on the fixed effects in <i>alp</i>.
+
+
+  <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></code>
+  The model's f(<i>alp</i>, b[i]) and R(<i>alp</i>, b[i]) functions are then
+  called for each individual <i>i</i> to simulate the measurement means and the
+  noise in the measurements, respectively.
+
+  <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></code>
+
+  The set of data created are placed in the matrix <i>yOut</i>.  The random
+  effects for all subjects are placed in the matrix <i>bAllOut</i>.  The input values
+  of the matrices <i>yOut</i> and <i>bAllOut</i> do not matter, as they
+  will be changed and any previous information stored in them will be overwritten.
+  In addition, the variation of the random effects is bounded above by <i>bUp</i> and
+  bounded below by <i>bLow</i>.
+
+  <br>
+<br>
+<b><big><a name="Assumptions">Assumptions</a></big></b>
+<br>
+The same number of random effects act on each subject.
+
+  <br>
+<br>
+<b><big><a name="Notation">Notation</a></big></b>
+<br>
+If A is a <code><font color="blue">DoubleMatrix</font></code> we use A[i] to denote the ith element of A.  Unless noted
+  otherwise, the indexing begins at zero.
+
+  <br>
+<br>
+<b><big><a name="Arguments">Arguments</a></big></b>
+
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  A user implementation of the <code><font color="blue">SpkModel</font></code> class that is dependent on
+  all <i>alp</i>, <i>b</i> and <i>i</i>.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>alp</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  The <code><font color="blue">valarray&lt;double&gt;</font></code> <i>alp</i> contains the 
+  <a href="glossary_frame1.htm#Population Notation" target="frame1"><i><span style='white-space: nowrap'>fixed&nbsp;effects</span></i></a>
+ for the simulation.  The measurements
+  and the random effects will be simulated from these fixed effects as described above. 
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>N</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  The <code><font color="blue">valarray&lt;int&gt;</font></code> <i>N</i> contains the number of measurements
+  taken for each subject, i.e., N[i] is the number of measurements taken for
+  the ith subject and indexing begins at 1 instead of zero.  
+  The number of measurements must be positive.  <i>N</i> 
+  is assumed to be an <i>M</i> by <i>1</i> matrix, where <i>M</i> is 
+  the number of subjects.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>bLow</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  The <code><font color="blue">valarray&lt;double&gt;</font></code> <i>bLow</i> contains the lower bounds on the
+  variation of the random effects for all subjects, i.e., bLow[i] is 
+  the lower bound on the variation of the ith random effects.  Generally, <i>bLow</i>
+  is negative, as random effects have mean zero.  <i>bLow</i> is 
+  assumed to be a <i>Q</i> by <i>1</i> matrix, where <i>Q</i> is the 
+  number of random effects.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>bUp</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  The <code><font color="blue">valarray&lt;double&gt;</font></code> <i>bUp</i> contains the upper bounds on the
+  variation of the random effects for all subjects, i.e., bUp[i] is 
+  the upper bound on the variation of the ith random effects.  Generally, <i>bUp</i>
+  is positive, as random effects have mean zero.  <i>bUp</i> is 
+  assumed to be a <i>Q</i> by <i>1</i> matrix, where <i>Q</i> is the 
+  number of random effects.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>yOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  Simulated data for each subject is placed in the <code><font color="blue">valarray&lt;double&gt;</font></code> 
+  <i>yOut</i>.  The input size of <i>yOut</i> must be sized to the total number of measurements 
+  prior to the call.  <i>yOut</i> is a column vector; the first <i>N[0]</i>
+  elements correspond to the data for the 1st individual, the next <i>N[1]</i>
+  elements correspond to the data for the 2nd individual, etc.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>bAllOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  The random effects for all of the subjects is placed in the<code><font color="blue">valarray&lt;double&gt;</font></code> 
+  <i>bAllOut</i>.  The input size of <i>bAllOut</i> must be sized to
+  the resulting size, which is <i>Q</i> by <i>M</i>. Any data that was present in 
+  <i>bAllOut</i> will be overwritten.  The ith column of <i>bAllOut</i> corresponds 
+  to the random effects for the ith individual.  If any of the random effects 
+  are above the upper bound or below the lower bound, they will be set at 
+  the upper bound or the lower bound, respectively.  
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>seed</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  The default value of <i>seed</i> is random.  The user can pass an 
+  <code><font color="blue">integer</font></code> if a different starting seed value for the random number 
+  generators is desired.
+
+
+  <br>
+<br>
+<b><big><a name="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program,
+  <code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;//&nbsp;In&nbsp;the&nbsp;following&nbsp;example,&nbsp;simulate()&nbsp;takes&nbsp;in&nbsp;parameters&nbsp;and&nbsp;calculates<br>
+&nbsp;&nbsp;//&nbsp;yOut&nbsp;and&nbsp;bAllOut.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&lt;spk/SpkValarray.h&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&lt;spk/identity.h&gt;<br>
+<br>
+&nbsp;&nbsp;#include&nbsp;&lt;spk/simulate.h&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&lt;spk/randNormal.h&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&lt;spk/allZero.h&gt;<br>
+<br>
+&nbsp;&nbsp;using&nbsp;std::string;<br>
+<br>
+&nbsp;&nbsp;class&nbsp;PopModel&nbsp;:&nbsp;public&nbsp;SpkModel<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;_a,&nbsp;_b;<br>
+&nbsp;&nbsp;int&nbsp;_i;<br>
+&nbsp;&nbsp;const&nbsp;int&nbsp;nAlp,&nbsp;nB,&nbsp;nY;<br>
+<br>
+&nbsp;&nbsp;public:<br>
+&nbsp;&nbsp;PopModel(&nbsp;int&nbsp;nAlpIn,&nbsp;int&nbsp;nBIn,&nbsp;int&nbsp;nYIn&nbsp;)<br>
+&nbsp;&nbsp;:&nbsp;nAlp(nAlpIn),&nbsp;nB(nBIn),&nbsp;nY(nYIn)<br>
+&nbsp;&nbsp;{}<br>
+&nbsp;&nbsp;~PopModel(){}<br>
+&nbsp;&nbsp;protected:<br>
+&nbsp;&nbsp;void&nbsp;doSelectIndividual(int&nbsp;i)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;_i&nbsp;=&nbsp;i;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;void&nbsp;doSetPopPar(const&nbsp;valarray&lt;double&gt;&amp;&nbsp;alp)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;_a&nbsp;=&nbsp;alp;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;void&nbsp;doSetIndPar(const&nbsp;valarray&lt;double&gt;&amp;&nbsp;b)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;_b&nbsp;=&nbsp;b;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;void&nbsp;doDataMean(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;fiOut&nbsp;)&nbsp;const&nbsp;<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;Calculates<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f(alp,&nbsp;b)&nbsp;=&nbsp;|&nbsp;&nbsp;alp(1)&nbsp;+&nbsp;b(1)&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;fiOut&nbsp;=&nbsp;_a[0]&nbsp;+&nbsp;_b[0];<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;bool&nbsp;doDataMean_popPar(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;fi_alpOut&nbsp;)&nbsp;const&nbsp;<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;Calculates<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_alp(alp,&nbsp;b)&nbsp;=&nbsp;|&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;fi_alpOut[0]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;fi_alpOut[1]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;bool&nbsp;doDataMean_indPar(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;fi_bOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;Calculates<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_b(alp,&nbsp;b)&nbsp;=&nbsp;|&nbsp;&nbsp;1&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;fi_bOut&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;void&nbsp;doDataVariance(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;RiOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;Calculates<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R(alp,&nbsp;b)&nbsp;=&nbsp;|&nbsp;&nbsp;1&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;RiOut&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;bool&nbsp;doDataVariance_popPar(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;Ri_alpOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;Calculates<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_alp(alp,&nbsp;b)&nbsp;=&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;Ri_alpOut&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;bool&nbsp;doDataVariance_indPar(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;Ri_bOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;Calculates<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_b(alp,&nbsp;b)&nbsp;=&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;Ri_bOut&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;return&nbsp;false;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;void&nbsp;doIndParVariance(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;DOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;Calculates<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D(alp)&nbsp;=&nbsp;|&nbsp;&nbsp;alp(2)&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;DOut&nbsp;=&nbsp;_a[1];<br>
+&nbsp;&nbsp;return&nbsp;(_a[1]!=0?&nbsp;true&nbsp;:&nbsp;false&nbsp;);<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;bool&nbsp;doIndParVariance_popPar(&nbsp;valarray&lt;double&gt;&nbsp;&amp;&nbsp;D_alpOut&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;Calculates<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D_alp(alp)&nbsp;=&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;D_alpOut[0]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;D_alpOut[1]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;return&nbsp;true;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;};<br>
+<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;Function:&nbsp;main<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//--------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Preliminaries.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;that&nbsp;define&nbsp;the&nbsp;problem.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;Mean&nbsp;and&nbsp;variance&nbsp;of&nbsp;the&nbsp;true&nbsp;transfer&nbsp;rate,&nbsp;betaTrue.<br>
+&nbsp;&nbsp;double&nbsp;meanBetaTrue&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;double&nbsp;varBetaTrue&nbsp;&nbsp;=&nbsp;5.0;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;Number&nbsp;of&nbsp;individuals.<br>
+&nbsp;&nbsp;int&nbsp;nInd&nbsp;=&nbsp;10;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;data&nbsp;vector,&nbsp;y.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;Number&nbsp;of&nbsp;measurements.<br>
+&nbsp;&nbsp;int&nbsp;nY&nbsp;=&nbsp;nInd&nbsp;*&nbsp;1;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;Size&nbsp;of&nbsp;alp&nbsp;vector<br>
+&nbsp;&nbsp;int&nbsp;nAlp&nbsp;=&nbsp;2;<br>
+<br>
+&nbsp;&nbsp;//&nbsp;size&nbsp;of&nbsp;b&nbsp;vector<br>
+&nbsp;&nbsp;int&nbsp;nB&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;Measurement&nbsp;values,&nbsp;y.<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;y(&nbsp;nY&nbsp;);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;Number&nbsp;of&nbsp;measurements&nbsp;for&nbsp;each&nbsp;individual.&nbsp;<br>
+&nbsp;&nbsp;valarray&lt;int&gt;&nbsp;N(&nbsp;1,&nbsp;nInd&nbsp;);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;Mean,&nbsp;variance,&nbsp;and&nbsp;standard&nbsp;deviation&nbsp;of&nbsp;eTrue&nbsp;and&nbsp;bTrue.<br>
+&nbsp;&nbsp;double&nbsp;meanETrue&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;double&nbsp;varETrue&nbsp;&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;double&nbsp;sdETrue&nbsp;&nbsp;&nbsp;=&nbsp;sqrt(&nbsp;varETrue&nbsp;);<br>
+&nbsp;&nbsp;double&nbsp;meanBTrue&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;double&nbsp;varBTrue&nbsp;&nbsp;=&nbsp;varBetaTrue;<br>
+&nbsp;&nbsp;double&nbsp;sdBTrue&nbsp;&nbsp;&nbsp;=&nbsp;sqrt(&nbsp;varBTrue&nbsp;);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;bTrue(nInd);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;fixed&nbsp;population&nbsp;parameter,&nbsp;alp.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;alpTrue(&nbsp;nAlp&nbsp;);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;Set&nbsp;the&nbsp;values&nbsp;associated&nbsp;with&nbsp;alp(1).<br>
+&nbsp;&nbsp;alpTrue[&nbsp;0&nbsp;]&nbsp;=&nbsp;meanBetaTrue;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//&nbsp;Set&nbsp;the&nbsp;values&nbsp;associated&nbsp;with&nbsp;alp(2).<br>
+&nbsp;&nbsp;alpTrue[&nbsp;1&nbsp;]&nbsp;=&nbsp;varBetaTrue;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;random&nbsp;population&nbsp;parameters,&nbsp;b.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;bLow&nbsp;(&nbsp;-1.5e+1,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;bUp&nbsp;&nbsp;(&nbsp;+1.5e+1,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;user-provided&nbsp;model.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;PopModel&nbsp;model(&nbsp;nAlp,&nbsp;nB,&nbsp;nY/nInd&nbsp;);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Simulate&nbsp;measurements&nbsp;for&nbsp;each&nbsp;individual.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;simulate(model,&nbsp;alpTrue,&nbsp;N,&nbsp;bLow,&nbsp;bUp,&nbsp;y,&nbsp;bTrue,&nbsp;1);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Print&nbsp;the&nbsp;results.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;yOut:&quot;&nbsp;&lt;&lt;&nbsp;y&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;bAllOut:&quot;&nbsp;&lt;&lt;&nbsp;bTrue&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;The&nbsp;mean&nbsp;of&nbsp;the&nbsp;random&nbsp;effects&nbsp;in&nbsp;this&nbsp;example&nbsp;converges&nbsp;to&nbsp;0.<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;mean&nbsp;=&nbsp;calcMean(bTrue,&nbsp;nB);<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;mean&nbsp;of&nbsp;bAllOut:&quot;&nbsp;&lt;&lt;&nbsp;mean&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;//&nbsp;The&nbsp;covariance&nbsp;of&nbsp;the&nbsp;random&nbsp;effects&nbsp;in&nbsp;this&nbsp;example&nbsp;converges&nbsp;to&nbsp;D(alp).<br>
+&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;Matrix&nbsp;Cov&nbsp;=&nbsp;sampleCovariance(bTrue,&nbsp;nInd);<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;covariance&nbsp;of&nbsp;bAllOut:&quot;&nbsp;&lt;&lt;&nbsp;Cov&nbsp;&lt;&lt;&nbsp;&nbsp;endl;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;}<br>
+<br>
+</span>
+</font></code>
+the matrices
+  <code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;<i>yOut</i>:<br>
+&nbsp;&nbsp;[&nbsp;1.99088&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;-2.83752&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;3.47354&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;-1.60409&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;-1.90355&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;0.750448&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;4.56466&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;1.50014&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;0.698962&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;4.66475&nbsp;]<br>
+<br>
+&nbsp;&nbsp;<i>bAllOut</i>:<br>
+&nbsp;&nbsp;[&nbsp;-0.58122&nbsp;-1.62934&nbsp;2.00363&nbsp;-1.63388&nbsp;-2.42738&nbsp;-0.869417&nbsp;2.60903&nbsp;1.37082&nbsp;-1.87685&nbsp;2.80124&nbsp;]<br>
+<br>
+&nbsp;&nbsp;<i>mean</i>&nbsp;<i>of</i>&nbsp;<i>bAllOut</i>:<br>
+&nbsp;&nbsp;[&nbsp;-0.0233364&nbsp;]<br>
+<br>
+&nbsp;&nbsp;<i>covariance</i>&nbsp;<i>of</i>&nbsp;<i>bAllOut</i>:<br>
+&nbsp;&nbsp;[&nbsp;4.04166&nbsp;]<br>
+<br>
+&nbsp;&nbsp;</span></code>
+  will be printed.
+
+  
+<hr>Input File: ../../lib/src/simulate.cpp
+
+</body>
+</html>

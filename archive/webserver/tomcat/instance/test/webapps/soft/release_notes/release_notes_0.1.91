@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.91
+----------------------------------
+USER VISIBLE CHANGES
+When statistics fails, the job's status code has been changed to
+"Statistics Fail" from "Software Error" and there will be no bug
+reports automatically generated and sent to the Bugzilla when this
+problem occurs.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: August 25, 2005

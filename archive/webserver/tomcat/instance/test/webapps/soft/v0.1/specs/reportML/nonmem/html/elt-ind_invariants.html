@@ -1,0 +1,16 @@
+<html><body><p><a href=dtd-overview.html>Overview</a> <a href=dtd-tree.html>Tree</a> <a href=dtd-index.html>Index</a> <a href=dtd-notations.html>Notations</a> <a href=dtd-entities.html>Entities</a> </p><h1>Element &lt;ind_invariants&gt;</h1><p>A string containing the table of all individuals' invariants: i.e. ETA and its residuals.</p><p>
+Each row is separated by a new line, and contains a comma (,) separated list of values.
+The first row contains the list of invariant names.
+The second row contains the values of the invariants.
+    <pre>
+    &lt;ind_invariants&gt;
+    ID,ETA(1),ETA(2),
+    ETARES(1),ETARES(2),WETARES(1),WETARES(2),
+    IETARES(1),IETARES(2),IWETARES(1),IWETARES(2),
+    PETARES(1),PETARES(2),PWETARES(1),PWETARES(2)
+    1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    2,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    3,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+    &lt/ind_invariants&gt;
+    </pre>
+</p><h2>Attributes</h2><dl><dt>columns REQUIRED </dt><dd><p>The number of columns including the leading ID column: i.e. #of invariants plus one for ID.  </p></dd><dt>rows REQUIRED </dt><dd><p>The number of rows including the header: i.e. #of individuals plus one for the header  </p></dd></dl><h2>Content</h2><p>(#PCDATA)</p><h2>Parents</h2><p><a href=elt-presentation_data.html>presentation_data</a> </p></body></html>

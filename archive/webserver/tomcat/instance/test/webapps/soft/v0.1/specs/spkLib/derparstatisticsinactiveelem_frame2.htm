@@ -1,0 +1,199 @@
+<html><head><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head><body>
+<div align='right'><a href="derparstatisticsinactiveelem.htm" target="_top">this</a></div>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description">Description</a></big></b>
+<br>
+This function calculates statistics for a parameter vector z(x) that
+is derived from another parameter vector x with a known covariance
+matrix.
+The statistics for z(x) that can be calculated are its standard error
+vector, correlation matrix, coefficient of variation vector, and
+confidence interval vector.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The covariance matrix for the derived parameter is calculated as
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;<i>T</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>Cov</i>[&nbsp;<i>z</i>(<i>x</i>)&nbsp;]&nbsp;&nbsp;=&nbsp;&nbsp;|&nbsp;&nbsp;<i>d</i>&nbsp;&nbsp;&nbsp;<i>z</i>(<i>x</i>)&nbsp;&nbsp;|&nbsp;&nbsp;<i>Cov</i>[&nbsp;<i>x</i>&nbsp;]&nbsp;&nbsp;|&nbsp;&nbsp;<i>d</i>&nbsp;&nbsp;&nbsp;<i>z</i>(<i>x</i>)&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<i>x</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<i>x</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;<br>
+<br>
+</span></code>The standard error vector is calculated by taking the square roots 
+of the diagonal elements of this covariance matrix.
+The correlation matrix is calculated by dividing each element of 
+the covariance matrix by the standard errors that correspond to its 
+row and column.
+The coefficients of variation are calculated as
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>CV</i>&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;|&nbsp;<i>z</i>(<i>x</i>)&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;*&nbsp;100&nbsp;&nbsp;&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)<br>
+<br>
+</span></code>where CV is the coefficient of variation and SE is the standard error.  
+The 95% confidence intervals are calculated as
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;<i>z</i>(<i>x</i>)&nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;<i>t</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;,&nbsp;&nbsp;<i>z</i>(<i>x</i>)&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;&nbsp;<i>t</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;<i>SE</i>&nbsp;&nbsp;&nbsp;&nbsp;)&nbsp;,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>i</i>)<br>
+<br>
+</span></code>where
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>t</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0.025,&nbsp;<i>degFree</i><br>
+<br>
+</span></code>is the critical value for the <code><span style='white-space: nowrap'><i>t</i></span></code> distribution with 
+<code><span style='white-space: nowrap'><i>degFree</i></span></code> number of degrees of freedom for which the 
+area under the <code><span style='white-space: nowrap'><i>t</i></span></code> curve is <code><span style='white-space: nowrap'>1&nbsp;-&nbsp;0.025</span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>This function assumes that x and z(x) have the same number of
+elements, n.
+
+<br>
+<br>
+<b><big><a name="Return Value">Return Value</a></big></b>
+<br>
+Upon a successful completion, the function sets the given output
+value place holders to point to the result values.
+  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If an error is detected or failure occurs during the evaluation, an
+SpkException object will be thrown.  
+The state after an exception is thrown is defined in 
+<a href="glossary_frame1.htm#Exception Handling Policy" target="frame1"><i><span style='white-space: nowrap'>Exception&nbsp;Handling&nbsp;Policy</span></i></a>
+.
+
+<br>
+<br>
+<b><big><a name="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>mask</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><code><font color="blue">mask</font></code> is a vector of boolean values of length equal to the parameter
+vector, <code><font color="blue">popPar</font></code>.  <code><font color="blue">mask[i]</font></code> tells as to whether <code><font color="blue">popPar[i]</font></code>
+is active or not.  If <code><span style='white-space: nowrap'><i>mask</i>[<i>i</i>]</span></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>, the i-th element of
+the parameter vector are treated as if it does not exist and further 
+statistics computations are performed based upon the assumption.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>xCov</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is an n * n dimensional vector that contains the covariance matrix for
+x in column major order.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>z</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is the n dimensional parameter vector z(x) that is derived from the
+parameter vector x.  
+Note that the number of elements in z specifies n.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>z_x</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is an n * n dimensional vector that contains the derivative with
+respect to x of the derived variable z(x) in column major order.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nDegFreedom</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is the number of degrees of freedom that is used to compute the
+confidence intervals.  It should be set equal to m - n, where m is the
+number of fitted data points.  The value must be greater than zero,
+although it will not be referenced at all if zCIOut is set to NULL.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>zCovOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>will point to an n * n dimensional vector containing the covariance
+matrix for the derived parameter Cov[z(x)] in column major order if
+the pointer points to an n * n valarray.
+If it points to NULL, it will remain unchanged.
+If it points to a valarray sized other than n * n, the resulting
+behavior is undetermined.
+
+The <code><span style='white-space: nowrap'>(<i>i</i>,<i>j</i>)</span></code>-the element of the covariance matrix
+will be replaced by NaN if <code><font color="blue">mask[i]</font></code> or <code><font color="blue">mask[j]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>zInvCovOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>will point to an n * n dimensional vector containing the inverse of the covariance
+matrix for the derived parameter Cov[z(x)] in column major order if
+the pointer points to an n * n valarray.
+If it points to NULL, it will remain unchanged.
+If it points to a valarray sized other than n * n, the resulting
+behavior is undetermined.
+
+The <code><span style='white-space: nowrap'>(<i>i</i>,<i>j</i>)</span></code>-the element of the inverse of the covariance matrix
+will be replaced by NaN if <code><font color="blue">mask[i]</font></code> or <code><font color="blue">mask[j]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>zSEOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>will point to an n dimensional vector containing the standard errors
+for z(x) if the pointer points to an n dimensional valarray.  
+If it points to NULL, it will remain unchanged.
+If it points to a valarray sized other than n, the resulting behavior
+is undetermined.
+
+The <code><span style='white-space: nowrap'><i>i</i></span></code>-th element of the standard error vector
+will be replaced by NaN if <code><font color="blue">mask[i]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>zCorOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>will point to an n * n dimensional vector containing the correlation
+matrix for the derived parameter Cor[z(x)] in column major order if
+the pointer points to an n * n valarray.
+If it points to NULL, it will remain unchanged.
+If it points to a valarray sized other than n * n, the resulting
+behavior is undetermined.
+
+The <code><span style='white-space: nowrap'>(<i>i</i>,&nbsp;<i>j</i>)</span></code>-th element of the correlation matrix
+will be replaced by NaN if <code><font color="blue">mask[i]</font></code> or <code><font color="blue">mask[j]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>zCVOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>will point to an n dimensional vector containing the coefficients of variation
+for z(x) if the pointer points to an n dimensional valarray.  
+If it points to NULL, it will remain unchanged.
+If it points to a valarray sized other than n, the resulting behavior
+is undetermined.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The <code><span style='white-space: nowrap'><i>i</i></span></code>-th element of the coefficient vector
+will be replaced by NaN if <code><font color="blue">mask[i]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>zCIOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>will point to an n * 2 dimensional vector containing the 95%
+confidence intervals if the pointer points to an n * 2 dimensional
+valarray.
+The first n elements are the lower bounds for the intervals, 
+while the last n elements are the upper bounds.
+If it points to NULL, it will remain unchanged.
+If it points to a valarray sized other than n * 2, the resulting
+behavior is undetermined.
+
+The <code><span style='white-space: nowrap'>(<i>i</i>,1)</span></code> and <code><span style='white-space: nowrap'>(<i>i</i>,2)</span></code> elements of the confidence interval matrix
+will be replaced by NaN if <code><font color="blue">mask[i]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+
+
+<hr>Input File: ../../lib/src/derParStatistics.cpp
+
+</body>
+</html>

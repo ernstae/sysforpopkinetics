@@ -1,0 +1,1073 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Basic</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Basic">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Basic">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC19"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_6.html#SEC18"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC20"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_6.html#SEC18"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> D. Basic Editing Commands </H1>
+<!--docid::SEC19::-->
+<P>
+
+<A NAME="IDX31"></A>
+<A NAME="IDX32"></A>
+  We now give the basics of how to enter text, make corrections, and
+save the text in a file.  If this material is new to you, you might
+learn it more easily by running the Emacs learn-by-doing tutorial.  To
+use the tutorial, run Emacs and type <KBD>Control-h t</KBD>
+(<CODE>help-with-tutorial</CODE>).
+</P><P>
+
+  To clear the screen and redisplay, type <KBD>C-l</KBD> (<CODE>recenter</CODE>).
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+</TABLE>
+
+<br>
+<TABLE BORDER=0 CELLSPACING=0>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_7.html#SEC20">D.1 Inserting Text</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Inserting text by simply typing it.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_7.html#SEC21">D.2 Changing the Location of Point</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to move the cursor to the place where you want to
+			  change something.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_7.html#SEC22">D.3 Erasing Text</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Deleting and killing text.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_7.html#SEC23">D.4 Undoing Changes</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Undoing recent changes in the text.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_7.html#SEC24">D.5 Files</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Visiting, creating, and saving files.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_7.html#SEC25">D.6 Help</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Asking what a character does.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_7.html#SEC26">D.7 Blank Lines</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Commands to make or delete blank lines.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_7.html#SEC27">D.8 Continuation Lines</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Lines too wide for the screen.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_7.html#SEC28">D.9 Cursor Position Information</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">What page, line, row, or column is point on?</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_7.html#SEC29">D.10 Numeric Arguments</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Numeric arguments for repeating a command.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_7.html#SEC30">D.11 Repeating a Command</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">A short-cut for repeating the previous command.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Inserting Text"></A>
+<HR SIZE="6">
+<A NAME="SEC20"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC21"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> D.1 Inserting Text </H2>
+<!--docid::SEC20::-->
+<P>
+
+<A NAME="IDX33"></A>
+<A NAME="IDX34"></A>
+  To insert printing characters into the text you are editing, just type
+them.  This inserts the characters you type into the buffer at the
+cursor (that is, at <EM>point</EM>; see section <A HREF="emacs_5.html#SEC9">B.1 Point</A>).  The cursor moves
+forward, and any text after the cursor moves forward too.  If the text
+in the buffer is <SAMP>`FOOBAR'</SAMP>, with the cursor before the <SAMP>`B'</SAMP>,
+then if you type <KBD>XX</KBD>, you get <SAMP>`FOOXXBAR'</SAMP>, with the cursor
+still before the <SAMP>`B'</SAMP>.
+</P><P>
+
+   To <EM>delete</EM> text you have just inserted, use the large key
+labeled <KBD>DEL</KBD>, <KBD>BACKSPACE</KBD> or <KBD>DELETE</KBD> which is a short
+distance above the <KBD>RET</KBD> or <KBD>ENTER</KBD> key.  This is the key you
+normally use, outside Emacs, for erasing the last character that you
+typed.  Regardless of the label on that key, Emacs thinks of it as
+<KBD>DEL</KBD>, and that's what we call it in this manual.
+</P><P>
+
+  The <KBD>DEL</KBD> key deletes the character <EM>before</EM> the cursor.
+As a consequence, the cursor and all the characters after it move
+backwards.  If you type a printing character and then type <KBD>DEL</KBD>,
+they cancel out.
+</P><P>
+
+  On most computers, Emacs recognizes automatically which key ought to
+be <KBD>DEL</KBD>, and sets it up that way.  But in some cases, especially
+with text-only terminals, you will need to tell Emacs which key to use
+for that purpose.  If the large key not far above the <KBD>RET</KBD> or
+<KBD>ENTER</KBD> key doesn't delete backwards, you need to do this.
+See section <A HREF="emacs_33.html#SEC512">AD.9.1 If <KBD>DEL</KBD> Fails to Delete</A>, for an explanation of how.
+</P><P>
+
+  Most PC keyboards have both a <KBD>BACKSPACE</KBD> key a short ways above
+<KBD>RET</KBD> or <KBD>ENTER</KBD>, and a <KBD>DELETE</KBD> key elsewhere.  On these
+keyboards, Emacs supports when possible the usual convention that the
+<KBD>BACKSPACE</KBD> key deletes backwards (it is <KBD>DEL</KBD>), while the
+<KBD>DELETE</KBD> key deletes "forwards," deleting the character after
+point, the one underneath the cursor, like <KBD>C-d</KBD> (see below).
+</P><P>
+
+<A NAME="IDX35"></A>
+<A NAME="IDX36"></A>
+   To end a line and start typing a new one, type <KBD>RET</KBD>.  This
+inserts a newline character in the buffer.  If point is in the middle of
+a line, <KBD>RET</KBD> splits the line.  Typing <KBD>DEL</KBD> when the cursor is
+at the beginning of a line deletes the preceding newline, thus joining
+the line with the preceding line.
+</P><P>
+
+  Emacs can split lines automatically when they become too long, if you
+turn on a special minor mode called <EM>Auto Fill</EM> mode.
+See section <A HREF="emacs_23.html#SEC238">T.5 Filling Text</A>, for how to use Auto Fill mode.
+</P><P>
+
+  If you prefer to have text characters replace (overwrite) existing
+text rather than shove it to the right, you can enable Overwrite mode,
+a minor mode.  See section <A HREF="emacs_33.html#SEC476">AD.1 Minor Modes</A>.
+</P><P>
+
+<A NAME="IDX37"></A>
+<A NAME="IDX38"></A>
+<A NAME="IDX39"></A>
+  Direct insertion works for printing characters and <KBD>SPC</KBD>, but other
+characters act as editing commands and do not insert themselves.  If you
+need to insert a control character or a character whose code is above 200
+octal, you must <EM>quote</EM> it by typing the character <KBD>Control-q</KBD>
+(<CODE>quoted-insert</CODE>) first.  (This character's name is normally written
+<KBD>C-q</KBD> for short.)  There are two ways to use <KBD>C-q</KBD>:</P><P>
+
+<UL>
+<LI>
+<KBD>C-q</KBD> followed by any non-graphic character (even <KBD>C-g</KBD>)
+inserts that character.
+<P>
+
+<LI>
+<KBD>C-q</KBD> followed by a sequence of octal digits inserts the character
+with the specified octal character code.  You can use any number of
+octal digits; any non-digit terminates the sequence.  If the
+terminating character is <KBD>RET</KBD>, it serves only to terminate the
+sequence.  Any other non-digit terminates the sequence and then acts
+as normal input--thus, <KBD>C-q 1 0 1 B</KBD> inserts <SAMP>`AB'</SAMP>.
+<P>
+
+The use of octal sequences is disabled in ordinary non-binary
+Overwrite mode, to give you a convenient way to insert a digit instead
+of overwriting with it.
+</UL>
+<P>
+
+<A NAME="IDX40"></A>
+When multibyte characters are enabled, if you specify a code in the
+range 0200 through 0377 octal, <KBD>C-q</KBD> assumes that you intend to
+use some ISO 8859-<VAR>n</VAR> character set, and converts the specified
+code to the corresponding Emacs character code.  See section <A HREF="emacs_20.html#SEC215">Q.2 Enabling Multibyte Characters</A>.  You select <EM>which</EM> of the ISO 8859 character sets to
+use through your choice of language environment (see section <A HREF="emacs_20.html#SEC216">Q.3 Language Environments</A>).
+</P><P>
+
+<A NAME="IDX41"></A>
+To use decimal or hexadecimal instead of octal, set the variable
+<CODE>read-quoted-char-radix</CODE> to 10 or 16.  If the radix is greater than
+10, some letters starting with <KBD>a</KBD> serve as part of a character
+code, just like digits.
+</P><P>
+
+A numeric argument to <KBD>C-q</KBD> specifies how many copies of the
+quoted character should be inserted (see section <A HREF="emacs_7.html#SEC29">D.10 Numeric Arguments</A>).
+</P><P>
+
+<A NAME="IDX42"></A>
+<A NAME="IDX43"></A>
+  Customization information: <KBD>DEL</KBD> in most modes runs the command
+<CODE>delete-backward-char</CODE>; <KBD>RET</KBD> runs the command <CODE>newline</CODE>, and
+self-inserting printing characters run the command <CODE>self-insert</CODE>,
+which inserts whatever character was typed to invoke it.  Some major modes
+rebind <KBD>DEL</KBD> to other commands.
+</P><P>
+
+<A NAME="Moving Point"></A>
+<HR SIZE="6">
+<A NAME="SEC21"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC20"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC22"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC22"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> D.2 Changing the Location of Point </H2>
+<!--docid::SEC21::-->
+<P>
+
+<A NAME="IDX44"></A>
+<A NAME="IDX45"></A>
+<A NAME="IDX46"></A>
+<A NAME="IDX47"></A>
+<A NAME="IDX48"></A>
+  To do more than insert characters, you have to know how to move point
+(see section <A HREF="emacs_5.html#SEC9">B.1 Point</A>).  The simplest way to do this is with arrow keys, or by
+clicking the left mouse button where you want to move to.
+</P><P>
+
+  There are also control and meta characters for cursor motion.  Some
+are equivalent to the arrow keys (these date back to the days before
+terminals had arrow keys, and are usable on terminals which don't have
+them).  Others do more sophisticated things.
+</P><P>
+
+<A NAME="IDX49"></A>
+<A NAME="IDX50"></A>
+<A NAME="IDX51"></A>
+<A NAME="IDX52"></A>
+<A NAME="IDX53"></A>
+<A NAME="IDX54"></A>
+<A NAME="IDX55"></A>
+<A NAME="IDX56"></A>
+<A NAME="IDX57"></A>
+<A NAME="IDX58"></A>
+<A NAME="IDX59"></A>
+<A NAME="IDX60"></A>
+<A NAME="IDX61"></A>
+<A NAME="IDX62"></A>
+<A NAME="IDX63"></A>
+<A NAME="IDX64"></A>
+<A NAME="IDX65"></A>
+<A NAME="IDX66"></A>
+<A NAME="IDX67"></A>
+<A NAME="IDX68"></A>
+<A NAME="IDX69"></A>
+<A NAME="IDX70"></A>
+<A NAME="IDX71"></A>
+<A NAME="IDX72"></A>
+<DL COMPACT>
+<DT><KBD>C-a</KBD>
+<DD>Move to the beginning of the line (<CODE>beginning-of-line</CODE>).
+<DT><KBD>C-e</KBD>
+<DD>Move to the end of the line (<CODE>end-of-line</CODE>).
+<DT><KBD>C-f</KBD>
+<DD>Move forward one character (<CODE>forward-char</CODE>).  The right-arrow key
+does the same thing.
+<DT><KBD>C-b</KBD>
+<DD>Move backward one character (<CODE>backward-char</CODE>).  The left-arrow
+key has the same effect.
+<DT><KBD>M-f</KBD>
+<DD>Move forward one word (<CODE>forward-word</CODE>).
+<DT><KBD>M-b</KBD>
+<DD>Move backward one word (<CODE>backward-word</CODE>).
+<DT><KBD>C-n</KBD>
+<DD>Move down one line, vertically (<CODE>next-line</CODE>).  This command
+attempts to keep the horizontal position unchanged, so if you start in
+the middle of one line, you end in the middle of the next.  The
+down-arrow key does the same thing.
+<DT><KBD>C-p</KBD>
+<DD>Move up one line, vertically (<CODE>previous-line</CODE>).  The up-arrow key
+has the same effect.
+<DT><KBD>M-r</KBD>
+<DD>Move point to left margin, vertically centered in the window
+(<CODE>move-to-window-line</CODE>).  Text does not move on the screen.
+<P>
+
+A numeric argument says which screen line to place point on.  It counts
+screen lines down from the top of the window (zero for the top line).  A
+negative argument counts lines from the bottom (-1 for the bottom
+line).
+<DT><KBD>M-&#60;</KBD>
+<DD>Move to the top of the buffer (<CODE>beginning-of-buffer</CODE>).  With
+numeric argument <VAR>n</VAR>, move to <VAR>n</VAR>/10 of the way from the top.
+See section <A HREF="emacs_7.html#SEC29">D.10 Numeric Arguments</A>, for more information on numeric arguments.<DT><KBD>M-&#62;</KBD>
+<DD>Move to the end of the buffer (<CODE>end-of-buffer</CODE>).
+<DT><KBD>C-v</KBD>
+<DD>Scroll the display one screen forward, and move point if necessary to put
+it on the screen (<CODE>scroll-up</CODE>).  This doesn't always
+move point, but it is commonly used to do so.
+If your keyboard has a <KBD>PAGEDOWN</KBD> key, it does the same thing.
+<P>
+
+Scrolling commands are further described in <A HREF="emacs_13.html#SEC83">J.6 Scrolling</A>.
+<DT><KBD>M-v</KBD>
+<DD>Scroll one screen backward, and move point if necessary to put it on
+the screen (<CODE>scroll-down</CODE>).  This doesn't always move point, but
+it is commonly used to do so.  The <KBD>PAGEUP</KBD> key has the same
+effect.
+<DT><KBD>M-x goto-char</KBD>
+<DD>Read a number <VAR>n</VAR> and move point to buffer position <VAR>n</VAR>.
+Position 1 is the beginning of the buffer.
+<DT><KBD>M-x goto-line</KBD>
+<DD>Read a number <VAR>n</VAR> and move point to line number <VAR>n</VAR>.  Line 1
+is the beginning of the buffer.
+<DT><KBD>C-x C-n</KBD>
+<DD><A NAME="IDX73"></A>
+<A NAME="IDX74"></A>
+Use the current column of point as the <EM>semipermanent goal column</EM> for
+<KBD>C-n</KBD> and <KBD>C-p</KBD> (<CODE>set-goal-column</CODE>).  Henceforth, those
+commands always move to this column in each line moved into, or as
+close as possible given the contents of the line.  This goal column remains
+in effect until canceled.
+<DT><KBD>C-u C-x C-n</KBD>
+<DD>Cancel the goal column.  Henceforth, <KBD>C-n</KBD> and <KBD>C-p</KBD> once
+again try to stick to a fixed horizontal position, as usual.
+</DL>
+<P>
+
+<A NAME="IDX75"></A>
+  If you set the variable <CODE>track-eol</CODE> to a non-<CODE>nil</CODE> value,
+then <KBD>C-n</KBD> and <KBD>C-p</KBD>, when starting at the end of the line, move
+to the end of another line.  Normally, <CODE>track-eol</CODE> is <CODE>nil</CODE>.
+See section <A HREF="emacs_33.html#SEC477">AD.2 Variables</A>, for how to set variables such as <CODE>track-eol</CODE>.
+</P><P>
+
+<A NAME="IDX76"></A>
+  <KBD>C-n</KBD> normally gets an error when you use it on the last line of
+the buffer (just as <KBD>C-p</KBD> gets an error on the first line).  But
+if you set the variable <CODE>next-line-add-newlines</CODE> to a
+non-<CODE>nil</CODE> value, <KBD>C-n</KBD> on the last line of a buffer creates
+an additional line at the end and moves down onto it.
+</P><P>
+
+<A NAME="Erasing"></A>
+<HR SIZE="6">
+<A NAME="SEC22"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC21"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC23"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC23"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> D.3 Erasing Text </H2>
+<!--docid::SEC22::-->
+<P>
+
+<DL COMPACT>
+<DT><KBD><KBD>DEL</KBD></KBD>
+<DD>Delete the character before point (<CODE>delete-backward-char</CODE>).
+<DT><KBD>C-d</KBD>
+<DD>Delete the character after point (<CODE>delete-char</CODE>).
+<DT><KBD><KBD>DELETE</KBD></KBD>
+<DD><DT><KBD><KBD>BACKSPACE</KBD></KBD>
+<DD>One of these keys, whichever is the large key above the <KBD>RET</KBD> or
+<KBD>ENTER</KBD> key, deletes the character before point, like <KBD>DEL</KBD>.
+If that is <KBD>BACKSPACE</KBD>, and your keyboard also has <KBD>DELETE</KBD>,
+then <KBD>DELETE</KBD> deletes forwards, like <KBD>C-d</KBD>.
+<DT><KBD>C-k</KBD>
+<DD>Kill to the end of the line (<CODE>kill-line</CODE>).
+<DT><KBD>M-d</KBD>
+<DD>Kill forward to the end of the next word (<CODE>kill-word</CODE>).
+<DT><KBD>M-<KBD>DEL</KBD></KBD>
+<DD>Kill back to the beginning of the previous word
+(<CODE>backward-kill-word</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX77"></A>
+<A NAME="IDX78"></A>
+<A NAME="IDX79"></A>
+  You already know about the <KBD>DEL</KBD> key which deletes the character
+before point (that is, before the cursor).  Another key, <KBD>Control-d</KBD>
+(<KBD>C-d</KBD> for short), deletes the character after point (that is, the
+character that the cursor is on).  This shifts the rest of the text on
+the line to the left.  If you type <KBD>C-d</KBD> at the end of a line, it
+joins together that line and the next line.
+</P><P>
+
+  To erase a larger amount of text, use the <KBD>C-k</KBD> key, which kills a
+line at a time.  If you type <KBD>C-k</KBD> at the beginning or middle of a
+line, it kills all the text up to the end of the line.  If you type
+<KBD>C-k</KBD> at the end of a line, it joins that line and the next line.
+</P><P>
+
+  See section <A HREF="emacs_11.html#SEC59">H.7 Deletion and Killing</A>, for more flexible ways of killing text.
+</P><P>
+
+<A NAME="Undo"></A>
+<HR SIZE="6">
+<A NAME="SEC23"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC22"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC24"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC24"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> D.4 Undoing Changes </H2>
+<!--docid::SEC23::-->
+<P>
+
+  You can undo all the recent changes in the buffer text, up to a
+certain point.  Each buffer records changes individually, and the undo
+command always applies to the current buffer.  Usually each editing
+command makes a separate entry in the undo records, but some commands
+such as <CODE>query-replace</CODE> make many entries, and very simple commands
+such as self-inserting characters are often grouped to make undoing less
+tedious.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-x u</KBD>
+<DD>Undo one batch of changes--usually, one command worth (<CODE>undo</CODE>).
+<DT><KBD>C-_</KBD>
+<DD>The same.
+<DT><KBD>C-u C-x u</KBD>
+<DD>Undo one batch of changes in the region.
+</DL>
+<P>
+
+<A NAME="IDX80"></A>
+<A NAME="IDX81"></A>
+<A NAME="IDX82"></A>
+  The command <KBD>C-x u</KBD> or <KBD>C-_</KBD> is how you undo.  The first time
+you give this command, it undoes the last change.  Point moves back to
+where it was before the command that made the change.
+</P><P>
+
+  Consecutive repetitions of <KBD>C-_</KBD> or <KBD>C-x u</KBD> undo earlier and
+earlier changes, back to the limit of the undo information available.
+If all recorded changes have already been undone, the undo command
+displays an error message and does nothing.
+</P><P>
+
+  Any command other than an undo command breaks the sequence of undo
+commands.  Starting from that moment, the previous undo commands become
+ordinary changes that you can undo.  Thus, to redo changes you have
+undone, type <KBD>C-f</KBD> or any other command that will harmlessly break
+the sequence of undoing, then type more undo commands.
+</P><P>
+
+<A NAME="IDX83"></A>
+<A NAME="IDX84"></A>
+  Ordinary undo applies to all changes made in the current buffer.  You
+can also perform <EM>selective undo</EM>, limited to the current region.
+To do this, specify the region you want, then run the <CODE>undo</CODE>
+command with a prefix argument (the value does not matter): <KBD>C-u C-x
+u</KBD> or <KBD>C-u C-_</KBD>.  This undoes the most recent change in the region.
+To undo further changes in the same region, repeat the <CODE>undo</CODE>
+command (no prefix argument is needed).  In Transient Mark mode, any use
+of <CODE>undo</CODE> when there is an active region performs selective undo;
+you do not need a prefix argument.
+</P><P>
+
+  If you notice that a buffer has been modified accidentally, the
+easiest way to recover is to type <KBD>C-_</KBD> repeatedly until the stars
+disappear from the front of the mode line.  At this time, all the
+modifications you made have been canceled.  Whenever an undo command
+makes the stars disappear from the mode line, it means that the buffer
+contents are the same as they were when the file was last read in or
+saved.
+</P><P>
+
+  If you do not remember whether you changed the buffer deliberately,
+type <KBD>C-_</KBD> once.  When you see the last change you made undone, you
+will see whether it was an intentional change.  If it was an accident,
+leave it undone.  If it was deliberate, redo the change as described
+above.
+</P><P>
+
+  Not all buffers record undo information.  Buffers whose names start with
+spaces don't; these buffers are used internally by Emacs and its extensions
+to hold text that users don't normally look at or edit.
+</P><P>
+
+  You cannot undo mere cursor motion; only changes in the buffer
+contents save undo information.  However, some cursor motion commands
+set the mark, so if you use these commands from time to time, you can
+move back to the neighborhoods you have moved through by popping the
+mark ring (see section <A HREF="emacs_11.html#SEC57">H.5 The Mark Ring</A>).
+</P><P>
+
+<A NAME="IDX85"></A>
+<A NAME="IDX86"></A>
+<A NAME="IDX87"></A>
+  When the undo information for a buffer becomes too large, Emacs
+discards the oldest undo information from time to time (during garbage
+collection).  You can specify how much undo information to keep by
+setting two variables: <CODE>undo-limit</CODE> and <CODE>undo-strong-limit</CODE>.
+Their values are expressed in units of bytes of space.
+</P><P>
+
+  The variable <CODE>undo-limit</CODE> sets a soft limit: Emacs keeps undo
+data for enough commands to reach this size, and perhaps exceed it, but
+does not keep data for any earlier commands beyond that.  Its default
+value is 20000.  The variable <CODE>undo-strong-limit</CODE> sets a stricter
+limit: the command which pushes the size past this amount is itself
+forgotten.  Its default value is 30000.
+</P><P>
+
+  Regardless of the values of those variables, the most recent change is
+never discarded, so there is no danger that garbage collection occurring
+right after an unintentional large change might prevent you from undoing
+it.
+</P><P>
+
+  The reason the <CODE>undo</CODE> command has two keys, <KBD>C-x u</KBD> and
+<KBD>C-_</KBD>, set up to run it is that it is worthy of a single-character
+key, but on some keyboards it is not obvious how to type <KBD>C-_</KBD>.
+<KBD>C-x u</KBD> is an alternative you can type straightforwardly on any
+terminal.
+</P><P>
+
+<A NAME="Basic Files"></A>
+<HR SIZE="6">
+<A NAME="SEC24"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC23"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC25"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC25"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> D.5 Files </H2>
+<!--docid::SEC24::-->
+<P>
+
+  The commands described above are sufficient for creating and altering
+text in an Emacs buffer; the more advanced Emacs commands just make
+things easier.  But to keep any text permanently you must put it in a
+<EM>file</EM>.  Files are named units of text which are stored by the
+operating system for you to retrieve later by name.  To look at or use
+the contents of a file in any way, including editing the file with
+Emacs, you must specify the file name.
+</P><P>
+
+  Consider a file named <TT>`/usr/rms/foo.c'</TT>.  In Emacs, to begin editing
+this file, type
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>C-x C-f /usr/rms/foo.c <KBD>RET</KBD>
+</pre></td></tr></table></P><P>
+
+Here the file name is given as an <EM>argument</EM> to the command <KBD>C-x
+C-f</KBD> (<CODE>find-file</CODE>).  That command uses the <EM>minibuffer</EM> to
+read the argument, and you type <KBD>RET</KBD> to terminate the argument
+(see section <A HREF="emacs_8.html#SEC31">E. The Minibuffer</A>).</P><P>
+
+  Emacs obeys the command by <EM>visiting</EM> the file: creating a buffer,
+copying the contents of the file into the buffer, and then displaying
+the buffer for you to edit.  If you alter the text, you can <EM>save</EM>
+the new text in the file by typing <KBD>C-x C-s</KBD> (<CODE>save-buffer</CODE>).
+This makes the changes permanent by copying the altered buffer contents
+back into the file <TT>`/usr/rms/foo.c'</TT>.  Until you save, the changes
+exist only inside Emacs, and the file <TT>`foo.c'</TT> is unaltered.
+</P><P>
+
+  To create a file, just visit the file with <KBD>C-x C-f</KBD> as if it
+already existed.  This creates an empty buffer in which you can insert
+the text you want to put in the file.  The file is actually created when
+you save this buffer with <KBD>C-x C-s</KBD>.
+</P><P>
+
+  Of course, there is a lot more to learn about using files.  See section <A HREF="emacs_16.html#SEC110">M. File Handling</A>.
+</P><P>
+
+<A NAME="Basic Help"></A>
+<HR SIZE="6">
+<A NAME="SEC25"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC24"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC26"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC26"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> D.6 Help </H2>
+<!--docid::SEC25::-->
+<P>
+
+<A NAME="IDX88"></A>
+  If you forget what a key does, you can find out with the Help
+character, which is <KBD>C-h</KBD> (or <KBD>F1</KBD>, which is an alias for
+<KBD>C-h</KBD>).  Type <KBD>C-h k</KBD> followed by the key you want to know
+about; for example, <KBD>C-h k C-n</KBD> tells you all about what <KBD>C-n</KBD>
+does.  <KBD>C-h</KBD> is a prefix key; <KBD>C-h k</KBD> is just one of its
+subcommands (the command <CODE>describe-key</CODE>).  The other subcommands of
+<KBD>C-h</KBD> provide different kinds of help.  Type <KBD>C-h</KBD> twice to get
+a description of all the help facilities.  See section <A HREF="emacs_10.html#SEC42">G. Help</A>.</P><P>
+
+<A NAME="Blank Lines"></A>
+<HR SIZE="6">
+<A NAME="SEC26"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC25"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC27"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC27"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> D.7 Blank Lines </H2>
+<!--docid::SEC26::-->
+<P>
+
+<A NAME="IDX89"></A>
+<A NAME="IDX90"></A>
+  Here are special commands and techniques for putting in and taking out
+blank lines.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-o</KBD>
+<DD>Insert one or more blank lines after the cursor (<CODE>open-line</CODE>).
+<DT><KBD>C-x C-o</KBD>
+<DD>Delete all but one of many consecutive blank lines
+(<CODE>delete-blank-lines</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX91"></A>
+<A NAME="IDX92"></A>
+<A NAME="IDX93"></A>
+<A NAME="IDX94"></A>
+<A NAME="IDX95"></A>
+  When you want to insert a new line of text before an existing line, you
+can do it by typing the new line of text, followed by <KBD>RET</KBD>.
+However, it may be easier to see what you are doing if you first make a
+blank line and then insert the desired text into it.  This is easy to do
+using the key <KBD>C-o</KBD> (<CODE>open-line</CODE>), which inserts a newline
+after point but leaves point in front of the newline.  After <KBD>C-o</KBD>,
+type the text for the new line.  <KBD>C-o F O O</KBD> has the same effect as
+<KBD>F O O <KBD>RET</KBD></KBD>, except for the final location of point.
+</P><P>
+
+  You can make several blank lines by typing <KBD>C-o</KBD> several times, or
+by giving it a numeric argument to tell it how many blank lines to make.
+See section <A HREF="emacs_7.html#SEC29">D.10 Numeric Arguments</A>, for how.  If you have a fill prefix, then <KBD>C-o</KBD>
+command inserts the fill prefix on the new line, when you use it at the
+beginning of a line.  See section <A HREF="emacs_23.html#SEC242">T.5.4 The Fill Prefix</A>.
+</P><P>
+
+  The easy way to get rid of extra blank lines is with the command
+<KBD>C-x C-o</KBD> (<CODE>delete-blank-lines</CODE>).  <KBD>C-x C-o</KBD> in a run of
+several blank lines deletes all but one of them.  <KBD>C-x C-o</KBD> on a
+solitary blank line deletes that blank line.  When point is on a
+nonblank line, <KBD>C-x C-o</KBD> deletes any blank lines following that
+nonblank line.
+</P><P>
+
+<A NAME="Continuation Lines"></A>
+<HR SIZE="6">
+<A NAME="SEC27"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC26"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC28"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC28"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> D.8 Continuation Lines </H2>
+<!--docid::SEC27::-->
+<P>
+
+<A NAME="IDX96"></A>
+<A NAME="IDX97"></A>
+<A NAME="IDX98"></A>
+  If you add too many characters to one line without breaking it with
+<KBD>RET</KBD>, the line grows to occupy two (or more) lines on the screen.
+On graphical displays, Emacs indicates line wrapping with small bent
+arrows in the fringes to the left and right of the window.  On
+text-only terminals, Emacs displays a <SAMP>`\'</SAMP> character at the right
+margin of a screen line if it is not the last in its text line.  This
+<SAMP>`\'</SAMP> character says that the following screen line is not really a
+distinct line in the text, just a <EM>continuation</EM> of a line too
+long to fit the screen.  Continuation is also called <EM>line
+wrapping</EM>.
+</P><P>
+
+  When line wrapping occurs before a character that is wider than one
+column, some columns at the end of the previous screen line may be
+"empty."  In this case, Emacs displays additional <SAMP>`\'</SAMP>
+characters in the "empty" columns, just before the <SAMP>`\'</SAMP>
+character that indicates continuation.
+</P><P>
+
+  Sometimes it is nice to have Emacs insert newlines automatically when
+a line gets too long.  Continuation on the screen does not do that.  Use
+Auto Fill mode (see section <A HREF="emacs_23.html#SEC238">T.5 Filling Text</A>) if that's what you want.
+</P><P>
+
+<A NAME="IDX99"></A>
+<A NAME="IDX100"></A>
+  As an alternative to continuation, Emacs can display long lines by
+<EM>truncation</EM>.  This means that all the characters that do not fit
+in the width of the screen or window do not appear at all.  They
+remain in the buffer, temporarily invisible.  On terminals, <SAMP>`$'</SAMP>
+in the last column informs you that the line has been truncated on the
+display.  On window systems, a small straight arrow in the fringe to
+the right of the window indicates a truncated line.
+</P><P>
+
+<A NAME="IDX101"></A>
+  Truncation instead of continuation happens whenever horizontal
+scrolling is in use, and optionally in all side-by-side windows
+(see section <A HREF="emacs_18.html#SEC183">O. Multiple Windows</A>).  You can enable or disable truncation for a
+particular buffer with the command <KBD>M-x toggle-truncate-lines</KBD>.
+</P><P>
+
+  See section <A HREF="emacs_13.html#SEC89">J.12 Customization of Display</A>, for additional variables that affect how text is
+displayed.
+</P><P>
+
+<A NAME="Position Info"></A>
+<HR SIZE="6">
+<A NAME="SEC28"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC27"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC29"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> D.9 Cursor Position Information </H2>
+<!--docid::SEC28::-->
+<P>
+
+  Here are commands to get information about the size and position of
+parts of the buffer, and to count lines.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-x what-page</KBD>
+<DD>Display the page number of point, and the line number within the page.
+<DT><KBD>M-x what-line</KBD>
+<DD>Display the line number of point in the buffer.
+<DT><KBD>M-x line-number-mode</KBD>
+<DD><DT><KBD>M-x column-number-mode</KBD>
+<DD>Toggle automatic display of current line number or column number.
+See section <A HREF="emacs_13.html#SEC87">J.10 Optional Mode Line Features</A>.
+<DT><KBD>M-=</KBD>
+<DD>Display the number of lines in the current region (<CODE>count-lines-region</CODE>).
+See section <A HREF="emacs_11.html#SEC52">H. The Mark and the Region</A>, for information about the region.
+<DT><KBD>C-x =</KBD>
+<DD>Display the character code of character after point, character position of
+point, and column of point (<CODE>what-cursor-position</CODE>).
+<DT><KBD>M-x hl-line-mode</KBD>
+<DD>Enable or disable highlighting of the current line.  See section <A HREF="emacs_13.html#SEC90">J.13 Displaying the Cursor</A>.
+</DL>
+<P>
+
+<A NAME="IDX102"></A>
+<A NAME="IDX103"></A>
+<A NAME="IDX104"></A>
+<A NAME="IDX105"></A>
+<A NAME="IDX106"></A>
+<A NAME="IDX107"></A>
+  There are two commands for working with line numbers.  <KBD>M-x
+what-line</KBD> computes the current line number and displays it in the echo
+area.  To go to a given line by number, use <KBD>M-x goto-line</KBD>; it
+prompts you for the number.  These line numbers count from one at the
+beginning of the buffer.
+</P><P>
+
+  You can also see the current line number in the mode line; see <A HREF="emacs_5.html#SEC11">B.3 The Mode Line</A>.  If you narrow the buffer, then the line number in the mode line
+is relative to the accessible portion (see section <A HREF="emacs_32.html#SEC462">AC.22 Narrowing</A>).  By contrast,
+<CODE>what-line</CODE> shows both the line number relative to the narrowed
+region and the line number relative to the whole buffer.
+</P><P>
+
+  <KBD>M-x what-page</KBD> counts pages from the beginning of the file, and
+counts lines within the page, showing both numbers in the echo area.
+See section <A HREF="emacs_23.html#SEC237">T.4 Pages</A>.
+</P><P>
+
+<A NAME="IDX108"></A>
+<A NAME="IDX109"></A>
+  While on this subject, we might as well mention <KBD>M-=</KBD> (<CODE>count-lines-region</CODE>),
+which displays the number of lines in the region (see section <A HREF="emacs_11.html#SEC52">H. The Mark and the Region</A>).
+See section <A HREF="emacs_23.html#SEC237">T.4 Pages</A>, for the command <KBD>C-x l</KBD> which counts the lines in the
+current page.
+</P><P>
+
+<A NAME="IDX110"></A>
+<A NAME="IDX111"></A>
+  The command <KBD>C-x =</KBD> (<CODE>what-cursor-position</CODE>) can be used to find out
+the column that the cursor is in, and other miscellaneous information about
+point.  It displays a line in the echo area that looks like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Char: c (0143, 99, 0x63)  point=21044 of 26883(78%)  column 53 
+</FONT></pre></td></tr></table></P><P>
+
+(In fact, this is the output produced when point is before the
+<SAMP>`column'</SAMP> in the example.)
+</P><P>
+
+  The four values after <SAMP>`Char:'</SAMP> describe the character that follows
+point, first by showing it and then by giving its character code in
+octal, decimal and hex.  For a non-ASCII multibyte character, these are
+followed by <SAMP>`ext'</SAMP> and the character's representation, in hex, in
+the buffer's coding system, if that coding system encodes the character
+safely and with a single byte (see section <A HREF="emacs_20.html#SEC220">Q.7 Coding Systems</A>).  If the
+character's encoding is longer than one byte, Emacs shows <SAMP>`ext ...'</SAMP>.
+</P><P>
+
+  <SAMP>`point='</SAMP> is followed by the position of point expressed as a character
+count.  The front of the buffer counts as position 1, one character later
+as 2, and so on.  The next, larger, number is the total number of characters
+in the buffer.  Afterward in parentheses comes the position expressed as a
+percentage of the total size.
+</P><P>
+
+  <SAMP>`column'</SAMP> is followed by the horizontal position of point, in
+columns from the left edge of the window.
+</P><P>
+
+  If the buffer has been narrowed, making some of the text at the
+beginning and the end temporarily inaccessible, <KBD>C-x =</KBD> displays
+additional text describing the currently accessible range.  For example, it
+might display this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Char: C (0103, 67, 0x43)  point=252 of 889(28%) &#60;231 - 599&#62;  column 0 
+</FONT></pre></td></tr></table></P><P>
+
+where the two extra numbers give the smallest and largest character
+position that point is allowed to assume.  The characters between those
+two positions are the accessible ones.  See section <A HREF="emacs_32.html#SEC462">AC.22 Narrowing</A>.
+</P><P>
+
+  If point is at the end of the buffer (or the end of the accessible
+part), the <KBD>C-x =</KBD> output does not describe a character after
+point.  The output might look like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>point=26957 of 26956(100%)  column 0 
+</FONT></pre></td></tr></table></P><P>
+
+  <KBD>C-u C-x =</KBD> displays additional information about a character,
+in place of the buffer coordinates and column: the character set name
+and the codes that identify the character within that character set;
+ASCII characters are identified as belonging to the <CODE>ASCII</CODE>
+character set.  In addition, the full character encoding, even if it
+takes more than a single byte, is shown after <SAMP>`ext'</SAMP>.  Here's an
+example for a Latin-1 character A with a grave accent in a buffer whose
+coding system is iso-2022-7bit<A NAME="DOCF1" HREF="emacs_fot.html#FOOT1">(1)</A>:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Char: &Agrave; (04300, 2240, 0x8c0, ext ESC , A @) (latin-iso8859-1 64)
+</FONT></pre></td></tr></table></P><P>
+
+<A NAME="Arguments"></A>
+<HR SIZE="6">
+<A NAME="SEC29"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC28"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC30"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC21"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> D.10 Numeric Arguments </H2>
+<!--docid::SEC29::-->
+<P>
+
+  In mathematics and computer usage, the word <EM>argument</EM> means
+"data provided to a function or operation."  You can give any Emacs
+command a <EM>numeric argument</EM> (also called a <EM>prefix argument</EM>).
+Some commands interpret the argument as a repetition count.  For
+example, <KBD>C-f</KBD> with an argument of ten moves forward ten characters
+instead of one.  With these commands, no argument is equivalent to an
+argument of one.  Negative arguments tell most such commands to move or
+act in the opposite direction.
+</P><P>
+
+<A NAME="IDX112"></A>
+<A NAME="IDX113"></A>
+<A NAME="IDX114"></A>
+<A NAME="IDX115"></A>
+  If your terminal keyboard has a <KBD>META</KBD> key, the easiest way to
+specify a numeric argument is to type digits and/or a minus sign while
+holding down the <KBD>META</KBD> key.  For example,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>M-5 C-n
+</pre></td></tr></table></P><P>
+
+would move down five lines.  The characters <KBD>Meta-1</KBD>, <KBD>Meta-2</KBD>,
+and so on, as well as <KBD>Meta--</KBD>, do this because they are keys bound
+to commands (<CODE>digit-argument</CODE> and <CODE>negative-argument</CODE>) that
+are defined to contribute to an argument for the next command.
+<KBD>Meta--</KBD> without digits normally means -1.  Digits and
+<KBD>-</KBD> modified with Control, or Control and Meta, also specify numeric
+arguments.
+</P><P>
+
+<A NAME="IDX116"></A>
+<A NAME="IDX117"></A>
+  Another way of specifying an argument is to use the <KBD>C-u</KBD>
+(<CODE>universal-argument</CODE>) command followed by the digits of the
+argument.  With <KBD>C-u</KBD>, you can type the argument digits without
+holding down modifier keys; <KBD>C-u</KBD> works on all terminals.  To type a
+negative argument, type a minus sign after <KBD>C-u</KBD>.  Just a minus sign
+without digits normally means -1.
+</P><P>
+
+  <KBD>C-u</KBD> followed by a character which is neither a digit nor a minus
+sign has the special meaning of "multiply by four."  It multiplies the
+argument for the next command by four.  <KBD>C-u</KBD> twice multiplies it by
+sixteen.  Thus, <KBD>C-u C-u C-f</KBD> moves forward sixteen characters.  This
+is a good way to move forward "fast," since it moves about 1/5 of a line
+in the usual size screen.  Other useful combinations are <KBD>C-u C-n</KBD>,
+<KBD>C-u C-u C-n</KBD> (move down a good fraction of a screen), <KBD>C-u C-u
+C-o</KBD> (make "a lot" of blank lines), and <KBD>C-u C-k</KBD> (kill four
+lines).</P><P>
+
+  Some commands care only about whether there is an argument, and not about
+its value.  For example, the command <KBD>M-q</KBD> (<CODE>fill-paragraph</CODE>) with
+no argument fills text; with an argument, it justifies the text as well.
+(See section <A HREF="emacs_23.html#SEC238">T.5 Filling Text</A>, for more information on <KBD>M-q</KBD>.)  Plain <KBD>C-u</KBD> is a
+handy way of providing an argument for such commands.
+</P><P>
+
+  Some commands use the value of the argument as a repeat count, but do
+something peculiar when there is no argument.  For example, the command
+<KBD>C-k</KBD> (<CODE>kill-line</CODE>) with argument <VAR>n</VAR> kills <VAR>n</VAR> lines,
+including their terminating newlines.  But <KBD>C-k</KBD> with no argument is
+special: it kills the text up to the next newline, or, if point is right at
+the end of the line, it kills the newline itself.  Thus, two <KBD>C-k</KBD>
+commands with no arguments can kill a nonblank line, just like <KBD>C-k</KBD>
+with an argument of one.  (See section <A HREF="emacs_11.html#SEC59">H.7 Deletion and Killing</A>, for more information on
+<KBD>C-k</KBD>.)</P><P>
+
+  A few commands treat a plain <KBD>C-u</KBD> differently from an ordinary
+argument.  A few others may treat an argument of just a minus sign
+differently from an argument of -1.  These unusual cases are
+described when they come up; they are always for reasons of convenience
+of use of the individual command.
+</P><P>
+
+  You can use a numeric argument to insert multiple copies of a
+character.  This is straightforward unless the character is a digit; for
+example, <KBD>C-u 6 4 a</KBD> inserts 64 copies of the character <SAMP>`a'</SAMP>.
+But this does not work for inserting digits; <KBD>C-u 6 4 1</KBD> specifies
+an argument of 641, rather than inserting anything.  To separate the
+digit to insert from the argument, type another <KBD>C-u</KBD>; for example,
+<KBD>C-u 6 4 C-u 1</KBD> does insert 64 copies of the character <SAMP>`1'</SAMP>.
+</P><P>
+
+  We use the term "prefix argument" as well as "numeric argument" to
+emphasize that you type the argument before the command, and to
+distinguish these arguments from minibuffer arguments that come after
+the command.
+</P><P>
+
+<A NAME="Repeating"></A>
+<HR SIZE="6">
+<A NAME="SEC30"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC29"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC21"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC19"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> D.11 Repeating a Command </H2>
+<!--docid::SEC30::-->
+<P>
+
+  Many simple commands, such as those invoked with a single key or
+with <KBD>M-x <VAR>command-name</VAR> <KBD>RET</KBD></KBD>, can be repeated by
+invoking them with a numeric argument that serves as a repeat count
+(see section <A HREF="emacs_7.html#SEC29">D.10 Numeric Arguments</A>).  However, if the command you want to repeat
+prompts for some input, or uses a numeric argument in another way,
+repetition using a numeric argument might be problematical.
+</P><P>
+
+<A NAME="IDX118"></A>
+<A NAME="IDX119"></A>
+  The command <KBD>C-x z</KBD> (<CODE>repeat</CODE>) provides another way to repeat
+an Emacs command many times.  This command repeats the previous Emacs
+command, whatever that was.  Repeating a command uses the same arguments
+that were used before; it does not read new arguments each time.
+</P><P>
+
+  To repeat the command more than once, type additional <KBD>z</KBD>'s: each
+<KBD>z</KBD> repeats the command one more time.  Repetition ends when you
+type a character other than <KBD>z</KBD>, or press a mouse button.
+</P><P>
+
+  For example, suppose you type <KBD>C-u 2 0 C-d</KBD> to delete 20
+characters.  You can repeat that command (including its argument) three
+additional times, to delete a total of 80 characters, by typing <KBD>C-x
+z z z</KBD>.  The first <KBD>C-x z</KBD> repeats the command once, and each
+subsequent <KBD>z</KBD> repeats it once again.
+</P><P>
+
+<A NAME="Minibuffer"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_7.html#SEC21"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

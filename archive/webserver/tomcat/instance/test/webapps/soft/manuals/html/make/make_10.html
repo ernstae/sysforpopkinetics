@@ -1,0 +1,1837 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<!-- Created on December, 25  2002 by texi2html 1.65 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU make: Implicit Rules</TITLE>
+
+<META NAME="description" CONTENT="GNU make: Implicit Rules">
+<META NAME="keywords" CONTENT="GNU make: Implicit Rules">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.65">
+
+</HEAD>
+
+<BODY LANG="en" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC103"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_9.html#SEC102"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC104"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_9.html#SEC95"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_11.html#SEC118"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> 10. Using Implicit Rules </H1>
+<!--docid::SEC103::-->
+<P>
+
+Certain standard ways of remaking target files are used very often.  For
+example, one customary way to make an object file is from a C source file
+using the C compiler, <CODE>cc</CODE>.
+</P><P>
+
+<EM>Implicit rules</EM> tell <CODE>make</CODE> how to use customary techniques so
+that you do not have to specify them in detail when you want to use
+them.  For example, there is an implicit rule for C compilation.  File
+names determine which implicit rules are run.  For example, C
+compilation typically takes a `<TT>.c</TT>' file and makes a `<TT>.o</TT>' file.
+So <CODE>make</CODE> applies the implicit rule for C compilation when it sees
+this combination of file name endings.</P><P>
+
+A chain of implicit rules can apply in sequence; for example, <CODE>make</CODE>
+will remake a `<TT>.o</TT>' file from a `<TT>.y</TT>' file by way of a `<TT>.c</TT>' file.
+</P><P>
+
+The built-in implicit rules use several variables in their commands so
+that, by changing the values of the variables, you can change the way the
+implicit rule works.  For example, the variable <CODE>CFLAGS</CODE> controls the
+flags given to the C compiler by the implicit rule for C compilation.
+</P><P>
+
+You can define your own implicit rules by writing <EM>pattern rules</EM>.
+</P><P>
+
+<EM>Suffix rules</EM> are a more limited way to define implicit rules.
+Pattern rules are more general and clearer, but suffix rules are
+retained for compatibility.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_10.html#SEC104">10.1 Using Implicit Rules</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to use an existing implicit rule
+                                  to get the commands for updating a file.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_10.html#SEC105">10.2 Catalogue of Implicit Rules</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">A list of built-in implicit rules.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_10.html#SEC106">10.3 Variables Used by Implicit Rules</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to change what predefined rules do.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_10.html#SEC107">10.4 Chains of Implicit Rules</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to use a chain of implicit rules.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_10.html#SEC108">10.5 Defining and Redefining Pattern Rules</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to define new implicit rules.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_10.html#SEC115">10.6 Defining Last-Resort Default Rules</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to defining commands for rules
+                                  which cannot find any.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_10.html#SEC116">10.7 Old-Fashioned Suffix Rules</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">The old-fashioned style of implicit rule.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_10.html#SEC117">10.8 Implicit Rule Search Algorithm</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">The precise algorithm for applying
+                                  implicit rules.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Using Implicit"></A>
+<HR SIZE="6">
+<A NAME="SEC104"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC105"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_11.html#SEC118"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.1 Using Implicit Rules </H2>
+<!--docid::SEC104::-->
+<P>
+
+To allow <CODE>make</CODE> to find a customary method for updating a target file,
+all you have to do is refrain from specifying commands yourself.  Either
+write a rule with no command lines, or don't write a rule at all.  Then
+<CODE>make</CODE> will figure out which implicit rule to use based on which
+kind of source file exists or can be made.
+</P><P>
+
+For example, suppose the makefile looks like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>foo : foo.o bar.o
+        cc -o foo foo.o bar.o $(CFLAGS) $(LDFLAGS)
+</pre></td></tr></table></P><P>
+
+Because you mention `<TT>foo.o</TT>' but do not give a rule for it, <CODE>make</CODE>
+will automatically look for an implicit rule that tells how to update it.
+This happens whether or not the file `<TT>foo.o</TT>' currently exists.
+</P><P>
+
+If an implicit rule is found, it can supply both commands and one or
+more prerequisites (the source files).  You would want to write a rule
+for `<TT>foo.o</TT>' with no command lines if you need to specify additional
+prerequisites, such as header files, that the implicit rule cannot
+supply.
+</P><P>
+
+Each implicit rule has a target pattern and prerequisite patterns.  There may
+be many implicit rules with the same target pattern.  For example, numerous
+rules make `<SAMP>.o</SAMP>' files: one, from a `<SAMP>.c</SAMP>' file with the C compiler;
+another, from a `<SAMP>.p</SAMP>' file with the Pascal compiler; and so on.  The rule
+that actually applies is the one whose prerequisites exist or can be made.
+So, if you have a file `<TT>foo.c</TT>', <CODE>make</CODE> will run the C compiler;
+otherwise, if you have a file `<TT>foo.p</TT>', <CODE>make</CODE> will run the Pascal
+compiler; and so on.
+</P><P>
+
+Of course, when you write the makefile, you know which implicit rule you
+want <CODE>make</CODE> to use, and you know it will choose that one because you
+know which possible prerequisite files are supposed to exist.
+See section <A HREF="make_10.html#SEC105">Catalogue of Implicit Rules</A>,
+for a catalogue of all the predefined implicit rules.
+</P><P>
+
+Above, we said an implicit rule applies if the required prerequisites "exist
+or can be made".  A file "can be made" if it is mentioned explicitly in
+the makefile as a target or a prerequisite, or if an implicit rule can be
+recursively found for how to make it.  When an implicit prerequisite is the
+result of another implicit rule, we say that <EM>chaining</EM> is occurring.
+See section <A HREF="make_10.html#SEC107">Chains of Implicit Rules</A>.
+</P><P>
+
+In general, <CODE>make</CODE> searches for an implicit rule for each target, and
+for each double-colon rule, that has no commands.  A file that is mentioned
+only as a prerequisite is considered a target whose rule specifies nothing,
+so implicit rule search happens for it.  See section <A HREF="make_10.html#SEC117">Implicit Rule Search Algorithm</A>, for the
+details of how the search is done.
+</P><P>
+
+Note that explicit prerequisites do not influence implicit rule search.
+For example, consider this explicit rule:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>foo.o: foo.p
+</pre></td></tr></table></P><P>
+
+The prerequisite on `<TT>foo.p</TT>' does not necessarily mean that
+<CODE>make</CODE> will remake `<TT>foo.o</TT>' according to the implicit rule to
+make an object file, a `<TT>.o</TT>' file, from a Pascal source file, a
+`<TT>.p</TT>' file.  For example, if `<TT>foo.c</TT>' also exists, the implicit
+rule to make an object file from a C source file is used instead,
+because it appears before the Pascal rule in the list of predefined
+implicit rules (see section <A HREF="make_10.html#SEC105">Catalogue of Implicit Rules</A>).
+</P><P>
+
+If you do not want an implicit rule to be used for a target that has no
+commands, you can give that target empty commands by writing a semicolon
+(see section <A HREF="make_5.html#SEC64">Defining Empty Commands</A>).
+</P><P>
+
+<A NAME="Catalogue of Rules"></A>
+<HR SIZE="6">
+<A NAME="SEC105"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC104"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC106"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_11.html#SEC118"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.2 Catalogue of Implicit Rules </H2>
+<!--docid::SEC105::-->
+<P>
+
+Here is a catalogue of predefined implicit rules which are always
+available unless the makefile explicitly overrides or cancels them.
+See section <A HREF="make_10.html#SEC114">Canceling Implicit Rules</A>, for information on
+canceling or overriding an implicit rule.  The `<SAMP>-r</SAMP>' or
+`<SAMP>--no-builtin-rules</SAMP>' option cancels all predefined rules.
+</P><P>
+
+Not all of these rules will always be defined, even when the `<SAMP>-r</SAMP>'
+option is not given.  Many of the predefined implicit rules are
+implemented in <CODE>make</CODE> as suffix rules, so which ones will be
+defined depends on the <EM>suffix list</EM> (the list of prerequisites of
+the special target <CODE>.SUFFIXES</CODE>).  The default suffix list is:
+<CODE>.out</CODE>, <CODE>.a</CODE>, <CODE>.ln</CODE>, <CODE>.o</CODE>, <CODE>.c</CODE>, <CODE>.cc</CODE>,
+<CODE>.C</CODE>, <CODE>.p</CODE>, <CODE>.f</CODE>, <CODE>.F</CODE>, <CODE>.r</CODE>, <CODE>.y</CODE>,
+<CODE>.l</CODE>, <CODE>.s</CODE>, <CODE>.S</CODE>, <CODE>.mod</CODE>, <CODE>.sym</CODE>, <CODE>.def</CODE>,
+<CODE>.h</CODE>, <CODE>.info</CODE>, <CODE>.dvi</CODE>, <CODE>.tex</CODE>, <CODE>.texinfo</CODE>,
+<CODE>.texi</CODE>, <CODE>.txinfo</CODE>, <CODE>.w</CODE>, <CODE>.ch</CODE> <CODE>.web</CODE>,
+<CODE>.sh</CODE>, <CODE>.elc</CODE>, <CODE>.el</CODE>.  All of the implicit rules
+described below whose prerequisites have one of these suffixes are
+actually suffix rules.  If you modify the suffix list, the only
+predefined suffix rules in effect will be those named by one or two of
+the suffixes that are on the list you specify; rules whose suffixes fail
+to be on the list are disabled.  See section <A HREF="make_10.html#SEC116">Old-Fashioned Suffix Rules</A>, for full details on suffix rules.
+</P><P>
+
+<DL COMPACT>
+<DT>Compiling C programs
+<DD><A NAME="IDX441"></A>
+<A NAME="IDX442"></A>
+<A NAME="IDX443"></A>
+<A NAME="IDX444"></A>
+<A NAME="IDX445"></A>
+`<TT><VAR>n</VAR>.o</TT>' is made automatically from `<TT><VAR>n</VAR>.c</TT>' with
+a command of the form `<SAMP>$(CC) -c $(CPPFLAGS) $(CFLAGS)</SAMP>'.<P>
+
+<DT>Compiling C++ programs
+<DD><A NAME="IDX446"></A>
+<A NAME="IDX447"></A>
+<A NAME="IDX448"></A>
+<A NAME="IDX449"></A>
+`<TT><VAR>n</VAR>.o</TT>' is made automatically from `<TT><VAR>n</VAR>.cc</TT>' or
+`<TT><VAR>n</VAR>.C</TT>' with a command of the form `<SAMP>$(CXX) -c $(CPPFLAGS)
+$(CXXFLAGS)</SAMP>'.  We encourage you to use the suffix `<SAMP>.cc</SAMP>' for C++
+source files instead of `<SAMP>.C</SAMP>'.<P>
+
+<DT>Compiling Pascal programs
+<DD><A NAME="IDX450"></A>
+<A NAME="IDX451"></A>
+<A NAME="IDX452"></A>
+`<TT><VAR>n</VAR>.o</TT>' is made automatically from `<TT><VAR>n</VAR>.p</TT>'
+with the command `<SAMP>$(PC) -c $(PFLAGS)</SAMP>'.<P>
+
+<DT>Compiling Fortran and Ratfor programs
+<DD><A NAME="IDX453"></A>
+<A NAME="IDX454"></A>
+<A NAME="IDX455"></A>
+<A NAME="IDX456"></A>
+<A NAME="IDX457"></A>
+<A NAME="IDX458"></A>
+`<TT><VAR>n</VAR>.o</TT>' is made automatically from `<TT><VAR>n</VAR>.r</TT>',
+`<TT><VAR>n</VAR>.F</TT>' or `<TT><VAR>n</VAR>.f</TT>' by running the
+Fortran compiler.  The precise command used is as follows:<P>
+
+<DL COMPACT>
+<DT>`<SAMP>.f</SAMP>'
+<DD>`<SAMP>$(FC) -c $(FFLAGS)</SAMP>'.
+<DT>`<SAMP>.F</SAMP>'
+<DD>`<SAMP>$(FC) -c $(FFLAGS) $(CPPFLAGS)</SAMP>'.
+<DT>`<SAMP>.r</SAMP>'
+<DD>`<SAMP>$(FC) -c $(FFLAGS) $(RFLAGS)</SAMP>'.
+</DL>
+<P>
+
+<DT>Preprocessing Fortran and Ratfor programs
+<DD>`<TT><VAR>n</VAR>.f</TT>' is made automatically from `<TT><VAR>n</VAR>.r</TT>' or
+`<TT><VAR>n</VAR>.F</TT>'.  This rule runs just the preprocessor to convert a
+Ratfor or preprocessable Fortran program into a strict Fortran
+program.  The precise command used is as follows:<P>
+
+<DL COMPACT>
+<DT>`<SAMP>.F</SAMP>'
+<DD>`<SAMP>$(FC) -F $(CPPFLAGS) $(FFLAGS)</SAMP>'.
+<DT>`<SAMP>.r</SAMP>'
+<DD>`<SAMP>$(FC) -F $(FFLAGS) $(RFLAGS)</SAMP>'.
+</DL>
+<P>
+
+<DT>Compiling Modula-2 programs
+<DD><A NAME="IDX459"></A>
+<A NAME="IDX460"></A>
+<A NAME="IDX461"></A>
+<A NAME="IDX462"></A>
+<A NAME="IDX463"></A>
+`<TT><VAR>n</VAR>.sym</TT>' is made from `<TT><VAR>n</VAR>.def</TT>' with a command
+of the form `<SAMP>$(M2C) $(M2FLAGS) $(DEFFLAGS)</SAMP>'.  `<TT><VAR>n</VAR>.o</TT>'
+is made from `<TT><VAR>n</VAR>.mod</TT>'; the form is:
+`<SAMP>$(M2C) $(M2FLAGS) $(MODFLAGS)</SAMP>'.<P>
+
+<DT>Assembling and preprocessing assembler programs
+<DD><A NAME="IDX464"></A>
+<A NAME="IDX465"></A>
+<A NAME="IDX466"></A>
+`<TT><VAR>n</VAR>.o</TT>' is made automatically from `<TT><VAR>n</VAR>.s</TT>' by
+running the assembler, <CODE>as</CODE>.  The precise command is
+`<SAMP>$(AS) $(ASFLAGS)</SAMP>'.<P>
+
+<A NAME="IDX467"></A>
+`<TT><VAR>n</VAR>.s</TT>' is made automatically from `<TT><VAR>n</VAR>.S</TT>' by
+running the C preprocessor, <CODE>cpp</CODE>.  The precise command is
+`<SAMP>$(CPP) $(CPPFLAGS)</SAMP>'.
+</P><P>
+
+<DT>Linking a single object file
+<DD><A NAME="IDX468"></A>
+<A NAME="IDX469"></A>
+<A NAME="IDX470"></A>
+`<TT><VAR>n</VAR></TT>' is made automatically from `<TT><VAR>n</VAR>.o</TT>' by running
+the linker (usually called <CODE>ld</CODE>) via the C compiler.  The precise
+command used is `<SAMP>$(CC) $(LDFLAGS) <VAR>n</VAR>.o $(LOADLIBES) $(LDLIBS)</SAMP>'.
+<P>
+
+This rule does the right thing for a simple program with only one
+source file.  It will also do the right thing if there are multiple
+object files (presumably coming from various other source files), one
+of which has a name matching that of the executable file.  Thus,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>x: y.o z.o
+</pre></td></tr></table></P><P>
+
+when `<TT>x.c</TT>', `<TT>y.c</TT>' and `<TT>z.c</TT>' all exist will execute:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cc -c x.c -o x.o
+cc -c y.c -o y.o
+cc -c z.c -o z.o
+cc x.o y.o z.o -o x
+rm -f x.o
+rm -f y.o
+rm -f z.o
+</pre></td></tr></table></P><P>
+
+In more complicated cases, such as when there is no object file whose
+name derives from the executable file name, you must write an explicit
+command for linking.
+</P><P>
+
+Each kind of file automatically made into `<SAMP>.o</SAMP>' object files will
+be automatically linked by using the compiler (`<SAMP>$(CC)</SAMP>',
+`<SAMP>$(FC)</SAMP>' or `<SAMP>$(PC)</SAMP>'; the C compiler `<SAMP>$(CC)</SAMP>' is used to
+assemble `<SAMP>.s</SAMP>' files) without the `<SAMP>-c</SAMP>' option.  This could be
+done by using the `<SAMP>.o</SAMP>' object files as intermediates, but it is
+faster to do the compiling and linking in one step, so that's how it's
+done.</P><P>
+
+<DT>Yacc for C programs
+<DD><A NAME="IDX471"></A>
+<A NAME="IDX472"></A>
+<A NAME="IDX473"></A>
+`<TT><VAR>n</VAR>.c</TT>' is made automatically from `<TT><VAR>n</VAR>.y</TT>' by
+running Yacc with the command `<SAMP>$(YACC) $(YFLAGS)</SAMP>'.
+<P>
+
+<DT>Lex for C programs
+<DD><A NAME="IDX474"></A>
+<A NAME="IDX475"></A>
+<A NAME="IDX476"></A>
+`<TT><VAR>n</VAR>.c</TT>' is made automatically from `<TT><VAR>n</VAR>.l</TT>' by
+running Lex.  The actual command is `<SAMP>$(LEX) $(LFLAGS)</SAMP>'.
+<P>
+
+<DT>Lex for Ratfor programs
+<DD>`<TT><VAR>n</VAR>.r</TT>' is made automatically from `<TT><VAR>n</VAR>.l</TT>' by
+running Lex.  The actual command is `<SAMP>$(LEX) $(LFLAGS)</SAMP>'.
+<P>
+
+The convention of using the same suffix `<SAMP>.l</SAMP>' for all Lex files
+regardless of whether they produce C code or Ratfor code makes it
+impossible for <CODE>make</CODE> to determine automatically which of the two
+languages you are using in any particular case.  If <CODE>make</CODE> is
+called upon to remake an object file from a `<SAMP>.l</SAMP>' file, it must
+guess which compiler to use.  It will guess the C compiler, because
+that is more common.  If you are using Ratfor, make sure <CODE>make</CODE>
+knows this by mentioning `<TT><VAR>n</VAR>.r</TT>' in the makefile.  Or, if you
+are using Ratfor exclusively, with no C files, remove `<SAMP>.c</SAMP>' from
+the list of implicit rule suffixes with:</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>.SUFFIXES:
+.SUFFIXES: .o .r .f .l <small>...</small>
+</pre></td></tr></table></P><P>
+
+<DT>Making Lint Libraries from C, Yacc, or Lex programs
+<DD><A NAME="IDX477"></A>
+<A NAME="IDX478"></A>
+<A NAME="IDX479"></A>
+`<TT><VAR>n</VAR>.ln</TT>' is made from `<TT><VAR>n</VAR>.c</TT>' by running <CODE>lint</CODE>.
+The precise command is `<SAMP>$(LINT) $(LINTFLAGS) $(CPPFLAGS) -i</SAMP>'.
+The same command is used on the C code produced from
+`<TT><VAR>n</VAR>.y</TT>' or `<TT><VAR>n</VAR>.l</TT>'.<P>
+
+<DT>TeX and Web
+<DD><A NAME="IDX480"></A>
+<A NAME="IDX481"></A>
+<A NAME="IDX482"></A>
+<A NAME="IDX483"></A>
+<A NAME="IDX484"></A>
+<A NAME="IDX485"></A>
+<A NAME="IDX486"></A>
+<A NAME="IDX487"></A>
+<A NAME="IDX488"></A>
+<A NAME="IDX489"></A>
+<A NAME="IDX490"></A>
+<A NAME="IDX491"></A>
+`<TT><VAR>n</VAR>.dvi</TT>' is made from `<TT><VAR>n</VAR>.tex</TT>' with the command
+`<SAMP>$(TEX)</SAMP>'.  `<TT><VAR>n</VAR>.tex</TT>' is made from `<TT><VAR>n</VAR>.web</TT>' with
+`<SAMP>$(WEAVE)</SAMP>', or from `<TT><VAR>n</VAR>.w</TT>' (and from `<TT><VAR>n</VAR>.ch</TT>' if
+it exists or can be made) with `<SAMP>$(CWEAVE)</SAMP>'.  `<TT><VAR>n</VAR>.p</TT>' is
+made from `<TT><VAR>n</VAR>.web</TT>' with `<SAMP>$(TANGLE)</SAMP>' and `<TT><VAR>n</VAR>.c</TT>'
+is made from `<TT><VAR>n</VAR>.w</TT>' (and from `<TT><VAR>n</VAR>.ch</TT>' if it exists
+or can be made) with `<SAMP>$(CTANGLE)</SAMP>'.<P>
+
+<DT>Texinfo and Info
+<DD><A NAME="IDX492"></A>
+<A NAME="IDX493"></A>
+<A NAME="IDX494"></A>
+<A NAME="IDX495"></A>
+<A NAME="IDX496"></A>
+<A NAME="IDX497"></A>
+<A NAME="IDX498"></A>
+<A NAME="IDX499"></A>
+`<TT><VAR>n</VAR>.dvi</TT>' is made from `<TT><VAR>n</VAR>.texinfo</TT>',
+`<TT><VAR>n</VAR>.texi</TT>', or `<TT><VAR>n</VAR>.txinfo</TT>', with the command
+`<SAMP>$(TEXI2DVI) $(TEXI2DVI_FLAGS)</SAMP>'.  `<TT><VAR>n</VAR>.info</TT>' is made from
+`<TT><VAR>n</VAR>.texinfo</TT>', `<TT><VAR>n</VAR>.texi</TT>', or `<TT><VAR>n</VAR>.txinfo</TT>', with
+the command `<SAMP>$(MAKEINFO) $(MAKEINFO_FLAGS)</SAMP>'.
+<P>
+
+<DT>RCS
+<DD><A NAME="IDX500"></A>
+<A NAME="IDX501"></A>
+<A NAME="IDX502"></A>
+Any file `<TT><VAR>n</VAR></TT>' is extracted if necessary from an RCS file
+named either `<TT><VAR>n</VAR>,v</TT>' or `<TT>RCS/<VAR>n</VAR>,v</TT>'.  The precise
+command used is `<SAMP>$(CO) $(COFLAGS)</SAMP>'.  `<TT><VAR>n</VAR></TT>' will not be
+extracted from RCS if it already exists, even if the RCS file is
+newer.  The rules for RCS are terminal
+(see section <A HREF="make_10.html#SEC113">Match-Anything Pattern Rules</A>),
+so RCS files cannot be generated from another source; they must
+actually exist.<P>
+
+<DT>SCCS
+<DD><A NAME="IDX503"></A>
+<A NAME="IDX504"></A>
+<A NAME="IDX505"></A>
+Any file `<TT><VAR>n</VAR></TT>' is extracted if necessary from an SCCS file
+named either `<TT>s.<VAR>n</VAR></TT>' or `<TT>SCCS/s.<VAR>n</VAR></TT>'.  The precise
+command used is `<SAMP>$(GET) $(GFLAGS)</SAMP>'.  The rules for SCCS are
+terminal (see section <A HREF="make_10.html#SEC113">Match-Anything Pattern Rules</A>),
+so SCCS files cannot be generated from another source; they must
+actually exist.<P>
+
+<A NAME="IDX506"></A>
+For the benefit of SCCS, a file `<TT><VAR>n</VAR></TT>' is copied from
+`<TT><VAR>n</VAR>.sh</TT>' and made executable (by everyone).  This is for
+shell scripts that are checked into SCCS.  Since RCS preserves the
+execution permission of a file, you do not need to use this feature
+with RCS.</P><P>
+
+We recommend that you avoid using of SCCS.  RCS is widely held to be
+superior, and is also free.  By choosing free software in place of
+comparable (or inferior) proprietary software, you support the free
+software movement.
+</DL>
+<P>
+
+Usually, you want to change only the variables listed in the table
+above, which are documented in the following section.
+</P><P>
+
+However, the commands in built-in implicit rules actually use
+variables such as <CODE>COMPILE.c</CODE>, <CODE>LINK.p</CODE>, and
+<CODE>PREPROCESS.S</CODE>, whose values contain the commands listed above.
+</P><P>
+
+<CODE>make</CODE> follows the convention that the rule to compile a
+`<TT>.<VAR>x</VAR></TT>' source file uses the variable <CODE>COMPILE.<VAR>x</VAR></CODE>.
+Similarly, the rule to produce an executable from a `<TT>.<VAR>x</VAR></TT>'
+file uses <CODE>LINK.<VAR>x</VAR></CODE>; and the rule to preprocess a
+`<TT>.<VAR>x</VAR></TT>' file uses <CODE>PREPROCESS.<VAR>x</VAR></CODE>.
+</P><P>
+
+<A NAME="IDX507"></A>
+Every rule that produces an object file uses the variable
+<CODE>OUTPUT_OPTION</CODE>.  <CODE>make</CODE> defines this variable either to
+contain `<SAMP>-o $@</SAMP>', or to be empty, depending on a compile-time
+option.  You need the `<SAMP>-o</SAMP>' option to ensure that the output goes
+into the right file when the source file is in a different directory,
+as when using <CODE>VPATH</CODE> (see section <A HREF="make_4.html#SEC34">4.5 Searching Directories for Prerequisites</A>).  However,
+compilers on some systems do not accept a `<SAMP>-o</SAMP>' switch for object
+files.  If you use such a system, and use <CODE>VPATH</CODE>, some
+compilations will put their output in the wrong place.
+A possible workaround for this problem is to give <CODE>OUTPUT_OPTION</CODE>
+the value `<SAMP>; mv $*.o $@</SAMP>'.
+</P><P>
+
+<A NAME="Implicit Variables"></A>
+<HR SIZE="6">
+<A NAME="SEC106"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC105"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC107"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_11.html#SEC118"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.3 Variables Used by Implicit Rules </H2>
+<!--docid::SEC106::-->
+<P>
+
+The commands in built-in implicit rules make liberal use of certain
+predefined variables.  You can alter these variables in the makefile,
+with arguments to <CODE>make</CODE>, or in the environment to alter how the
+implicit rules work without redefining the rules themselves.  You can
+cancel all variables used by implicit rules with the `<SAMP>-R</SAMP>' or
+`<SAMP>--no-builtin-variables</SAMP>' option.
+</P><P>
+
+For example, the command used to compile a C source file actually says
+`<SAMP>$(CC) -c $(CFLAGS) $(CPPFLAGS)</SAMP>'.  The default values of the variables
+used are `<SAMP>cc</SAMP>' and nothing, resulting in the command `<SAMP>cc -c</SAMP>'.  By
+redefining `<SAMP>CC</SAMP>' to `<SAMP>ncc</SAMP>', you could cause `<SAMP>ncc</SAMP>' to be
+used for all C compilations performed by the implicit rule.  By redefining
+`<SAMP>CFLAGS</SAMP>' to be `<SAMP>-g</SAMP>', you could pass the `<SAMP>-g</SAMP>' option to
+each compilation.  <EM>All</EM> implicit rules that do C compilation use
+`<SAMP>$(CC)</SAMP>' to get the program name for the compiler and <EM>all</EM>
+include `<SAMP>$(CFLAGS)</SAMP>' among the arguments given to the compiler.</P><P>
+
+The variables used in implicit rules fall into two classes: those that are
+names of programs (like <CODE>CC</CODE>) and those that contain arguments for the
+programs (like <CODE>CFLAGS</CODE>).  (The "name of a program" may also contain
+some command arguments, but it must start with an actual executable program
+name.)  If a variable value contains more than one argument, separate them
+with spaces.
+</P><P>
+
+Here is a table of variables used as names of programs in built-in rules:
+</P><P>
+
+<DL COMPACT>
+<DT><CODE>AR</CODE>
+<DD><A NAME="IDX508"></A>
+Archive-maintaining program; default `<SAMP>ar</SAMP>'.
+<A NAME="IDX509"></A>
+<P>
+
+<DT><CODE>AS</CODE>
+<DD><A NAME="IDX510"></A>
+Program for doing assembly; default `<SAMP>as</SAMP>'.
+<A NAME="IDX511"></A>
+<P>
+
+<DT><CODE>CC</CODE>
+<DD><A NAME="IDX512"></A>
+Program for compiling C programs; default `<SAMP>cc</SAMP>'.
+<A NAME="IDX513"></A>
+<P>
+
+<DT><CODE>CXX</CODE>
+<DD><A NAME="IDX514"></A>
+Program for compiling C++ programs; default `<SAMP>g++</SAMP>'.
+<A NAME="IDX515"></A>
+<P>
+
+<DT><CODE>CO</CODE>
+<DD><A NAME="IDX516"></A>
+Program for extracting a file from RCS; default `<SAMP>co</SAMP>'.
+<A NAME="IDX517"></A>
+<P>
+
+<DT><CODE>CPP</CODE>
+<DD><A NAME="IDX518"></A>
+Program for running the C preprocessor, with results to standard output;
+default `<SAMP>$(CC) -E</SAMP>'.
+<P>
+
+<DT><CODE>FC</CODE>
+<DD><A NAME="IDX519"></A>
+Program for compiling or preprocessing Fortran and Ratfor programs;
+default `<SAMP>f77</SAMP>'.
+<A NAME="IDX520"></A>
+<P>
+
+<DT><CODE>GET</CODE>
+<DD><A NAME="IDX521"></A>
+Program for extracting a file from SCCS; default `<SAMP>get</SAMP>'.
+<A NAME="IDX522"></A>
+<P>
+
+<DT><CODE>LEX</CODE>
+<DD><A NAME="IDX523"></A>
+Program to use to turn Lex grammars into C programs or Ratfor programs;
+default `<SAMP>lex</SAMP>'.
+<A NAME="IDX524"></A>
+<P>
+
+<DT><CODE>PC</CODE>
+<DD><A NAME="IDX525"></A>
+Program for compiling Pascal programs; default `<SAMP>pc</SAMP>'.
+<A NAME="IDX526"></A>
+<P>
+
+<DT><CODE>YACC</CODE>
+<DD><A NAME="IDX527"></A>
+Program to use to turn Yacc grammars into C programs; default `<SAMP>yacc</SAMP>'.
+<A NAME="IDX528"></A>
+<P>
+
+<DT><CODE>YACCR</CODE>
+<DD><A NAME="IDX529"></A>
+Program to use to turn Yacc grammars into Ratfor
+programs; default `<SAMP>yacc -r</SAMP>'.
+<P>
+
+<DT><CODE>MAKEINFO</CODE>
+<DD><A NAME="IDX530"></A>
+Program to convert a Texinfo source file into an Info file; default
+`<SAMP>makeinfo</SAMP>'.
+<A NAME="IDX531"></A>
+<P>
+
+<DT><CODE>TEX</CODE>
+<DD><A NAME="IDX532"></A>
+Program to make TeX DVI files from TeX source;
+default `<SAMP>tex</SAMP>'.
+<A NAME="IDX533"></A>
+<P>
+
+<DT><CODE>TEXI2DVI</CODE>
+<DD><A NAME="IDX534"></A>
+Program to make TeX DVI files from Texinfo source;
+default `<SAMP>texi2dvi</SAMP>'.
+<A NAME="IDX535"></A>
+<P>
+
+<DT><CODE>WEAVE</CODE>
+<DD><A NAME="IDX536"></A>
+Program to translate Web into TeX; default `<SAMP>weave</SAMP>'.
+<A NAME="IDX537"></A>
+<P>
+
+<DT><CODE>CWEAVE</CODE>
+<DD><A NAME="IDX538"></A>
+Program to translate C Web into TeX; default `<SAMP>cweave</SAMP>'.
+<A NAME="IDX539"></A>
+<P>
+
+<DT><CODE>TANGLE</CODE>
+<DD><A NAME="IDX540"></A>
+Program to translate Web into Pascal; default `<SAMP>tangle</SAMP>'.
+<A NAME="IDX541"></A>
+<P>
+
+<DT><CODE>CTANGLE</CODE>
+<DD><A NAME="IDX542"></A>
+Program to translate C Web into C; default `<SAMP>ctangle</SAMP>'.
+<A NAME="IDX543"></A>
+<P>
+
+<DT><CODE>RM</CODE>
+<DD><A NAME="IDX544"></A>
+Command to remove a file; default `<SAMP>rm -f</SAMP>'.
+<A NAME="IDX545"></A>
+</DL>
+<P>
+
+Here is a table of variables whose values are additional arguments for the
+programs above.  The default values for all of these is the empty
+string, unless otherwise noted.
+</P><P>
+
+<DL COMPACT>
+<DT><CODE>ARFLAGS</CODE>
+<DD><A NAME="IDX546"></A>
+Flags to give the archive-maintaining program; default `<SAMP>rv</SAMP>'.
+<P>
+
+<DT><CODE>ASFLAGS</CODE>
+<DD><A NAME="IDX547"></A>
+Extra flags to give to the assembler (when explicitly
+invoked on a `<SAMP>.s</SAMP>' or `<SAMP>.S</SAMP>' file).
+<P>
+
+<DT><CODE>CFLAGS</CODE>
+<DD><A NAME="IDX548"></A>
+Extra flags to give to the C compiler.
+<P>
+
+<DT><CODE>CXXFLAGS</CODE>
+<DD><A NAME="IDX549"></A>
+Extra flags to give to the C++ compiler.
+<P>
+
+<DT><CODE>COFLAGS</CODE>
+<DD><A NAME="IDX550"></A>
+Extra flags to give to the RCS <CODE>co</CODE> program.
+<P>
+
+<DT><CODE>CPPFLAGS</CODE>
+<DD><A NAME="IDX551"></A>
+Extra flags to give to the C preprocessor and programs
+that use it (the C and Fortran compilers).
+<P>
+
+<DT><CODE>FFLAGS</CODE>
+<DD><A NAME="IDX552"></A>
+Extra flags to give to the Fortran compiler.
+<P>
+
+<DT><CODE>GFLAGS</CODE>
+<DD><A NAME="IDX553"></A>
+Extra flags to give to the SCCS <CODE>get</CODE> program.
+<P>
+
+<DT><CODE>LDFLAGS</CODE>
+<DD><A NAME="IDX554"></A>
+Extra flags to give to compilers when they are
+supposed to invoke the linker, `<SAMP>ld</SAMP>'.
+<P>
+
+<DT><CODE>LFLAGS</CODE>
+<DD><A NAME="IDX555"></A>
+Extra flags to give to Lex.
+<P>
+
+<DT><CODE>PFLAGS</CODE>
+<DD><A NAME="IDX556"></A>
+Extra flags to give to the Pascal compiler.
+<P>
+
+<DT><CODE>RFLAGS</CODE>
+<DD><A NAME="IDX557"></A>
+Extra flags to give to the Fortran compiler for Ratfor programs.
+<P>
+
+<DT><CODE>YFLAGS</CODE>
+<DD><A NAME="IDX558"></A>
+Extra flags to give to Yacc.
+</DL>
+<P>
+
+<A NAME="Chained Rules"></A>
+<HR SIZE="6">
+<A NAME="SEC107"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC106"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC108"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_11.html#SEC118"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.4 Chains of Implicit Rules </H2>
+<!--docid::SEC107::-->
+<P>
+
+<A NAME="IDX559"></A>
+<A NAME="IDX560"></A>
+Sometimes a file can be made by a sequence of implicit rules.  For example,
+a file `<TT><VAR>n</VAR>.o</TT>' could be made from `<TT><VAR>n</VAR>.y</TT>' by running
+first Yacc and then <CODE>cc</CODE>.  Such a sequence is called a <EM>chain</EM>.
+</P><P>
+
+If the file `<TT><VAR>n</VAR>.c</TT>' exists, or is mentioned in the makefile, no
+special searching is required: <CODE>make</CODE> finds that the object file can
+be made by C compilation from `<TT><VAR>n</VAR>.c</TT>'; later on, when considering
+how to make `<TT><VAR>n</VAR>.c</TT>', the rule for running Yacc is
+used.  Ultimately both `<TT><VAR>n</VAR>.c</TT>' and `<TT><VAR>n</VAR>.o</TT>' are
+updated.</P><P>
+
+<A NAME="IDX561"></A>
+<A NAME="IDX562"></A>
+However, even if `<TT><VAR>n</VAR>.c</TT>' does not exist and is not mentioned,
+<CODE>make</CODE> knows how to envision it as the missing link between
+`<TT><VAR>n</VAR>.o</TT>' and `<TT><VAR>n</VAR>.y</TT>'!  In this case, `<TT><VAR>n</VAR>.c</TT>' is
+called an <EM>intermediate file</EM>.  Once <CODE>make</CODE> has decided to use the
+intermediate file, it is entered in the data base as if it had been
+mentioned in the makefile, along with the implicit rule that says how to
+create it.</P><P>
+
+Intermediate files are remade using their rules just like all other
+files.  But intermediate files are treated differently in two ways.
+</P><P>
+
+The first difference is what happens if the intermediate file does not
+exist.  If an ordinary file <VAR>b</VAR> does not exist, and <CODE>make</CODE>
+considers a target that depends on <VAR>b</VAR>, it invariably creates
+<VAR>b</VAR> and then updates the target from <VAR>b</VAR>.  But if <VAR>b</VAR> is an
+intermediate file, then <CODE>make</CODE> can leave well enough alone.  It
+won't bother updating <VAR>b</VAR>, or the ultimate target, unless some
+prerequisite of <VAR>b</VAR> is newer than that target or there is some other
+reason to update that target.
+</P><P>
+
+The second difference is that if <CODE>make</CODE> <EM>does</EM> create <VAR>b</VAR>
+in order to update something else, it deletes <VAR>b</VAR> later on after it
+is no longer needed.  Therefore, an intermediate file which did not
+exist before <CODE>make</CODE> also does not exist after <CODE>make</CODE>.
+<CODE>make</CODE> reports the deletion to you by printing a `<SAMP>rm -f</SAMP>'
+command showing which file it is deleting.
+</P><P>
+
+Ordinarily, a file cannot be intermediate if it is mentioned in the
+makefile as a target or prerequisite.  However, you can explicitly mark a
+file as intermediate by listing it as a prerequisite of the special target
+<CODE>.INTERMEDIATE</CODE>.  This takes effect even if the file is mentioned
+explicitly in some other way.
+</P><P>
+
+<A NAME="IDX563"></A>
+<A NAME="IDX564"></A>
+<A NAME="IDX565"></A>
+You can prevent automatic deletion of an intermediate file by marking it
+as a <EM>secondary</EM> file.  To do this, list it as a prerequisite of the
+special target <CODE>.SECONDARY</CODE>.  When a file is secondary, <CODE>make</CODE>
+will not create the file merely because it does not already exist, but
+<CODE>make</CODE> does not automatically delete the file.  Marking a file as
+secondary also marks it as intermediate.
+</P><P>
+
+You can list the target pattern of an implicit rule (such as `<SAMP>%.o</SAMP>')
+as a prerequisite of the special target <CODE>.PRECIOUS</CODE> to preserve
+intermediate files made by implicit rules whose target patterns match
+that file's name; see <A HREF="make_5.html#SEC57">5.5 Interrupting or Killing <CODE>make</CODE></A>.<A NAME="IDX566"></A>
+<A NAME="IDX567"></A>
+</P><P>
+
+A chain can involve more than two implicit rules.  For example, it is
+possible to make a file `<TT>foo</TT>' from `<TT>RCS/foo.y,v</TT>' by running RCS,
+Yacc and <CODE>cc</CODE>.  Then both `<TT>foo.y</TT>' and `<TT>foo.c</TT>' are
+intermediate files that are deleted at the end.</P><P>
+
+No single implicit rule can appear more than once in a chain.  This means
+that <CODE>make</CODE> will not even consider such a ridiculous thing as making
+`<TT>foo</TT>' from `<TT>foo.o.o</TT>' by running the linker twice.  This
+constraint has the added benefit of preventing any infinite loop in the
+search for an implicit rule chain.
+</P><P>
+
+There are some special implicit rules to optimize certain cases that would
+otherwise be handled by rule chains.  For example, making `<TT>foo</TT>' from
+`<TT>foo.c</TT>' could be handled by compiling and linking with separate
+chained rules, using `<TT>foo.o</TT>' as an intermediate file.  But what
+actually happens is that a special rule for this case does the compilation
+and linking with a single <CODE>cc</CODE> command.  The optimized rule is used in
+preference to the step-by-step chain because it comes earlier in the
+ordering of rules.
+</P><P>
+
+<A NAME="Pattern Rules"></A>
+<HR SIZE="6">
+<A NAME="SEC108"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC107"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC109"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC115"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.5 Defining and Redefining Pattern Rules </H2>
+<!--docid::SEC108::-->
+<P>
+
+You define an implicit rule by writing a <EM>pattern rule</EM>.  A pattern
+rule looks like an ordinary rule, except that its target contains the
+character `<SAMP>%</SAMP>' (exactly one of them).  The target is considered a
+pattern for matching file names; the `<SAMP>%</SAMP>' can match any nonempty
+substring, while other characters match only themselves.  The prerequisites
+likewise use `<SAMP>%</SAMP>' to show how their names relate to the target name.
+</P><P>
+
+Thus, a pattern rule `<SAMP>%.o : %.c</SAMP>' says how to make any file
+`<TT><VAR>stem</VAR>.o</TT>' from another file `<TT><VAR>stem</VAR>.c</TT>'.</P><P>
+
+Note that expansion using `<SAMP>%</SAMP>' in pattern rules occurs
+<STRONG>after</STRONG> any variable or function expansions, which take place
+when the makefile is read.  See section <A HREF="make_6.html#SEC65">How to Use Variables</A>, and <A HREF="make_8.html#SEC83">Functions for Transforming Text</A>.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_10.html#SEC109">10.5.1 Introduction to Pattern Rules</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">An introduction to pattern rules.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_10.html#SEC110">10.5.2 Pattern Rule Examples</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Examples of pattern rules.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_10.html#SEC111">10.5.3 Automatic Variables</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to use automatic variables in the
+                                  commands of implicit rules.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_10.html#SEC112">10.5.4 How Patterns Match</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How patterns match.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_10.html#SEC113">10.5.5 Match-Anything Pattern Rules</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Precautions you should take prior to
+                                  defining rules that can match any
+                                  target file whatever.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="make_10.html#SEC114">10.5.6 Canceling Implicit Rules</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to override or cancel built-in rules.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Pattern Intro"></A>
+<HR SIZE="6">
+<A NAME="SEC109"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC108"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC110"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC107"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC108"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC115"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 10.5.1 Introduction to Pattern Rules </H3>
+<!--docid::SEC109::-->
+<P>
+
+A pattern rule contains the character `<SAMP>%</SAMP>' (exactly one of them)
+in the target; otherwise, it looks exactly like an ordinary rule.  The
+target is a pattern for matching file names; the `<SAMP>%</SAMP>' matches any
+nonempty substring, while other characters match only themselves.
+<A NAME="IDX568"></A>
+<A NAME="IDX569"></A>
+</P><P>
+
+For example, `<SAMP>%.c</SAMP>' as a pattern matches any file name that ends in
+`<SAMP>.c</SAMP>'.  `<SAMP>s.%.c</SAMP>' as a pattern matches any file name that starts
+with `<SAMP>s.</SAMP>', ends in `<SAMP>.c</SAMP>' and is at least five characters long.
+(There must be at least one character to match the `<SAMP>%</SAMP>'.)  The substring
+that the `<SAMP>%</SAMP>' matches is called the <EM>stem</EM>.</P><P>
+
+`<SAMP>%</SAMP>' in a prerequisite of a pattern rule stands for the same stem
+that was matched by the `<SAMP>%</SAMP>' in the target.  In order for
+the pattern rule to apply, its target pattern must match the file name
+under consideration, and its prerequisite patterns must name files that
+exist or can be made.  These files become prerequisites of the target.
+<A NAME="IDX570"></A>
+</P><P>
+
+Thus, a rule of the form
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>%.o : %.c ; <VAR>command</VAR><small>...</small>
+</pre></td></tr></table></P><P>
+
+specifies how to make a file `<TT><VAR>n</VAR>.o</TT>', with another file
+`<TT><VAR>n</VAR>.c</TT>' as its prerequisite, provided that `<TT><VAR>n</VAR>.c</TT>'
+exists or can be made.
+</P><P>
+
+There may also be prerequisites that do not use `<SAMP>%</SAMP>'; such a prerequisite
+attaches to every file made by this pattern rule.  These unvarying
+prerequisites are useful occasionally.
+</P><P>
+
+A pattern rule need not have any prerequisites that contain `<SAMP>%</SAMP>', or
+in fact any prerequisites at all.  Such a rule is effectively a general
+wildcard.  It provides a way to make any file that matches the target
+pattern.  See section <A HREF="make_10.html#SEC115">10.6 Defining Last-Resort Default Rules</A>.
+</P><P>
+
+Pattern rules may have more than one target.  Unlike normal rules, this
+does not act as many different rules with the same prerequisites and
+commands.  If a pattern rule has multiple targets, <CODE>make</CODE> knows that
+the rule's commands are responsible for making all of the targets.  The
+commands are executed only once to make all the targets.  When searching
+for a pattern rule to match a target, the target patterns of a rule other
+than the one that matches the target in need of a rule are incidental:
+<CODE>make</CODE> worries only about giving commands and prerequisites to the file
+presently in question.  However, when this file's commands are run, the
+other targets are marked as having been updated themselves.
+<A NAME="IDX571"></A>
+<A NAME="IDX572"></A>
+</P><P>
+
+The order in which pattern rules appear in the makefile is important
+since this is the order in which they are considered.
+Of equally applicable
+rules, only the first one found is used.  The rules you write take precedence
+over those that are built in.  Note however, that a rule whose
+prerequisites actually exist or are mentioned always takes priority over a
+rule with prerequisites that must be made by chaining other implicit rules.
+<A NAME="IDX573"></A>
+<A NAME="IDX574"></A>
+</P><P>
+
+<A NAME="Pattern Examples"></A>
+<HR SIZE="6">
+<A NAME="SEC110"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC109"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC111"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC107"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC108"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC115"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 10.5.2 Pattern Rule Examples </H3>
+<!--docid::SEC110::-->
+<P>
+
+Here are some examples of pattern rules actually predefined in
+<CODE>make</CODE>.  First, the rule that compiles `<SAMP>.c</SAMP>' files into `<SAMP>.o</SAMP>'
+files:</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>%.o : %.c
+        $(CC) -c $(CFLAGS) $(CPPFLAGS) $&#60; -o $@
+</pre></td></tr></table></P><P>
+
+defines a rule that can make any file `<TT><VAR>x</VAR>.o</TT>' from
+`<TT><VAR>x</VAR>.c</TT>'.  The command uses the automatic variables `<SAMP>$@</SAMP>' and
+`<SAMP>$&#60;</SAMP>' to substitute the names of the target file and the source file
+in each case where the rule applies (see section <A HREF="make_10.html#SEC111">Automatic Variables</A>).</P><P>
+
+Here is a second built-in rule:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>% :: RCS/%,v
+        $(CO) $(COFLAGS) $&#60;
+</pre></td></tr></table></P><P>
+
+defines a rule that can make any file `<TT><VAR>x</VAR></TT>' whatsoever from a
+corresponding file `<TT><VAR>x</VAR>,v</TT>' in the subdirectory `<TT>RCS</TT>'.  Since
+the target is `<SAMP>%</SAMP>', this rule will apply to any file whatever, provided
+the appropriate prerequisite file exists.  The double colon makes the rule
+<EM>terminal</EM>, which means that its prerequisite may not be an intermediate
+file (see section <A HREF="make_10.html#SEC113">Match-Anything Pattern Rules</A>).</P><P>
+
+This pattern rule has two targets:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>%.tab.c %.tab.h: %.y
+        bison -d $&#60;
+</pre></td></tr></table></P><P>
+
+This tells <CODE>make</CODE> that the command `<SAMP>bison -d <VAR>x</VAR>.y</SAMP>' will
+make both `<TT><VAR>x</VAR>.tab.c</TT>' and `<TT><VAR>x</VAR>.tab.h</TT>'.  If the file
+`<TT>foo</TT>' depends on the files `<TT>parse.tab.o</TT>' and `<TT>scan.o</TT>'
+and the file `<TT>scan.o</TT>' depends on the file `<TT>parse.tab.h</TT>',
+when `<TT>parse.y</TT>' is changed, the command `<SAMP>bison -d parse.y</SAMP>'
+will be executed only once, and the prerequisites of both
+`<TT>parse.tab.o</TT>' and `<TT>scan.o</TT>' will be satisfied.  (Presumably
+the file `<TT>parse.tab.o</TT>' will be recompiled from `<TT>parse.tab.c</TT>'
+and the file `<TT>scan.o</TT>' from `<TT>scan.c</TT>', while `<TT>foo</TT>' is
+linked from `<TT>parse.tab.o</TT>', `<TT>scan.o</TT>', and its other
+prerequisites, and it will execute happily ever after.)</P><P>
+
+<A NAME="Automatic"></A>
+<HR SIZE="6">
+<A NAME="SEC111"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC110"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC112"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC107"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC108"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC115"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 10.5.3 Automatic Variables </H3>
+<!--docid::SEC111::-->
+<P>
+
+Suppose you are writing a pattern rule to compile a `<SAMP>.c</SAMP>' file into a
+`<SAMP>.o</SAMP>' file: how do you write the `<SAMP>cc</SAMP>' command so that it operates
+on the right source file name?  You cannot write the name in the command,
+because the name is different each time the implicit rule is applied.
+</P><P>
+
+What you do is use a special feature of <CODE>make</CODE>, the <EM>automatic
+variables</EM>.  These variables have values computed afresh for each rule that
+is executed, based on the target and prerequisites of the rule.  In this
+example, you would use `<SAMP>$@</SAMP>' for the object file name and `<SAMP>$&#60;</SAMP>'
+for the source file name.
+</P><P>
+
+Here is a table of automatic variables:
+</P><P>
+
+<DL COMPACT>
+<A NAME="IDX575"></A>
+<A NAME="IDX576"></A>
+<DT><CODE>$@</CODE>
+<DD>The file name of the target of the rule.  If the target is an archive
+member, then `<SAMP>$@</SAMP>' is the name of the archive file.  In a pattern
+rule that has multiple targets (see section <A HREF="make_10.html#SEC109">Introduction to Pattern Rules</A>), `<SAMP>$@</SAMP>' is the name of whichever target caused the
+rule's commands to be run.
+<P>
+
+<A NAME="IDX577"></A>
+<A NAME="IDX578"></A>
+<DT><CODE>$%</CODE>
+<DD>The target member name, when the target is an archive member.
+See section <A HREF="make_11.html#SEC118">11. Using <CODE>make</CODE> to Update Archive Files</A>.  For example, if the target is `<TT>foo.a(bar.o)</TT>' then
+`<SAMP>$%</SAMP>' is `<TT>bar.o</TT>' and `<SAMP>$@</SAMP>' is `<TT>foo.a</TT>'.  `<SAMP>$%</SAMP>' is
+empty when the target is not an archive member.
+<P>
+
+<A NAME="IDX579"></A>
+<A NAME="IDX580"></A>
+<DT><CODE>$&#60;</CODE>
+<DD>The name of the first prerequisite.  If the target got its commands from
+an implicit rule, this will be the first prerequisite added by the
+implicit rule (see section <A HREF="make_10.html#SEC103">10. Using Implicit Rules</A>).
+<P>
+
+<A NAME="IDX581"></A>
+<A NAME="IDX582"></A>
+<DT><CODE>$?</CODE>
+<DD>The names of all the prerequisites that are newer than the target, with
+spaces between them.  For prerequisites which are archive members, only
+the member named is used (see section <A HREF="make_11.html#SEC118">11. Using <CODE>make</CODE> to Update Archive Files</A>).
+<A NAME="IDX583"></A>
+<A NAME="IDX584"></A>
+<P>
+
+<A NAME="IDX585"></A>
+<A NAME="IDX586"></A>
+<DT><CODE>$^</CODE>
+<DD>The names of all the prerequisites, with spaces between them.  For
+prerequisites which are archive members, only the member named is used
+(see section <A HREF="make_11.html#SEC118">11. Using <CODE>make</CODE> to Update Archive Files</A>).  A target has only one prerequisite on each other file
+it depends on, no matter how many times each file is listed as a
+prerequisite.  So if you list a prerequisite more than once for a target,
+the value of <CODE>$^</CODE> contains just one copy of the name.
+<A NAME="IDX587"></A>
+<A NAME="IDX588"></A>
+<P>
+
+<A NAME="IDX589"></A>
+<A NAME="IDX590"></A>
+<DT><CODE>$+</CODE>
+<DD>This is like `<SAMP>$^</SAMP>', but prerequisites listed more than once are
+duplicated in the order they were listed in the makefile.  This is
+primarily useful for use in linking commands where it is meaningful to
+repeat library file names in a particular order.
+<P>
+
+<A NAME="IDX591"></A>
+<A NAME="IDX592"></A>
+<DT><CODE>$*</CODE>
+<DD>The stem with which an implicit rule matches (see section <A HREF="make_10.html#SEC112">How Patterns Match</A>).  If the target is `<TT>dir/a.foo.b</TT>' and the target
+pattern is `<TT>a.%.b</TT>' then the stem is `<TT>dir/foo</TT>'.  The stem is
+useful for constructing names of related files.<A NAME="IDX593"></A>
+<P>
+
+In a static pattern rule, the stem is part of the file name that matched
+the `<SAMP>%</SAMP>' in the target pattern.
+</P><P>
+
+In an explicit rule, there is no stem; so `<SAMP>$*</SAMP>' cannot be determined
+in that way.  Instead, if the target name ends with a recognized suffix
+(see section <A HREF="make_10.html#SEC116">Old-Fashioned Suffix Rules</A>), `<SAMP>$*</SAMP>' is set to
+the target name minus the suffix.  For example, if the target name is
+`<SAMP>foo.c</SAMP>', then `<SAMP>$*</SAMP>' is set to `<SAMP>foo</SAMP>', since `<SAMP>.c</SAMP>' is a
+suffix.  GNU <CODE>make</CODE> does this bizarre thing only for compatibility
+with other implementations of <CODE>make</CODE>.  You should generally avoid
+using `<SAMP>$*</SAMP>' except in implicit rules or static pattern rules.</P><P>
+
+If the target name in an explicit rule does not end with a recognized
+suffix, `<SAMP>$*</SAMP>' is set to the empty string for that rule.
+</DL>
+<P>
+
+`<SAMP>$?</SAMP>' is useful even in explicit rules when you wish to operate on only
+the prerequisites that have changed.  For example, suppose that an archive
+named `<TT>lib</TT>' is supposed to contain copies of several object files.
+This rule copies just the changed object files into the archive:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>lib: foo.o bar.o lose.o win.o
+        ar r lib $?
+</pre></td></tr></table></P><P>
+
+Of the variables listed above, four have values that are single file
+names, and three have values that are lists of file names.  These seven
+have variants that get just the file's directory name or just the file
+name within the directory.  The variant variables' names are formed by
+appending `<SAMP>D</SAMP>' or `<SAMP>F</SAMP>', respectively.  These variants are
+semi-obsolete in GNU <CODE>make</CODE> since the functions <CODE>dir</CODE> and
+<CODE>notdir</CODE> can be used to get a similar effect (see section <A HREF="make_8.html#SEC86">Functions for File Names</A>).  Note, however, that the
+`<SAMP>D</SAMP>' variants all omit the trailing slash which always appears in
+the output of the <CODE>dir</CODE> function.  Here is a table of the variants:
+</P><P>
+
+<DL COMPACT>
+<A NAME="IDX594"></A>
+<A NAME="IDX595"></A>
+<DT>`<SAMP>$(@D)</SAMP>'
+<DD>The directory part of the file name of the target, with the trailing
+slash removed.  If the value of `<SAMP>$@</SAMP>' is `<TT>dir/foo.o</TT>' then
+`<SAMP>$(@D)</SAMP>' is `<TT>dir</TT>'.  This value is `<TT>.</TT>' if `<SAMP>$@</SAMP>' does
+not contain a slash.
+<P>
+
+<A NAME="IDX596"></A>
+<A NAME="IDX597"></A>
+<DT>`<SAMP>$(@F)</SAMP>'
+<DD>The file-within-directory part of the file name of the target.  If the
+value of `<SAMP>$@</SAMP>' is `<TT>dir/foo.o</TT>' then `<SAMP>$(@F)</SAMP>' is
+`<TT>foo.o</TT>'.  `<SAMP>$(@F)</SAMP>' is equivalent to `<SAMP>$(notdir $@)</SAMP>'.
+<P>
+
+<A NAME="IDX598"></A>
+<A NAME="IDX599"></A>
+<DT>`<SAMP>$(*D)</SAMP>'
+<DD><A NAME="IDX600"></A>
+<A NAME="IDX601"></A>
+<DT>`<SAMP>$(*F)</SAMP>'
+<DD>The directory part and the file-within-directory
+part of the stem; `<TT>dir</TT>' and `<TT>foo</TT>' in this example.
+<P>
+
+<A NAME="IDX602"></A>
+<A NAME="IDX603"></A>
+<DT>`<SAMP>$(%D)</SAMP>'
+<DD><A NAME="IDX604"></A>
+<A NAME="IDX605"></A>
+<DT>`<SAMP>$(%F)</SAMP>'
+<DD>The directory part and the file-within-directory part of the target
+archive member name.  This makes sense only for archive member targets
+of the form `<TT><VAR>archive</VAR>(<VAR>member</VAR>)</TT>' and is useful only when
+<VAR>member</VAR> may contain a directory name.  (See section <A HREF="make_11.html#SEC119">Archive Members as Targets</A>.)
+<P>
+
+<A NAME="IDX606"></A>
+<A NAME="IDX607"></A>
+<DT>`<SAMP>$(&#60;D)</SAMP>'
+<DD><A NAME="IDX608"></A>
+<A NAME="IDX609"></A>
+<DT>`<SAMP>$(&#60;F)</SAMP>'
+<DD>The directory part and the file-within-directory
+part of the first prerequisite.
+<P>
+
+<A NAME="IDX610"></A>
+<A NAME="IDX611"></A>
+<DT>`<SAMP>$(^D)</SAMP>'
+<DD><A NAME="IDX612"></A>
+<A NAME="IDX613"></A>
+<DT>`<SAMP>$(^F)</SAMP>'
+<DD>Lists of the directory parts and the file-within-directory
+parts of all prerequisites.
+<P>
+
+<A NAME="IDX614"></A>
+<A NAME="IDX615"></A>
+<DT>`<SAMP>$(+D)</SAMP>'
+<DD><A NAME="IDX616"></A>
+<A NAME="IDX617"></A>
+<DT>`<SAMP>$(+F)</SAMP>'
+<DD>Lists of the directory parts and the file-within-directory
+parts of all prerequisites, including multiple instances of duplicated
+prerequisites.
+<P>
+
+<A NAME="IDX618"></A>
+<A NAME="IDX619"></A>
+<DT>`<SAMP>$(?D)</SAMP>'
+<DD><A NAME="IDX620"></A>
+<A NAME="IDX621"></A>
+<DT>`<SAMP>$(?F)</SAMP>'
+<DD>Lists of the directory parts and the file-within-directory parts of
+all prerequisites that are newer than the target.
+</DL>
+<P>
+
+Note that we use a special stylistic convention when we talk about these
+automatic variables; we write "the value of `<SAMP>$<</SAMP>'", rather than
+"the variable <CODE><</CODE>" as we would write for ordinary variables
+such as <CODE>objects</CODE> and <CODE>CFLAGS</CODE>.  We think this convention
+looks more natural in this special case.  Please do not assume it has a
+deep significance; `<SAMP>$&#60;</SAMP>' refers to the variable named <CODE>&#60;</CODE> just
+as `<SAMP>$(CFLAGS)</SAMP>' refers to the variable named <CODE>CFLAGS</CODE>.
+You could just as well use `<SAMP>$(&#60;)</SAMP>' in place of `<SAMP>$&#60;</SAMP>'.
+</P><P>
+
+<A NAME="IDX622"></A>
+<A NAME="IDX623"></A>
+<A NAME="IDX624"></A>
+<A NAME="IDX625"></A>
+GNU <CODE>make</CODE> provides support for the SysV <CODE>make</CODE> feature that
+allows special variable references <CODE>$$@</CODE>, <CODE>$$(@D)</CODE>, and
+<CODE>$$(@F)</CODE> (note the required double-"$"!) to appear with the
+<EM>prerequisites list</EM> (normal automatic variables are available
+only within a command script).  When appearing in a prerequisites
+list, these variables are expanded to the name of the target, the
+directory component of the target, and the file component of the
+target, respectively.
+</P><P>
+
+Note that these variables are available only within explicit and
+static pattern (see section <A HREF="make_4.html#SEC47">Static Pattern Rules</A>) rules;
+they have no special significance within implicit (suffix or pattern)
+rules.  Also note that while SysV <CODE>make</CODE> actually expands its
+entire prerequisite list <EM>twice</EM>, GNU <CODE>make</CODE> does not behave
+this way: instead it simply expands these special variables without
+re-expanding any other part of the prerequisites list.
+</P><P>
+
+This somewhat bizarre feature is included only to provide some
+compatibility with SysV makefiles.  In a native GNU <CODE>make</CODE> file
+there are other ways to accomplish the same results.  This feature is
+disabled if the special pseudo target <CODE>.POSIX</CODE> is defined.
+</P><P>
+
+<A NAME="Pattern Match"></A>
+<HR SIZE="6">
+<A NAME="SEC112"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC111"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC113"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC107"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC108"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC115"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 10.5.4 How Patterns Match </H3>
+<!--docid::SEC112::-->
+<P>
+
+<A NAME="IDX626"></A>
+A target pattern is composed of a `<SAMP>%</SAMP>' between a prefix and a suffix,
+either or both of which may be empty.  The pattern matches a file name only
+if the file name starts with the prefix and ends with the suffix, without
+overlap.  The text between the prefix and the suffix is called the
+<EM>stem</EM>.  Thus, when the pattern `<SAMP>%.o</SAMP>' matches the file name
+`<TT>test.o</TT>', the stem is `<SAMP>test</SAMP>'.  The pattern rule prerequisites are
+turned into actual file names by substituting the stem for the character
+`<SAMP>%</SAMP>'.  Thus, if in the same example one of the prerequisites is written
+as `<SAMP>%.c</SAMP>', it expands to `<SAMP>test.c</SAMP>'.</P><P>
+
+When the target pattern does not contain a slash (and it usually does
+not), directory names in the file names are removed from the file name
+before it is compared with the target prefix and suffix.  After the
+comparison of the file name to the target pattern, the directory
+names, along with the slash that ends them, are added on to the
+prerequisite file names generated from the pattern rule's prerequisite
+patterns and the file name. The directories are ignored only for the
+purpose of finding an implicit rule to use, not in the application of
+that rule.  Thus, `<SAMP>e%t</SAMP>' matches the file name `<TT>src/eat</TT>',
+with `<SAMP>src/a</SAMP>' as the stem.  When prerequisites are turned into file
+names, the directories from the stem are added at the front, while the
+rest of the stem is substituted for the `<SAMP>%</SAMP>'.  The stem
+`<SAMP>src/a</SAMP>' with a prerequisite pattern `<SAMP>c%r</SAMP>' gives the file name
+`<TT>src/car</TT>'.</P><P>
+
+<A NAME="Match-Anything Rules"></A>
+<HR SIZE="6">
+<A NAME="SEC113"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC112"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC114"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC107"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC108"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC115"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 10.5.5 Match-Anything Pattern Rules </H3>
+<!--docid::SEC113::-->
+<P>
+
+<A NAME="IDX627"></A>
+<A NAME="IDX628"></A>
+When a pattern rule's target is just `<SAMP>%</SAMP>', it matches any file name
+whatever.  We call these rules <EM>match-anything</EM> rules.  They are very
+useful, but it can take a lot of time for <CODE>make</CODE> to think about them,
+because it must consider every such rule for each file name listed either
+as a target or as a prerequisite.
+</P><P>
+
+Suppose the makefile mentions `<TT>foo.c</TT>'.  For this target, <CODE>make</CODE>
+would have to consider making it by linking an object file `<TT>foo.c.o</TT>',
+or by C compilation-and-linking in one step from `<TT>foo.c.c</TT>', or by
+Pascal compilation-and-linking from `<TT>foo.c.p</TT>', and many other
+possibilities.
+</P><P>
+
+We know these possibilities are ridiculous since `<TT>foo.c</TT>' is a C source
+file, not an executable.  If <CODE>make</CODE> did consider these possibilities,
+it would ultimately reject them, because files such as `<TT>foo.c.o</TT>' and
+`<TT>foo.c.p</TT>' would not exist.  But these possibilities are so
+numerous that <CODE>make</CODE> would run very slowly if it had to consider
+them.</P><P>
+
+To gain speed, we have put various constraints on the way <CODE>make</CODE>
+considers match-anything rules.  There are two different constraints that
+can be applied, and each time you define a match-anything rule you must
+choose one or the other for that rule.
+</P><P>
+
+One choice is to mark the match-anything rule as <EM>terminal</EM> by defining
+it with a double colon.  When a rule is terminal, it does not apply unless
+its prerequisites actually exist.  Prerequisites that could be made with
+other implicit rules are not good enough.  In other words, no further
+chaining is allowed beyond a terminal rule.
+</P><P>
+
+For example, the built-in implicit rules for extracting sources from RCS
+and SCCS files are terminal; as a result, if the file `<TT>foo.c,v</TT>' does
+not exist, <CODE>make</CODE> will not even consider trying to make it as an
+intermediate file from `<TT>foo.c,v.o</TT>' or from `<TT>RCS/SCCS/s.foo.c,v</TT>'.
+RCS and SCCS files are generally ultimate source files, which should not be
+remade from any other files; therefore, <CODE>make</CODE> can save time by not
+looking for ways to remake them.</P><P>
+
+If you do not mark the match-anything rule as terminal, then it is
+nonterminal.  A nonterminal match-anything rule cannot apply to a file name
+that indicates a specific type of data.  A file name indicates a specific
+type of data if some non-match-anything implicit rule target matches it.
+</P><P>
+
+For example, the file name `<TT>foo.c</TT>' matches the target for the pattern
+rule `<SAMP>%.c : %.y</SAMP>' (the rule to run Yacc).  Regardless of whether this
+rule is actually applicable (which happens only if there is a file
+`<TT>foo.y</TT>'), the fact that its target matches is enough to prevent
+consideration of any nonterminal match-anything rules for the file
+`<TT>foo.c</TT>'.  Thus, <CODE>make</CODE> will not even consider trying to make
+`<TT>foo.c</TT>' as an executable file from `<TT>foo.c.o</TT>', `<TT>foo.c.c</TT>',
+`<TT>foo.c.p</TT>', etc.</P><P>
+
+The motivation for this constraint is that nonterminal match-anything
+rules are used for making files containing specific types of data (such as
+executable files) and a file name with a recognized suffix indicates some
+other specific type of data (such as a C source file).
+</P><P>
+
+Special built-in dummy pattern rules are provided solely to recognize
+certain file names so that nonterminal match-anything rules will not be
+considered.  These dummy rules have no prerequisites and no commands, and
+they are ignored for all other purposes.  For example, the built-in
+implicit rule
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>%.p :
+</pre></td></tr></table></P><P>
+
+exists to make sure that Pascal source files such as `<TT>foo.p</TT>' match a
+specific target pattern and thereby prevent time from being wasted looking
+for `<TT>foo.p.o</TT>' or `<TT>foo.p.c</TT>'.
+</P><P>
+
+Dummy pattern rules such as the one for `<SAMP>%.p</SAMP>' are made for every
+suffix listed as valid for use in suffix rules (see section <A HREF="make_10.html#SEC116">Old-Fashioned Suffix Rules</A>).
+</P><P>
+
+<A NAME="Canceling Rules"></A>
+<HR SIZE="6">
+<A NAME="SEC114"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC113"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC115"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC107"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC108"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC115"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 10.5.6 Canceling Implicit Rules </H3>
+<!--docid::SEC114::-->
+<P>
+
+You can override a built-in implicit rule (or one you have defined
+yourself) by defining a new pattern rule with the same target and
+prerequisites, but different commands.  When the new rule is defined, the
+built-in one is replaced.  The new rule's position in the sequence of
+implicit rules is determined by where you write the new rule.
+</P><P>
+
+You can cancel a built-in implicit rule by defining a pattern rule with the
+same target and prerequisites, but no commands.  For example, the following
+would cancel the rule that runs the assembler:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>%.o : %.s
+</pre></td></tr></table></P><P>
+
+<A NAME="Last Resort"></A>
+<HR SIZE="6">
+<A NAME="SEC115"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC114"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC116"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC108"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_11.html#SEC118"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.6 Defining Last-Resort Default Rules </H2>
+<!--docid::SEC115::-->
+<P>
+
+You can define a last-resort implicit rule by writing a terminal
+match-anything pattern rule with no prerequisites (see section <A HREF="make_10.html#SEC113">10.5.5 Match-Anything Pattern Rules</A>).  This is just like any other pattern rule; the only thing
+special about it is that it will match any target.  So such a rule's
+commands are used for all targets and prerequisites that have no commands
+of their own and for which no other implicit rule applies.
+</P><P>
+
+For example, when testing a makefile, you might not care if the source
+files contain real data, only that they exist.  Then you might do this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>%::
+        touch $@
+</pre></td></tr></table></P><P>
+
+to cause all the source files needed (as prerequisites) to be created
+automatically.
+</P><P>
+
+<A NAME="IDX629"></A>
+You can instead define commands to be used for targets for which there
+are no rules at all, even ones which don't specify commands.  You do
+this by writing a rule for the target <CODE>.DEFAULT</CODE>.  Such a rule's
+commands are used for all prerequisites which do not appear as targets in
+any explicit rule, and for which no implicit rule applies.  Naturally,
+there is no <CODE>.DEFAULT</CODE> rule unless you write one.
+</P><P>
+
+If you use <CODE>.DEFAULT</CODE> with no commands or prerequisites:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>.DEFAULT:
+</pre></td></tr></table></P><P>
+
+the commands previously stored for <CODE>.DEFAULT</CODE> are cleared.
+Then <CODE>make</CODE> acts as if you had never defined <CODE>.DEFAULT</CODE> at all.
+</P><P>
+
+If you do not want a target to get the commands from a match-anything
+pattern rule or <CODE>.DEFAULT</CODE>, but you also do not want any commands
+to be run for the target, you can give it empty commands (see section <A HREF="make_5.html#SEC64">Defining Empty Commands</A>).</P><P>
+
+You can use a last-resort rule to override part of another makefile.
+See section <A HREF="make_3.html#SEC21">Overriding Part of Another Makefile</A>.
+</P><P>
+
+<A NAME="Suffix Rules"></A>
+<HR SIZE="6">
+<A NAME="SEC116"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC115"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC117"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_11.html#SEC118"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.7 Old-Fashioned Suffix Rules </H2>
+<!--docid::SEC116::-->
+<P>
+
+<EM>Suffix rules</EM> are the old-fashioned way of defining implicit rules for
+<CODE>make</CODE>.  Suffix rules are obsolete because pattern rules are more
+general and clearer.  They are supported in GNU <CODE>make</CODE> for
+compatibility with old makefiles.  They come in two kinds:
+<EM>double-suffix</EM> and <EM>single-suffix</EM>.</P><P>
+
+A double-suffix rule is defined by a pair of suffixes: the target suffix
+and the source suffix.  It matches any file whose name ends with the
+target suffix.  The corresponding implicit prerequisite is made by
+replacing the target suffix with the source suffix in the file name.  A
+two-suffix rule whose target and source suffixes are `<SAMP>.o</SAMP>' and
+`<SAMP>.c</SAMP>' is equivalent to the pattern rule `<SAMP>%.o : %.c</SAMP>'.
+</P><P>
+
+A single-suffix rule is defined by a single suffix, which is the source
+suffix.  It matches any file name, and the corresponding implicit
+prerequisite name is made by appending the source suffix.  A single-suffix
+rule whose source suffix is `<SAMP>.c</SAMP>' is equivalent to the pattern rule
+`<SAMP>% : %.c</SAMP>'.
+</P><P>
+
+Suffix rule definitions are recognized by comparing each rule's target
+against a defined list of known suffixes.  When <CODE>make</CODE> sees a rule
+whose target is a known suffix, this rule is considered a single-suffix
+rule.  When <CODE>make</CODE> sees a rule whose target is two known suffixes
+concatenated, this rule is taken as a double-suffix rule.
+</P><P>
+
+For example, `<SAMP>.c</SAMP>' and `<SAMP>.o</SAMP>' are both on the default list of
+known suffixes.  Therefore, if you define a rule whose target is
+`<SAMP>.c.o</SAMP>', <CODE>make</CODE> takes it to be a double-suffix rule with source
+suffix `<SAMP>.c</SAMP>' and target suffix `<SAMP>.o</SAMP>'.  Here is the old-fashioned
+way to define the rule for compiling a C source file:</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>.c.o:
+        $(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $&#60;
+</pre></td></tr></table></P><P>
+
+Suffix rules cannot have any prerequisites of their own.  If they have any,
+they are treated as normal files with funny names, not as suffix rules.
+Thus, the rule:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>.c.o: foo.h
+        $(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $&#60;
+</pre></td></tr></table></P><P>
+
+tells how to make the file `<TT>.c.o</TT>' from the prerequisite file
+`<TT>foo.h</TT>', and is not at all like the pattern rule:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>%.o: %.c foo.h
+        $(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $&#60;
+</pre></td></tr></table></P><P>
+
+which tells how to make `<SAMP>.o</SAMP>' files from `<SAMP>.c</SAMP>' files, and makes all
+`<SAMP>.o</SAMP>' files using this pattern rule also depend on `<TT>foo.h</TT>'.
+</P><P>
+
+Suffix rules with no commands are also meaningless.  They do not remove
+previous rules as do pattern rules with no commands (see section <A HREF="make_10.html#SEC114">Canceling Implicit Rules</A>).  They simply enter the suffix or pair of suffixes concatenated as
+a target in the data base.</P><P>
+
+<A NAME="IDX630"></A>
+The known suffixes are simply the names of the prerequisites of the special
+target <CODE>.SUFFIXES</CODE>.  You can add your own suffixes by writing a rule
+for <CODE>.SUFFIXES</CODE> that adds more prerequisites, as in:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>.SUFFIXES: .hack .win
+</pre></td></tr></table></P><P>
+
+which adds `<SAMP>.hack</SAMP>' and `<SAMP>.win</SAMP>' to the end of the list of suffixes.
+</P><P>
+
+If you wish to eliminate the default known suffixes instead of just adding
+to them, write a rule for <CODE>.SUFFIXES</CODE> with no prerequisites.  By
+special dispensation, this eliminates all existing prerequisites of
+<CODE>.SUFFIXES</CODE>.  You can then write another rule to add the suffixes you
+want.  For example,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>.SUFFIXES:            # Delete the default suffixes
+.SUFFIXES: .c .o .h   # Define our suffix list
+</pre></td></tr></table></P><P>
+
+The `<SAMP>-r</SAMP>' or `<SAMP>--no-builtin-rules</SAMP>' flag causes the default
+list of suffixes to be empty.
+</P><P>
+
+<A NAME="IDX631"></A>
+The variable <CODE>SUFFIXES</CODE> is defined to the default list of suffixes
+before <CODE>make</CODE> reads any makefiles.  You can change the list of suffixes
+with a rule for the special target <CODE>.SUFFIXES</CODE>, but that does not alter
+this variable.
+</P><P>
+
+<A NAME="Implicit Rule Search"></A>
+<HR SIZE="6">
+<A NAME="SEC117"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC116"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_11.html#SEC118"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_11.html#SEC118"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 10.8 Implicit Rule Search Algorithm </H2>
+<!--docid::SEC117::-->
+<P>
+
+Here is the procedure <CODE>make</CODE> uses for searching for an implicit rule
+for a target <VAR>t</VAR>.  This procedure is followed for each double-colon
+rule with no commands, for each target of ordinary rules none of which have
+commands, and for each prerequisite that is not the target of any rule.  It
+is also followed recursively for prerequisites that come from implicit
+rules, in the search for a chain of rules.
+</P><P>
+
+Suffix rules are not mentioned in this algorithm because suffix rules are
+converted to equivalent pattern rules once the makefiles have been read in.
+</P><P>
+
+For an archive member target of the form
+`<SAMP><VAR>archive</VAR>(<VAR>member</VAR>)</SAMP>', the following algorithm is run
+twice, first using the entire target name <VAR>t</VAR>, and second using
+`<SAMP>(<VAR>member</VAR>)</SAMP>' as the target <VAR>t</VAR> if the first run found no
+rule.</P><P>
+
+<OL>
+<LI>
+Split <VAR>t</VAR> into a directory part, called <VAR>d</VAR>, and the rest,
+called <VAR>n</VAR>.  For example, if <VAR>t</VAR> is `<SAMP>src/foo.o</SAMP>', then
+<VAR>d</VAR> is `<SAMP>src/</SAMP>' and <VAR>n</VAR> is `<SAMP>foo.o</SAMP>'.<P>
+
+<LI>
+Make a list of all the pattern rules one of whose targets matches
+<VAR>t</VAR> or <VAR>n</VAR>.  If the target pattern contains a slash, it is
+matched against <VAR>t</VAR>; otherwise, against <VAR>n</VAR>.
+<P>
+
+<LI>
+If any rule in that list is <EM>not</EM> a match-anything rule, then
+remove all nonterminal match-anything rules from the list.
+<P>
+
+<LI>
+Remove from the list all rules with no commands.
+<P>
+
+<LI>
+For each pattern rule in the list:
+<P>
+
+<OL>
+<LI>
+Find the stem <VAR>s</VAR>, which is the nonempty part of <VAR>t</VAR> or <VAR>n</VAR>
+matched by the `<SAMP>%</SAMP>' in the target pattern.<P>
+
+<LI>
+Compute the prerequisite names by substituting <VAR>s</VAR> for `<SAMP>%</SAMP>'; if
+the target pattern does not contain a slash, append <VAR>d</VAR> to
+the front of each prerequisite name.<P>
+
+<LI>
+Test whether all the prerequisites exist or ought to exist.  (If a
+file name is mentioned in the makefile as a target or as an explicit
+prerequisite, then we say it ought to exist.)
+<P>
+
+If all prerequisites exist or ought to exist, or there are no prerequisites,
+then this rule applies.
+</OL>
+<P>
+
+<LI>
+If no pattern rule has been found so far, try harder.
+For each pattern rule in the list:
+<P>
+
+<OL>
+<LI>
+If the rule is terminal, ignore it and go on to the next rule.
+<P>
+
+<LI>
+Compute the prerequisite names as before.
+<P>
+
+<LI>
+Test whether all the prerequisites exist or ought to exist.
+<P>
+
+<LI>
+For each prerequisite that does not exist, follow this algorithm
+recursively to see if the prerequisite can be made by an implicit
+rule.
+<P>
+
+<LI>
+If all prerequisites exist, ought to exist, or can be
+made by implicit rules, then this rule applies.
+</OL>
+<P>
+
+<LI>
+If no implicit rule applies, the rule for <CODE>.DEFAULT</CODE>, if any,
+applies.  In that case, give <VAR>t</VAR> the same commands that
+<CODE>.DEFAULT</CODE> has.  Otherwise, there are no commands for <VAR>t</VAR>.
+</OL>
+<P>
+
+Once a rule that applies has been found, for each target pattern of the
+rule other than the one that matched <VAR>t</VAR> or <VAR>n</VAR>, the `<SAMP>%</SAMP>' in
+the pattern is replaced with <VAR>s</VAR> and the resultant file name is stored
+until the commands to remake the target file <VAR>t</VAR> are executed.  After
+these commands are executed, each of these stored file names are entered
+into the data base and marked as having been updated and having the same
+update status as the file <VAR>t</VAR>.
+</P><P>
+
+When the commands of a pattern rule are executed for <VAR>t</VAR>, the automatic
+variables are set corresponding to the target and prerequisites.
+See section <A HREF="make_10.html#SEC111">Automatic Variables</A>.
+</P><P>
+
+<A NAME="Archives"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_10.html#SEC103"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_11.html#SEC118"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="make_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Jeff Bailey</I> on <I>December, 25  2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+</FONT>
+
+</BODY>
+</HTML>

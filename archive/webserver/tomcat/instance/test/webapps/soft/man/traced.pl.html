@@ -1,0 +1,89 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>traceserver.pl -- the SPK trace server</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#abstract">ABSTRACT</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
+
+		<li><a href="#arguments">ARGUMENTS</a></li>
+	</ul>
+
+	<li><a href="#returns">RETURNS</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>traceserver.pl -- the SPK trace server</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p>traceserver.pl mode</p>
+<p>
+</p>
+<hr />
+<h1><a name="abstract">ABSTRACT</a></h1>
+<p>The SPK trace server accepts request: job identification number,
+and sends respond: the text of the optimization trace file in the 
+job's working directory if the file exists, or an empty string if 
+the file does not exist.</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>
+</p>
+<h2><a name="arguments">ARGUMENTS</a></h2>
+<p>The program expects the following arguments:</p>
+<pre>
+    $mode
+        The test mode indicator being &quot;test&quot; for test mode, &quot;prod&quot; for production mode 
+    
+=head2 OPERATION</pre>
+<p>The first thing that traceserver.pl does after starting up is to call
+Proc::Daemon::Init to make it into a daemon, by shedding its
+inheirited environment and becoming a direct child of the system init
+process.</p>
+<p>It then opens the system log so that it has a place to record progress
+and error messages.</p>
+<p>It attempts to create a lock-file if one does not already exist. The
+method that is used assures that the process of query and creation is
+atomic.  If the lock-file already exists, the program writes an error
+message to the system log and terminates, because only one copy of
+spkrund.pl can be allowed to run at any given time.
+use strict;</p>
+<p>Then, it waits for incoming requests.  The request should be a job's 
+identification number.  The program forms the path-name of the job's
+optimization trace file in the job's working directory.  If the file
+exists, the program opens the file, and send the content of the file 
+to the client as the response.  If the file does not exist, an empty 
+string is sent as the response.</p>
+<p>
+</p>
+<hr />
+<h1><a name="returns">RETURNS</a></h1>
+<p>Nothing, because it has no parent (other than init) to which an exit
+code might be returned.  The program does, however, write event messages
+to the system log.</p>
+
+</body>
+
+</html>

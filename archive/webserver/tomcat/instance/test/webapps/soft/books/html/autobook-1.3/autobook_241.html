@@ -1,0 +1,324 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: 24.4 Example: The Full Pull</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: 24.4 Example: The Full Pull">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: 24.4 Example: The Full Pull">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC241"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_240.html#SEC240" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: 24.3 Example: Quick And Dirty" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_242.html#SEC242" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Integration with Cygnus Cygwin" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_237.html#SEC237" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Migrating Existing Packages" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_237.html#SEC237" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Migrating Existing Packages" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_242.html#SEC242" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Integration with Cygnus Cygwin" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 24.4 Example: The Full Pull </H2>
+<!--docid::SEC241::-->
+<P>
+
+Suppose instead that I wanted to fully autoconfiscate <CODE>zip</CODE>.  Let's
+ignore for now that <CODE>zip</CODE> can build on systems to which the
+GNU Autotools have not been ported, like TOPS-20---perhaps a big
+problem back in the real world.
+</P><P>
+
+The first step should always be to run <CODE>autoscan</CODE>.  <CODE>autoscan</CODE>
+is a program which examines your source code and then generates a file
+called <TT>`configure.scan'</TT> which can be used as a rough draft of a
+<TT>`configure.in'</TT>.  <CODE>autoscan</CODE> isn't perfect, and in fact in some
+situations can generate a <TT>`configure.scan'</TT> which <CODE>autoconf</CODE>
+won't directly accept, so you should examine this file by hand before
+renaming it to <TT>`configure.in'</TT>.
+</P><P>
+
+<CODE>autoscan</CODE> doesn't take into account macro names used by your
+program.  For instance, if <CODE>autoscan</CODE> decides to generate a check
+for <TT>`&#60;fcntl.h&#62;'</TT>, it will just generate ordinary <CODE>autoconf</CODE>
+code which in turn might define <SAMP>`HAVE_FCNTL_H'</SAMP> at <CODE>configure</CODE>
+time.  This just means that <CODE>autoscan</CODE> isn't a panacea -- you will
+probably have to modify your source to take advantage of the code that
+<CODE>autoscan</CODE> generates.
+</P><P>
+
+Here is the <TT>`configure.scan'</TT> I get when I run <CODE>autoscan</CODE> on
+<CODE>zip</CODE>:
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>dnl Process this file with autoconf to produce a configure script.
+AC_INIT(bits.c)
+
+dnl Checks for programs.
+AC_PROG_AWK
+AC_PROG_CC
+AC_PROG_CPP
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+
+dnl Checks for libraries.
+dnl Replace `main' with a function in -lx:
+AC_CHECK_LIB(x, main)
+
+dnl Checks for header files.
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_CHECK_HEADERS(fcntl.h malloc.h sgtty.h strings.h sys/ioctl.h \
+termio.h unistd.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_TYPE_SIZE_T
+AC_STRUCT_ST_BLKSIZE
+AC_STRUCT_ST_BLOCKS
+AC_STRUCT_ST_RDEV
+AC_STRUCT_TM
+
+dnl Checks for library functions.
+AC_PROG_GCC_TRADITIONAL
+AC_FUNC_MEMCMP
+AC_FUNC_MMAP
+AC_FUNC_SETVBUF_REVERSED
+AC_TYPE_SIGNAL
+AC_FUNC_UTIME_NULL
+AC_CHECK_FUNCS(getcwd mktime regcomp rmdir strstr)
+
+AC_OUTPUT(acorn/makefile unix/Makefile Makefile atari/Makefile)
+</pre></td></tr></table></P><P>
+
+As you can see, this isn't suitable for immediate use as
+<TT>`configure.in'</TT>.  For instance, it generates several
+<TT>`Makefile'</TT>s which we know we won't need.  At this point there are
+two things to do in order to fix this file.
+</P><P>
+
+First, we must fix outright flaws in <TT>`configure.scan'</TT>, add checks
+for libraries, and the like.  For instance, we might also add code to
+see if we are building on Windows and set a variable appropriately:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>AC_CANONICAL_HOST
+case "$target" in
+  *-cygwin* | *-mingw*)
+    INCLUDES='-I$(srcdir)/win32'
+    ;;
+  *)
+    # Assume Unix.
+    INCLUDES='-I$(srcdir)/unix'
+    ;;
+esac
+AC_SUBST(INCLUDES)
+</pre></td></tr></table></P><P>
+
+Second, we must make sure that the <CODE>zip</CODE> sources use the results we
+compute.  So, for instance, we would check the <CODE>zip</CODE> source to see
+if we should use <SAMP>`HAVE_MMAP'</SAMP>, which is the result of calling
+<CODE>AC_FUNC_MMAP</CODE>.
+</P><P>
+
+At this point you might also consider using a configuration header such
+as is generated by <CODE>AC_CONFIG_HEADER</CODE>.  Typically this involves
+editing all your source files to include the header, but in the long run
+this is probably a cleaner way to go than using many <CODE>-D</CODE> options
+on the command line.  If you are making major source changes in order to
+fully adapt your code to <CODE>autoconf</CODE>'s output, adding a
+<SAMP>`#include'</SAMP> to each file will not be difficult.
+</P><P>
+
+This step can be quite difficult if done thoroughly, as it can involve
+radical changes to the source.  After this you will have a minimal but
+functional <TT>`configure.in'</TT> and a knowledge of what portability
+information your program has already incorporated.
+</P><P>
+
+Next, you want to write your <TT>`Makefile.am'</TT>s.  This might involve
+restructuring your package so that it can more easily conform to what
+Automake expects.  This work might also involve source code changes if
+the program makes assumptions about the layout of the install tree --
+these assumptions might very well break if you follow the GNU rules
+about the install layout.
+</P><P>
+
+At the same time as you are writing your <TT>`Makefile.am'</TT>s, you might
+consider <EM>libtoolizing</EM> your package.  This makes sense if you want
+to export shared libraries, or if you have libraries which several
+executables in your package use.
+</P><P>
+
+In our example, since there is no library involed, we won't use Libtool.
+The <TT>`Makefile.am'</TT> used in the minimal example is nearly sufficient
+for our use, but not quite.  Here's how we change it to add dependency
+tracking and <CODE>dist</CODE> support:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>## Process this file with automake to create Makefile.in.
+
+bin_PROGRAMS = zip
+
+if UNIX
+bin_SCRIPTS = unix/zipgrep
+os_sources = unix/unix.c
+else
+os_sources = win32/win32.c win32zip.c
+endif
+zip_SOURCES = zip.c zipfile.c zipup.c fileio.c util.c globals.c \
+              crypt.c ttyio.c crc32.c crctab.c deflate.c trees.c \
+              bits.c $(os_sources)
+
+## It was easier to just list all the source files than to pick out the
+## non-source files.
+EXTRA_DIST = algorith.doc README TODO Where crc_i386.S bits.c crc32.c \
+acorn/RunMe1st acorn/ReadMe acorn/acornzip.c acorn/makefile \
+acorn/match.s acorn/osdep.h acorn/riscos.c acorn/riscos.h \
+acorn/sendbits.s acorn/swiven.h acorn/swiven.s acorn/zipup.h crctab.c \
+crypt.c crypt.h deflate.c ebcdic.h fileio.c globals.c history \
+...
+wizdll/wizdll.def wizdll/wizmain.c wizdll/wizzip.h wizdll/zipdll16.mak \
+wizdll/zipdll32.mak
+</pre></td></tr></table>The extremely long <SAMP>`EXTRA_DIST'</SAMP> macro above has be truncated for
+brevity, denoted by the <SAMP>`...'</SAMP> line.
+</P><P>
+
+Note that we no longer define <CODE>INCLUDES</CODE> -- it is now automatically
+defined by <CODE>configure</CODE>.  Note also that, due to a small
+technicality, this <TT>`Makefile.am'</TT> won't really work with Automake
+1.4.  Instead, we must modify things so that we don't try to compile
+<TT>`unix/unix.c'</TT> or other files from subdirectories.
+</P><P>
+
+<A NAME="Integration with Cygnus Cygwin"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

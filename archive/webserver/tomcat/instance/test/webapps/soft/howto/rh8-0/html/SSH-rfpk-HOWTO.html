@@ -1,0 +1,1024 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>SSH CONFIGURATION HOWTO</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>SSH CONFIGURATION HOWTO</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	Following a discussion of the importance of 
+	<B
+CLASS="command"
+>ssh</B
+>
+	and the public key authentication 
+	method, a process for configuring 
+	the capability to establish secure connections between your workstation
+	and remote computers without using passwords is described.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>April 4, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.1</TD
+><TD
+ALIGN="LEFT"
+>April 18, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added sections on public key authentication.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN18"
+>Introduction: What is SSH?</A
+></DT
+><DT
+><A
+HREF="#AEN52"
+>Public Key Authentication</A
+></DT
+><DT
+><A
+HREF="#AEN69"
+>Public Key Authentication and the Gnome Desktop</A
+></DT
+><DT
+><A
+HREF="#AEN101"
+>Configuring Password-Free Remote Connection</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN104"
+>Create a Pair of Keys</A
+></DT
+><DT
+><A
+HREF="#AEN131"
+>Transfer Your Public Key to the Remote Machine</A
+></DT
+><DT
+><A
+HREF="#AEN147"
+>Configure Gnome</A
+></DT
+><DT
+><A
+HREF="#AEN161"
+>Verify the results</A
+></DT
+></DL
+></DD
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN18"
+></A
+>Introduction: What is SSH?</H2
+><P
+>&#13;      Until about ten years ago, there was no secure way to 
+      log into a remote computer and to do work on that machine
+      while using the keyboard and monitor on your own workstation.
+      The method that was normally used combined the Internet
+      <B
+CLASS="command"
+>telnet</B
+> service
+      with a Unix application running on the
+      user's machine, enabling the user to connect to a shell 
+      running on a remote machine and interact with it as if it
+      were local. To establish a session with the remote machine,
+      the user would enter her username and password. 
+    </P
+><P
+>&#13;      Authentication by username and password was acceptable 
+      practice during the early days of inter-networking, when
+      most connections were within college campuses or between
+      academic laboratories. There was really very little
+      security, however. There was no encryption, either of
+      the username and password nor of message content. Anyone
+      with the ability to tap a communications circuit could
+      eavesdrop or, worse yet, steal a password.
+    </P
+><P
+>&#13;      An even less secure practice was the use of another Internet
+      service called <B
+CLASS="command"
+>rsh</B
+>,
+      or the remote shell,
+      which was very similar to <B
+CLASS="command"
+>telnet</B
+>,
+      but which could be set up to establish a connection to a shell
+      running on a remote system
+      <I
+CLASS="emphasis"
+>without using a password</I
+>.
+      In this mode, the  application depended completely
+      on trust; there was no authentication and no encryption. 
+      A companion to <B
+CLASS="command"
+>rsh</B
+> was 
+      <B
+CLASS="command"
+>rcp</B
+>, the remote copy command,
+      which copied files
+      between systems with a similar lack of security.
+    </P
+><P
+>&#13;      Well before the Internet was opened up to the world in the
+      1990s, these practices were obsolete due to their 
+      lack of security. With the advent of the World Wide Web there
+      was an explosion of the number of machines connected to 
+      the Internet. There was a need to administer machines
+      remotely, but this required secure connections. 
+    </P
+><P
+>&#13;      A number of projects to develop secure replacements for 
+      <B
+CLASS="command"
+>rsh</B
+> and 
+      <B
+CLASS="command"
+>rcp</B
+>
+      were mounted. The effort that succeeded and was rapidly
+      adopted was that of the Finnish developer
+      Tatu Yloenen. He named his products 
+      <B
+CLASS="command"
+>ssh</B
+> and 
+      <B
+CLASS="command"
+>scp</B
+>,
+      the secure shell and secure copy, respectively.
+    </P
+><P
+>&#13;      These products were never open source, but they were
+      offered free of charge to the Linux and OpenBSD 
+      communities for a number of years. Because of the
+      importance of this software, this arrangement was not
+      satisfactory for the long term. The OpenSSH project
+      was launched to create open source replacements for
+      the proprietary ones. The OpenSSH versions of 
+      <B
+CLASS="command"
+>ssh</B
+> and 
+      <B
+CLASS="command"
+>scp</B
+>
+      have been distributed with OpenBSD and Linux for several
+      years now.  
+    </P
+><P
+>    
+      With <B
+CLASS="command"
+>ssh</B
+>,
+      you can log into a remote machine
+      with a high degree of security.  All of the communication between
+      your workstation and the remote system is encrypted, including
+      a password if it is needed.  It is also possible to establish
+      sessions with remote machines without providing a password, 
+      in a way that is functionally identical to 
+      <B
+CLASS="command"
+>rsh</B
+>,
+      except that this can be accomplished
+      with nearly complete security.  This mode of operation and the process
+      for setting it up will be described in the sections that follow..
+    </P
+><P
+>&#13;      The <B
+CLASS="command"
+>ssh</B
+> command
+      can also be used to set up an
+      <I
+CLASS="emphasis"
+>encrypted tunnel</I
+> between your workstation and
+      an application running on a remote machine. This feature is especially
+      useful when running an X-Windows application on the remote host.
+      The following services are provided:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    All communications are encrypted.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    The X-Windows messages, which can be voluminous, can optionally
+	    be compressed. This is especially useful over a slow connection.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    The user does not have to set up the DISPLAY
+	    variable (a requirement
+	    for X-Windows). This is done automatically.
+	  </P
+></LI
+></UL
+>
+      Normally you do not have to do anything
+      to benefit from encrypted tunneling
+      of X-Windows sessions.
+      You simply establish a connection with
+      <B
+CLASS="command"
+>ssh</B
+> and start
+      up an X-Windows application on the remote host. That application will
+      use the X-Server running in your workstation to display its output.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN52"
+></A
+>Public Key Authentication</H2
+><P
+>&#13;      When two parties wish to exchange secret messages
+      using traditional encryption
+      methods (also known as <I
+CLASS="emphasis"
+>symmetric</I
+>
+      encryption), they must
+      first exchange a secret key. Distributing keys reliably has always been
+      a problem. With <I
+CLASS="emphasis"
+>public key </I
+>encryption, it is not 
+      necessary for the parties to share secret keys.  Instead, each party
+      has a pair of keys: a private key and a public key.  Each party gives the
+      other his public key.  Each party keeps his private key secret, never
+      revealing it to anyone else. If a third party discovers one of the public
+      keys, it is not a problem.  Public keys can be posted to the world with
+      no loss of security.
+    </P
+><P
+>&#13;      In order to send a message, the author uses the recipient's public key
+      to encrypt it.  Once encrypted, the only key that can decrypt it is
+      the recipient's private key, and only the recipient knows that key.
+      This is the method used by
+      <B
+CLASS="command"
+>ssh</B
+> for public key
+      authentication.
+    </P
+><P
+>&#13;      When you call upon the <B
+CLASS="command"
+>ssh</B
+>
+      on your machine to connect you
+      to another machine, your <B
+CLASS="command"
+>ssh</B
+>
+      sends a connection request
+      to the <B
+CLASS="command"
+>ssh</B
+>
+      on the remote machine.  The remote
+      <B
+CLASS="command"
+>ssh</B
+>
+      then generates a random number, encrypts it with
+      your <I
+CLASS="emphasis"
+>public key</I
+> and sends it back.  Your
+      <B
+CLASS="command"
+>ssh</B
+> then decrypts it using
+      your <I
+CLASS="emphasis"
+>private key</I
+>
+      to reveal the original number.  Your 
+      <B
+CLASS="command"
+>ssh</B
+> sends the
+      number back to the remote
+      <B
+CLASS="command"
+>ssh</B
+>, proving that you are 
+      who you claim to be, since only you possess the necessary key.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN69"
+></A
+>Public Key Authentication and the Gnome Desktop</H2
+><P
+>&#13;      There is a very convenient way that users of the Gnome desktop
+      can set up <B
+CLASS="command"
+>ssh</B
+> so that they
+      can connect to remote machines without having to supply
+      a username and password but with a high level of security.
+      In order for this to work, <B
+CLASS="command"
+>ssh</B
+>
+      depends on two related applications:
+      <B
+CLASS="command"
+>ssh-agent</B
+> and
+      <B
+CLASS="command"
+>ssh-add</B
+>.
+    </P
+><P
+>&#13;      When you log into the Gnome desktop, the
+      <B
+CLASS="command"
+>ssh-agent</B
+> authentication 
+      agent is started automatically.  It continues to run
+      for as long as you are logged into the desktop.  The
+      mission of <B
+CLASS="command"
+>ssh-agent</B
+>
+      is to use your private key to decrypt authentication
+      messages sent to your
+      <B
+CLASS="command"
+>ssh</B
+> client by the remote
+      <B
+CLASS="command"
+>ssh</B
+> daemon.
+      <B
+CLASS="command"
+>ssh-agent</B
+>
+      is available to provide this service to any 
+      <B
+CLASS="command"
+>ssh</B
+> started from your 
+      desktop.
+    </P
+><P
+>&#13;      In order to send requests to
+      <B
+CLASS="command"
+>ssh-agent</B
+> and to receive
+      responses,
+      <B
+CLASS="command"
+>ssh</B
+> must have a communications
+      channel. When <B
+CLASS="command"
+>ssh-agent</B
+>
+      starts up, it creates a <I
+CLASS="emphasis"
+>unix domain socket</I
+>
+      for this purpose and writes the path-name of the socket to
+      standard output. The parent process, which is the Gnome 
+      desktop, receives this path-name and uses it as the value of
+      the <TT
+CLASS="varname"
+>SSH_AUTH_SOCK</TT
+> environment variable.
+      The Gnome desktop is an ancestor to any process started
+      from the desktop, including <B
+CLASS="command"
+>ssh</B
+>.
+      Processes inherit all of the environment variables of their
+      parents, hence <TT
+CLASS="varname"
+>SSH_AUTH_SOCK</TT
+> is part of the
+      environment of every <B
+CLASS="command"
+>ssh</B
+> client
+      that you run. By querying the value of this variable,
+      <B
+CLASS="command"
+>ssh</B
+> knows which socket
+      to use to communicate with 
+      <B
+CLASS="command"
+>ssh-agent</B
+>.
+    </P
+><P
+>&#13;      <B
+CLASS="command"
+>ssh-agent</B
+>
+      does not know your pass phrase, hence it cannot decrypt
+      your private key.
+      This is where 
+      <B
+CLASS="command"
+>ssh-add</B
+> comes in.
+      After starting <B
+CLASS="command"
+>ssh-agent</B
+>,
+      the Gnome desktop runs <B
+CLASS="command"
+>ssh-add</B
+>
+      to ask you for your pass phrase, which it then uses 
+      to decrypt your private key.  It passes the decrypted private
+      key via the Unix domain socket
+      to <B
+CLASS="command"
+>ssh-agent</B
+>, which
+      caches it for future use.
+      It is possible to run 
+      <B
+CLASS="command"
+>ssh-add</B
+> several
+      times, to add additional private keys to 
+      the cache.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN101"
+></A
+>Configuring Password-Free Remote Connection</H2
+><P
+>&#13;      This section describes the process for setting up the 
+      Gnome desktop for password-free connection to remote machines.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN104"
+></A
+>Create a Pair of Keys</H3
+><P
+>&#13;	Open up a shell window.  Determine whether
+	or not the <TT
+CLASS="filename"
+>.ssh</TT
+> directory
+	exists in your home directory:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cd
+	  ls -al
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	If there is no .ssh directory, create it as follows, and set
+	the permission mode bits:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  mkdir .ssh
+	  chmod 755 .ssh
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	Next, you need to generate your two keys, using
+	the <B
+CLASS="command"
+>ssh-keygen</B
+> command:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  ssh-keygen -t dsa
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	The <I
+CLASS="emphasis"
+>-t dsa</I
+> option specifies
+	that you prefer to use the dsa encryption algorithm (rsa is the other
+	possibility).
+      </P
+><P
+>&#13;	You will be asked to supply a <I
+CLASS="emphasis"
+>pass phrase.
+	</I
+> This is 
+	very important!  The pass phrase
+	is used to encrypt your <I
+CLASS="emphasis"
+>private key</I
+> when it is
+	stored on the disk of your computer.  If it is not encrypted,
+	anyone who
+	can break into your computer can steal your private key
+	and then enter without challenge any of the machines you have
+	set up for password-free connection.
+      </P
+><P
+>&#13;	Be very careful to select an excellent pass phrase
+	It is like the passwords that you use to log in to
+	your workstation and other
+	machines, but it is even more important because it will provide access
+	to multiple machines.  It should have the following properties:
+	<P
+></P
+><UL
+><LI
+><P
+>Be at least nine characters long.</P
+></LI
+><LI
+><P
+>Be neither a word nor a given name in any language.</P
+></LI
+><LI
+><P
+>Contain several digits or special characters</P
+></LI
+></UL
+>
+	Note also that the pass phrase is case sensitive.
+      </P
+><P
+>&#13;	If you look in your
+	<TT
+CLASS="filename"
+>.ssh</TT
+> directory
+	after running <B
+CLASS="command"
+>ssh-keygen</B
+>,
+	you will find that two files have been added:
+	<TT
+CLASS="filename"
+>id_dsa</TT
+>, which is your 
+	<I
+CLASS="emphasis"
+>encrypted</I
+> private key 
+	and <TT
+CLASS="filename"
+>id_dsa.pub</TT
+>,
+	which is your public key.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN131"
+></A
+>Transfer Your Public Key to the Remote Machine</H3
+><P
+>&#13;	Next, you need to copy your public key to the remote host
+	that you want access
+	to. You can use <B
+CLASS="command"
+>scp</B
+>
+	to accomplish this.
+	In the following
+	example, we assume that the remote machine is named
+	<I
+CLASS="emphasis"
+>whitechuck</I
+>:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  scp ~/.ssh/id_dsa.pub whitechuck:
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	You will be asked to supply your username and
+	password for the remote host, because
+	public key authentication is not yet configured.
+      </P
+><P
+>&#13;	<I
+CLASS="emphasis"
+>Log in to the remote host</I
+> using your
+	username and password. Then use
+	<B
+CLASS="command"
+>ls -al</B
+> to determine whether or
+	not <TT
+CLASS="filename"
+>.ssh</TT
+> exists in your
+	home directory on that machine. If not, create the directory
+	and set the permission mode bits:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  mkdir .ssh
+	  chmod 755 .ssh
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+><P
+>&#13;	Concatenate your
+	<I
+CLASS="emphasis"
+>public key</I
+> onto the end of the
+	list of public keys
+	in the file <TT
+CLASS="filename"
+>authorized_keys</TT
+>
+	and insure that the mode bits are set properly 
+	(<B
+CLASS="command"
+>ssh</B
+> is very fussy about
+	mode bits):
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  cat id_dsa.pub &#62;&#62; .ssh/authorized_keys
+	  chmod 644 .ssh/authorized_keys
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN147"
+></A
+>Configure Gnome</H3
+><P
+>&#13;	The final step is performed on your workstation. You need to
+	configure the Gnome desktop to call
+	<B
+CLASS="command"
+>ssh-add</B
+> when X-Windows
+	starts up, in order to ask you for your pass phrase.
+	Here is the menu sequence:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  <B
+CLASS="guimenu"
+>Main</B
+> =&#62; <B
+CLASS="guimenu"
+>Extras</B
+> =&#62; <B
+CLASS="guimenu"
+>Preferences</B
+> =&#62; <B
+CLASS="guimenuitem"
+>Sessions</B
+> =&#62; left-click
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	This will open the <SPAN
+CLASS="interface"
+>Sessions</SPAN
+>
+	window.  Press the 
+	<B
+CLASS="guibutton"
+>Startup Programs</B
+> button
+	followed by
+	the <B
+CLASS="guibutton"
+>Add</B
+> button.  Then
+	set the following variables:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  Startup Command: /usr/bin/ssh-add
+	  Priority: 70
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	Close the window by pressing the
+	<B
+CLASS="guibutton"
+>OK</B
+> button.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN161"
+></A
+>Verify the results</H3
+><P
+>&#13;	Log out of the Gnome desktop on your workstation, and then
+	restart it.  You should be asked for your pass phrase.  If
+	not, check to make sure that you did the Gnome configuration'
+	correctly.
+      </P
+><P
+>&#13;	Open up a shell window on your workstation and connect to
+	the remote machine with <B
+CLASS="command"
+>ssh</B
+>:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  ssh whitechuck
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	If everything has been correctly configured, the connection
+	should go through without you having to supply a pass phrase
+	or password.
+      </P
+><P
+>&#13;	If you are asked for a password, something is wrong.  Here are
+	some things that you can check:
+	<P
+></P
+><UL
+><LI
+><P
+>&#13;	      Are the permission mode bits on the 
+	      <TT
+CLASS="filename"
+>.ssh</TT
+> directory in
+	      your home directory of your workstation and on the
+	      <TT
+CLASS="filename"
+>.ssh</TT
+> directory in
+	      your home directory on the remote machine set to
+	      775?
+	    </P
+></LI
+><LI
+><P
+>&#13;	      On the remote machine, are the permission modes on the file 
+	      <TT
+CLASS="filename"
+>~/.ssh/authorized_keys</TT
+>
+	      set to 644?
+	    </P
+></LI
+></UL
+>
+	<P
+></P
+><UL
+><LI
+><P
+>&#13;	      Does a copy of the file
+	      <TT
+CLASS="filename"
+>~/.ssh/id_dsa.pub</TT
+>
+	      in your workstation appear at the end of the file
+	      <TT
+CLASS="filename"
+>~/.ssh/authorized_keys</TT
+>
+	      on the remote machine?
+	    </P
+></LI
+></UL
+>
+      </P
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

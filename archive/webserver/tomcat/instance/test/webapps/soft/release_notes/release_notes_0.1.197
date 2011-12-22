@@ -1,0 +1,12 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.197
+----------------------------------
+New code in spkcompiler to handle large dataset problems by
+creating a binary dataset file instead of inlining the 
+values in arrays within the DataSet.h
+
+RELATED BUG REPORTS: 637 638
+
+BY:  Andrew Ernst
+
+WHEN: December 21, 2006

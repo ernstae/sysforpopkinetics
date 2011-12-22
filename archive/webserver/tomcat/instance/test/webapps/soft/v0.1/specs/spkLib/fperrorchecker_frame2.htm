@@ -1,0 +1,200 @@
+<html><head>
+<title>Floating Point Error Detection</title>
+<meta name="description" id="description" content="Floating Point Error Detection">
+<meta name="keywords" id="keywords" content=" Fperrorchecker error floating point detection exception "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="fperrorchecker.htm" target="_top">section</a>, <a href="fperrorchecker_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This class provides tools to detect floating point errors.
+When this class is instanciated, it clears the state of the <b>universal</b> floating point error flags and
+set the <b>universal</b> floating-point control word to be able to detect a certain set of floating point errors.
+As the object goes out of scope, the error flags are cleared and the control word is restored as before.
+
+<br>
+<br>
+<b><big><a name="Constructors" id="Constructors">Constructors</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+FpErrorChecker()<br>
+</span></font></code>is the default constructor.  It clears the state of the universal floating point error flags
+and reset the universal floating-point control word to detect the following floating point errors:
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><table><tr><td align='left'  valign='top'>
+Overflow </td><td align='left'  valign='top'>
+
+Tripping the highest bit in mantissa.
+</td></tr><tr><td align='left'  valign='top'>
+
+Invalid operation </td><td align='left'  valign='top'>
+
+Attempting an arithmetic operation on an invalid floating-point number such as NAN.
+</td></tr><tr><td align='left'  valign='top'>
+
+Denormalization loss  </td><td align='left'  valign='top'>
+
+Attempting representing a too small number in mantissa.
+</td></tr><tr><td align='left'  valign='top'>
+
+Divide by zero  </td><td align='left'  valign='top'>
+
+Divide a number by zero.
+</td></tr><tr><td align='left'  valign='top'>
+
+Inexact result  </td><td align='left'  valign='top'>
+
+Disabled (truncate to exact zero): Too small or too large to represent in a given precision.
+</td></tr><tr><td align='left'  valign='top'>
+
+Underflow </td><td align='left'  valign='top'>
+
+Disabled (truncate to exact zero): Tripping the lowest bit in mantissa.
+</td></tr><tr><td align='left'  valign='top'>
+
+
+</td></tr>
+</table>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+~FpErrorChecker()<br>
+</span></font></code>is the destructor which clears the state of the universal floating point error flags and
+restores the universal floating point control word as before.
+
+<br>
+<br>
+<b><big><a name="Public Methods" id="Public Methods">Public Methods</a></big></b>
+
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+static&nbsp;unsigned&nbsp;int&nbsp;check(unsigned&nbsp;int&nbsp;line,&nbsp;const&nbsp;char*&nbsp;filename)<br>
+</span></font></code>determines whether floating point errors have occurred since the universal error flags were cleared most
+recently.  If errors were detected, it will throw an object of <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+ that
+may contain one or more <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+ errors with <i>line</i> and <i>filename</i>
+as a location at which the error causing operation appeared. Otherwise, it returns the current state of
+the flags.
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The following table summarizes the correspondence between errors and Spk Error Codes (of type of <code><font color="blue">SpkError::ErrorCode</font></code>):
+<table><tr><td align='left'  valign='top'>
+
+Overflow 
+</td><td align='left'  valign='top'>
+
+SPK_FP_OVERFLOW_ERR 
+</td></tr><tr><td align='left'  valign='top'>
+
+Invalid operation 
+</td><td align='left'  valign='top'>
+
+SPK_FP_INVALID_ERR
+</td></tr><tr><td align='left'  valign='top'>
+
+Denormalization loss 
+</td><td align='left'  valign='top'>
+
+SPK_FP_DENORMAL_ERR
+</td></tr><tr><td align='left'  valign='top'>
+
+Divide by zero 
+</td><td align='left'  valign='top'>
+
+SPK_FP_ZERODIVIDE_ERR
+</td></tr><tr><td align='left'  valign='top'>
+
+(Disabled, truncate to exact zero) Inexact representation
+</td><td align='left'  valign='top'>
+
+SPK_FP_INEXACT_ERR
+</td></tr><tr><td align='left'  valign='top'>
+
+(Disabled, truncate to exact zero) Underflow 
+</td><td align='left'  valign='top'>
+
+SPK_FP_UNDERFLOW_ERR 
+</td></tr><tr><td align='left'  valign='top'>
+
+
+</td></tr>
+</table>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+static&nbsp;unsigned&nbsp;int&nbsp;clear()<br>
+</span></font></code>clears the universal floating point error flags and returns the state before the action.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+static&nbsp;void&nbsp;print()<br>
+</span></font></code>prints out the current status of the error flags in hexadecimal notation.
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program named as <code><font color="blue">X:\Temp\Honda\FpErrorChecker\main.cpp</font></code>,
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;FpErrorChecker.h&quot;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;SpkException.h&quot;<br>
+<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+&nbsp;&nbsp;int&nbsp;main()<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;a&nbsp;=&nbsp;1e-40,&nbsp;b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;float&nbsp;&nbsp;y;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FpErrorChecker&nbsp;checkerON;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Since&nbsp;a&nbsp;is&nbsp;too&nbsp;small&nbsp;to&nbsp;be&nbsp;presented&nbsp;exactly,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;the&nbsp;following&nbsp;assignment&nbsp;triggers&nbsp;&quot;Inexact&quot;&nbsp;and&nbsp;&quot;Underflow&quot;&nbsp;errors.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;=&nbsp;a;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FpErrorChecker::check(__LINE__,&nbsp;__FILE__);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;catch(&nbsp;const&nbsp;SpkException&amp;&nbsp;e&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.print();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;-1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;count<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;errorcode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;26<br>
+&nbsp;&nbsp;&nbsp;&nbsp;linenum<br>
+&nbsp;&nbsp;&nbsp;&nbsp;15<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:\Temp\Honda\FpErrorChecker\main.cpp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;message<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Underflow<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/FpErrorChecker.cpp
+
+</body>
+</html>

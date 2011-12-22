@@ -1,0 +1,721 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Clock Synchronization</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Clock Synchronization</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	It is important that the system clocks in the Linux 
+	workstations of the RFPK Software Team be closely 
+	synchronized to the clock in the server which hosts the CVS
+	repository, or to the time standard to which that server is 
+	synchronized, because the CVS application, as well as the
+	backup process which runs on the same server, depend for their
+	proper operation on the comparison of timestamps of files 
+	residing on different.machines. This tutorial
+	explains how to configure your workstation so that it
+	stays synchronized within a fraction of a second with that
+	server.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>April 25, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.01</TD
+><TD
+ALIGN="LEFT"
+>July 25, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added sections for server and cluster</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.02</TD
+><TD
+ALIGN="LEFT"
+>December 31, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Relative to RHEL 3.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.03</TD
+><TD
+ALIGN="LEFT"
+>May 6, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Modified for firewall.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.04</TD
+><TD
+ALIGN="LEFT"
+>June 24, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Modified treatment of cluster.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.05</TD
+><TD
+ALIGN="LEFT"
+>December 3, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added section on firewall configuration for webserver and
+	removed section for cluster.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN37"
+>Network Time Protocol</A
+></DT
+><DT
+><A
+HREF="#AEN50"
+>Defining Timeserver</A
+></DT
+><DT
+><A
+HREF="#AEN72"
+>Configuring RFPK Software Development Clients</A
+></DT
+><DT
+><A
+HREF="#AEN87"
+>Daemon Setup</A
+></DT
+><DT
+><A
+HREF="#AEN95"
+>Extra Configuration for Webserver</A
+></DT
+><DT
+><A
+HREF="#AEN102"
+>Configuring the RFPK Timeserver</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN37"
+></A
+>Network Time Protocol</H2
+><P
+>&#13;      The Network Time Protocol (NTP) allows computers connected
+      to the Internet to keep their clocks synchronized.  Certain
+      host computers equipped with accurate clocks make the NTP
+      service available to other, less well endowed, hosts.  
+      A machine with an accurate clock which is offering an NTP
+      service is known as a <I
+CLASS="emphasis"
+>level one</I
+> NTP
+      server.  Other machines, which may not be equipped with
+      accurate clocks but which nevertheless have accurate time
+      due to the fact that they are synchronized to one or more
+      <I
+CLASS="emphasis"
+>level one</I
+> NTP servers, can offer an
+      NTP service over the Internet as <I
+CLASS="emphasis"
+>level two</I
+>
+      NTP servers, and so on.
+    </P
+><P
+>&#13;      The host
+      <SPAN
+CLASS="systemitem"
+>&#13;	bigben.cac.washington.edu
+      </SPAN
+>
+      is a <I
+CLASS="emphasis"
+>level one</I
+> NTP server equipped
+      with a clock that gets its time from GPS satellites. 
+      The RFPK CVS server
+      is synchronized to 
+      <SPAN
+CLASS="systemitem"
+>bigben</SPAN
+>
+      and several other <I
+CLASS="emphasis"
+>level one</I
+> NTP servers.
+      This document describes the way to configure your 
+      RedHat Linux 8.0 workstation to synchronize to 
+      to one or the other of these servers.
+    </P
+><P
+>&#13;      If your machine is on the LAN behind the SPK firewall, it can be 
+      synchronized to the the CVS server, which is located on the LAN.
+      If it is not on the LAN, it can be synchronized to 
+      <SPAN
+CLASS="systemitem"
+>&#13;	bigben.cac.washington.edu
+      </SPAN
+>
+      or to some other external time server.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN50"
+></A
+>Defining Timeserver</H2
+><P
+>&#13;      The following instructions will be easier to follow if we define
+      a system alias for the 
+      time server we are going to use.  This will also allow us to move
+      machines from one network to another, only having to change the
+      alias definition in a single file rather than references in a number
+      of files.
+    </P
+><P
+>&#13;      The changes will be made to the <TT
+CLASS="filename"
+>/etc/hosts</TT
+> file.
+      There are the following cases:
+      <P
+></P
+><OL
+TYPE="i"
+><LI
+><P
+>&#13;	    Your machine is outside the firewall.  
+	    Add the following line to <TT
+CLASS="filename"
+>/etc/hosts</TT
+>:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;140.142.16.34    bigben.cac.washington.edu   timeserver
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Your machine is behind the firewall and
+	    there is already an entry for the CVS server (IP address
+	    192.168.1.2) in your 
+	    <TT
+CLASS="filename"
+>/etc/hosts</TT
+> file.  In this case, simply add
+	    <I
+CLASS="emphasis"
+>timeserver</I
+> to the end of that line.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Your machine is behind the firewall, but 
+	    there is no entry for the CVS server.
+	    Add the following line to 
+	    <TT
+CLASS="filename"
+>/etc/hosts</TT
+>
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;192.168.1.2 timeserver
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    The machine is one of the computational (not frontend) nodes
+	    in the cluster topology that contains a frontend.  The entry
+	    in <TT
+CLASS="filename"
+>/etc/hosts</TT
+> should look like this
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;192.168.3.1    timeserver frontend
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+></OL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN72"
+></A
+>Configuring RFPK Software Development Clients</H2
+><P
+>&#13;      This section covers the configuration of RFPK software development
+      workstations and the cspk server.
+      We must edit several configuration files. To do this, 
+      you will need root privilege.
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su -
+cd /etc
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      Edit <TT
+CLASS="filename"
+>ntp.conf</TT
+>
+      with your favorite editor, setting the default behavior to 
+      <I
+CLASS="emphasis"
+>nomodify</I
+> rather than 
+      <I
+CLASS="emphasis"
+>ignore</I
+>.
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;restrict default ignore
+
+	<I
+CLASS="emphasis"
+>should be changed to</I
+>
+
+restrict default nomodify
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      Next specify that 
+      <SPAN
+CLASS="systemitem"
+>timesever</SPAN
+>
+      is a trusted time server by making this change:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	after
+
+# restrict mytrustedtimeserverip mask 255.255.255.255 nomodify notap noquery
+# server mytrustedtimeserverip
+
+	insert the following pair of lines
+
+restrict timeserver nomodify notrap noquery
+server timeserver
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      Save the file, after you have made your changes.
+    </P
+><P
+>&#13;      Finally, we need to recreate the 
+      <TT
+CLASS="filename"
+>/etc/ntp/step-tickers</TT
+> file,
+      which is a list of time servers queried by your system when it boots.
+    </P
+><P
+>&#13;      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /etc/ntp
+echo timeserver &#62; step-tickers
+echo time.nist.gov &#62;&#62; step-tickers
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN87"
+></A
+>Daemon Setup</H2
+><P
+>&#13;      We need to start the ntp daemon, if it is not already running, and
+      make sure that it is started automatically whenever the system reboots.
+      As <SPAN
+CLASS="systemitem"
+>root</SPAN
+>,
+      input the following commands:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/etc/rc.d/init.d/ntpd restart
+/sbin/chkconfig --level 2345 ntpd on
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      You should now check that your ntp daemon is working.
+      Wait a few minutes after restarting ntpd, then issue this command:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/usr/sbin/ntpq -p
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      You should see output that looks something like this:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;     remote           refid      st t when poll reach   delay   offset  jitter
+==============================================================================
+ LOCAL(0)        LOCAL(0)        10 l   63   64  377    0.000    0.000   0.008
+*whitechuck.rfpk bigben.cac.wash  2 u  192  256  377    0.684    0.075   0.024
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      If delay, offset, and jitter are not small numbers, the clock has not
+      synchronized, which may indicate that there is an error your configuration.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN95"
+></A
+>Extra Configuration for Webserver</H2
+><P
+>&#13;      <I
+CLASS="emphasis"
+>Webserver</I
+> is on the orange LAN. The rest of the
+      RFPK workstations and servers are either on the green LAN or on the
+      public internet. The firewall greatly restricts network traffic between
+      the green and orange LANs. The NTP setup for <I
+CLASS="emphasis"
+>webserver</I
+>
+      is the same as for the rest of the clients with the exception
+      that additional configuration must be done to the firewall.
+      It is necessary to use the firewall administration interface to 
+      create a pinhole between the IP address of <I
+CLASS="emphasis"
+>webserver</I
+>
+      and the IP address of <I
+CLASS="emphasis"
+>timeserver</I
+> on port 123 for
+      the TCP protocol, and another one on the same port for the UDP protocol.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN102"
+></A
+>Configuring the RFPK Timeserver</H2
+><P
+>&#13;      The RFPK time server
+      needs to be set up somewhat differently from the 
+      workstations.
+    </P
+><P
+>&#13;      Just as for workstations,
+      the default should be edited to read
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;restrict default nomodify
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      The list of trusted servers, should read as follows:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;restrict bigben.cac.washington.edu nomodify notrap noquery
+restrict time.nist.gov nomodify notrap noquery
+restrict tick.uh.edu nomodify notrap noquery
+restrict tick.usno.navy.mil nomodify notrap noquery
+
+server bigben.cac.washington.edu
+server time.nist.gov
+server tick.uh.edu
+server tick.usno.navy.mil
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      Unlike the workstation case, the server must be open to 
+      clients.  Just following the commented CLIENT NETWORK
+      section, add the following
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;restrict 192.168.0.0 mask 255.255.0.0 notrust nomodify notrap
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      which enables service requests coming from any of the
+      IP addresses behind the firewall in the 
+      lab at AERL 241.  
+    </P
+><P
+>&#13;      Additional lines, similar to the one above, can be added
+      to accommodate RFPK machines with IP addresses that fall
+      into other address ranges.
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,439 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Unloading a Module</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Unloading a Module">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Unloading a Module">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC187"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_186.html#SEC186" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Loading a Module" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_188.html#SEC188" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: A Loadable Module" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_182.html#SEC182" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: A Complex GNU Autotools Project" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_183.html#SEC183" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: A Module Loading Subsystem" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_188.html#SEC188" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: A Loadable Module" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 20.1.4 Unloading a Module </H3>
+<!--docid::SEC187::-->
+<P>
+
+When unloading a module, several things must be done:
+</P><P>
+
+<UL>
+<LI>
+Any built-in commands implemented by this module must be unregistered so
+that Sic doesn't try to call them after the implementation has been
+removed.
+<P>
+
+<LI>
+Any syntax extensions implemented by this module must be similarly
+unregistered, including <CODE>syntax_init</CODE> and <CODE>syntax_finish</CODE>
+functions.
+<P>
+
+<LI>
+If there is a finalisation entry point in the module,
+<SAMP>`module_finish'</SAMP> (see section <A HREF="autobook_186.html#SEC186">20.1.3 Loading a Module</A>), it must be called.
+</UL>
+<P>
+
+My first cut implementation of a module subsystem kept a list of the
+entry points associated with each module so that they could be looked up
+and removed when the module was subsequently unloaded.  It also kept
+track of multiply loaded modules so that a module wasn't unloaded
+prematurely.  libltdl already does all of this though, and it is
+wasteful to duplicate all of that work.  This system uses
+<CODE>lt_dlforeach</CODE> and <CODE>lt_dlgetinfo</CODE> to access libltdls records
+of loaded modules, and save on duplication.  These two functions are
+described fully insection `Libltdl interface' in <CITE>The Libtool Manual</CITE>. 
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>static int unload_ltmodule (lt_dlhandle module, lt_ptr_t data);
+
+struct unload_data { Sic *sic; const char *name; };
+
+int
+module_unload (Sic *sic, const char *name)
+{
+  struct unload_data data;
+
+  last_error = NULL;
+
+  data.sic = sic;
+  data.name = name;
+
+  /* Stopping might be an error, or we may have unloaded the module. */
+  if (lt_dlforeach (unload_ltmodule, (lt_ptr_t) &#38;data) != 0)
+    if (!last_error)
+      return SIC_OKAY;
+
+  if (!last_error)
+    last_error = module_not_found_error;
+    
+  return SIC_ERROR;
+}
+
+</pre></td></tr></table></P><P>
+
+This function asks libltdl to call the function
+<CODE>unload_ltmodule</CODE> for each of the modules it has loaded, along with
+some details of the module it wants to unload.  The tricky part of the
+callback function below is recalculating the ntry point addresses for
+the module to be unloaded and then removing all matching addresses from
+the appropriate internal structures.  Otherwise, the balance of this
+callback is involved in informing the calling <CODE>lt_dlforeach</CODE> loop
+of whether a matching module has been found and handled:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>static int userdata_address_compare (List *elt, void *match);
+
+/* This callback returns 0 if the module was not yet found.
+   If there is an error, LAST_ERROR will be set, otherwise the
+   module was successfully unloaded. */
+static int
+unload_ltmodule (lt_dlhandle module, void *data)
+{
+  struct unload_data *unload = (struct unload_data *) data;
+  const lt_dlinfo *module_info = lt_dlgetinfo (module);
+
+  if ((unload == NULL)
+      || (unload-&#62;name == NULL)
+      || (module_info == NULL)
+      || (module_info-&#62;name == NULL)
+      || (strcmp (module_info-&#62;name, unload-&#62;name) != 0))
+    {
+      /* No match, return 0 to keep searching */
+      return 0;
+    }
+  
+  if (module)
+    {
+      /* Fetch the addresses of the entrypoints into the module. */
+      Builtin *builtin_table
+        = (Builtin*) lt_dlsym (module, "builtin_table");
+      Syntax *syntax_table
+        = (Syntax *) lt_dlsym (module, "syntax_table");
+      void *syntax_init_address
+        = (void *) lt_dlsym (module, "syntax_init");
+      void **syntax_finish_address
+        = (void *) lt_dlsym (module, "syntax_finish");
+      List *stale;
+
+      /* Remove all references to these entry points in the internal
+         data structures, before actually unloading the module. */
+      stale = list_remove (&#38;unload-&#62;sic-&#62;syntax_init,
+                   syntax_init_address, userdata_address_compare);
+      XFREE (stale);
+        
+      stale = list_remove (&#38;unload-&#62;sic-&#62;syntax_finish,
+                   syntax_finish_address, userdata_address_compare);
+      XFREE (stale);
+
+      if (builtin_table
+          &#38;&#38; builtin_remove (unload-&#62;sic, builtin_table) != SIC_OKAY)
+        {
+          last_error = builtin_unload_error;
+          module = NULL;
+        }
+
+      if (syntax_table
+          &#38;&#38; SIC_OKAY != syntax_remove (unload-&#62;sic, module,
+                                        syntax_table))
+        {
+          last_error = syntax_unload_error;
+          module = NULL;
+        }
+    }
+  
+  if (module)
+    {
+      ModuleFinish *finish_func
+        = (ModuleFinish *) lt_dlsym (module, "module_finish");
+
+      if (finish_func)
+        (*finish_func) (unload-&#62;sic);
+    }
+
+  if (module)
+    {
+      if (lt_dlclose (module) != 0)
+        module = NULL;
+    }
+
+  /* No errors?  Stop the search! */
+  if (module)
+    return 1;
+      
+  /* Find a suitable diagnostic. */
+  if (!last_error)
+    last_error = lt_dlerror();
+  if (!last_error)
+    last_error = module_not_unloaded_error;
+      
+  /* Error diagnosed.  Stop the search! */
+  return -1;
+}
+
+static int
+userdata_address_compare (List *elt, void *match)
+{
+  return (int) (elt-&#62;userdata - match);
+}
+
+</pre></td></tr></table></P><P>
+
+The <CODE>userdata_address_compare</CODE> helper function at the end is used
+to compare the address of recalculated entry points against the already
+registered functions and handlers to find which items need to be
+unregistered.
+</P><P>
+
+There is also a matching header file to export the module interface, so
+that the code for loadable modules can make use of it:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#ifndef SIC_MODULE_H
+#define SIC_MODULE_H 1
+
+#include &#60;sic/builtin.h&#62;
+#include &#60;sic/common.h&#62;
+#include &#60;sic/sic.h&#62;
+
+BEGIN_C_DECLS
+
+typedef void ModuleInit         (Sic *sic);
+typedef void ModuleFinish       (Sic *sic);
+
+extern const char *module_error (void);
+extern int module_init          (void);
+extern int module_load          (Sic *sic, const char *name);
+extern int module_unload        (Sic *sic, const char *name);
+
+END_C_DECLS
+
+#endif /* !SIC_MODULE_H */
+
+</pre></td></tr></table></P><P>
+
+This header also includes some of the other Sic headers, so that in most
+cases, the source code for a module need only <SAMP>`#include
+&#60;sic/module.h&#62;'</SAMP>.
+</P><P>
+
+To make the module loading interface useful, I have added built-ins for
+<SAMP>`load'</SAMP> and <SAMP>`unload'</SAMP>.  Naturally, these must be compiled into
+the bare <CODE>sic</CODE> executable, so that it is able to load additional
+modules:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if HAVE_CONFIG_H
+#  include &#60;config.h&#62;
+#endif
+
+#include "module.h"
+#include "sic_repl.h"
+
+/* List of built in functions. */
+#define builtin_functions               \
+        BUILTIN(exit,           0, 1)   \
+        BUILTIN(load,           1, 1)   \
+        BUILTIN(unload,         1, -1)
+
+BUILTIN_DECLARATION (load)
+{
+  int status = SIC_ERROR;
+
+  if (module_load (sic, argv[1]) &#60; 0)
+    {
+      sic_result_clear (sic);
+      sic_result_append (sic, "module \"", argv[1], "\" not loaded: ",
+                         module_error (), NULL);
+    }
+  else
+    status = SIC_OKAY;
+
+  return status;
+}
+
+BUILTIN_DECLARATION (unload)
+{
+  int status = SIC_ERROR;
+  int i;
+
+  for (i = 1; argv[i]; ++i)
+    if (module_unload (sic, argv[i]) != SIC_OKAY)
+      {
+        sic_result_clear (sic);
+        sic_result_append (sic, "module \"", argv[1],
+                           "\" not unloaded: ", module_error (), NULL);
+      }
+    else
+      status = SIC_OKAY;
+
+  return status;
+}
+
+</pre></td></tr></table></P><P>
+
+These new built-in commands are simply wrappers around the module loading
+code in <TT>`module.c'</TT>.
+</P><P>
+
+As with <SAMP>`dlopen'</SAMP>, you can  use libltdl to <SAMP>`lt_dlopen'</SAMP> the
+main executable, and then lookup <EM>its</EM> symbols.  I have simplified
+the initialisation of Sic by replacing the <CODE>sic_init</CODE> function in
+<TT>`src/sic.c'</TT> by `loading' the executable itself as a module.  This
+works because I was careful to use the same format in
+<TT>`sic_builtin.c'</TT> and <TT>`sic_syntax.c'</TT> as would be required for a 
+genuine loadable module, like so:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>  /* initialise the module subsystem */
+  if (module_init () != SIC_OKAY)
+      sic_fatal ("module initialisation failed");
+
+  if (module_load (sic, NULL) != SIC_OKAY)
+      sic_fatal ("sic initialisation failed");
+
+</pre></td></tr></table></P><P>
+
+<A NAME="A Loadable Module"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

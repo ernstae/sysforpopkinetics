@@ -1,0 +1,34 @@
+<html><body><p><a href=dtd-overview.html>Overview</a> <a href=dtd-tree.html>Tree</a> <a href=dtd-index.html>Index</a> <a href=dtd-notations.html>Notations</a> <a href=dtd-entities.html>Entities</a> </p><h1>Element &lt;omega&gt;</h1><p>A minimal representation of Omega matrix.</p><p>
+
+For full (ie. "block") matrix, <a href=elt-omega.html>omega</a> lists the <font color='red'>lower</font> triangle elements in the <font color='red'>row-major</font> order.  For diagonal, <a href=elt-omega.html>omega</a> lists only the diagonal elements from the upper left corner. 
+
+Given a 3 by 3 matrix, A:
+<pre>
+/                   \
+|  a11   a12   a13  |
+|  a21   a22   a23  |
+|  a31   a32   a33  |
+\                   / 
+</pre>
+
+If A were <font color='red'>full</font> (ie. block) symmetric, <a href=elt-omega.html>omega</a> specifies as follows:
+<pre>
+    &lt;omega&gt;
+       &lt;in&gt;
+          &lt;value&gt;a11&lt;/value&gt;
+          &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+          &lt;value&gt;a31&lt;/value&gt;&lt;value&gt;a32&lt;/value&gt;&lt;value&gt;a33&lt;/value&gt;
+       &lt;/in&gt;
+    &lt;/omega&gt;
+</pre>
+If A were <font color='red'>diagonal</font>, <a href=elt-omega.html>omega</a> specifies as follows:
+<pre>
+    &lt;omega&gt;
+       &lt;in&gt;
+          &lt;value&gt;a11&lt;/value&gt;
+                            &lt;value&gt;a22&lt;/value&gt;
+                                              &lt;value&gt;a33&lt;/value&gt;
+       &lt;/in&gt;
+    &lt;/omega&gt;
+</pre>
+</p><h2>Attributes</h2><p><em>None</em></p><h2>Content</h2><p>(<a href=elt-in.html>in</a> | <a href=elt-out.html>out</a>)</p><h2>Parents</h2><p><a href=elt-ind_opt_result.html>ind_opt_result</a> <a href=elt-pop_opt_result.html>pop_opt_result</a> </p></body></html>

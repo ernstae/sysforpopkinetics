@@ -1,0 +1,18 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.170
+----------------------------------
+USER VISIBLE CHANGES
+
+The ordering of simultaneous bolus dose and observation event data records 
+now determines whether the calculated compartment masses are right- or 
+left-continuous.
+
+OTHER CHANGES
+
+Warning messages from the ODE integrator are now making it to the user.
+
+RELATED BUG REPORTS:  574, 579
+
+BY: Mitch Watrous
+
+WHEN: June 8, 2006

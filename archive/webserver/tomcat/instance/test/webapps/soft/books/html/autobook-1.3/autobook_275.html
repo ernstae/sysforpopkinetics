@@ -1,0 +1,394 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: PLATFORMS</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: PLATFORMS">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: PLATFORMS">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC275"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_274.html#SEC274" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Installing the tools" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_276.html#SEC276" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Generated File Dependencies" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_276.html#SEC276" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Generated File Dependencies" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Top" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_276.html#SEC276" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Generated File Dependencies" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H1> B. PLATFORMS </H1>
+<!--docid::SEC275::-->
+<P>
+
+This table lists platforms and toolchains known to be supported by
+Libtool.  Each row represents completion of the self test suite shipped
+with the Libtool distribution on the platform named in that row.
+</P><P>
+
+There is a <TT>`PLATFORMS'</TT> file maintained in the Libtool source tree,
+updated whenever a Libtool user volunteers updated information, or when
+the Libtool team runs pre-release tests on the platforms to which they
+individually have access.
+</P><P>
+
+The table from the latest source tree at the time of writing follows:
+</P><P>
+
+<DL COMPACT>
+<DT><CODE>canonical host name</CODE>
+<DD>This is the configuration triplet returned by <CODE>config.guess</CODE> on
+each system for which the test suite was executed.  Where the developer
+who ran the tests considered it to be significant, versions of tools in
+the compiler toolchain are named below the configuration triplet.
+<P>
+
+<DT><CODE>compiler</CODE>
+<DD>The compiler used for the tests.
+<P>
+
+<DT><CODE>libtool release</CODE>
+<DD>The version number of the Libtool distribution most recently tested for
+the associated configuration triplet.  The GNU Autotools all use an alpha
+version numbering system where `odd' letters (a, c, e, g etc.)
+represent many CVS snapshots between the `even' lettered (b, d, f
+etc) alpha release versions.  After version 1.4, the CVS revision
+number of the <TT>`Changelog'</TT> file will be appended to odd lettered
+CVS snapshots, <SAMP>`1.4a 1.641.2.54'</SAMP>, for example.
+<P>
+
+<DT><CODE>results</CODE>
+<DD>Either <SAMP>`ok'</SAMP> if the Libtool test suite passed all tests, or
+optionally <SAMP>`NS'</SAMP> if the test suite would only pass when the
+distribution was configured with the <SAMP>`--disable-shared'</SAMP> option.
+</DL>
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>-------------------------------------------------------
+canonical host name          compiler  libtool results
+  (tools versions)                     release
+-------------------------------------------------------
+alpha-dec-osf4.0*               gcc      1.3b     ok
+  (egcs-1.1.2)
+alpha-dec-osf4.0*               cc       1.3b     ok
+alpha-dec-osf3.2                gcc      0.8      ok
+alpha-dec-osf3.2                cc       0.8      ok
+alpha-dec-osf2.1                gcc      1.2f     NS
+alpha*-unknown-linux-gnu        gcc      1.3b     ok
+  (egcs-1.1.2, GNU ld 2.9.1.0.23)
+hppa2.0w-hp-hpux11.00           cc       1.2f     ok
+hppa2.0-hp-hpux10.20            cc       1.3.2    ok
+hppa1.1-hp-hpux10.20            gcc      1.2f     ok
+hppa1.1-hp-hpux10.20            cc       1.2f     ok
+hppa1.1-hp-hpux10.10            gcc      1.2f     ok
+hppa1.1-hp-hpux10.10            cc       1.2f     ok
+hppa1.1-hp-hpux9.07             gcc      1.2f     ok
+hppa1.1-hp-hpux9.07             cc       1.2f     ok
+hppa1.1-hp-hpux9.05             gcc      1.2f     ok
+hppa1.1-hp-hpux9.05             cc       1.2f     ok
+hppa1.1-hp-hpux9.01             gcc      1.2f     ok
+hppa1.1-hp-hpux9.01             cc       1.2f     ok
+i*86-*-beos                     gcc      1.2f     ok
+i*86-*-bsdi4.0.1                gcc      1.3c     ok
+  (gcc-2.7.2.1)
+i*86-*-bsdi4.0                  gcc      1.2f     ok
+i*86-*-bsdi3.1                  gcc      1.2e     NS
+i*86-*-bsdi3.0                  gcc      1.2e     NS
+i*86-*-bsdi2.1                  gcc      1.2e     NS
+i*86-pc-cygwin                  gcc      1.3b     NS
+  (egcs-1.1 stock b20.1 compiler)
+i*86-*-dguxR4.20MU01            gcc      1.2      ok
+i*86-*-freebsdelf4.0            gcc      1.3c     ok
+  (egcs-1.1.2)
+i*86-*-freebsdelf3.2            gcc      1.3c     ok
+  (gcc-2.7.2.1)
+i*86-*-freebsdelf3.1            gcc      1.3c     ok
+  (gcc-2.7.2.1)
+i*86-*-freebsdelf3.0            gcc      1.3c     ok
+i*86-*-freebsd3.0               gcc      1.2e     ok
+i*86-*-freebsd2.2.8             gcc      1.3c     ok
+  (gcc-2.7.2.1)
+i*86-*-freebsd2.2.6             gcc      1.3b     ok
+  (egcs-1.1 &#38; gcc-2.7.2.1, native ld)
+i*86-*-freebsd2.1.5             gcc      0.5      ok
+i*86-*-gnu                      gcc      1.3c     ok (1.602)
+i*86-*-netbsd1.4                gcc      1.3c     ok
+  (egcs-1.1.1)
+i*86-*-netbsd1.3.3              gcc      1.3c     ok
+  (gcc-2.7.2.2+myc2)
+i*86-*-netbsd1.3.2              gcc      1.2e     ok
+i*86-*-netbsd1.3I               gcc      1.2e     ok
+  (egcs 1.1?)
+i*86-*-netbsd1.2                gcc      0.9g     ok
+i*86-*-linux-gnu                gcc      1.3b     ok
+  (egcs-1.1.2, GNU ld 2.9.1.0.23)
+i*86-*-linux-gnulibc1           gcc      1.2f     ok
+i*86-*-openbsd2.5               gcc      1.3c     ok
+  (gcc-2.8.1)
+i*86-*-openbsd2.4               gcc      1.3c     ok
+  (gcc-2.8.1)
+i*86-*-solaris2.7               gcc      1.3b     ok
+  (egcs-1.1.2, native ld)
+i*86-*-solaris2.6               gcc      1.2f     ok
+i*86-*-solaris2.5.1             gcc      1.2f     ok
+i*86-ncr-sysv4.3.03             gcc      1.2f     ok
+i*86-ncr-sysv4.3.03             cc       1.2e     ok
+  (cc -Hnocopyr)
+i*86-pc-sco3.2v5.0.5		cc	 1.3c	  ok
+i*86-pc-sco3.2v5.0.5		gcc	 1.3c	  ok
+  (gcc 95q4c)
+i*86-pc-sco3.2v5.0.5		gcc	 1.3c	  ok
+  (egcs-1.1.2)
+i*86-UnixWare7.1.0-sysv5	cc	 1.3c	  ok
+i*86-UnixWare7.1.0-sysv5	gcc	 1.3c	  ok
+  (egcs-1.1.1)
+m68k-next-nextstep3             gcc      1.2f     NS
+m68k-sun-sunos4.1.1             gcc      1.2f     NS
+  (gcc-2.5.7)
+m88k-dg-dguxR4.12TMU01          gcc      1.2      ok
+m88k-motorola-sysv4             gcc      1.3      ok
+  (egcs-1.1.2)
+mips-sgi-irix6.5                gcc      1.2f     ok
+  (gcc-2.8.1)
+mips-sgi-irix6.4                gcc      1.2f     ok
+mips-sgi-irix6.3                gcc      1.3b     ok
+  (egcs-1.1.2, native ld)
+mips-sgi-irix6.3                cc       1.3b     ok
+  (cc 7.0)
+mips-sgi-irix6.2                gcc      1.2f     ok
+mips-sgi-irix6.2                cc       0.9      ok
+mips-sgi-irix5.3                gcc      1.2f     ok
+  (egcs-1.1.1)
+mips-sgi-irix5.3                gcc      1.2f     NS
+  (gcc-2.6.3)
+mips-sgi-irix5.3                cc       0.8      ok
+mips-sgi-irix5.2                gcc      1.3b     ok
+  (egcs-1.1.2, native ld)
+mips-sgi-irix5.2                cc       1.3b     ok
+  (cc 3.18)
+mipsel-unknown-openbsd2.1       gcc      1.0      ok
+powerpc-ibm-aix4.3.1.0          gcc      1.2f     ok
+  (egcs-1.1.1)
+powerpc-ibm-aix4.2.1.0          gcc      1.2f     ok
+  (egcs-1.1.1)
+powerpc-ibm-aix4.1.5.0          gcc      1.2f     ok
+  (egcs-1.1.1)
+powerpc-ibm-aix4.1.5.0          gcc      1.2f     NS
+  (gcc-2.8.1)
+powerpc-ibm-aix4.1.4.0          gcc      1.0      ok
+powerpc-ibm-aix4.1.4.0          xlc      1.0i     ok
+rs6000-ibm-aix4.1.5.0           gcc      1.2f     ok
+  (gcc-2.7.2)
+rs6000-ibm-aix4.1.4.0           gcc      1.2f     ok
+  (gcc-2.7.2)
+rs6000-ibm-aix3.2.5             gcc      1.0i     ok
+rs6000-ibm-aix3.2.5             xlc      1.0i     ok
+sparc-sun-solaris2.7            gcc      1.3b     ok
+  (egcs-1.1.2, GNU ld 2.9.1 &#38; native ld)
+sparc-sun-solaris2.6            gcc      1.3.2    ok
+  (egcs-1.1.2, GNU ld 2.9.1 &#38; native ld)
+sparc-sun-solaris2.5.1          gcc      1.2f     ok
+sparc-sun-solaris2.5            gcc      1.3b     ok
+  (egcs-1.1.2, GNU ld 2.9.1 &#38; native ld)
+sparc-sun-solaris2.5            cc       1.3b     ok
+  (SC 3.0.1)
+sparc-sun-solaris2.4            gcc      1.0a     ok
+sparc-sun-solaris2.4            cc       1.0a     ok
+sparc-sun-solaris2.3            gcc      1.2f     ok
+sparc-sun-sunos4.1.4            gcc      1.2f     ok
+sparc-sun-sunos4.1.4            cc       1.0f     ok
+sparc-sun-sunos4.1.3_U1         gcc      1.2f     ok
+sparc-sun-sunos4.1.3C           gcc      1.2f     ok
+sparc-sun-sunos4.1.3            gcc      1.3b     ok
+  (egcs-1.1.2, GNU ld 2.9.1 &#38; native ld)
+sparc-sun-sunos4.1.3            cc       1.3b     ok
+sparc-unknown-bsdi4.0           gcc      1.2c     ok
+sparc-unknown-linux-gnulibc1    gcc      1.2f     ok
+sparc-unknown-linux-gnu         gcc      1.3b     ok
+  (egcs-1.1.2, GNU ld 2.9.1.0.23)
+sparc64-unknown-linux-gnu       gcc      1.2f     ok
+
+Notes:
+- "ok" means "all tests passed".
+- "NS" means "Not Shared", but OK for static libraries
+</pre></td></tr></table></P><P>
+
+You too can contribute to this file, either if you use a platform which
+is missing from the table entirely, or if you are using a newer release
+of Libtool than the version listed in the table.  From a freshly
+unpacked release, do the following:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ cd libtool-1.4
+$ ./configure
+...
+
+---------------------------------------------------------
+Configuring libtool 1.4a (1.641.2.54 2000/06/18 03:02:52)
+---------------------------------------------------------
+
+...
+checking host system type... i586-pc-linux-gnu
+checking build system type... i586-pc-linux-gnu
+...
+$ make
+...
+$ make check
+...
+===================
+All 76 tests passed
+===================
+...
+</FONT></pre></td></tr></table></P><P>
+
+If there are no test failures, and you see a message similar to the
+above, send a short message to <A HREF="mailto:libtool@gnu.org">libtool@gnu.org</A> stating what you
+did and the configuration triplet for your platform as reported for the
+<SAMP>`host system'</SAMP> by <CODE>configure</CODE> (see the example directly above),
+and the precise version number of the release you have tested as reported by
+<SAMP>`libtool --version'</SAMP>:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ pwd
+/tmp/cvs/libtool
+$ ./libtool --version
+ltmain.sh (GNU libtool) 1.4a (1.641.2.41 2000/05/29 10:40:46)
+</FONT></pre></td></tr></table></P><P>
+
+The official <TT>`PLATFORMS'</TT> file will be updated shortly thereafter.
+</P><P>
+
+<A NAME="Generated File Dependencies"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

@@ -1,0 +1,291 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Linking an Executable</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Linking an Executable">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Linking an Executable">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC75"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_74.html#SEC74" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Creating Convenience Libraries with libtool" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_76.html#SEC76" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Linking a Library" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_76.html#SEC76" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Linking a Library" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_68.html#SEC68" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Introducing GNU Libtool" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_83.html#SEC83" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Using GNU Libtool" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 10.3 Linking an Executable </H2>
+<!--docid::SEC75::-->
+<P>
+
+Continuing the parallel between the syntax used to compile with
+<CODE>libtool</CODE> and the syntax used when building old static
+libraries, linking an executable is a matter of combining compilation
+units into a binary in both cases.  We tell the compiler which objects
+and libraries are required, and it creates an executable for us.
+</P><P>
+
+<BLOCKQUOTE>
+If you want to try this to see what <CODE>libtool</CODE> does on your
+machine, put the following code in a file <TT>`main.c'</TT>, in the same
+directory as <TT>`hello.c'</TT> and <TT>`libhello.la'</TT>, and run the example
+shell commands from there:
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>void hello ();
+
+int
+main (int argc, char *argv[])
+{
+  hello ("World");
+  exit (0);
+}
+
+
+</FONT></pre></td></tr></table></BLOCKQUOTE>
+<P>
+
+To compile an executable which uses the non-Libtool <TT>`libhello.a'</TT>
+library built previously (see section <A HREF="autobook_70.html#SEC70">10.2 The Libtool Library</A>), I would use the
+following commands: 
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ gcc -o hello main.c libhello.a
+$ ./hello
+Hello, World!
+</pre></td></tr></table></P><P>
+
+To create a similar executable on the HP-UX host, using
+<CODE>libtool</CODE> this time:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ libtool gcc -o hello main.c libhello.la
+libtool: link: warning: this platform does not like uninstalled
+libtool: link: warning: shared libraries.
+libtool: link: hello will be relinked during installation
+gcc -o .libs/hello main.c /tmp/hello/.libs/libhello.sl  \
+-Wl,+b -Wl,/tmp/hello/.libs:/usr/local/lib
+creating hello
+$ ls
+hello     hello.lo   libhello.la
+hello.c   hello.o    main.c
+$ ./hello
+Hello, World!
+</FONT></pre></td></tr></table></P><P>
+
+Notice that you linked against the Libtool library, <TT>`libhello.la'</TT>,
+but otherwise the link command you used was not really very different
+from non-Libtool static library link command used earlier.  Still,
+<CODE>libtool</CODE> does several things for you:  it links with the shared
+archive rather than the static archive;  and it sets the compiler
+options so that the program can be run in place, even though it is
+linked against the uninstalled Libtool library.  Using a <CODE>make</CODE>
+rule <EM>without</EM> the benefit of <CODE>libtool</CODE>, it would be almost
+impossible to reliably link a program against an uninstalled shared
+library in this way, since the particular switches needed would
+be different between the various platforms you want the project to
+work with.  Also without the extra compiler options <CODE>libtool</CODE>
+adds for you, the program will search only the standard library
+direcotories for a shared <TT>`libhello'</TT>.
+</P><P>
+
+The link warning tells you that <CODE>libtool</CODE> knows that on
+HP-UX the program will stop working if it is copied directly to
+the installation directory;  To prevent it breaking, <CODE>libtool</CODE>
+will relink the program when it is installed, see <A HREF="autobook_80.html#SEC80">10.6 Installing a Library</A>.
+</P><P>
+
+I discussed the creation of static Libtool libraries in <A HREF="autobook_73.html#SEC73">Creating Static Libraries</A>.  If you
+link an executable against such a library, the library objects, by
+definition, can only be statically linked into your executable.  Often
+this is what you want if the library is not intended for installation,
+or if you have temporarily disabled building of shared libraries in your 
+development tree to speed up compilation while you are debugging.
+</P><P>
+
+Sometimes, this isn't what you want.  You might need to install a
+complete Libtool library with shared and static components, but need to
+generate a static executable linked against the same library, like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ libtool gcc -static -o hello main.c libhello.la
+gcc -o hello main.c ./.libs/libhello.a
+</FONT></pre></td></tr></table></P><P>
+
+<A NAME="IDX12"></A>
+In this case, the <SAMP>`-static'</SAMP> switch instructs <CODE>libtool</CODE>
+to choose the static component of any uninstalled Libtool library.
+</P><P>
+
+<A NAME="IDX13"></A>
+You could have specified <SAMP>`-all-static'</SAMP> instead, which instructs
+<CODE>libtool</CODE> to link the executable with only static libraries
+(wherever possible), for any Libtool or native libraries used.
+</P><P>
+
+Finally, you can also link executables against convenience libraries.
+This makes sense when the convenience library is being used as an alias
+(see section <A HREF="autobook_74.html#SEC74">Creating Convenience Libraries</A>).  Notice how <TT>`libgraphics.la'</TT> expands to
+its own dependencies in the link command:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ libtool gcc -o image loader.o libgraphics.la
+libtool: link: warning: this platform does not like uninstalled
+libtool: link: warning: shared libraries
+libtool: link: image will be relinked during installation
+gcc -o .libs/image loader.o -lpng -ltiff -ljpeg -lz \
+-Wl,+b -Wl,/tmp/image/.libs:/usr/local/lib
+creating image
+</FONT></pre></td></tr></table></P><P>
+
+You can also link against convenience libraries being used as partially
+linked objects, so long as you are careful that each is linked only once.
+Remember that a partially linked object is just the same as any other
+object, and that if you load it twice (even from different libraries),
+you will get multiple definition errors when you try to link your
+executable.  This is almost the same as using the <SAMP>`-static'</SAMP>
+switch on the <CODE>libtool</CODE> link line to link an executable with the 
+static component of a normal Libtool library, except that the
+convenience library comprises PIC objects.  When statically linking
+an executable, PIC objects are best avoided however, see
+<A HREF="autobook_71.html#SEC71">10.2.1 Position Independent Code</A>.
+</P><P>
+
+  
+<A NAME="Linking a Library"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

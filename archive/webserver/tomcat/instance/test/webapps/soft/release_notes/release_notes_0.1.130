@@ -1,0 +1,18 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.130
+----------------------------------
+USER VISIBLE CHANGES
+
+Turned off integration of unused output compartments, added evaluation of Pred
+and Des blocks before the Error block, and added evaluation of predicted values
+at dosing times.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS: 488, 497, 504.
+
+BY:  Mitch Watrous
+
+WHEN:  October 28, 2005

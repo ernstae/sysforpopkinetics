@@ -1,0 +1,660 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Clock Synchronization</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Clock Synchronization</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	It is important that the system clocks in the Linux 
+	workstations of the RFPK Software Team be closely 
+	synchronized with the clock in the Linux server,
+	<SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>,
+	because the CVS application on that machine as well as the
+	backup process depends on the comparison of timestamps on
+	files residing on different machines.  This tutorial
+	explains how to configure your workstation so that it
+	stays synchronized within a fraction of a second with that on
+ 	<SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>.
+    </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>April 25, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.1</TD
+><TD
+ALIGN="LEFT"
+>July 25, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added sections for server and cluster</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN19"
+>Network Time Protocol</A
+></DT
+><DT
+><A
+HREF="#AEN44"
+>Configuring RFPK Software Development Workstations</A
+></DT
+><DT
+><A
+HREF="#AEN64"
+>Daemon Setup</A
+></DT
+><DT
+><A
+HREF="#AEN78"
+>Configuring the RFPK Time Server on Whitechuck</A
+></DT
+><DT
+><A
+HREF="#AEN89"
+>Configuring Time Service for the Cluster</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN19"
+></A
+>Network Time Protocol</H2
+><P
+>&#13;      The Network Time Protocol (NTP) allows computers connected
+      to the Internet to keep their clocks synchronized.  Certain
+      host computers equipped with accurate clocks make the NTP
+      service available to other, less well endowed, hosts.  
+      A machine with an accurate clock which is offering an NTP
+      service is known as a <I
+CLASS="emphasis"
+>level one</I
+> NTP
+      server.  Other machines, which may not be equipped with
+      accurate clocks but which nevertheless have accurate time
+      due to the fact that they are synchronized to one or more
+      <I
+CLASS="emphasis"
+>level one</I
+> NTP servers, can offer an
+      NTP service over the Internet as <I
+CLASS="emphasis"
+>level two</I
+>
+      NTP servers, and so on.
+    </P
+><P
+>&#13;      The host
+      <SPAN
+CLASS="systemitem"
+>&#13;	bigben.cac.washington.edu
+      </SPAN
+>
+      is a <I
+CLASS="emphasis"
+>level one</I
+> NTP server equipped
+      with a clock that gets its time from GPS satellites. 
+      The RFPK Linux server,
+      <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>,
+      is synchronized to 
+      <SPAN
+CLASS="systemitem"
+>bigben</SPAN
+>
+      and several other <I
+CLASS="emphasis"
+>level one</I
+> NTP servers.
+      This document describes the way to configure your 
+      RedHat Linux 8.0 workstation to synchronize to 
+      <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>.
+    </P
+><P
+>&#13;      There are two reasons for synchronizing our workstations to
+      <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>
+      rather than to 
+      <SPAN
+CLASS="systemitem"
+>bigben</SPAN
+>:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    Reduce the load on 
+	    <SPAN
+CLASS="systemitem"
+>bigben</SPAN
+>.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Synchronize to the machine that we really want to be 
+	    in sync with.  Even if
+	    <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>
+	    should go out of sync with the <I
+CLASS="emphasis"
+>level one</I
+>
+	    servers because of Internet problems, for example, our CVS
+	    and backup processes would still work well because they would be
+	    comparing timestamps on files on our workstations with those on
+	    <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>.
+	  </P
+></LI
+></UL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN44"
+></A
+>Configuring RFPK Software Development Workstations</H2
+><P
+>&#13;      In this section, we will edit several configuration files. To do this, 
+      you will need root privilege.
+    </P
+><P
+>&#13;      We will start by putting the file
+      <TT
+CLASS="filename"
+>/etc/ntp.conf</TT
+> under local
+      source control:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su -
+cd /etc
+ci -l ntp.conf
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      Edit <TT
+CLASS="filename"
+>ntp.conf</TT
+>
+      with your favorite editor, setting the default behavior to 
+      <I
+CLASS="emphasis"
+>nomodify</I
+> rather than 
+      <I
+CLASS="emphasis"
+>ignore</I
+>.
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;restrict default ignore
+
+	<I
+CLASS="emphasis"
+>should be changed to</I
+>
+
+restrict default nomodify
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      Next specify that 
+      <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>
+      is a trusted time server by making this change:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	after
+
+# restrict mytrustedtimeserverip mask 255.255.255.255 nomodify notap noquery
+# server mytrustedtimeserverip
+
+	insert the following pair of lines
+
+restrict whitechuck.rfpk.washington.edu nomodify notrap noquery
+server whitechuck
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      After making the above changes, use the <B
+CLASS="command"
+>rcsdiff</B
+>
+      command to check your work:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;rcsdiff ntp.conf
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      Finally, we need to recreate the 
+      <TT
+CLASS="filename"
+>/etc/ntp/step-tickers</TT
+> file,
+      which is a list of time servers queried by your system when it boots.
+    </P
+><P
+>&#13;      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /etc/ntp
+echo whitechuck.rfpk.washington.edu &#62; step-tickers
+echo time.nist.gov &#62;&#62; step-tickers
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN64"
+></A
+>Daemon Setup</H2
+><P
+>&#13;      We need to start the ntp daemon, if it is not already running, and
+      make sure that it is started automatically whenever the system reboots.
+      As <SPAN
+CLASS="systemitem"
+>root</SPAN
+>,
+      input the following commands:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/etc/rc.d/init.d/ntpd restart
+chkconfig --level 2345 ntpd on
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      You should now check that your ntp daemon is working.
+      Wait a few seconds after restarting ntpd, then issue this command:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ntpq -p
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      You should see output that looks something like this:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;     remote           refid      st t when poll reach   delay   offset  jitter
+==============================================================================
+ LOCAL(0)        LOCAL(0)        10 l   63   64  377    0.000    0.000   0.008
+*whitechuck.rfpk bigben.cac.wash  2 u  192  256  377    0.684    0.075   0.024
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      I believe that this
+      shows that there are two time servers, the dummy local server to
+      be used in case the network is down, and 
+      <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>.
+      It shows that 
+      <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>
+      gets its time from 
+      <SPAN
+CLASS="systemitem"
+>bigben</SPAN
+>,
+      <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>
+      is a level 2 server, it is remote, it was last queried 192 seconds ago,
+      it is queried every 256 seconds, a measure of its estimated
+      "reachability" is 377, there is a delay of 0.684 milli-seconds
+      between the
+      time it is queried and the time the response arrives, an offset of 
+      0.075 milli-seconds was applied in order to synchronize
+      the clocks and an 
+      estimate of the random error is 0.024 milli-seconds.
+    </P
+><P
+>&#13;      If you do not get comparable numbers (for example, the jitter is 0.000)
+      there is something wrong. 
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN78"
+></A
+>Configuring the RFPK Time Server on Whitechuck</H2
+><P
+>&#13;      The RFPK time server running on 
+      <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>
+      needs to be configured somewhat differently than those running on
+      workstations.
+    </P
+><P
+>&#13;      Just as for workstations,
+      the default should be edited to read
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;restrict default nomodify
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      The list of trusted servers, should read as follows:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;restrict bigben.cac.washington.edu nomodify notrap noquery
+restrict time.nist.gov nomodify notrap noquery
+restrict tick.uh.edu nomodify notrap noquery
+restrict tick.usno.navy.mil nomodify notrap noquery
+
+server bigben.cac.washington.edu
+server time.nist.gov
+server tick.uh.edu
+server tick.usno.navy.mil
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      Unlike the workstation case, the server must be opened to 
+      clients.  Just following the commented CLIENT NETWORK
+      section, add the following
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;restrict 128.95.35.0 mask 255.255.255.0 notrust nomodify notrap
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      which enables service requests coming from any of the
+      256 IP addresses starting 128.95.35, which is the range
+      encompassing the IPs for workstations located in the 
+      lab at AERL 241.  
+    </P
+><P
+>&#13;      Additional lines, similar to the one above, can be added
+      to accommodate RFPK machines with IP addresses that fall
+      into other address ranges.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN89"
+></A
+>Configuring Time Service for the Cluster</H2
+><P
+>&#13;      The gateway node should be configured to be the same as
+      <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>,
+      except that 
+      <SPAN
+CLASS="systemitem"
+>&#13;	bigben.cac.washington.edu
+      </SPAN
+>
+      should be replaced by
+      <SPAN
+CLASS="systemitem"
+>&#13;	whitechuck.rfpk.washington.edu
+      </SPAN
+> 
+      and the range of client IP addresses should be
+      "192.168.1.0 mask 255.255.255.0".
+    </P
+><P
+>&#13;      Each of the other nodes should be configured as workstations,
+      except that the trusted server specification should be the
+      following:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;restrict 192.168.1.1 mask 255.255.255.255 nomodify notrap noquery
+server 192.168.1.1
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

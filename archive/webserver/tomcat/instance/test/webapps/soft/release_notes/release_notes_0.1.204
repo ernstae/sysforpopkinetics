@@ -1,0 +1,17 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.204
+----------------------------------
+
+USER VISIBLE CHANGES
+
+Added checking for invidividuals with no data values.
+
+OTHER CHANGES
+
+None
+
+RELATED BUG REPORTS:  701
+
+BY:  Mitch Watrous
+
+WHEN:  May 29, 2007

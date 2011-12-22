@@ -1,0 +1,62 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.74
+----------------------------------
+USER VISIBLE CHANGES
+
+The final parameter estimates are returned to the user
+as long as the optimization completes successfully,
+regardless of the exit status of statistics calculation.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 218
+
+BY: Sachiko Honda
+
+WHEN: July 05, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.75
+----------------------------------
+USER VISIBLE CHANGES
+
+More detailed information is given back to the user
+when the optimization fails for certain reasons.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 184
+
+BY: Sachiko Honda
+
+WHEN: July 05, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.76
+----------------------------------
+USER VISIBLE CHANGES
+None
+
+OTHER CHANGES
+Added string constants for faster access.
+
+RELATED BUG REPORTS: 
+
+BY: Sachiko Honda
+
+WHEN: July 12, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.77
+----------------------------------
+USER VISIBLE CHANGES
+
+User is able to abort jobs through MDA.
+
+OTHER CHANGES
+
+The compiler daemon, the run daemon, the Perl database API and
+the database have been modefied to handle user job abortions.
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: July 13, 2005

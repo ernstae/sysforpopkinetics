@@ -1,0 +1,757 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>The Benefits of Open Source</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>The Benefits of Open Source</H1
+><H4
+CLASS="author"
+><A
+NAME="AEN4"
+>Alan Westhagen</A
+></H4
+><DIV
+CLASS="affiliation"
+><SPAN
+CLASS="jobtitle"
+>Software Architect<BR></SPAN
+><SPAN
+CLASS="jobtitle"
+>RFPK Software Team Leader<BR></SPAN
+></DIV
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	The System for Population Kinetics (SPK) is software being developed
+	by the RFPK Laboratory, in the Bioengineering Department of the 
+	University of Washington, under grant <I
+CLASS="emphasis"
+>P41 EB-001975</I
+>
+	from the National Institutes
+	of Health (NIH) of the U.S. Department of Health and Human Services.	
+	This white paper presents the rationale for the choice by RFPK of an open
+	source development and distribution model for this software.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>July 14, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN19"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN24"
+>Goals</A
+></DT
+><DT
+><A
+HREF="#AEN31"
+>The Case for Free Beer</A
+></DT
+><DT
+><A
+HREF="#AEN38"
+>The Case Against Free Binaries</A
+></DT
+><DT
+><A
+HREF="#AEN49"
+>The Case for Open Source</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN52"
+>Freedom to Include the Work of Others</A
+></DT
+><DT
+><A
+HREF="#AEN80"
+>Freedom to Share the Work with Others</A
+></DT
+><DT
+><A
+HREF="#AEN85"
+>Freedom from Proprietary Lock-In</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN102"
+>The Impact of Open Source</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN105"
+>End Users</A
+></DT
+><DT
+><A
+HREF="#AEN108"
+>Service Providers</A
+></DT
+><DT
+><A
+HREF="#AEN112"
+>Consultants</A
+></DT
+><DT
+><A
+HREF="#AEN115"
+>Software Houses</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN118"
+>Summary</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN19"
+></A
+>Introduction</H2
+><P
+>&#13;      With the traditional model of software distribution,
+      source code was assumed to be
+      private information.  Software was distributed as binary object code,
+      which would reveal its inner structure only through very difficult 
+      analysis of CPU instruction sequences. Users or third-party developers who wanted to
+      modify the software were constrained from doing so by intellectual property laws,
+      even when their efforts in reverse engineering were otherwise
+      successful.
+    </P
+><P
+>&#13;      The open source distribution model reverses the old assumptions.
+      Source code is not secret. A copy of the source code is always published
+      as part of the distribution package.  Anyone who has a copy of the code
+      is authorized to redistribute it.
+      Anyone is free to modify the code.  If they do so, they are under no
+      obligation to share their enhancements with anyone.  If, however, they
+      distribute a modified version of the original, they must include in the
+      distribution the altered source code.  Co-development is strongly
+      encouraged.
+    </P
+><P
+>&#13;      Although this white paper will be primarily concerned with practical
+      considerations, it is appropriate at the onset to acknowledge the equally
+      important philosophical dimension. In a profound manner, open source 
+      mirrors the academic ideal of free exchange of ideas through publication
+      and discourse, and the furthering of knowledge as a cooperative endeavor
+      in ways that closed source does not.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN24"
+></A
+>Goals</H2
+><P
+>&#13;      In the interest of developing this rationale in a top-down manner, it
+      is best to start with the purpose of the software itself.
+    </P
+><A
+NAME="goal"
+></A
+><P
+>&#13;      SPK exists <I
+CLASS="emphasis"
+>to improve the quality and expand the application of population
+      kinetic modeling in biomedical research.
+    </I
+></P
+><P
+>&#13;      Important practical benefits will be 
+      a reduction in the cost of developing drugs, as well as improvements
+      in their safety and effectiveness.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN31"
+></A
+>The Case for Free Beer</H2
+><P
+>&#13;      Open source software is often described as <I
+CLASS="emphasis"
+>free</I
+> software.
+      What is meant is <I
+CLASS="emphasis"
+>free, as in freedom,</I
+> and not
+      <I
+CLASS="emphasis"
+>free, as in free beer</I
+>.  The latter definition is,
+      nevertheless, highly relevant to the distribution of SPK.
+      Some of the potential users of SPK have the resources to pay handsomely
+      for critical software.  This is true, one would suppose, of the
+      pharmaceutical industry. 
+      Drug companies, however, will not buy software which has not already established
+      its credibility by use in the broader biomedical research community.  For
+      this reason, RFPK has chosen a strategy of setting the purchase price of
+      SPK to zero, in order to maximize the number of users.
+    </P
+><P
+>&#13;      It could be argued that by giving away its software RFPK is foregoing income
+      which might be used to hire more programmers, to make the project 
+      self-sustaining, or even to provide a profit.  There is no guarantee of success
+      in the software business,
+      however.  Many firms have produced excellent software but have nevertheless
+      failed for marketing reasons, and their software has disappeared along with them.
+      RFPK believes that wide adoption of its software and its long-term viability
+      can be achieved without subjecting the project to the vagaries of the market.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN38"
+></A
+>The Case Against Free Binaries</H2
+><P
+>&#13;      As an alternative to giving away source code, RFPK considered giving away 
+      object code instead.  There are several reasons that this option was 
+      rejected:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    Open source greatly reduces the cost of developing and distributing 
+	    complex software, such as SPK.  (This advantage will be described
+	    in subsequent sections.)  If RFPK were to exclude source code from
+	    its distribution, it would become ineligible for most of the benefits
+	    of open source development.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <A
+NAME="risk"
+></A
+>
+	    In addition to a workstation and an Internet connection, an SPK user
+	    needs access to an SPK service provider.  The service provider offers
+	    a web site, servers and a computational cluster.  RFPK is itself a service provider.
+	    For the project to achieve the goal of wide adoption, there must be 
+	    many more SPK service providers.  
+	    A service provider might be embedded in an academic research group such as 
+	    RFPK.  It might be part of the IT department of a pharmaceutical company.
+	    It might be one of the offerings of a consulting or computer services firm.
+	  </P
+><P
+>&#13;	    Providing a service such as SPK represents a considerable investment,
+	    especially if a powerful computational cluster is involved.
+	    Before making this commitment, a potential service provider would want some assurance
+	    that SPK would continue to evolve and to be maintained.  RFPK is a first rate
+	    organization, with excellent prospects for obtaining a renewal of its current grant
+	    and for obtaining additional grants.  Even so, some might see the small
+	    size of RFPK as a risk factor.  
+	  </P
+><P
+>&#13;	    With open source, all interested parties have access to source code.  In
+	    the unlikely event that RFPK would no longer be able to continue 
+	    the development of SPK, other organizations would be positioned to step in
+	    to fill the gap. 
+	  </P
+></LI
+></UL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN49"
+></A
+>The Case for Open Source</H2
+><P
+>&#13;      Open Source provides RFPK with the freedom it needs to develop a complex
+      product on a modest budget.  
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN52"
+></A
+>Freedom to Include the Work of Others</H3
+><P
+>&#13;	SPK includes many other pieces of software, some of which represent much more 
+	development effort than the code that RFPK itself has written.
+	The incorporated modules include:
+	<P
+></P
+><UL
+><LI
+><P
+>&#13;	      <I
+CLASS="emphasis"
+>MySQL</I
+> relational database management system
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <I
+CLASS="emphasis"
+>Tomcat</I
+> web server
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <I
+CLASS="emphasis"
+>NetBeans</I
+> interactive development environment
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <I
+CLASS="emphasis"
+>GNU RCS</I
+> revision control system
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <I
+CLASS="emphasis"
+>Atlas</I
+> (Automatically Tuned Linear Algebra Software)
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <I
+CLASS="emphasis"
+>CppAd</I
+> c++ automatic differentiation library
+	    </P
+></LI
+><LI
+><P
+>&#13;	      <I
+CLASS="emphasis"
+>GNU Operating System</I
+>
+	    </P
+></LI
+></UL
+>
+      </P
+><P
+>&#13;	All of this software can be freely distributed as part of a system that
+	is open source.  There is no need to negotiate with the copyright holders
+	over price or conditions. Inclusion of closed source software always 
+	requires negotiation preceded by cost and benefit analysis.
+      </P
+><P
+>&#13;	Consider for example the MySQL relational database management system.  As
+	part of an open source application, it can be freely distributed without the
+	payment of any royalties.  When part of a proprietary system, however, it
+	can only be distributed under a commercial license, which requires the 
+	payment of fees similar to those charged for other database management systems.
+	If SPK were not open source, it would be necessary to do a cost and benefit
+	comparison between MySQL and similar systems, such as Oracle, DB2, 
+	SyBase and SQL-Server.  It would then be necessary to negotiate prices for
+	placing the software on development machines, test machines and, finally,
+	on the customers' machines.  The price of the database management system would be 
+	loaded on top of the price of SPK, making the total package more expensive
+	for the customer to acquire.  Having to deal with business issues such
+	as these would inevitably draw resources away from development.
+      </P
+><P
+>&#13;	The SPK service is delivered over the world-wide-web.
+	MySQL, Tomcat, and the GNU operating system are widely used in that environment.
+	Although Microsoft products dominate on the desktop and in the office, 
+	open source products dominate the Internet.  SPK concedes nothing in terms
+	of quality or usability by including these excellent products.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN80"
+></A
+>Freedom to Share the Work with Others</H3
+><P
+>&#13;	With closed source, a software company is always extremely protective 
+	of its intellectual property.  It is very rare that a company opens its source code
+	to outsiders, and even then it is not to enable them to modify the 
+	code, but only to better understand how it works or how to interface
+	to it.  They usually expect to be paid for this privilege and to be indemnified
+	in case their secrets are leaked to third parties.
+      </P
+><P
+>&#13;	With open source, the situation is reversed.  Every recipient of the 
+	software has a right to the source code and the right to modify it.
+	There is no need to negotiate price and conditions.  There is no
+	concern over the leaking of information that is already public.
+	Anyone with the software is a potential co-developer.
+      </P
+><P
+>&#13;	The tools that are used to develop open source products are themselves
+	open source.  The cost of obtaining these tools is low or non-existent.
+	Anyone with a Linux computer, for example, already has most of these
+	tools installed on her machine or can easily download them from the
+	Internet.  This is another way in which the threshold for becoming
+	a co-developer is very low.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN85"
+></A
+>Freedom from Proprietary Lock-In</H3
+><P
+>&#13;	The strategy to make it difficult or impossible for consumers of computer
+	technology to change
+	system vendor is known as proprietary lock-in,  At one time, this strategy
+	was pursued successfully by all major computer manufacturers. Software developers were
+	enlisted, whether willingly or unwillingly, in this endeavor via the
+	means of the <I
+CLASS="emphasis"
+>application programming interface (API).</I
+>
+	To develop software to run on the systems of a particular computer company, a developer
+	had to use the  API of that vendor. The software would run on
+	the systems of that company and none other.  This strategy partitioned
+	the world of software development along API lines.  Because of the
+	intentional incompatibility of the APIs, most software houses were forced
+	to develop software for the platform of a single vendor. It would then be 
+	impossible for consumers who purchased the software to switch computer
+	manufacturers.  They were locked in and could no longer
+	benefit from competition between vendors.
+      </P
+><P
+>&#13;	The Unix operating system was revolutionary, not because it was more
+	powerful, or more efficient, or had better features, but because it was
+	<I
+CLASS="emphasis"
+>portable</I
+>.  Within a few years of its creation at
+	AT&#38;T Bell Laboratories, it had been modified to run on most of the 
+	computer processors available at the time.  Software development needed 
+	no longer to be <I
+CLASS="emphasis"
+>balkanized.</I
+>  Systems written to the
+	Unix API could be easily ported to any Unix system, whether the hardware
+	came from IBM, Digital, Hewlett Packard, Sun, SGI, etc.  Consumers loved it, because
+	they now had the option of changing hardware vendors.  
+	The old-line computer manufacturers hated it, and
+	did everything in their power to impede the process of migration to Unix.
+      </P
+><P
+>&#13;	By the mid 1990's, the battle between Unix and the old proprietary
+	operating systems was over, with Unix the victor. Those computer companies 
+	which had first opposed Unix and then had impeded its adoption were now
+	solidly committed to delivering Unix on their hardware and developing
+	applications using the Unix API.  At the same time, these companies
+	underwent a transformation from being primarily manufacturers to also
+	being systems integrators and consultants.  In this new environment, an
+	operating system which could run on any hardware made integration of
+	systems much easier.
+      </P
+><P
+>&#13;	At the same time that Unix was consolidating its dominance for the large
+	and medium sized computers used as Internet servers, database servers,
+	and enterprise application servers, another force was at work.  Microsoft
+	recognized that desktop computing and office automation would be the 
+	major growth area for information technologies.  By developing
+	Windows as an operating system that could provide an easy-to-use
+	graphical user interface for the desktop and a platform for office
+	automation, Microsoft asserted its dominance at the low end of the
+	computer spectrum.  
+      </P
+><P
+>&#13;	SPK is a complex system, made of a number of components.  These can be
+	divided between the <I
+CLASS="emphasis"
+>server side</I
+>,
+	which runs on server machines and high performance computing (HPC)
+	clusters, and the <I
+CLASS="emphasis"
+>client side</I
+>, which runs on the
+	end-user's workstation or laptop.
+      </P
+><P
+>&#13;	For the server-side, 
+	there are today for all practical purposes, only two APIs for software developers
+	to choose from.  The Unix API is supported by all Unix and Unix-compatible
+	systems, including Linux and Apple Macintosh OS-10.  The Windows API is supported
+	by the Microsoft Windows operating system.  The two are incompatible.
+      </P
+><P
+>	
+	The choice of server-side API determines the processor architectures on which the
+	software will run.  
+	Programs written to the Unix API can be installed on nearly every 
+	processor architecture in existence, including Intel Pentium and Itanium,
+	but also Sparc, Alpha, PowerPC and IBM Mainframes.  Software written to the Windows API
+	runs only on Pentium and Itanium.
+      </P
+><P
+>&#13;	The choice of API also determines the operating system that must be used.  For SPK, this 
+	turns out to be of prime importance, because almost all 
+	HPC clusters run Unix or Unix-compatible operating systems rather than Windows.
+	SPK is developed to the open source GNU version of the Unix API. This is
+	the most portable of all APIs.  This choice enables SPK to run on
+	practically all clusters available. 
+      </P
+><P
+>&#13;	For the client side,
+	many end-users of SPK prefer to use Windows as the operating system for
+	their workstations and laptops.  This is a choice
+	that RFPK respects.  Proprietary lock-in is
+	avoided through the use of Java, the 
+	<I
+CLASS="emphasis"
+>write once, run anywhere</I
+> technology,
+	which allows the client side of SPK to run not only on top of Windows,
+	but also on Apple Macintosh OS-10, Linux or Unix, depending on the
+	user's preference.
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN102"
+></A
+>The Impact of Open Source</H2
+><P
+>&#13;      Up to this point, this paper has focused primarily on how the
+      decision to develop and distribute SPK as open source affects
+      RFPK itself.  This decision also affects other constituencies, 
+      including end users, service providers, consultants and software
+      houses.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN105"
+></A
+>End Users</H3
+><P
+>&#13;	The impact on end users is positive and unambiguous.  They 
+	obtain the client software for free and the service at a price that
+	should be competitive because of the low threshold of entry for 
+	service providers.  In fact, computer-savvy end users can obtain
+	the entire SPK package for free and install it on their own hardware
+	if that is preferable to using a service provider.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN108"
+></A
+>Service Providers</H3
+><P
+>&#13;	Service providers can download SPK for free and install it on their
+	hardware.  Because RFPK has chosen to develop SPK using open
+	source GNU tools, it is possible to install the software on just
+	about any hardware that the service provider has available.  The
+	requirement that the operating system be either Unix or a
+	Unix-compatible system such as Linux or Mac-OS10 is not a barrier
+	for most service providers, who already have in-house Unix 
+	expertise.  As discussed <A
+HREF="#risk"
+>above</A
+>, the
+	the fact that open source distribution creates a community of individuals and
+	organizations that would continue the development of maintenance
+	should RFPK go out of existence, eliminates that risk to service providers.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN112"
+></A
+>Consultants</H3
+><P
+>&#13;	SPK can be a real boon to consultants, especially if they choose to
+	become service providers.  Because SPK is a web based service, it is
+	easy to differentiate a particular SPK from others through specialization
+	of the web site and through the provision of proprietary PK models.
+	It is important to note that models are not part of SPK.  They are, 
+	rather, the intellectual property of the person or organization
+	which develops them.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN115"
+></A
+>Software Houses</H3
+><P
+>&#13;	There remains opportunity for developers of 
+	proprietary software to add value to SPK by replacing entire modules.
+	Architecturally, SPK can be viewed as a cooperating group of 
+	loosely-coupled independent processes.  The interfaces between these
+	processes are well documented.  A software house could, for example, replace the 
+	SPK client program with its own proprietary client, which might feature a 
+	different type of graphical user interface or which might integrate seamlessly
+	with its other products.  A software house that specialized in getting the
+	most out of computational clusters might develop a proprietary replacement
+	for the SPK run-time daemon which might do a superior job of optimizing
+	work flow.
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN118"
+></A
+>Summary</H2
+><P
+>&#13;      In conclusion, open source is the right choice for RFPK, because it 
+      significantly enhances its ability to achieve its 
+      <A
+HREF="#goal"
+>goal</A
+>, given its limited resources.  
+      Other groups benefit as well, because open source creates a community
+      to which all constituencies can contribute and from which all can
+      draw benefits.
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,791 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Spkdb - Perl Binding for the Spk Database API</title>
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<ul>
+
+		<li><a href="#export">EXPORT</a></li>
+	</ul>
+
+	<li><a href="#abstract">ABSTRACT</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
+
+		<li><a href="#connect__open_a_database_connection">connect - open a database connection</a></li>
+		<li><a href="#disconnect__close_a_database_connection">disconnect - close a database connection</a></li>
+		<li><a href="#new_job__submit_a_new_job">new_job - submit a new job</a></li>
+		<li><a href="#job_history__get_event_history_for_this_job">job_history - get event history for this job</a></li>
+		<li><a href="#get_job__retrieve_a_job_for_a_user">get_job - retrieve a job for a user</a></li>
+		<li><a href="#job_status__return_the_current_state_of_a_job">job_status - return the current state of a job</a></li>
+		<li><a href="#user_jobs__get_status_for_the_most_recent_jobs_of_a_user">user_jobs - get status for the most recent jobs of a user</a></li>
+		<li><a href="#set_state_code__set_job_state_code">set_state_code - set job state_code</a></li>
+		<li><a href="#de_q2c__remove_highest_priority_job_from_compile_queue">de_q2c - remove highest priority job from compile queue</a></li>
+		<li><a href="#get_q2c_job__get_a_queuedtocompile_job_from_the_database">get_q2c_job - get a queued-to-compile job from the database</a></li>
+		<li><a href="#get_job_ids__get_job_ids_of_all_jobs_with_a_given_state_code">get_job_ids - get job_ids of all jobs with a given state_code</a></li>
+		<li><a href="#get_cmp_jobs__get_all_jobs_currently_being_compiled">get_cmp_jobs - get all jobs currently being compiled</a></li>
+		<li><a href="#en_q2r__add_a_compiled_job_to_the_run_queue">en_q2r - add a compiled job to the run queue</a></li>
+		<li><a href="#de_q2r__remove_the_highest_priority_job_from_the_run_queue">de_q2r - remove the highest priority job from the run queue</a></li>
+		<li><a href="#get_q2r_job__get_a_queuedtorun_job_from_the_database">get_q2r_job - get a queued-to-run job from the database</a></li>
+		<li><a href="#de_q2ar__remove_the_highest_priority_job_from_the_aborting_run_queue">de_q2ar - remove the highest priority job from the aborting run queue</a></li>
+		<li><a href="#get_run_jobs__get_all_jobs_with_state_code_'run'">get_run_jobs - get all jobs with state_code 'run'</a></li>
+		<li><a href="#end_job__end_a_job,_whether_successful_or_not">end_job - end a job, whether successful or not</a></li>
+		<li><a href="#job_report__retrieve_final_report_for_a_job">job_report - retrieve final report for a job</a></li>
+		<li><a href="#job_checkpoint__retrieve_final_checkpoint_for_a_job">job_checkpoint - retrieve final checkpoint for a job</a></li>
+		<li><a href="#new_dataset__add_a_new_dataset">new_dataset - add a new dataset</a></li>
+		<li><a href="#get_dataset__retrieve_a_dataset_for_a_user">get_dataset - retrieve a dataset for a user</a></li>
+		<li><a href="#update_dataset__update_a_dataset">update_dataset - update a dataset</a></li>
+		<li><a href="#user_datasets__get_descriptions_of_all_the_datasets_of_a_user">user_datasets - get descriptions of all the datasets of a user</a></li>
+		<li><a href="#new_model__add_a_new_model">new_model - add a new model</a></li>
+		<li><a href="#get_model__retrieve_a_model_for_a_user">get_model - retrieve a model for a user</a></li>
+		<li><a href="#update_model__update_a_model">update_model - update a model</a></li>
+		<li><a href="#user_models__get_descriptions_of_all_the_models_of_a_user">user_models - get descriptions of all the models of a user</a></li>
+		<li><a href="#new_user__add_a_new_user">new_user - add a new user</a></li>
+		<li><a href="#update_user__update_a_user_record">update_user - update a user record</a></li>
+		<li><a href="#get_user__retrieve_a_user_record_by_username">get_user - retrieve a user record by username</a></li>
+		<li><a href="#set_mail_notice__set_endjob_email_notice_request_option">set_mail_notice - set end-job email notice request option</a></li>
+		<li><a href="#get_mail_notice__get_endjob_email_notice_request_option">get_mail_notice - get end-job email notice request option</a></li>
+		<li><a href="#email_for_job__get_email_address_for_a_job">email_for_job - get email address for a job</a></li>
+	</ul>
+
+	<li><a href="#see_also">SEE ALSO</a></li>
+	<li><a href="#author">AUTHOR</a></li>
+	<li><a href="#copyright_and_license">COPYRIGHT AND LICENSE</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>Spkdb - Perl Binding for the Spk Database API</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<pre>
+  use Spkdb;
+  
+  See individual function descriptions.</pre>
+<p>
+</p>
+<h2><a name="export">EXPORT</a></h2>
+<p>None by default.  All subroutines names may be imported.</p>
+<p>
+</p>
+<hr />
+<h1><a name="abstract">ABSTRACT</a></h1>
+<p>Module Spkdb provides an Application Programming Interface (API)
+to the Spk Database.  It accesses the database via the 
+Perl modules DBI and DBD::Mysql.  This module is simply a collection
+of Perl subroutines which correspond to the functions defined
+in the Spk Database API Specification.</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>A short description of the usage of each of the subroutines 
+follows.</p>
+<p>
+</p>
+<h2><a name="connect__open_a_database_connection">connect -- open a database connection</a></h2>
+<p>Establish a connection to the database, returning 
+a handle which is a required argument to all other
+subroutines in this package:</p>
+<p>$dbh = &amp;Spkdb::connect($dbname, $hostname, $username, $password);</p>
+<p>$dbname is a string containing the name of an existing database.</p>
+<p>$hostname is a string containing the hostname where the database resides.</p>
+<p>$username is a string containing the name of a valid user of Spkdb.</p>
+<p>$password is a string containing the password of the given user.</p>
+<p>Returns</p>
+<pre>
+  success: a valid database handle
+  failure: undef</pre>
+<p>
+</p>
+<h2><a name="disconnect__close_a_database_connection">disconnect -- close a database connection</a></h2>
+<p>Close a connection to the database, releasing resources:</p>
+<pre>
+    &amp;Spkdb::disconnect($dbh);</pre>
+<p>$dbh is the handle of an open database connection.</p>
+<p>Returns undef.</p>
+<p>
+</p>
+<h2><a name="new_job__submit_a_new_job">new_job -- submit a new job</a></h2>
+<p>Submit a new job to be compiled and run.</p>
+<pre>
+    $job_id = &amp;Spkdb::new_job($dbh,
+                              $user_id,
+                              $abstract,
+                              $dataset_id,
+                              $dataset_version,
+                              $model_id,
+                              $model_version,
+                              $xml_source,
+                              );
+$dbh is the handle to an open database connection.</pre>
+<p>$user_id is the user_id number of an existing user.</p>
+<p>$abstract is a string containing a brief description of the model.</p>
+<p>$dataset_id is the dataset_id number of an existing dataset</p>
+<p>$dataset_version is the version string of the dataset</p>
+<p>$model_id is the model_id number of an existing model.</p>
+<p>$model_version is the version string of the model.</p>
+<p>$xml_source is the source string.</p>
+<p>Returns:</p>
+<pre>
+  success: automatically generated value of the job_id primary key
+  failure: 0
+        $errstr contains an error messages string
+        $err == $Spkdb::INSERT_FAILED</pre>
+<p>
+</p>
+<h2><a name="job_history__get_event_history_for_this_job">job_history -- get event history for this job</a></h2>
+<p>Returns a reference to an array of rows from the history table.  Each
+row is a reference to a hash table, with the field name as key and field
+value as value.  Within the array, rows are sorted in order of occurence.
+Each row contains all fields of the history table.</p>
+<pre>
+    $array_row = $Spkdb::job_history($dbh, $job_id);</pre>
+<p>Returns</p>
+<pre>
+  success:
+    reference to an array of references to hash tables, each 
+    representing a row in the history table</pre>
+<pre>
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="get_job__retrieve_a_job_for_a_user">get_job -- retrieve a job for a user</a></h2>
+<p>Retrieve the job corresponding to a job_id</p>
+<pre>
+    $row = &amp;Spkdb::get_job($dbh, $job_id);</pre>
+<p>$dbh is the handle to an open database connection</p>
+<p>$job_id is the integer which uniquely identifies the job</p>
+<p>Returns</p>
+<pre>
+  success: reference to a hash table of column/value pairs
+           0 if no datatset corresponds to the given job_id
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="job_status__return_the_current_state_of_a_job">job_status -- return the current state of a job</a></h2>
+<p>Return the state_code, event_time, and end_code for a job.  Note that
+the event_time is the time of the last job state transistion, such
+as the transition from ``queued to compile'' to ``compiling''.</p>
+<pre>
+    $row = &amp;Spkdb::job_status($dbh, $job_id);</pre>
+<p>$dbh is the handle to an open database connection.</p>
+<p>$job_id is the primary key of the job in question.</p>
+<p>Returns</p>
+<pre>
+  success: reference to a hash table containing the following
+    columns from the selected row of the job table:
+        state_code
+        event_time
+        end_code
+    In the hash table, the above field names are the keys and 
+    the column values the values.
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function fail
+                == $Spkdb::EXECUTE_FAILED if execute function fails</pre>
+<p>
+</p>
+<h2><a name="user_jobs__get_status_for_the_most_recent_jobs_of_a_user">user_jobs -- get status for the most recent jobs of a user</a></h2>
+<p>Returns a reference to an array of rows.  Each row is a reference
+to a hash table, with the field name as key and field value as value.
+Within the array, jobs are sorted in reverse order of job_id, hence
+the most recently submitted job appears first.  The maximum number 
+of jobs to return is the third argument.</p>
+<p>The fields returned are job_id, abstract, state_code, start_time,
+event_time and end_code.</p>
+<pre>
+    $array_row = $Spkdb::user_jobs($dbh, $user_id, $maxnum);</pre>
+<p>Returns</p>
+<pre>
+  success:
+    reference to an array of references to hash tables, each 
+    representing a subset of a row in the job table</pre>
+<pre>
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="set_state_code__set_job_state_code">set_state_code -- set job state_code</a></h2>
+<pre>
+
+Set the state_code of a specified job.</pre>
+<pre>
+    $r = &amp;Spkdb::set_state_code($dbh, $job_id, $state_code);</pre>
+<p>$dbh is the handle to an open database connection.</p>
+<p>$job_id is the key to the job table</p>
+<p>$state_code is the state_code to set.</p>
+<p>Returns</p>
+<pre>
+  success: 1 if state_code of the job is set, 0 otherwise
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::UPDATE_FAILED</pre>
+<p>
+</p>
+<h2><a name="de_q2c__remove_highest_priority_job_from_compile_queue">de_q2c -- remove highest priority job from compile queue</a></h2>
+<p>Remove the highest priority job from the compiler queue, so that
+it can be compiled.</p>
+<pre>
+    $row = &amp;Spkdb::de_q2c($dbh);</pre>
+<p>$dbh is the handle to an open database connection.</p>
+<p>Returns</p>
+<pre>
+  success: 
+    reference to a hash for the row of highest priority, 
+    containing the following fields:
+        job_id
+        dataset_id
+        dataset_version
+        xml_source
+    false if compiler queue is empty</pre>
+<pre>
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="get_q2c_job__get_a_queuedtocompile_job_from_the_database">get_q2c_job -- get a queued-to-compile job from the database</a></h2>
+<p>Remove the highest priority job from the compiler queue, so that
+it can be compiled.</p>
+<pre>
+    $row = &amp;Spkdb::get_q2c_job($dbh, $job_id);</pre>
+<p>$dbh is the handle to an open database connection.
+$job_id is the key to a row in the job table.</p>
+<p>Returns</p>
+<pre>
+  success: 
+    reference to a hash for the row of highest priority, 
+    containing the following fields:
+        dataset_id
+        dataset_version
+        xml_source
+    false if compiler queue is empty</pre>
+<pre>
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="get_job_ids__get_job_ids_of_all_jobs_with_a_given_state_code">get_job_ids -- get job_ids of all jobs with a given state_code</a></h2>
+<p>Get job_ids of all jobs as an array with a given state_code.</p>
+<pre>
+    @array_job_ids = &amp;Spkdb::get_job_ids($dbh, $state_code);</pre>
+<p>$dbh is the handle to an open database connection.</p>
+<p>$state_code is the given state_code of the jobs.</p>
+<p>Returns</p>
+<pre>
+  success: 
+    an array of job_ids of all the jobs with the given state_code,
+    0 if there is no job with the given state_code</pre>
+<pre>
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="get_cmp_jobs__get_all_jobs_currently_being_compiled">get_cmp_jobs -- get all jobs currently being compiled</a></h2>
+<p>Returns a reference to an array of rows.  Each row is a reference
+to a hash table, with the field name as key and field value as value.
+Within the array, jobs are sorted in order of job_id, hence the first
+job submitted appears first. Each row contains
+        job_id
+        dataset_id
+        dataset_version
+        xml_source</p>
+<pre>
+    $array_row = $Spkdb::get_cmp_jobs($dbh);</pre>
+<p>Returns</p>
+<pre>
+  success:
+    reference to an array of references to hash tables, each 
+    representing a subset of a row in the job table; 
+    false if there are no jobs with state_code 'cmp'</pre>
+<pre>
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="en_q2r__add_a_compiled_job_to_the_run_queue">en_q2r -- add a compiled job to the run queue</a></h2>
+<p>Add a compiled job to the queue of jobs that are ready to run.</p>
+<pre>
+    $r = &amp;Spkdb::en_q2r($dbh, $job_id, $cpp_source);</pre>
+<p>$dbh is the handle to an open database connection.</p>
+<p>$job_id is the key to the job table</p>
+<p>$cpp_source is a string of c++ source code.</p>
+<p>Returns</p>
+<pre>
+  success: true
+  failure: false
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::UPDATE_FAILED</pre>
+<p>
+</p>
+<h2><a name="de_q2r__remove_the_highest_priority_job_from_the_run_queue">de_q2r -- remove the highest priority job from the run queue</a></h2>
+<p>Remove the highest priority job from the ready to run queue, so
+that it can be run.</p>
+<pre>
+    $row = &amp;Spkdb::de_q2r($dbh);</pre>
+<p>$dbh is the handle to an open database connection.</p>
+<p>Returns</p>
+<pre>
+  success:</pre>
+<pre>
+    reference to a hash for the row of highest priority, 
+    containing the following fields:
+        job_id
+        cpp_source
+    false if ready to run queue is empty</pre>
+<pre>
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="get_q2r_job__get_a_queuedtorun_job_from_the_database_remove_the_highest_priority_job_from_the_ready_to_run_queue,_so_that_it_can_be_run.">get_q2r_job -- get a queued-to-run job from the database
+Remove the highest priority job from the ready to run queue, so
+that it can be run.</a></h2>
+<pre>
+    $row = &amp;Spkdb::get_q2r_job($dbh, $job_id);</pre>
+<p>$dbh is the handle to an open database connection.
+$job_id is the key to a row in the job table.</p>
+<p>Returns</p>
+<pre>
+  success:</pre>
+<pre>
+    reference to a hash for the row of highest priority, 
+    containing the following fields:
+        cpp_source
+        checkpoint
+    false if ready to run queue is empty</pre>
+<pre>
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="de_q2ar__remove_the_highest_priority_job_from_the_aborting_run_queue">de_q2ar -- remove the highest priority job from the aborting run queue</a></h2>
+<p>Remove the highest priority job from the aborting run queue, so
+that it can be aborted by run daemon.</p>
+<pre>
+    $job_id = &amp;Spkdb::de_q2ar($dbh);</pre>
+<p>$dbh is the handle to an open database connection.</p>
+<p>Returns</p>
+<pre>
+  success:</pre>
+<pre>
+    job_id of highest priority aborting run job 
+    false if aborting run queue is empty</pre>
+<pre>
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="get_run_jobs__get_all_jobs_with_state_code_'run'">get_run_jobs -- get all jobs with state_code 'run'</a></h2>
+<p>Returns a reference to an array of rows.  Each row is a reference
+to a hash table, with the field name as key and field value as value.
+Within the array, jobs are sorted in order of job_id, hence the first
+job submitted appears first. Each row contains 
+    job_id
+    cpp_source</p>
+<pre>
+    $array_row = $Spkdb::get_run_jobs($dbh);</pre>
+<p>Returns</p>
+<pre>
+  success:
+    reference to an array of references to hash tables, each 
+    representing a subset of a row in the job table; 
+    false if there are no jobs with state_code 'run'</pre>
+<pre>
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="end_job__end_a_job,_whether_successful_or_not">end_job -- end a job, whether successful or not</a></h2>
+<p>End the job, whether successfully or not.  Note, this does
+not actually terminate the processing of a job.  Instead,
+it sets the state of the job to 'end', and stores the
+final report.</p>
+<pre>
+    $r = &amp;Spkdb::end_job($dbh, $job_id, $end, $report, $checkpoint);</pre>
+<p>$dbh is the handle to an open database connection.</p>
+<p>$job_id is a unique job table identifier.</p>
+<p>$end_code is a valid end_code, defined in the end table.</p>
+<p>$report is a string containing the report.</p>
+<p>$checkpoint is a string containing the checkpoint file</p>
+<p>Returns</p>
+<pre>
+  success: true
+  failure: false
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::INVALID_END
+                == $SPKDB::UPDATE_FAILED</pre>
+<p>
+</p>
+<h2><a name="job_report__retrieve_final_report_for_a_job">job_report -- retrieve final report for a job</a></h2>
+<p>Retrieve the report string for a job in the 'end' state.</p>
+<pre>
+    $report = &amp;Spkdb::job_report($dbh, $job_id);</pre>
+<p>$dbh is the handle to an open database connection.</p>
+<p>$job_id is the unique numeric identifier of a job;</p>
+<p>Returns</p>
+<pre>
+    success: a string containing the report
+    failure: undef
+        $Spkdb::errstr contains an error message string
+        $Spkdb::err == $Spkdb::NOT_ENDED if job not in 'end' state
+                    == $Spkdb::PREPARE_FAILED if prepare function failed
+                    == $Spkdb::EXECUTE_FAILED if execute function failed
+                    == $Spkdb::GET_FAILED if retieval failed</pre>
+<p>
+</p>
+<h2><a name="job_checkpoint__retrieve_final_checkpoint_for_a_job">job_checkpoint -- retrieve final checkpoint for a job</a></h2>
+<p>Retrieve the checkpoint string for a job in the 'end' state.</p>
+<pre>
+    $checkpoint = &amp;Spkdb::job_checkpoint($dbh, $job_id);</pre>
+<p>$dbh is the handle to an open database connection.</p>
+<p>$job_id is the unique numeric identifier of a job;</p>
+<p>Returns</p>
+<pre>
+    success: a string containing the checkpoint
+    failure: undef
+        $Spkdb::errstr contains an error message string
+        $Spkdb::err == $Spkdb::NOT_ENDED if job not in 'end' state
+                    == $Spkdb::PREPARE_FAILED if prepare function failed
+                    == $Spkdb::EXECUTE_FAILED if execute function failed
+                    == $Spkdb::GET_FAILED if retieval failed</pre>
+<p>
+</p>
+<h2><a name="new_dataset__add_a_new_dataset">new_dataset -- add a new dataset</a></h2>
+<p>Add a new dataset to a users collection of datasets stored 
+in the database.</p>
+<pre>
+    $dataset_id = &amp;Spkdb::new_dataset($dbh, $user_id, $name, $abstract, $archive);</pre>
+<p>$dbh is the handle to an open database connection</p>
+<p>$user_id is the unique identifier of a user</p>
+<p>$name is the name of the dataset</p>
+<p>$abstract is a short description of the dataset</p>
+<p>$archive is a version archive, rcs format</p>
+<p>Returns</p>
+<pre>
+  success: the automatically generated value of the dataset_id
+  failure: 0
+        $errstr contains an error message string
+        $err == $Spkdb::DATASET_EXISTS     if user_id + name is not unique
+             == $Spkdb::INSERT_FAILED    if the adding the new record failed</pre>
+<p>
+</p>
+<h2><a name="get_dataset__retrieve_a_dataset_for_a_user">get_dataset -- retrieve a dataset for a user</a></h2>
+<p>Retrieve the dataset corresponding to a name</p>
+<pre>
+    $row = &amp;Spkdb::get_dataset($dbh, $dataset_id);</pre>
+<p>$dbh is the handle to an open database connection</p>
+<p>$dataset_id is the integer which uniquely identifies the dataset</p>
+<p>Returns</p>
+<pre>
+  success: reference to a hash table of column/value pairs
+           0 if no datatset corresponds to the given dataset_id
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="update_dataset__update_a_dataset">update_dataset -- update a dataset</a></h2>
+<p>Update the abstract and/or the archive of a dataset.</p>
+<pre>
+    $r = &amp;Spkdb::update_dataset($dbh, &quot;dataset_id&quot;, $dataset_id, ...);</pre>
+<p>$dbh is a handle to an open database connection.</p>
+<p>``dataset_id'', $dataset_id is a name value pair which uniquely identifies
+a dataset.</p>
+<p>Other name value pairs specify the fields to be change.  These
+may be:</p>
+<p>``abstract'', $abstract
+``archive'',  $archive</p>
+<p>These pairs may be in any order, but there must be at least one pair.</p>
+<p>Returns</p>
+<pre>
+  success: 1
+  failure: 0
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err = $Spkdb::KEY_REQUIRED   if &quot;dataset_id&quot; not supplied
+                = $Spkdb::INVALID_CHANGE if you have asked to change a
+                            field that must never be changed
+                = $Spkdb::UPDATE_FAILED  if failure for some other reason</pre>
+<p>
+</p>
+<h2><a name="user_datasets__get_descriptions_of_all_the_datasets_of_a_user">user_datasets -- get descriptions of all the datasets of a user</a></h2>
+<p>Returns a reference to an array of rows.  Each row is a reference
+to a hash table, with the field name as key and field value as value.
+Within the array, datasets are sorted in order of name.  The fields
+returned are dataset_id, name, and abstract.</p>
+<pre>
+    $array_row = $Spkdb::user_datasets($dbh, $user_id);</pre>
+<p>Returns</p>
+<pre>
+  success:
+    reference to an array of references to hash tables, each 
+    representing a row in the dataset table</pre>
+<pre>
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="new_model__add_a_new_model">new_model -- add a new model</a></h2>
+<p>Add a new model to a users collection of models, stored 
+in the database.</p>
+<pre>
+    $model_id = &amp;Spkdb::new_model($dbh, $user_id, $name, $abstract, $archive);</pre>
+<p>$dbh is the handle to an open database connection</p>
+<p>$user_id is the unique identifier of a user</p>
+<p>$name is the name of the model</p>
+<p>$abstract is a short description of the model</p>
+<p>$archive is a version archive, rcs format</p>
+<p>Returns</p>
+<pre>
+  success: the automatically generated value of the model_id
+  failure: 0
+        $errstr contains an error message string
+        $err == $Spkdb::MODEL_EXISTS     if user_id + name is not unique
+             == $Spkdb::INSERT_FAILED    if the adding the new record failed</pre>
+<p>
+</p>
+<h2><a name="get_model__retrieve_a_model_for_a_user">get_model -- retrieve a model for a user</a></h2>
+<p>Retrieve the model corresponding to a name</p>
+<pre>
+    $row = &amp;Spkdb::get_model($dbh, $user_id, $name);</pre>
+<p>$dbh is the handle to an open database connection</p>
+<p>$model_id is the integer which uniquely identifies the model</p>
+<p>Returns</p>
+<pre>
+  success: reference to a hash table of column/value pairs
+           0 if no model corresponds to the model_id
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="update_model__update_a_model">update_model -- update a model</a></h2>
+<p>Update the abstract and/or the archive of a model.</p>
+<pre>
+    $r = &amp;Spkdb::update_model($dbh, &quot;model_id&quot;, $model_id, ...);</pre>
+<p>$dbh is a handle to an open database connection.</p>
+<p>``model_id'', $model_id is a name value pair which uniquely identifies
+a model.</p>
+<p>Other name value pairs specify the fields to be change.  These
+may be:</p>
+<p>``abstract'', $abstract
+``archive'',  $archive</p>
+<p>These pairs may be in any order, but there must be at least one pair.</p>
+<p>Returns</p>
+<pre>
+  success: 1
+  failure: 0
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err = $Spkdb::KEY_REQUIRED   if &quot;model_id&quot; not supplied
+                = $Spkdb::INVALID_CHANGE if you have asked to change a
+                            field that must never be changed
+                = $Spkdb::UPDATE_FAILED  if failure for some other reason</pre>
+<p>
+</p>
+<h2><a name="user_models__get_descriptions_of_all_the_models_of_a_user">user_models -- get descriptions of all the models of a user</a></h2>
+<p>Returns a reference to an array of rows.  Each row is a reference
+to a hash table, with the field name as key and field value as value.
+Within the array, models are sorted in order of name.  The fields
+returned are model_id, name, and abstract.</p>
+<pre>
+    $array_row = $Spkdb::user_models($dbh, $user_id);</pre>
+<p>Returns</p>
+<pre>
+  success:
+    reference to an array of references to hash tables, each 
+    representing a row in the model table</pre>
+<pre>
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="new_user__add_a_new_user">new_user -- add a new user</a></h2>
+<p>Add a new Spk user to the database.</p>
+<pre>
+    $user_id = &amp;Spkdb::new_user($dbh,
+                                &quot;username&quot;, $username,
+                                &quot;password&quot;, $password,
+                                ...);</pre>
+<p>$dbh is the handle to an open database connection</p>
+<p>$username is a unique string that will be used to identify
+an Spk user.</p>
+<p>$password is a string which will be used to authenticate
+this Spk user.</p>
+<p>Other name/value pairs corresponding to column names defined
+for the user table.</p>
+<p>Returns</p>
+<pre>
+  success: the automatically generated value of the user_id
+  failure: 0
+        $errstr contains an error message string
+        $err == $Spkdb::COLUMN_REQUIRED if username or password not supplied
+             == $Spkdb::USER_EXISTS     if the username is not unique
+             == $Spkdb::INSERT_FAILED   if the adding the new record failed</pre>
+<p>
+</p>
+<h2><a name="update_user__update_a_user_record">update_user -- update a user record</a></h2>
+<p>Update the row in user identified by $user_id:</p>
+<pre>
+    $rv = &amp;Spkdb::update_user($dbh, &quot;user_id&quot;, $user_id, ...);</pre>
+<p>$dbh is a handle to an open database connection.</p>
+<p>$user_id is value of the numerical primary key for an existing row.</p>
+<p>Other name/value pairs specify columns to be changed.</p>
+<p>Returns</p>
+<pre>
+  success: 1
+  failure: 0
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err = $Spkdb::KEY_REQUIRED  if &quot;user_id&quot; not suppled
+                = $Spkdb::UPDATE_FAILED if failure for some other reason</pre>
+<p>
+</p>
+<h2><a name="get_user__retrieve_a_user_record_by_username">get_user -- retrieve a user record by username</a></h2>
+<p>Retrieve the row corresponding to a username.</p>
+<pre>
+    $row_hash_ref = &amp;Spkdb::get_user($dbh, $username);</pre>
+<p>$dbh is the handle to an open database connection</p>
+<p>$username is the value of username for an existing row.</p>
+<p>Returns</p>
+<pre>
+  success: reference to a hash table of column/value pairs
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<h2><a name="set_mail_notice__set_endjob_email_notice_request_option_given_a_job_id,_set_endjob_email_notice_request_option_for_the_job.">set_mail_notice -- set end-job email notice request option
+Given a job_id, set end-job email notice request option for the job.</a></h2>
+<pre>
+
+    $r = &amp;Spkdb::set_mail_notice($dbh, $job_id, $email);</pre>
+<p>$dbh is the handle to an open database connection</p>
+<p>$job_id is the key to a row in the job table</p>
+<p>$email is true if end-job email notice is requested, false if otherwise</p>
+<p>Returns</p>
+<pre>
+  success: true if end-job email notice request option is set, false if otherwise
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::UPDATE_FAILED</pre>
+<p>
+</p>
+<h2><a name="get_mail_notice__get_endjob_email_notice_request_option_given_a_job_id,_get_endjob_email_notice_request_option_for_the_job.">get_mail_notice -- get end-job email notice request option
+Given a job_id, get end-job email notice request option for the job.</a></h2>
+<pre>
+
+    $r = &amp;Spkdb::get_mail_notice($dbh, $job_id);</pre>
+<p>$dbh is the handle to an open database connection</p>
+<p>$job_id is the key to a row in the job table</p>
+<p>Returns</p>
+<pre>
+  success: true if end-job email notice request option is set, false if otherwise
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::UPDATE_FAILED</pre>
+<p>
+</p>
+<h2><a name="email_for_job__get_email_address_for_a_job">email_for_job -- get email address for a job</a></h2>
+<p>Given a job_id, retrieve the email address of the user.</p>
+<pre>
+    $email = &amp;Spkdb::email_for_job($dbh, $job_id);</pre>
+<p>$dbh is the handle to an open database connection</p>
+<p>$job_id is the key to a row in the job table</p>
+<p>Returns</p>
+<pre>
+  success: string containing an email address
+  failure: undef
+    $Spkdb::errstr contains an error message string
+    $Spkdb::err == $Spkdb::PREPARE_FAILED if prepare function failed
+                == $Spkdb::EXECUTE_FAILED if execute function failed</pre>
+<p>
+</p>
+<hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<p>For examples of the use of the subroutines in this module,
+see the test driver, driver.pl, in the t directory of this
+release.
+
+</p>
+<p>
+</p>
+<hr />
+<h1><a name="author">AUTHOR</a></h1>
+<p>Alan Westhagen
+
+</p>
+<p>
+</p>
+<hr />
+<h1><a name="copyright_and_license">COPYRIGHT AND LICENSE</a></h1>
+<p>This module is part of the System for Population Kinetics (SPK), which
+was developed with support from NIH grants RR-12609 and P41-
+EB001975. Please cite these grants in any publication for which this
+software is used and send a notification to the address given above.
+
+</p>
+<p>SPK is Copyright (C) 1998-2003, by the University of Washington,
+Resource Facility for Population Kinetics, and is made available as
+free open source software under the terms of the University of
+Washington Free-Fork License as a public service.  A copy of the
+License can be found in the COPYING file in the root directory of this
+distribution. or can be obtained from
+
+</p>
+<pre>
+     Resource Facility for Population Kinetics
+     Department of Bioengineering Box 352255
+     University of Washington
+     Seattle, WA 98195-2255
+
+</pre>
+
+</body>
+
+</html>

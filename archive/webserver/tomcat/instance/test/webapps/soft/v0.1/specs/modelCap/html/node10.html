@@ -1,0 +1,634 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Population Level Residuals Background</TITLE>
+<META NAME="description" CONTENT="Population Level Residuals Background">
+<META NAME="keywords" CONTENT="modelCap">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="modelCap.css">
+
+<LINK REL="next" HREF="node11.html">
+<LINK REL="previous" HREF="node9.html">
+<LINK REL="up" HREF="node7.html">
+<LINK REL="next" HREF="node11.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html222"
+  HREF="node11.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html218"
+  HREF="node7.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html212"
+  HREF="node9.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html220"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html223"
+  HREF="node11.html">First Order Population Residuals</A>
+<B> Up:</B> <A NAME="tex2html219"
+  HREF="node7.html">Residual Calculation</A>
+<B> Previous:</B> <A NAME="tex2html213"
+  HREF="node9.html">Map Bayesian Individual Level</A>
+ &nbsp; <B>  <A NAME="tex2html221"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00052300000000000000">
+Population Level Residuals Background</A>
+</H3>
+<P>
+<FONT SIZE="+1">SPK's mixed effects model for the <IMG
+ WIDTH="25" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img37.png"
+ ALT="$i^{\mbox{th}}$"> individual's data is
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+y_{i} = f_{i}(\alpha, b_i) + e_{i} ,
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="126" HEIGHT="28" BORDER="0"
+ SRC="img38.png"
+ ALT="\begin{displaymath}
+y_{i} = f_{i}(\alpha, b_i) + e_{i} ,
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(12)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+where
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+b_i \sim \mbox{N}[ 0, D(\alpha) ] ,
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="109" HEIGHT="28" BORDER="0"
+ SRC="img39.png"
+ ALT="\begin{displaymath}
+b_i \sim \mbox{N}[ 0, D(\alpha) ] ,
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(13)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+e_i \sim \mbox{N}[ 0, R_i(\alpha, b_i) ] ,
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="131" HEIGHT="28" BORDER="0"
+ SRC="img40.png"
+ ALT="\begin{displaymath}
+e_i \sim \mbox{N}[ 0, R_i(\alpha, b_i) ] ,
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(14)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+<IMG
+ WIDTH="14" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img41.png"
+ ALT="$\alpha$"> is a vector of fixed effects parameters, 
+<IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img42.png"
+ ALT="$b_i$"> is the individual's vector of random effects parameters,
+and <IMG
+ WIDTH="17" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img43.png"
+ ALT="$e_i$"> is a vector of random variables that describe the
+measurement noise.
+For a complete description of the models used at the population 
+level by SPK and NONMEM, see Appendix <A HREF="node56.html#App:PopLevelModels">C</A>.
+</FONT>
+<P>
+<FONT SIZE="+1">Different estimation methods arise from various approximations to
+the maximum likelihood objective function. Let <!-- MATH
+ $\tilde{f}_{i}(\alpha, b)$
+ -->
+<IMG
+ WIDTH="53" HEIGHT="38" ALIGN="MIDDLE" BORDER="0"
+ SRC="img44.png"
+ ALT="$\tilde{f}_{i}(\alpha, b)$">
+be a particular Taylor series approximation for <!-- MATH
+ $f_{i}(\alpha, b)$
+ -->
+<IMG
+ WIDTH="53" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img45.png"
+ ALT="$f_{i}(\alpha, b)$">.
+Let us now define classes of outputs to be calculated in the population case
+for individual <IMG
+ WIDTH="9" HEIGHT="17" ALIGN="BOTTOM" BORDER="0"
+ SRC="img46.png"
+ ALT="$i$">:
+</FONT>
+<UL>
+<LI>NONMEM-compatible outputs (no prefix), which are always calculated at zero random effects and for the true model, or
+	<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+f_i(\alpha, 0)
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="noprefix"></A><IMG
+ WIDTH="46" HEIGHT="49" BORDER="0"
+ SRC="img47.png"
+ ALT="\begin{displaymath}
+f_i(\alpha, 0)
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(15)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+</LI>
+<LI>population outputs (prefix P), or 
+	<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+\tilde{f}_i(\alpha, 0)
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="P"></A><IMG
+ WIDTH="48" HEIGHT="28" BORDER="0"
+ SRC="img48.png"
+ ALT="\begin{displaymath}
+\tilde{f}_i(\alpha, 0)\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(16)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+</LI>
+<LI>linearized outputs (prefix L), or 
+	<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+\tilde{f}_i(\alpha, \check{b}_i)
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="L"></A><IMG
+ WIDTH="52" HEIGHT="28" BORDER="0"
+ SRC="img49.png"
+ ALT="\begin{displaymath}
+\tilde{f}_i(\alpha, \check{b}_i)\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(17)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+</LI>
+<LI>individual outputs (prefix I), or 
+	<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+f_i(\alpha, \hat{b}_i)
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><A NAME="I"></A><IMG
+ WIDTH="52" HEIGHT="28" BORDER="0"
+ SRC="img50.png"
+ ALT="\begin{displaymath}
+f_i(\alpha, \hat{b}_i)\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(18)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P>
+</LI>
+</UL>
+<P>
+<FONT SIZE="+1">Let the vector of residuals for the <IMG
+ WIDTH="25" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img37.png"
+ ALT="$i^{\mbox{th}}$"> individual be
+defined as the differences between the individual's data and their 
+respective approximation as predicted by the model,
+  </FONT>
+<BR>
+<DIV ALIGN="CENTER">
+
+<!-- MATH
+ \begin{eqnarray}
+r_i & = & y_i - \tilde{f}_i(\alpha, b)
+\end{eqnarray}
+ -->
+<TABLE ALIGN="CENTER" CELLPADDING="0" WIDTH="100%">
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img51.png"
+ ALT="$\displaystyle r_i$"></TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="86" HEIGHT="38" ALIGN="MIDDLE" BORDER="0"
+ SRC="img52.png"
+ ALT="$\displaystyle y_i - \tilde{f}_i(\alpha, b)$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(19)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P><FONT SIZE="+1">
+The variance of the residuals is an approximation to the covariance 
+of the measurements, <!-- MATH
+ $R_i(\alpha, b_i)$
+ -->
+<IMG
+ WIDTH="63" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img53.png"
+ ALT="$R_i(\alpha, b_i)$">, which we will call 
+<!-- MATH
+ $\tilde{R}_i(\alpha, b_i)$
+ -->
+<IMG
+ WIDTH="63" HEIGHT="39" ALIGN="MIDDLE" BORDER="0"
+ SRC="img54.png"
+ ALT="$\tilde{R}_i(\alpha, b_i)$">.
+Thus, <!-- MATH
+ $r_i \sim N(0, \tilde{R}_i(\alpha, b_i)$
+ -->
+<IMG
+ WIDTH="132" HEIGHT="39" ALIGN="MIDDLE" BORDER="0"
+ SRC="img55.png"
+ ALT="$r_i \sim N(0, \tilde{R}_i(\alpha, b_i)$">. The weighted residuals
+can then be defined as <!-- MATH
+ $w_i = \{\tilde{R}_i(\alpha, b_i)\}^{-1} r_i$
+ -->
+<IMG
+ WIDTH="146" HEIGHT="39" ALIGN="MIDDLE" BORDER="0"
+ SRC="img56.png"
+ ALT="$w_i = \{\tilde{R}_i(\alpha, b_i)\}^{-1} r_i$">
+and it is easy to show that <IMG
+ WIDTH="88" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img57.png"
+ ALT="$Var[w_i] = I$">.
+The covariance matrix for the <IMG
+ WIDTH="25" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img37.png"
+ ALT="$i^{\mbox{th}}$"> individual's data is
+given by
+  </FONT>
+<BR>
+<DIV ALIGN="CENTER">
+
+<!-- MATH
+ \begin{eqnarray}
+\mbox{cov}[y_i] & = & \mbox{cov}_{b,e}
+          \left[ f_i(\alpha, b_i) + e_i \right] \nonumber \\
+        & = & \mbox{cov}_{b} \left[ f_i(\alpha, b_i) \right]
+                  + R_i(\alpha, b_i) .
+\end{eqnarray}
+ -->
+<TABLE ALIGN="CENTER" CELLPADDING="0" WIDTH="100%">
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="49" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img58.png"
+ ALT="$\displaystyle \mbox{cov}[y_i]$"></TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="142" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img59.png"
+ ALT="$\displaystyle \mbox{cov}_{b,e}
+\left[ f_i(\alpha, b_i) + e_i \right]$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+&nbsp;</TD></TR>
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT">&nbsp;</TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="183" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img60.png"
+ ALT="$\displaystyle \mbox{cov}_{b} \left[ f_i(\alpha, b_i) \right]
++ R_i(\alpha, b_i) .$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(20)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P><FONT SIZE="+1">
+The vector of weighted residuals for the <IMG
+ WIDTH="25" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img37.png"
+ ALT="$i^{\mbox{th}}$"> individual is
+defined as 
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+w_i = \left\{ \mbox{cov}[y_i] \right\}^{-1/2} r_i,
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="148" HEIGHT="28" BORDER="0"
+ SRC="img61.png"
+ ALT="\begin{displaymath}
+w_i = \left\{ \mbox{cov}[y_i] \right\}^{-1/2} r_i,
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(21)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+where the term multiplying the residuals is the matrix square 
+root of the inverse of the covariance.
+</FONT>
+<P>
+<FONT SIZE="+1">In order to calculate the residuals and weighted residuals, SPK makes
+some approximations that are based on the derivations and discussion
+in Sections (6.2) and (6.3) of Davidian and Giltinan<A NAME="tex2html1"
+  HREF="footnode.html#foot914"><SUP>1</SUP></A>.
+</FONT>
+<P>
+<FONT SIZE="+1">To be specific, SPK makes Taylor series approximations to (linearizes)
+the nonlinear function <IMG
+ WIDTH="53" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img62.png"
+ ALT="$f_i(\alpha,b)$">
+about the value <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img63.png"
+ ALT="$b^{\ast}_i$">. Note that the value or <IMG
+ WIDTH="18" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img63.png"
+ ALT="$b^{\ast}_i$"> 
+(either 0 or <IMG
+ WIDTH="16" HEIGHT="40" ALIGN="MIDDLE" BORDER="0"
+ SRC="img64.png"
+ ALT="$\hat{b}_i$">) will
+depend on the specific approximation method, see below for details,
+  </FONT>
+<BR>
+<DIV ALIGN="CENTER">
+
+<!-- MATH
+ \begin{eqnarray}
+\tilde{f}_i(\alpha, b_i) & = &  f_i(\alpha, b^{\ast}_i)
+      + \partial_b f_i(\alpha, b^{\ast}_i) ( b_i - b^{\ast}_i ) , \\
+    R_i(\alpha, b_i) & \approx &  R_i(\alpha, b^{\ast}_i) .
+\end{eqnarray}
+ -->
+<TABLE ALIGN="CENTER" CELLPADDING="0" WIDTH="100%">
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="59" HEIGHT="38" ALIGN="MIDDLE" BORDER="0"
+ SRC="img65.png"
+ ALT="$\displaystyle \tilde{f}_i(\alpha, b_i)$"></TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="214" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img66.png"
+ ALT="$\displaystyle f_i(\alpha, b^{\ast}_i)
++ \partial_b f_i(\alpha, b^{\ast}_i) ( b_i - b^{\ast}_i ) ,$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(22)</TD></TR>
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="63" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img67.png"
+ ALT="$\displaystyle R_i(\alpha, b_i)$"></TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img68.png"
+ ALT="$\textstyle \approx$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="69" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img69.png"
+ ALT="$\displaystyle R_i(\alpha, b^{\ast}_i) .$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(23)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+<P>
+<FONT SIZE="+1">The residuals are therefore in general approximated by
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+r_i \approx y_i - f_i(\alpha, b^{\ast}_i)
+      + \partial_b f_i(\alpha, b^{\ast}_i) \; b^{\ast}_i .
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="236" HEIGHT="28" BORDER="0"
+ SRC="img70.png"
+ ALT="\begin{displaymath}
+r_i \approx y_i - f_i(\alpha, b^{\ast}_i)
++ \partial_b f_i(\alpha, b^{\ast}_i) \; b^{\ast}_i .
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(24)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+The covariance of the individual's data is approximated by
+  </FONT>
+<BR>
+<DIV ALIGN="CENTER">
+
+<!-- MATH
+ \begin{eqnarray}
+\mbox{cov}[y_i] \approx \partial_b f_i(\alpha, b^{\ast}_i) \;
+        D(\alpha) \; \partial_b f_i(\alpha, b^{\ast}_i)^T
+      + R_i(\alpha, b^{\ast}_i) .
+\end{eqnarray}
+ -->
+<TABLE ALIGN="CENTER" CELLPADDING="0" WIDTH="100%">
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="354" HEIGHT="38" ALIGN="MIDDLE" BORDER="0"
+ SRC="img71.png"
+ ALT="$\displaystyle \mbox{cov}[y_i] \approx \partial_b f_i(\alpha, b^{\ast}_i) \;
+D(\alpha) \; \partial_b f_i(\alpha, b^{\ast}_i)^T
++ R_i(\alpha, b^{\ast}_i) .$"></TD>
+<TD>&nbsp;</TD>
+<TD>&nbsp;</TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(25)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P>
+<P>
+<FONT SIZE="+1">As a diagnostic, SPK will also provide the weighted individual 
+parameter residuals at the population level.
+Let the vector of residuals for the <IMG
+ WIDTH="25" HEIGHT="20" ALIGN="BOTTOM" BORDER="0"
+ SRC="img37.png"
+ ALT="$i^{\mbox{th}}$"> individual's 
+parameters be defined as the differences between zero and the 
+values for their individual parameters,
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+\rho_i = - b_i .
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="63" HEIGHT="27" BORDER="0"
+ SRC="img72.png"
+ ALT="\begin{displaymath}
+\rho_i = - b_i .
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(26)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+The covariance matrix for the individual parameters is
+  </FONT>
+<BR>
+<DIV ALIGN="CENTER">
+
+<!-- MATH
+ \begin{eqnarray}
+\mbox{cov}[b_i] & = & \mbox{cov}_{b}
+          \left[ b_i \right] \nonumber \\
+        & = & D(\alpha) .
+\end{eqnarray}
+ -->
+<TABLE ALIGN="CENTER" CELLPADDING="0" WIDTH="100%">
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT"><IMG
+ WIDTH="48" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img73.png"
+ ALT="$\displaystyle \mbox{cov}[b_i]$"></TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="57" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img74.png"
+ ALT="$\displaystyle \mbox{cov}_{b}
+\left[ b_i \right]$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+&nbsp;</TD></TR>
+<TR VALIGN="MIDDLE"><TD NOWRAP ALIGN="RIGHT">&nbsp;</TD>
+<TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="16" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img7.png"
+ ALT="$\textstyle =$"></TD>
+<TD ALIGN="LEFT" NOWRAP><IMG
+ WIDTH="44" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img75.png"
+ ALT="$\displaystyle D(\alpha) .$"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(27)</TD></TR>
+</TABLE></DIV>
+<BR CLEAR="ALL"><P></P><FONT SIZE="+1">
+The vector of weighted individual parameter residuals is
+defined as 
+  </FONT>
+<BR>
+<DIV ALIGN="RIGHT">
+
+<!-- MATH
+ \begin{equation}
+z_i = \left\{ \mbox{cov}[b_i] \right\}^{-1/2} \rho_i,
+\end{equation}
+ -->
+<TABLE WIDTH="100%" ALIGN="CENTER">
+<TR VALIGN="MIDDLE"><TD ALIGN="CENTER" NOWRAP><IMG
+ WIDTH="144" HEIGHT="28" BORDER="0"
+ SRC="img76.png"
+ ALT="\begin{displaymath}
+z_i = \left\{ \mbox{cov}[b_i] \right\}^{-1/2} \rho_i,
+\end{displaymath}"></TD>
+<TD WIDTH=10 ALIGN="RIGHT">
+(28)</TD></TR>
+</TABLE>
+<BR CLEAR="ALL"></DIV><P></P><FONT SIZE="+1">
+where the term multiplying the residuals is the matrix square 
+root of the inverse of the covariance.
+</FONT>
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html222"
+  HREF="node11.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html218"
+  HREF="node7.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html212"
+  HREF="node9.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html220"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html223"
+  HREF="node11.html">First Order Population Residuals</A>
+<B> Up:</B> <A NAME="tex2html219"
+  HREF="node7.html">Residual Calculation</A>
+<B> Previous:</B> <A NAME="tex2html213"
+  HREF="node9.html">Map Bayesian Individual Level</A>
+ &nbsp; <B>  <A NAME="tex2html221"
+  HREF="node1.html">Contents</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Mitch Watrous
+2007-12-17
+</ADDRESS>
+</BODY>
+</HTML>

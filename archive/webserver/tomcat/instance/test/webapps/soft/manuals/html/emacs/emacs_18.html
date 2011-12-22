@@ -1,0 +1,587 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Windows</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Windows">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Windows">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC183"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_17.html#SEC182"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC184"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_17.html#SEC172"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> O. Multiple Windows </H1>
+<!--docid::SEC183::-->
+<P>
+
+  Emacs can split a frame into two or many windows.  Multiple windows
+can display parts of different buffers, or different parts of one
+buffer.  Multiple frames always imply multiple windows, because each
+frame has its own set of windows.  Each window belongs to one and only
+one frame.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_18.html#SEC184">O.1 Concepts of Emacs Windows</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Introduction to Emacs windows.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_18.html#SEC185">O.2 Splitting Windows</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">New windows are made by splitting existing windows.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_18.html#SEC186">O.3 Using Other Windows</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Moving to another window or doing something to it.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_18.html#SEC187">O.4 Displaying in Another Window</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Finding a file or buffer in another window.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_18.html#SEC188">O.5 Forcing Display in the Same Window</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Forcing certain buffers to appear in the selected
+                          window rather than in another window.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_18.html#SEC189">O.6 Deleting and Rearranging Windows</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Deleting windows and changing their sizes.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_18.html#SEC190">O.7 Window Handling Convenience Features and Customization</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Convenience functions for window handling.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Basic Window"></A>
+<HR SIZE="6">
+<A NAME="SEC184"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC183"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC185"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC183"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC183"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> O.1 Concepts of Emacs Windows </H2>
+<!--docid::SEC184::-->
+<P>
+
+  Each Emacs window displays one Emacs buffer at any time.  A single
+buffer may appear in more than one window; if it does, any changes in
+its text are displayed in all the windows where it appears.  But the
+windows showing the same buffer can show different parts of it, because
+each window has its own value of point.
+</P><P>
+
+<A NAME="IDX806"></A>
+  At any time, one of the windows is the <EM>selected window</EM>; the
+buffer this window is displaying is the current buffer.  The terminal's
+cursor shows the location of point in this window.  Each other window
+has a location of point as well, but since the terminal has only one
+cursor there is no way to show where those locations are.  When multiple
+frames are visible in X, each frame has a cursor which appears in the
+frame's selected window.  The cursor in the selected frame is solid; the
+cursor in other frames is a hollow box.
+</P><P>
+
+  Commands to move point affect the value of point for the selected Emacs
+window only.  They do not change the value of point in any other Emacs
+window, even one showing the same buffer.  The same is true for commands
+such as <KBD>C-x b</KBD> to change the current buffer in the selected window;
+they do not affect other windows at all.  However, there are other commands
+such as <KBD>C-x 4 b</KBD> that select a different window and switch buffers in
+it.  Also, all commands that display information in a window, including
+(for example) <KBD>C-h f</KBD> (<CODE>describe-function</CODE>) and <KBD>C-x C-b</KBD>
+(<CODE>list-buffers</CODE>), work by switching buffers in a nonselected window
+without affecting the selected window.
+</P><P>
+
+  When multiple windows show the same buffer, they can have different
+regions, because they can have different values of point.  However,
+they all have the same value for the mark, because each buffer has
+only one mark position.
+</P><P>
+
+  Each window has its own mode line, which displays the buffer name,
+modification status and major and minor modes of the buffer that is
+displayed in the window.  See section <A HREF="emacs_5.html#SEC11">B.3 The Mode Line</A>, for full details on the mode
+line.
+</P><P>
+
+<A NAME="Split Window"></A>
+<HR SIZE="6">
+<A NAME="SEC185"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC184"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC186"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC186"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC183"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> O.2 Splitting Windows </H2>
+<!--docid::SEC185::-->
+<P>
+
+<DL COMPACT>
+<DT><KBD>C-x 2</KBD>
+<DD>Split the selected window into two windows, one above the other
+(<CODE>split-window-vertically</CODE>).
+<DT><KBD>C-x 3</KBD>
+<DD>Split the selected window into two windows positioned side by side
+(<CODE>split-window-horizontally</CODE>).
+<DT><KBD>C-Mouse-2</KBD>
+<DD>In the mode line or scroll bar of a window, split that window.
+</DL>
+<P>
+
+<A NAME="IDX807"></A>
+<A NAME="IDX808"></A>
+  The command <KBD>C-x 2</KBD> (<CODE>split-window-vertically</CODE>) breaks the
+selected window into two windows, one above the other.  Both windows start
+out displaying the same buffer, with the same value of point.  By default
+the two windows each get half the height of the window that was split; a
+numeric argument specifies how many lines to give to the top window.
+</P><P>
+
+<A NAME="IDX809"></A>
+<A NAME="IDX810"></A>
+  <KBD>C-x 3</KBD> (<CODE>split-window-horizontally</CODE>) breaks the selected
+window into two side-by-side windows.  A numeric argument specifies how
+many columns to give the one on the left.  A line of vertical bars
+separates the two windows.  Windows that are not the full width of the
+screen have mode lines, but they are truncated.  On terminals where
+Emacs does not support highlighting, truncated mode lines sometimes do
+not appear in inverse video.
+</P><P>
+
+<A NAME="IDX811"></A>
+  You can split a window horizontally or vertically by clicking
+<KBD>C-Mouse-2</KBD> in the mode line or the scroll bar.  (This does not
+work in scroll bars implemented by X toolkits.)  The line of splitting
+goes through the place where you click: if you click on the mode line,
+the new scroll bar goes above the spot; if you click in the scroll
+bar, the mode line of the split window is side by side with your
+click.
+</P><P>
+
+<A NAME="IDX812"></A>
+  When a window is less than the full width, text lines too long to fit are
+frequent.  Continuing all those lines might be confusing.  The variable
+<CODE>truncate-partial-width-windows</CODE> can be set non-<CODE>nil</CODE> to force
+truncation in all windows less than the full width of the screen,
+independent of the buffer being displayed and its value for
+<CODE>truncate-lines</CODE>.  See section <A HREF="emacs_7.html#SEC27">D.8 Continuation Lines</A>.</P><P>
+
+  Horizontal scrolling is often used in side-by-side windows.
+See section <A HREF="emacs_13.html#SEC77">J. Controlling the Display</A>.
+</P><P>
+
+<A NAME="IDX813"></A>
+  If <CODE>split-window-keep-point</CODE> is non-<CODE>nil</CODE>, the default,
+both of the windows resulting from <KBD>C-x 2</KBD> inherit the value of
+point from the window that was split.  This means that scrolling is
+inevitable.  If this variable is <CODE>nil</CODE>, then <KBD>C-x 2</KBD> tries to
+avoid scrolling the text currently visible on the screen, by putting
+point in each window at a position already visible in the window.  It
+also selects whichever window contain the screen line that the cursor
+was previously on.  Some users prefer the latter mode on slow
+terminals.
+</P><P>
+
+<A NAME="Other Window"></A>
+<HR SIZE="6">
+<A NAME="SEC186"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC185"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC187"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC187"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC183"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> O.3 Using Other Windows </H2>
+<!--docid::SEC186::-->
+<P>
+
+<DL COMPACT>
+<DT><KBD>C-x o</KBD>
+<DD>Select another window (<CODE>other-window</CODE>).  That is <KBD>o</KBD>, not zero.
+<DT><KBD>C-M-v</KBD>
+<DD>Scroll the next window (<CODE>scroll-other-window</CODE>).
+<DT><KBD>M-x compare-windows</KBD>
+<DD>Find next place where the text in the selected window does not match
+the text in the next window.
+<DT><KBD>Mouse-1</KBD>
+<DD><KBD>Mouse-1</KBD>, in a window's mode line, selects that window
+but does not move point in it (<CODE>mouse-select-window</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX814"></A>
+<A NAME="IDX815"></A>
+  To select a different window, click with <KBD>Mouse-1</KBD> on its mode
+line.  With the keyboard, you can switch windows by typing <KBD>C-x o</KBD>
+(<CODE>other-window</CODE>).  That is an <KBD>o</KBD>, for "other," not a zero.
+When there are more than two windows, this command moves through all the
+windows in a cyclic order, generally top to bottom and left to right.
+After the rightmost and bottommost window, it goes back to the one at
+the upper left corner.  A numeric argument means to move several steps
+in the cyclic order of windows.  A negative argument moves around the
+cycle in the opposite order.  When the minibuffer is active, the
+minibuffer is the last window in the cycle; you can switch from the
+minibuffer window to one of the other windows, and later switch back and
+finish supplying the minibuffer argument that is requested.
+See section <A HREF="emacs_8.html#SEC33">E.2 Editing in the Minibuffer</A>.
+</P><P>
+
+<A NAME="IDX816"></A>
+<A NAME="IDX817"></A>
+  The usual scrolling commands (see section <A HREF="emacs_13.html#SEC77">J. Controlling the Display</A>) apply to the selected
+window only, but there is one command to scroll the next window.
+<KBD>C-M-v</KBD> (<CODE>scroll-other-window</CODE>) scrolls the window that
+<KBD>C-x o</KBD> would select.  It takes arguments, positive and negative,
+like <KBD>C-v</KBD>.  (In the minibuffer, <KBD>C-M-v</KBD> scrolls the window
+that contains the minibuffer help display, if any, rather than the
+next window in the standard cyclic order.)
+</P><P>
+
+  The command <KBD>M-x compare-windows</KBD> lets you compare two files or
+buffers visible in two windows, by moving through them to the next
+mismatch.  See section <A HREF="emacs_16.html#SEC164">M.9 Comparing Files</A>, for details.
+</P><P>
+
+<A NAME="Pop Up Window"></A>
+<HR SIZE="6">
+<A NAME="SEC187"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC186"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC188"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC188"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC183"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> O.4 Displaying in Another Window </H2>
+<!--docid::SEC187::-->
+<P>
+
+<A NAME="IDX818"></A>
+<A NAME="IDX819"></A>
+  <KBD>C-x 4</KBD> is a prefix key for commands that select another window
+(splitting the window if there is only one) and select a buffer in that
+window.  Different <KBD>C-x 4</KBD> commands have different ways of finding the
+buffer to select.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-x 4 b <VAR>bufname</VAR> <KBD>RET</KBD></KBD>
+<DD>Select buffer <VAR>bufname</VAR> in another window.  This runs
+<CODE>switch-to-buffer-other-window</CODE>.
+<DT><KBD>C-x 4 C-o <VAR>bufname</VAR> <KBD>RET</KBD></KBD>
+<DD>Display buffer <VAR>bufname</VAR> in another window, but
+don't select that buffer or that window.  This runs
+<CODE>display-buffer</CODE>.
+<DT><KBD>C-x 4 f <VAR>filename</VAR> <KBD>RET</KBD></KBD>
+<DD>Visit file <VAR>filename</VAR> and select its buffer in another window.  This
+runs <CODE>find-file-other-window</CODE>.  See section <A HREF="emacs_16.html#SEC112">M.2 Visiting Files</A>.
+<DT><KBD>C-x 4 d <VAR>directory</VAR> <KBD>RET</KBD></KBD>
+<DD>Select a Dired buffer for directory <VAR>directory</VAR> in another window.
+This runs <CODE>dired-other-window</CODE>.  See section <A HREF="emacs_31.html#SEC396">AB. Dired, the Directory Editor</A>.
+<DT><KBD>C-x 4 m</KBD>
+<DD>Start composing a mail message in another window.  This runs
+<CODE>mail-other-window</CODE>; its same-window analogue is <KBD>C-x m</KBD>
+(see section <A HREF="emacs_29.html#SEC363">Z. Sending Mail</A>).
+<DT><KBD>C-x 4 .</KBD>
+<DD>Find a tag in the current tags table, in another window.  This runs
+<CODE>find-tag-other-window</CODE>, the multiple-window variant of <KBD>M-.</KBD>
+(see section <A HREF="emacs_26.html#SEC334">W.2 Tags Tables</A>).
+<DT><KBD>C-x 4 r <VAR>filename</VAR> <KBD>RET</KBD></KBD>
+<DD>Visit file <VAR>filename</VAR> read-only, and select its buffer in another
+window.  This runs <CODE>find-file-read-only-other-window</CODE>.
+See section <A HREF="emacs_16.html#SEC112">M.2 Visiting Files</A>.
+</DL>
+<P>
+
+<A NAME="Force Same Window"></A>
+<HR SIZE="6">
+<A NAME="SEC188"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC187"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC189"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC189"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC183"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> O.5 Forcing Display in the Same Window </H2>
+<!--docid::SEC188::-->
+<P>
+
+  Certain Emacs commands switch to a specific buffer with special
+contents.  For example, <KBD>M-x shell</KBD> switches to a buffer named
+<SAMP>`*Shell*'</SAMP>.  By convention, all these commands are written to pop up
+the buffer in a separate window.  But you can specify that certain of
+these buffers should appear in the selected window.
+</P><P>
+
+<A NAME="IDX820"></A>
+  If you add a buffer name to the list <CODE>same-window-buffer-names</CODE>,
+the effect is that such commands display that particular buffer by
+switching to it in the selected window.  For example, if you add the
+element <CODE>"*grep*"</CODE> to the list, the <CODE>grep</CODE> command will
+display its output buffer in the selected window.
+</P><P>
+
+  The default value of <CODE>same-window-buffer-names</CODE> is not
+<CODE>nil</CODE>: it specifies buffer names <SAMP>`*info*'</SAMP>, <SAMP>`*mail*'</SAMP> and
+<SAMP>`*shell*'</SAMP> (as well as others used by more obscure Emacs packages).
+This is why <KBD>M-x shell</KBD> normally switches to the <SAMP>`*shell*'</SAMP>
+buffer in the selected window.  If you delete this element from the
+value of <CODE>same-window-buffer-names</CODE>, the behavior of <KBD>M-x
+shell</KBD> will change--it will pop up the buffer in another window
+instead.
+</P><P>
+
+<A NAME="IDX821"></A>
+  You can specify these buffers more generally with the variable
+<CODE>same-window-regexps</CODE>.  Set it to a list of regular expressions;
+then any buffer whose name matches one of those regular expressions is
+displayed by switching to it in the selected window.  (Once again, this
+applies only to buffers that normally get displayed for you in a
+separate window.)  The default value of this variable specifies Telnet
+and rlogin buffers.
+</P><P>
+
+  An analogous feature lets you specify buffers which should be
+displayed in their own individual frames.  See section <A HREF="emacs_19.html#SEC202">P.11 Special Buffer Frames</A>.
+</P><P>
+
+<A NAME="Change Window"></A>
+<HR SIZE="6">
+<A NAME="SEC189"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC188"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC190"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC190"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC183"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> O.6 Deleting and Rearranging Windows </H2>
+<!--docid::SEC189::-->
+<P>
+
+<DL COMPACT>
+<DT><KBD>C-x 0</KBD>
+<DD>Delete the selected window (<CODE>delete-window</CODE>).  The last character
+in this key sequence is a zero.
+<DT><KBD>C-x 1</KBD>
+<DD>Delete all windows in the selected frame except the selected window
+(<CODE>delete-other-windows</CODE>).
+<DT><KBD>C-x 4 0</KBD>
+<DD>Delete the selected window and kill the buffer that was showing in it
+(<CODE>kill-buffer-and-window</CODE>).  The last character in this key
+sequence is a zero.
+<DT><KBD>C-x ^</KBD>
+<DD>Make selected window taller (<CODE>enlarge-window</CODE>).
+<DT><KBD>C-x }</KBD>
+<DD>Make selected window wider (<CODE>enlarge-window-horizontally</CODE>).
+<DT><KBD>C-x {</KBD>
+<DD>Make selected window narrower (<CODE>shrink-window-horizontally</CODE>).
+<DT><KBD>C-x -</KBD>
+<DD>Shrink this window if its buffer doesn't need so many lines
+(<CODE>shrink-window-if-larger-than-buffer</CODE>).
+<DT><KBD>C-x +</KBD>
+<DD>Make all windows the same height (<CODE>balance-windows</CODE>).
+<DT><KBD>Drag-Mouse-1</KBD>
+<DD>Dragging a window's mode line up or down with <KBD>Mouse-1</KBD> changes
+window heights.
+<DT><KBD>Mouse-2</KBD>
+<DD><KBD>Mouse-2</KBD> in a window's mode line deletes all other windows in the frame
+(<CODE>mouse-delete-other-windows</CODE>).
+<DT><KBD>Mouse-3</KBD>
+<DD><KBD>Mouse-3</KBD> in a window's mode line deletes that window
+(<CODE>mouse-delete-window</CODE>), unless the frame has only one window, in
+which case it buries the current buffer instead and switches to another
+buffer.
+</DL>
+<P>
+
+<A NAME="IDX822"></A>
+<A NAME="IDX823"></A>
+  To delete a window, type <KBD>C-x 0</KBD> (<CODE>delete-window</CODE>).  (That is
+a zero.)  The space occupied by the deleted window is given to an
+adjacent window (but not the minibuffer window, even if that is active
+at the time).  Once a window is deleted, its attributes are forgotten;
+only restoring a window configuration can bring it back.  Deleting the
+window has no effect on the buffer it used to display; the buffer
+continues to exist, and you can select it in any window with <KBD>C-x
+b</KBD>.
+</P><P>
+
+<A NAME="IDX824"></A>
+<A NAME="IDX825"></A>
+  <KBD>C-x 4 0</KBD> (<CODE>kill-buffer-and-window</CODE>) is a stronger command
+than <KBD>C-x 0</KBD>; it kills the current buffer and then deletes the
+selected window.
+</P><P>
+
+<A NAME="IDX826"></A>
+<A NAME="IDX827"></A>
+  <KBD>C-x 1</KBD> (<CODE>delete-other-windows</CODE>) is more powerful in a
+different way; it deletes all the windows except the selected one (and
+the minibuffer); the selected window expands to use the whole frame
+except for the echo area.
+</P><P>
+
+  You can also delete a window by clicking on its mode line with
+<KBD>Mouse-2</KBD>, and delete all the windows in a frame except one window
+by clicking on that window's mode line with <KBD>Mouse-3</KBD>.
+</P><P>
+
+  The easiest way to adjust window heights is with a mouse.  If you
+press <KBD>Mouse-1</KBD> on a mode line, you can drag that mode line up or
+down, changing the heights of the windows above and below it.
+</P><P>
+
+<A NAME="IDX828"></A>
+<A NAME="IDX829"></A>
+<A NAME="IDX830"></A>
+<A NAME="IDX831"></A>
+<A NAME="IDX832"></A>
+<A NAME="IDX833"></A>
+  To readjust the division of space among vertically adjacent windows,
+use <KBD>C-x ^</KBD> (<CODE>enlarge-window</CODE>).  It makes the currently
+selected window get one line bigger, or as many lines as is specified
+with a numeric argument.  With a negative argument, it makes the
+selected window smaller.  <KBD>C-x }</KBD>
+(<CODE>enlarge-window-horizontally</CODE>) makes the selected window wider by
+the specified number of columns.  <KBD>C-x {</KBD>
+(<CODE>shrink-window-horizontally</CODE>) makes the selected window narrower
+by the specified number of columns.
+</P><P>
+
+  When you make a window bigger, the space comes from one of its
+neighbors.  If this makes any window too small, it is deleted and its
+space is given to an adjacent window.  The minimum size is specified by
+the variables <CODE>window-min-height</CODE> and <CODE>window-min-width</CODE>.
+</P><P>
+
+<A NAME="IDX834"></A>
+<A NAME="IDX835"></A>
+  The command <KBD>C-x -</KBD> (<CODE>shrink-window-if-larger-than-buffer</CODE>)
+reduces the height of the selected window, if it is taller than
+necessary to show the whole text of the buffer it is displaying.  It
+gives the extra lines to other windows in the frame.
+</P><P>
+
+<A NAME="IDX836"></A>
+<A NAME="IDX837"></A>
+  You can also use <KBD>C-x +</KBD> (<CODE>balance-windows</CODE>) to even out the
+heights of all the windows in the selected frame.
+</P><P>
+
+<A NAME="Window Convenience"></A>
+<HR SIZE="6">
+<A NAME="SEC190"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC189"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC183"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC183"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> O.7 Window Handling Convenience Features and Customization </H2>
+<!--docid::SEC190::-->
+<P>
+
+<A NAME="IDX838"></A>
+<A NAME="IDX839"></A>
+<A NAME="IDX840"></A>
+<A NAME="IDX841"></A>
+<A NAME="IDX842"></A>
+  <KBD>M-x winner-mode</KBD> is a global minor mode that records the
+changes in the window configuration (i.e. how the frames are
+partitioned into windows), so that you can "undo" them.  To undo,
+use <KBD>C-x left</KBD> (<CODE>winner-undo</CODE>).  If you change your mind
+while undoing, you can redo the changes you had undone using <KBD>C-x
+right</KBD> (<CODE>M-x winner-redo</CODE>).  Another way to enable Winner mode is
+by customizing the variable <CODE>winner-mode</CODE>.
+</P><P>
+
+<A NAME="IDX843"></A>
+<A NAME="IDX844"></A>
+<A NAME="IDX845"></A>
+<A NAME="IDX846"></A>
+  The Windmove commands move directionally between neighboring windows in
+a frame.  <KBD>M-x windmove-right</KBD> selects the window immediately to the
+right of the currently selected one, and similarly for the "left," "up,"
+and "down" counterparts.  <KBD>M-x windmove-default-keybindings</KBD> binds
+these commands to <KBD>S-right</KBD> etc.  (Not all terminals support shifted
+arrow keys, however.)
+</P><P>
+
+  Follow minor mode (<KBD>M-x follow-mode</KBD>) synchronizes several
+windows on the same buffer so that they always display adjacent
+sections of that buffer.  See section <A HREF="emacs_13.html#SEC85">J.8 Follow Mode</A>.
+</P><P>
+
+<A NAME="IDX847"></A>
+<A NAME="IDX848"></A>
+<A NAME="IDX849"></A>
+<A NAME="IDX850"></A>
+  <KBD>M-x scroll-all-mode</KBD> provides commands to scroll all visible
+windows together.  You can also turn it on by customizing the variable
+<CODE>scroll-all-mode</CODE>.  The commands provided are <KBD>M-x
+scroll-all-scroll-down-all</KBD>, <KBD>M-x scroll-all-page-down-all</KBD> and
+their corresponding "up" equivalents.  To make this mode useful,
+you should bind these commands to appropriate keys.
+<A NAME="Frames"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_18.html#SEC183"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_19.html#SEC191"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

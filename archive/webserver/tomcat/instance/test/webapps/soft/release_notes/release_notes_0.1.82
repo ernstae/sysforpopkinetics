@@ -1,0 +1,30 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.81
+----------------------------------
+USER VISIBLE CHANGES
+The epsilon values used to determine convergence is calculated based on:
+eps = 1.0 / { (#of significant digits) + 1 }.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 241
+
+BY: Sachiko Honda
+
+WHEN: August 1, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.82
+----------------------------------
+USER VISIBLE CHANGES
+Report error messages back to the user when calculation of
+(various) residuals fail.
+
+OTHER CHANGES
+The entire body of body of main() in fitDriver.cpp is now
+surrounded by TRY-CATCH so that no exception leaks out.
+
+RELATED BUG REPORTS: 251
+
+BY: Sachiko Honda
+
+WHEN: Auguest 1, 2005

@@ -1,0 +1,15 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.168
+----------------------------------
+USER VISIBLE CHANGES:
+  none
+
+OTHER CHANGES:
+  -Fixed a compile error in the FullCovTest unit test.
+  -compiled in *release* mode (prev compile was in debug!)
+
+RELATED BUG REPORTS:
+
+BY: David Salinger
+
+WHEN:  2006-04-27

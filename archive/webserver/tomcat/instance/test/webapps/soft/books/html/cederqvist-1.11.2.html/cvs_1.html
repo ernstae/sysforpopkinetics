@@ -1,0 +1,700 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html40/loose.dtd">
+<HTML>
+<!-- Created on April, 18 2002 by texi2html 1.66 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<HEAD>
+<TITLE>CVS--Concurrent Versions System v1.11.2: Overview</TITLE>
+
+<META NAME="description" CONTENT="CVS--Concurrent Versions System v1.11.2: Overview">
+<META NAME="keywords" CONTENT="CVS--Concurrent Versions System v1.11.2: Overview">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.66">
+
+</HEAD>
+
+<BODY LANG="en" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC1"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC2"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<A NAME="Overview"></A>
+<H1> 1. Overview </H1>
+<!--docid::SEC1::-->
+<P>
+
+This chapter is for people who have never used
+CVS, and perhaps have never used version control
+software before.
+</P>
+<P>
+
+If you are already familiar with CVS and are just
+trying to learn a particular feature or remember a
+certain command, you can probably skip everything here.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_1.html#SEC2">1.1 What is CVS?</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">What you can do with CVS</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_1.html#SEC3">1.2 What is CVS not?</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Problems CVS doesn't try to solve</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_1.html#SEC4">1.3 A sample session</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">A tour of basic CVS usage</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="What is CVS?"></A>
+<HR SIZE="6">
+<A NAME="SEC2"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC1"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC3"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC1"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC1"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 1.1 What is CVS? </H2>
+<!--docid::SEC2::-->
+<P>
+
+CVS is a version control system.  Using it, you can
+record the history of your source files.
+</P>
+<P>
+
+For example, bugs sometimes creep in when
+software is modified, and you might not detect the bug
+until a long time after you make the modification.
+With CVS, you can easily retrieve old versions to see
+exactly which change caused the bug.  This can
+sometimes be a big help.
+</P>
+<P>
+
+You could of course save every version of every file
+you have ever created.  This would
+however waste an enormous amount of disk space.  CVS
+stores all the versions of a file in a single file in a
+clever way that only stores the differences between
+versions.
+</P>
+<P>
+
+CVS also helps you if you are part of a group of people working
+on the same project.  It is all too easy to overwrite
+each others' changes unless you are extremely careful.
+Some editors, like GNU Emacs, try to make sure that
+the same file is never modified by two people at the
+same time.  Unfortunately, if someone is using another
+editor, that safeguard will not work.  CVS solves this problem
+by insulating the different developers from each other.  Every
+developer works in his own directory, and CVS merges
+the work when each developer is done.
+</P>
+<P>
+
+<A NAME="IDX1"></A>
+<A NAME="IDX2"></A>
+<A NAME="IDX3"></A>
+<A NAME="IDX4"></A>
+CVS started out as a bunch of shell scripts written by
+Dick Grune, posted to the newsgroup
+<CODE>comp.sources.unix</CODE> in the volume 6
+release of December, 1986.  While no actual code from
+these shell scripts is present in the current version
+of CVS much of the CVS conflict resolution algorithms
+come from them.
+</P>
+<P>
+
+In April, 1989, Brian Berliner designed and coded CVS.
+Jeff Polk later helped Brian with the design of the CVS
+module and vendor branch support.
+</P>
+<P>
+
+<A NAME="IDX5"></A>
+You can get CVS in a variety of ways, including
+free download from the internet.  For more information
+on downloading CVS and other CVS topics, see:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>http://www.cvshome.org/
+http://www.loria.fr/~molli/cvs-index.html
+</pre></td></tr></table><P>
+
+<A NAME="IDX6"></A>
+<A NAME="IDX7"></A>
+<A NAME="IDX8"></A>
+There is a mailing list, known as <CODE>info-cvs</CODE>,
+devoted to CVS.  To subscribe or
+unsubscribe
+write to
+<CODE>info-cvs-request@gnu.org</CODE>.
+If you prefer a usenet group, the right
+group is <CODE>comp.software.config-mgmt</CODE> which is for
+CVS discussions (along with other configuration
+management systems).  In the future, it might be
+possible to create a
+<CODE>comp.software.config-mgmt.cvs</CODE>, but probably only
+if there is sufficient CVS traffic on
+<CODE>comp.software.config-mgmt</CODE>.
+</P>
+<P>
+
+You can also subscribe to the bug-cvs mailing list,
+described in more detail in <A HREF="cvs_23.html#SEC187">H. Dealing with bugs in CVS or this manual</A>.  To subscribe
+send mail to bug-cvs-request@gnu.org.
+</P>
+<P>
+
+<A NAME="What is CVS not?"></A>
+<HR SIZE="6">
+<A NAME="SEC3"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC2"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC4"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC1"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC1"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 1.2 What is CVS not? </H2>
+<!--docid::SEC3::-->
+<P>
+
+CVS can do a lot of things for you, but it does
+not try to be everything for everyone.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT>CVS is not a build system.
+<DD><P>
+
+Though the structure of your repository and modules
+file interact with your build system
+(e.g. `<TT>Makefile</TT>'s), they are essentially
+independent.
+</P>
+<P>
+
+CVS does not dictate how you build anything.  It
+merely stores files for retrieval in a tree structure
+you devise.
+</P>
+<P>
+
+CVS does not dictate how to use disk space in the
+checked out working directories.  If you write your
+`<TT>Makefile</TT>'s or scripts in every directory so they
+have to know the relative positions of everything else,
+you wind up requiring the entire repository to be
+checked out.
+</P>
+<P>
+
+If you modularize your work, and construct a build
+system that will share files (via links, mounts,
+<CODE>VPATH</CODE> in `<TT>Makefile</TT>'s, etc.), you can
+arrange your disk usage however you like.
+</P>
+<P>
+
+But you have to remember that <EM>any</EM> such system is
+a lot of work to construct and maintain.  CVS does
+not address the issues involved.
+</P>
+<P>
+
+Of course, you should place the tools created to
+support such a build system (scripts, `<TT>Makefile</TT>'s,
+etc) under CVS.
+</P>
+<P>
+
+Figuring out what files need to be rebuilt when
+something changes is, again, something to be handled
+outside the scope of CVS.  One traditional
+approach is to use <CODE>make</CODE> for building, and use
+some automated tool for generating the dependencies which
+<CODE>make</CODE> uses.
+</P>
+<P>
+
+See <A HREF="cvs_14.html#SEC111">14. How your build system interacts with CVS</A>, for more information on doing builds
+in conjunction with CVS.
+</P>
+<P>
+
+</P>
+<DT>CVS is not a substitute for management.
+<DD><P>
+
+Your managers and project leaders are expected to talk
+to you frequently enough to make certain you are aware
+of schedules, merge points, branch names and release
+dates.  If they don't, CVS can't help.
+</P>
+<P>
+
+CVS is an instrument for making sources dance to
+your tune.  But you are the piper and the composer.  No
+instrument plays itself or writes its own music.
+</P>
+<P>
+
+</P>
+<DT>CVS is not a substitute for developer communication.
+<DD><P>
+
+When faced with conflicts within a single file, most
+developers manage to resolve them without too much
+effort.  But a more general definition of &quot;conflict&quot;
+includes problems too difficult to solve without
+communication between developers.
+</P>
+<P>
+
+CVS cannot determine when simultaneous changes
+within a single file, or across a whole collection of
+files, will logically conflict with one another.  Its
+concept of a <EM>conflict</EM> is purely textual, arising
+when two changes to the same base file are near enough
+to spook the merge (i.e. <CODE>diff3</CODE>) command.
+</P>
+<P>
+
+CVS does not claim to help at all in figuring out
+non-textual or distributed conflicts in program logic.
+</P>
+<P>
+
+For example: Say you change the arguments to function
+<CODE>X</CODE> defined in file `<TT>A</TT>'.  At the same time,
+someone edits file `<TT>B</TT>', adding new calls to
+function <CODE>X</CODE> using the old arguments.  You are
+outside the realm of CVS's competence.
+</P>
+<P>
+
+Acquire the habit of reading specs and talking to your
+peers.
+</P>
+<P>
+
+</P>
+<DT>CVS does not have change control
+<DD><P>
+
+Change control refers to a number of things.  First of
+all it can mean <EM>bug-tracking</EM>, that is being able
+to keep a database of reported bugs and the status of
+each one (is it fixed?  in what release?  has the bug
+submitter agreed that it is fixed?).  For interfacing
+CVS to an external bug-tracking system, see the
+`<TT>rcsinfo</TT>' and `<TT>verifymsg</TT>' files
+(see section <A HREF="cvs_18.html#SEC156">C. Reference manual for Administrative files</A>).
+</P>
+<P>
+
+Another aspect of change control is keeping track of
+the fact that changes to several files were in fact
+changed together as one logical change.  If you check
+in several files in a single <CODE>cvs commit</CODE>
+operation, CVS then forgets that those files were
+checked in together, and the fact that they have the
+same log message is the only thing tying them
+together.  Keeping a GNU style `<TT>ChangeLog</TT>'
+can help somewhat.
+</P>
+<P>
+
+Another aspect of change control, in some systems, is
+the ability to keep track of the status of each
+change.  Some changes have been written by a developer,
+others have been reviewed by a second developer, and so
+on.  Generally, the way to do this with CVS is to
+generate a diff (using <CODE>cvs diff</CODE> or <CODE>diff</CODE>)
+and email it to someone who can then apply it using the
+<CODE>patch</CODE> utility.  This is very flexible, but
+depends on mechanisms outside CVS to make sure
+nothing falls through the cracks.
+</P>
+<P>
+
+</P>
+<DT>CVS is not an automated testing program
+<DD><P>
+
+It should be possible to enforce mandatory use of a
+testsuite using the <CODE>commitinfo</CODE> file.  I haven't
+heard a lot about projects trying to do that or whether
+there are subtle gotchas, however.
+</P>
+<P>
+
+</P>
+<DT>CVS does not have a builtin process model
+<DD><P>
+
+Some systems provide ways to ensure that changes or
+releases go through various steps, with various
+approvals as needed.  Generally, one can accomplish
+this with CVS but it might be a little more work.
+In some cases you'll want to use the `<TT>commitinfo</TT>',
+`<TT>loginfo</TT>', `<TT>rcsinfo</TT>', or `<TT>verifymsg</TT>'
+files, to require that certain steps be performed
+before cvs will allow a checkin.  Also consider whether
+features such as branches and tags can be used to
+perform tasks such as doing work in a development tree
+and then merging certain changes over to a stable tree
+only once they have been proven.
+</DL>
+<P>
+
+<A NAME="A sample session"></A>
+<HR SIZE="6">
+<A NAME="SEC4"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC3"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC5"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC1"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC1"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> 1.3 A sample session </H2>
+<!--docid::SEC4::-->
+<P>
+
+As a way of introducing CVS, we'll go through a
+typical work-session using CVS.  The first thing
+to understand is that CVS stores all files in a
+centralized <EM>repository</EM> (see section <A HREF="cvs_2.html#SEC9">2. The Repository</A>); this
+section assumes that a repository is set up.
+</P>
+<P>
+
+Suppose you are working on a simple compiler.  The source
+consists of a handful of C files and a `<TT>Makefile</TT>'.
+The compiler is called `<SAMP>tc</SAMP>' (Trivial Compiler),
+and the repository is set up so that there is a module
+called `<SAMP>tc</SAMP>'.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_1.html#SEC5">1.3.1 Getting the source</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Creating a workspace</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_1.html#SEC6">1.3.2 Committing your changes</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Making your work available to others</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_1.html#SEC7">1.3.3 Cleaning up</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_1.html#SEC8">1.3.4 Viewing differences</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+</TABLE>
+<P>
+
+<A NAME="Getting the source"></A>
+<HR SIZE="6">
+<A NAME="SEC5"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC4"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC6"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC1"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC4"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 1.3.1 Getting the source </H3>
+<!--docid::SEC5::-->
+<P>
+
+The first thing you must do is to get your own working copy of the
+source for `<SAMP>tc</SAMP>'.  For this, you use the <CODE>checkout</CODE> command:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs checkout tc
+</pre></td></tr></table><P>
+
+This will create a new directory called `<TT>tc</TT>' and populate it with
+the source files.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cd tc
+$ ls
+CVS         Makefile    backend.c   driver.c    frontend.c  parser.c
+</pre></td></tr></table><P>
+
+The `<TT>CVS</TT>' directory is used internally by
+CVS.  Normally, you should not modify or remove
+any of the files in it.
+</P>
+<P>
+
+You start your favorite editor, hack away at `<TT>backend.c</TT>', and a couple
+of hours later you have added an optimization pass to the compiler.
+A note to RCS and SCCS users: There is no need to lock the files that
+you want to edit.  See section <A HREF="cvs_10.html#SEC83">10. Multiple developers</A>, for an explanation.
+</P>
+<P>
+
+<A NAME="Committing your changes"></A>
+<HR SIZE="6">
+<A NAME="SEC6"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC5"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC7"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC1"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC4"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 1.3.2 Committing your changes </H3>
+<!--docid::SEC6::-->
+<P>
+
+When you have checked that the compiler is still compilable you decide
+to make a new version of `<TT>backend.c</TT>'.  This will
+store your new `<TT>backend.c</TT>' in the repository and
+make it available to anyone else who is using that same
+repository.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs commit backend.c
+</pre></td></tr></table><P>
+
+CVS starts an editor, to allow you to enter a log
+message.  You type in &quot;Added an optimization pass.&quot;,
+save the temporary file, and exit the editor.
+</P>
+<P>
+
+The environment variable <CODE>$CVSEDITOR</CODE> determines
+which editor is started.  If <CODE>$CVSEDITOR</CODE> is not
+set, then if the environment variable <CODE>$EDITOR</CODE> is
+set, it will be used. If both <CODE>$CVSEDITOR</CODE> and
+<CODE>$EDITOR</CODE> are not set then there is a default
+which will vary with your operating system, for example
+<CODE>vi</CODE> for unix or <CODE>notepad</CODE> for Windows
+NT/95.
+</P>
+<P>
+
+<A NAME="IDX9"></A>
+In addition, CVS checks the <CODE>$VISUAL</CODE> environment
+variable.  Opinions vary on whether this behavior is desirable and
+whether future releases of CVS should check <CODE>$VISUAL</CODE> or
+ignore it.  You will be OK either way if you make sure that
+<CODE>$VISUAL</CODE> is either unset or set to the same thing as
+<CODE>$EDITOR</CODE>.
+</P>
+<P>
+
+When CVS starts the editor, it includes a list of
+files which are modified.  For the CVS client,
+this list is based on comparing the modification time
+of the file against the modification time that the file
+had when it was last gotten or updated.  Therefore, if
+a file's modification time has changed but its contents
+have not, it will show up as modified.  The simplest
+way to handle this is simply not to worry about it--if
+you proceed with the commit CVS will detect that
+the contents are not modified and treat it as an
+unmodified file.  The next <CODE>update</CODE> will clue
+CVS in to the fact that the file is unmodified,
+and it will reset its stored timestamp so that the file
+will not show up in future editor sessions.
+</P>
+<P>
+
+If you want to avoid
+starting an editor you can specify the log message on
+the command line using the `<SAMP>-m</SAMP>' flag instead, like
+this:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs commit -m &quot;Added an optimization pass&quot; backend.c
+</pre></td></tr></table><P>
+
+<A NAME="Cleaning up"></A>
+<HR SIZE="6">
+<A NAME="SEC7"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC6"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC8"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC1"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC4"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 1.3.3 Cleaning up </H3>
+<!--docid::SEC7::-->
+<P>
+
+Before you turn to other tasks you decide to remove your working copy of
+tc.  One acceptable way to do that is of course
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cd ..
+$ rm -r tc
+</pre></td></tr></table><P>
+
+but a better way is to use the <CODE>release</CODE> command (see section <A HREF="cvs_16.html#SEC148">A.15 release--Indicate that a Module is no longer in use</A>):
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cd ..
+$ cvs release -d tc
+M driver.c
+? tc
+You have [1] altered files in this repository.
+Are you sure you want to release (and delete) directory `tc': n
+** `release' aborted by user choice.
+</pre></td></tr></table><P>
+
+The <CODE>release</CODE> command checks that all your modifications have been
+committed.  If history logging is enabled it also makes a note in the
+history file.  See section <A HREF="cvs_18.html#SEC177">C.7 The history file</A>.
+</P>
+<P>
+
+When you use the `<SAMP>-d</SAMP>' flag with <CODE>release</CODE>, it
+also removes your working copy.
+</P>
+<P>
+
+In the example above, the <CODE>release</CODE> command wrote a couple of lines
+of output.  `<SAMP>? tc</SAMP>' means that the file `<TT>tc</TT>' is unknown to CVS.
+That is nothing to worry about: `<TT>tc</TT>' is the executable compiler,
+and it should not be stored in the repository.  See section <A HREF="cvs_18.html#SEC175">C.5 Ignoring files via cvsignore</A>,
+for information about how to make that warning go away.
+See section <A HREF="cvs_16.html#SEC150">A.15.2 release output</A>, for a complete explanation of
+all possible output from <CODE>release</CODE>.
+</P>
+<P>
+
+`<SAMP>M driver.c</SAMP>' is more serious.  It means that the
+file `<TT>driver.c</TT>' has been modified since it was
+checked out.
+</P>
+<P>
+
+The <CODE>release</CODE> command always finishes by telling
+you how many modified files you have in your working
+copy of the sources, and then asks you for confirmation
+before deleting any files or making any note in the
+history file.
+</P>
+<P>
+
+You decide to play it safe and answer <KBD>n <KBD>RET</KBD></KBD>
+when <CODE>release</CODE> asks for confirmation.
+</P>
+<P>
+
+<A NAME="Viewing differences"></A>
+<HR SIZE="6">
+<A NAME="SEC8"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC7"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC1"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC4"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> 1.3.4 Viewing differences </H3>
+<!--docid::SEC8::-->
+<P>
+
+You do not remember modifying `<TT>driver.c</TT>', so you want to see what
+has happened to that file.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cd tc
+$ cvs diff driver.c
+</pre></td></tr></table><P>
+
+This command runs <CODE>diff</CODE> to compare the version of `<TT>driver.c</TT>'
+that you checked out with your working copy.  When you see the output
+you remember that you added a command line option that enabled the
+optimization pass.  You check it in, and release the module.
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$ cvs commit -m &quot;Added an optimization pass&quot; driver.c
+Checking in driver.c;
+/usr/local/cvsroot/tc/driver.c,v  &lt;--  driver.c
+new revision: 1.2; previous revision: 1.1
+done
+$ cd ..
+$ cvs release -d tc
+? tc
+You have [0] altered files in this repository.
+Are you sure you want to release (and delete) directory `tc': y
+</pre></td></tr></table><P>
+
+<A NAME="Repository"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_1.html#SEC1"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_2.html#SEC9"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>
+<FONT SIZE="-1">
+This document was generated
+by <I>Derek Robert Price</I> on <I>April, 18 2002</I>
+using <A HREF="http://texi2html.cvshome.org"><I>texi2html</I></A>
+</FONT>
+
+</BODY>
+</HTML>

@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.92
+----------------------------------
+USER VISIBLE CHANGES
+Added support for ABS, ACOS, ASIN, ATAN, ATAN2, COSH, MAX, MIN,
+MOD, SINH, TAN, TANH
+
+OTHER CHANGES
+When any of statistics-related routines fails, the job driver
+returns 4 and gives proper error messages.
+
+RELATED BUG REPORTS: 237, 361
+
+BY: Sachiko Honda
+
+WHEN: Auguest 31, 2005

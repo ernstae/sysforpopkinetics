@@ -1,0 +1,440 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Keeping Linux Up-To-Date</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Keeping Linux Up-To-Date</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	It is important to keep the Software Team's Linux workstations
+	up-to-date, with security fixes and bug fixes.  This document
+	describes the procedure for updating a workstation via
+	the Internet.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>May 30, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.1</TD
+><TD
+ALIGN="LEFT"
+>July 25, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Updated for systems that do not dual-boot</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN17"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN22"
+>Using the RHN Alert Notification Tool</A
+></DT
+><DT
+><A
+HREF="#AEN31"
+>After a Kernel Update</A
+></DT
+><DT
+><A
+HREF="#AEN51"
+>Removing Redundant Kernels</A
+></DT
+><DT
+><A
+HREF="#AEN58"
+>Downloading Packages from RHN</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN17"
+></A
+>Introduction</H2
+><P
+>&#13;      For each of the Software Team's Linux workstations, RFPK has
+      purchased a subscription to use the RedHat Network (RHN) for keeping
+      Linux up-to-date.  This subscription also enables priority
+      downloads of any of the large number of software packages that
+      are offered by RedHat.
+    </P
+><P
+>&#13;      It is important to make use of RHN at frequent intervals, to
+      keep your system current.  Updating does not have to take
+      much time away from other work.  While the process is 
+      going on, most of the time is spent in data transfer.
+      During that period, you can also be using your
+      workstation for other things.  Let the files download and
+      then go back to the updating process when all the files
+      are there.
+    </P
+><P
+>&#13;      With the exception of a kernel update, there is no
+      need to reboot after an update is complete.  With the
+      kernel, you first need to make a new boot diskette, and
+      then use that to boot.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN22"
+></A
+>Using the RHN Alert Notification Tool</H2
+><P
+>&#13;      On the panel at the bottom of your desktop screen, you
+      should have a small circle with a check-mark in it.  This
+      is the icon for the alert notification applet.  When it is red, there
+      are updates available to packages installed on your system.
+      When it is blue, all packages are up-to-date.  Green
+      means that updates are in progress.
+    </P
+><P
+>&#13;      Whenever you notice that the alert notification icon is red, and
+      you have a few spare moments, click on it and then click the
+      <B
+CLASS="guibutton"
+>Launch up2date</B
+> button. It is most
+      convenient to do this with an empty workspace
+      on the screen, so that the up2date windows do not get mixed
+      up with your other work.
+    </P
+><P
+>&#13;      The up2date wizard presents a list of "channels".  Select the
+      channel which corresponds to the release of Linux installed
+      on your workstation.  Generally, there will be only one 
+      choice, because up2date is smart enough to know this.
+    </P
+><P
+>&#13;      The wizard will then refresh its own information about any
+      updates available for your system.  It will give you a list
+      to choose from.  In the case of kernel updates, ask 
+      Alan Westhagen first whether or not that update is worth
+      performing.  For everything else, just select them all.
+    </P
+><P
+>&#13;      From that point on, just let up2date do its work.  
+      Occasionally check back.  Since up2date is interactive,
+      it may be waiting for an acknowledgment from you.  
+    </P
+><P
+>&#13;      When up2date says that it is finished, you are done, as
+      well.  You do not have to reboot, unless you updated
+      the kernel. The next section discusses what to do in 
+      that case,
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN31"
+></A
+>After a Kernel Update</H2
+><P
+>&#13;      If you boot Linux from the hard drive, there is nothing more
+      to do.  The next time you boot, the machine will come up on
+      the new version of Linux.
+    </P
+><P
+>&#13;      If your machine is dual-booted and you use a diskette to
+      boot onto Linux, you will need to make a new boot diskette and
+      a new backup boot diskette.  Here is the procedure to follow.
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    Determine the version number of the new kernel.
+	    The <B
+CLASS="command"
+>rpm</B
+> command can be used to list 
+	    all packages installed on your workstation, and 
+	    <B
+CLASS="command"
+>grep</B
+> can be used to filter out
+	    every line that does not contain the text
+	    "kernel-" followed by a digit:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;rpm -qa | grep kernel-[0-9]	    
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    The kernel package with the largest version number
+	    is the new one. 
+	  </P
+></LI
+><LI
+><P
+>&#13;	    You probably have three boot diskettes.  Two of the
+	    diskettes are for the version you currently are
+	    running.  The third is for the version that you
+	    ran previously.  Take that third diskette and 
+	    insert it in your diskette drive.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    As root, execute the <B
+CLASS="command"
+>mkbootdisk</B
+>
+	    command, giving the version number as argument.  For
+	    example, if you just installed the package
+	    <TT
+CLASS="filename"
+>kernel-2.4.20-13.8</TT
+>, you would
+	    enter the following command lines:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su
+/sbin/mkbootdisk 2.4.20-13.8 
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    Repeat the previous two steps, in order to make
+	    a backup copy of the boot diskette.  Use one of the
+	    two diskettes containing the version you are currently
+	    running.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Boot onto the new kernel, using one of the 
+	    diskettes you have just made.
+	  </P
+></LI
+></OL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN51"
+></A
+>Removing Redundant Kernels</H2
+><P
+>&#13;      You only need to have two kernels installed: the
+      current kernel and the previous kernel.  To
+      reduce clutter, you can remove old kernel packages.
+      Suppose that the 
+      <B
+CLASS="command"
+>rpm -qa | grep kernel-[0-9]</B
+>
+      command line returned the names of three kernel
+      packages, and that
+      <TT
+CLASS="filename"
+>kernel-2.4.14.8.0</TT
+> was the
+      oldest of them.  To remove that package,
+      use these commands:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su
+rpm -ev kernel-2.4.14.8.0	      
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      You can get a list of all kernels installed by using the
+      rpm query function:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;rpm -qa | grep kernel
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN58"
+></A
+>Downloading Packages from RHN</H2
+><P
+>&#13;      When the Software Team workstations were originally
+      set up for Linux, a large number of packages were
+      installed, especially in the area of tools for software
+      development.  There are, nevertheless, many additional
+      packages available.
+    </P
+><P
+>&#13;      For the great number of packages that are put together by
+      RedHat, RHN is the most convenient as well as the most
+      secure source. Just go to the 
+      <A
+HREF="http://www.redhat.com/software/rhn/"
+TARGET="_top"
+>RHN</A
+>
+      site, login, and click on the 
+      <B
+CLASS="guimenuitem"
+>software</B
+> button.  You should
+      then be able to find packages for the release of RedHat
+      Linux that you are running.
+    </P
+><P
+>&#13;      If RHN doesn't have it, there are a number of other 
+      sources for rpm packages.  A good place to look is
+      <A
+HREF="http://www.rpmfind.net/"
+TARGET="_top"
+>rpmfind</A
+>,
+      which is mirrored by speakeasy.net, in Seattle.
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

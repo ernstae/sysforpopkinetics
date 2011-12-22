@@ -1,0 +1,157 @@
+<html><head>
+<title>Extended Least Squares Function</title>
+<meta name="description" id="description" content="Extended Least Squares Function">
+<meta name="keywords" id="keywords" content=" elsq "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="elsqva.htm" target="_top">section</a>, <a href="elsqva_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+The routine <code><font color="blue">elsq</font></code> computes the
+extended least squares function 
+<code><span style='white-space: nowrap'><i>g</i>(<i>x</i>)</span></code>
+which is defined by
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>g</i>(<i>x</i>)&nbsp;=&nbsp;---&nbsp;logdet[&nbsp;2&nbsp;pi&nbsp;<i>Q</i>(<i>x</i>)&nbsp;]&nbsp;+&nbsp;---&nbsp;[<i>z</i>&nbsp;-&nbsp;<i>h</i>(<i>x</i>)]&nbsp;&nbsp;<i>Q</i>&nbsp;(<i>x</i>)&nbsp;[<i>z</i>&nbsp;-&nbsp;<i>h</i>(<i>x</i>)]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2<br>
+</span></code><code><span style='white-space: nowrap'><i>x</i></span></code> and <code><span style='white-space: nowrap'><i>z</i></span></code> are column vectors,
+<code><span style='white-space: nowrap'><i>Q</i>(<i>x</i>)</span></code> is a symmetric, positive definite matrix valued function,
+and <code><span style='white-space: nowrap'><i>h</i>(<i>x</i>)</span></code> is a column vector valued function.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><b><big><a name="Reference" id="Reference">Reference</a></big></b>
+<br>
+See Lemma 11 of 
+<i>Approximating the maximum likelihood estimate 
+for models with random parameters</i>.
+
+<br>
+<br>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+Upon a successful completion, this function returns 
+the value <code><span style='white-space: nowrap'><i>g</i>(<i>x</i>)</span></code> as a double-precision scalar.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>z</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><font color="blue">valarray&lt;double&gt;</font></code> object containing the value of <code><span style='white-space: nowrap'><i>n</i></span></code> dimensional column vector, <code><span style='white-space: nowrap'><i>z</i></span></code>.
+In the context of population analysis, this corresponds to the data vector (yi).
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>h</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><font color="blue">valarray&lt;double&gt;</font></code> object containing the value of <code><span style='white-space: nowrap'><i>n</i></span></code> dimensional column vector, <code><span style='white-space: nowrap'><i>h</i></span></code>.
+In the context of population analysis, this corresponds to the vector
+value returned by evaluating the model for the variance of i-th data at 
+<code><span style='white-space: nowrap'><i>x</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>Q</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><font color="blue">valarray&lt;double&gt;</font></code> object containing the value of <code><span style='white-space: nowrap'><i>n</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> 
+square matrix, <code><span style='white-space: nowrap'><i>Q</i>(<i>x</i>)</span></code>,
+corresponding to the current value of <code><span style='white-space: nowrap'><i>x</i></span></code>.
+In the context of population analysis, this corresponds to the
+symmetric matrix returned by evaluating the model for the
+variance of the i-th individual's data at <code><span style='white-space: nowrap'><i>x</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>Qinv</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><font color="blue">valarray&lt;double&gt;</font></code> object containing the value of the inverse of <code><span style='white-space: nowrap'><i>Q</i></span></code>, 
+which is a <code><span style='white-space: nowrap'><i>n</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> 
+square matrix.
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link and run the following program;
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;cassert&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;SpkValarray.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;elsq.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;inv2by2.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;det.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;SPK_VA::valarray;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;main(){<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;z(&nbsp;2&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;h(&nbsp;2&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;Q(&nbsp;2&nbsp;*&nbsp;2&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;Qinv(&nbsp;2&nbsp;*&nbsp;2&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;ans;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;Q&nbsp;to&nbsp;a&nbsp;matrix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;2.0&nbsp;&nbsp;1.0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;1.0&nbsp;&nbsp;3.0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q[0]&nbsp;=&nbsp;2.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q[1]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q[2]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Q[3]&nbsp;=&nbsp;3.0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Compute&nbsp;inverse&nbsp;of&nbsp;Q<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qinv&nbsp;=&nbsp;inverse(Q,&nbsp;n);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;h&nbsp;and&nbsp;z&nbsp;to&nbsp;a&nbsp;matrix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;1.0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;1.0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(&nbsp;i=0;&nbsp;i&lt;2;&nbsp;i++&nbsp;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z[i]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;z[i]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Q&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix(&nbsp;Q,&nbsp;2&nbsp;).print();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;Qinv&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix(&nbsp;Qinv,&nbsp;2&nbsp;).print();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Compute&nbsp;elsq&nbsp;and&nbsp;display&nbsp;the&nbsp;result<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ans&nbsp;=&nbsp;elsq(z,&nbsp;h,&nbsp;Q,&nbsp;Qinv);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;elsq&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;ans&nbsp;&lt;&lt;&nbsp;endl;<br>
+</span>
+</font></code>
+the program will display;
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Q&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;3&nbsp;]<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Qinv&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;&nbsp;0.6&nbsp;-0.2&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;-0.2&nbsp;&nbsp;0.4&nbsp;]<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;elsq&nbsp;=&nbsp;2.6426<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/elsq.cpp
+
+</body>
+</html>

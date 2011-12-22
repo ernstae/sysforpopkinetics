@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.215
+----------------------------------
+USER VISIBLE CHANGES
+
+Made fixes so that error block expressions are evaluated at the time for the data record rather than the last time from the ODE integration as was being done.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  818
+
+BY:  Mitch Watrous
+
+WHEN:  November 29, 2007

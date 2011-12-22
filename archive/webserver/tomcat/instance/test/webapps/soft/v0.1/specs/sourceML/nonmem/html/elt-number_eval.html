@@ -1,0 +1,6 @@
+<html><body><p><a href=dtd-overview.html>Overview</a> <a href=dtd-tree.html>Tree</a> <a href=dtd-index.html>Index</a> <a href=dtd-notations.html>Notations</a> <a href=dtd-entities.html>Entities</a> </p><h1>Element &lt;number_eval&gt;</h1><p>Specifies the numbers of function evaluations to use for each individual in the population data set.</p><p>
+
+To be specific, the number of evaluations is the product of the values in <a href=elt-value.html>value</a>s under <a href=elt-number_eval.html>number_eval</a>.  If "method" is equal to "grid", the number of occurences of <a href=elt-value.html>value</a> under <a href=elt-number_eval.html>number_eval</a> is equal to the number of random effects (per individual).  The i-th <a href=elt-value.html>value</a> is the number of uniformly space grid points in the i-th random effect.  If "method" is not equal to "grid", the number of occurences of <a href=elt-value.html>value</a> is equal to one; whence, the first occurence of <a href=elt-value.html>value</a> is the number of function evaluations to use for each individual.
+
+The default value for each <a href=elt-value.html>value</a> is 1000 for "plain" and "miser".  10 for "grid".  
+</p><h2>Attributes</h2><p><em>None</em></p><h2>Content</h2><p>(<a href=elt-value.html>value</a>)+</p><h2>Parents</h2><p><a href=elt-monte_carlo.html>monte_carlo</a> </p></body></html>

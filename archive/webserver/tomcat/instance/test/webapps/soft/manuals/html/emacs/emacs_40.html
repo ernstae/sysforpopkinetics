@@ -1,0 +1,1717 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Acknowledgments</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Acknowledgments">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Acknowledgments">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC574"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_39.html#SEC573"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_41.html#SEC575"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_45.html#SEC579"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_5.html#SEC8"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> AI. Acknowledgments </H1>
+<!--docid::SEC574::-->
+<P>
+
+Many people have contributed code included in the Free Software
+Foundation's distribution of GNU Emacs.  To show our appreciation for
+their public spirit, we list here in alphabetical order those who have
+written substantial portions.
+</P><P>
+
+<UL>
+<LI>
+Per Abrahamsen wrote the customization buffer facilities, as well as
+<TT>`double.el'</TT> for typing accented characters not normally available
+from the keyboard, <TT>`xt-mouse.el'</TT> which handles mouse commands
+through Xterm, <TT>`gnus-cus.el'</TT> which implements customization
+commands for Gnus, <TT>`gnus-cite.el'</TT>, a citation-parsing facility
+for news articles and <TT>`cpp.el'</TT> which hides or highlights parts of
+C programs according to preprocessor conditionals.
+<P>
+
+<LI>
+Tomas Abrahamsson wrote <TT>`artist.el'</TT>, a package for producing ASCII
+art with a mouse or with keyboard keys.
+<P>
+
+<LI>
+Jay K. Adams wrote <TT>`jka-compr.el'</TT>, providing automatic
+decompression and recompression for compressed files.
+<P>
+
+<LI>
+Joe Arceneaux wrote the original text property implementation, and
+implemented support for X11.
+<P>
+
+<LI>
+Miles Bader wrote <TT>`image-file.el'</TT>, support code for visiting image
+files; and <TT>`minibuf-eldef.el'</TT>, a minor mode whereby the default
+value is shown in the minibuffer prompt only when appropriate.
+<P>
+
+<LI>
+David Bakhash wrote <TT>`strokes.el'</TT>, a mode for controlling Emacs by
+moving the mouse in particular patterns.
+<P>
+
+<LI>
+Eli Barzilay wrote <TT>`calculator.el'</TT>, a desktop calculator for
+Emacs.
+<P>
+
+<LI>
+Steven L. Baur wrote
+<TT>`footnote.el'</TT> which lets you include
+footnotes in email messages, and <TT>`gnus-audio.el'</TT> which provides
+sound effects for Gnus.
+<P>
+
+<LI>
+Boaz Ben-Zvi wrote <TT>`profile.el'</TT>, to time Emacs Lisp functions.
+<P>
+
+<LI>
+Ray Blaak wrote <TT>`delphi.el'</TT>, a major mode for editing Delphi
+(Object Pascal) source code.
+<P>
+
+<LI>
+Jim Blandy wrote Emacs 19's input system, brought its configuration and
+build process up to the GNU coding standards, and contributed to the
+frame support and multi-face support.  Jim also wrote <TT>`tvi970.el'</TT>,
+terminal support for the TeleVideo 970 terminals.
+<P>
+
+<LI>
+Per Bothner wrote <TT>`term.el'</TT>, a terminal emulator in an Emacs
+buffer.
+<P>
+
+<LI>
+Terrence M. Brannon wrote <TT>`landmark.el'</TT>, a neural-network robot
+that learns landmarks.
+<P>
+
+<LI>
+Frank Bresz wrote <TT>`diff.el'</TT>, a program to display <CODE>diff</CODE>
+output.
+<P>
+
+<LI>
+Peter Breton implemented:
+<P>
+
+<UL>
+<LI>
+<TT>`dirtrack'</TT> which does better tracking of directory changes in shell
+buffers,
+<LI>
+<TT>`filecache.el'</TT> which records which directories your files are in,
+<LI>
+<TT>`locate.el'</TT> which interfaces to the <CODE>locate</CODE> command,
+<LI>
+<TT>`find-lisp.el'</TT>, an Emacs Lisp emulation of the <CODE>find</CODE> program,
+<LI>
+<TT>`net-utils.el'</TT>, and
+<LI>
+the "generic mode" feature.
+</UL>
+<P>
+
+<LI>
+Emmanuel Briot wrote <TT>`xml.el'</TT>, an XML parser for Emacs.
+<P>
+
+<LI>
+Kevin Broadey wrote <TT>`foldout.el'</TT>, providing folding extensions to
+Emacs's outline modes.
+<P>
+
+<LI>
+David M. Brown wrote <TT>`array.el'</TT>, for editing arrays and other
+tabular data.
+<P>
+
+<LI>
+W/lodek Bzyl and Ryszard Kubiak wrote <TT>`ogonek.el'</TT>, a package for
+changing the encoding of Polish characters.
+<P>
+
+<LI>
+Bill Carpenter provided <TT>`feedmail.el'</TT>, a package for massaging
+outgoing mail messages and sending them through various popular mailers.
+<P>
+
+<LI>
+Per Cederqvist and Inge Wallin wrote <TT>`ewoc.el'</TT>, an Emacs widget for
+manipulating object collections.
+<P>
+
+<LI>
+Hans Chalupsky wrote <TT>`advice.el'</TT>, an overloading mechanism for
+Emacs Lisp functions, and <TT>`trace.el'</TT>, a tracing facility for Emacs
+Lisp.
+<P>
+
+<LI>
+Chris Chase and Carsten Dominik wrote <TT>`idlwave.el'</TT>, an editing mode
+for IDL and WAVE CL.
+<P>
+
+<LI>
+Bob Chassell wrote <TT>`texnfo-upd.el'</TT> and <TT>`makeinfo.el'</TT>, modes
+and utilities for working with Texinfo files; and <TT>`page-ext.el'</TT>,
+commands for extended page handling.
+<P>
+
+<LI>
+Andrew Choi wrote the Macintosh support code, and contributed
+<TT>`mac-win.el'</TT>, support for the Mac window system.
+<P>
+
+<LI>
+James Clark wrote <TT>`sgml-mode.el'</TT>, a mode for editing SGML
+documents, and contributed to Emacs's dumping procedures.
+<P>
+
+<LI>
+Mike Clarkson wrote <TT>`edt.el'</TT>, an emulation of DEC's EDT editor.
+<P>
+
+<LI>
+Glynn Clements provided <TT>`gamegrid.el'</TT> and a couple of games that
+use it, Snake and Tetris.
+<P>
+
+<LI>
+Georges Brun-Cottan and Stefan Monnier wrote <TT>`easy-mmode.el'</TT>, a
+package for easy definition of major and minor modes.
+<P>
+
+<LI>
+Andrew Csillag wrote M4 mode (<TT>`m4-mode.el'</TT>).
+<P>
+
+<LI>
+Doug Cutting and Jamie Zawinski wrote <TT>`disass.el'</TT>, a disassembler
+for compiled Emacs Lisp code.
+<P>
+
+<LI>
+Michael DeCorte wrote <TT>`emacs.csh'</TT>, a C-shell script that starts a
+new Emacs job, or restarts a paused Emacs if one exists.
+<P>
+
+<LI>
+Gary Delp wrote <TT>`mailpost.el'</TT>, an interface between RMAIL and the
+<TT>`/usr/uci/post'</TT> mailer.
+<P>
+
+<LI>
+Matthieu Devin wrote <TT>`delsel.el'</TT>, a package to make newly-typed
+text replace the current selection.
+<P>
+
+<LI>
+Eric Ding contributed <TT>`goto-addr.el'</TT>, 
+<P>
+
+<LI>
+Carsten Dominik wrote <TT>`reftex.el'</TT>, a package for setting up
+labels and cross-references in LaTeX documents.
+<P>
+
+<LI>
+Scott Draves wrote <TT>`tq.el'</TT>, help functions for maintaining
+transaction queues between Emacs and its subprocesses.
+<P>
+
+<LI>
+Benjamin Drieu wrote <TT>`pong.el'</TT>, an implementation of the classical
+pong game.
+<P>
+
+<LI>
+Viktor Dukhovni wrote support for dumping under SunOS version 4.
+<P>
+
+<LI>
+John Eaton co-wrote Octave mode (<TT>`octave.el'</TT> and related files).
+<P>
+
+<LI>
+Rolf Ebert co-wrote Ada mode (<TT>`ada-mode.el'</TT>).
+<P>
+
+<LI>
+Stephen Eglen implemented <TT>`mspools.el'</TT>, for use with Procmail,
+which tells you which mail folders have mail waiting in them, and
+<TT>`iswitchb.el'</TT>, a feature for incremental reading and completion of
+buffer names.
+<P>
+
+<LI>
+Torbj&ouml;rn
+Einarsson contributed the  Fortran 90 mode (<TT>`f90.el'</TT>).
+<P>
+
+<LI>
+Tsugutomo Enami co-wrote the support for international character sets.
+<P>
+
+<LI>
+Hans Henrik Eriksen wrote <TT>`simula.el'</TT>, a mode for editing SIMULA 87
+code.
+<P>
+
+<LI>
+Michael Ernst wrote <TT>`reposition.el'</TT>, a command for recentering a
+function's source code and preceding comment on the screen.
+<P>
+
+<LI>
+Ata Etemadi wrote <TT>`cdl.el'</TT>, functions for working with Common Data
+Language source code.
+<P>
+
+<LI>
+Frederick Farnbach implemented <TT>`morse.el'</TT>, which converts text to
+Morse code.
+<P>
+
+<LI>
+Oscar Figueiredo wrote EUDC, the Emacs Unified Directory Client, which
+is an interface to directory servers via LDAP, CCSO PH/QI, or BBDB; and
+<TT>`ldap.el'</TT>, the LDAP client interface.
+<P>
+
+<LI>
+Fred Fish wrote the support for dumping COFF executable files.
+<P>
+
+<LI>
+Karl Fogel wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`bookmark.el'</TT>, for creating named placeholders, saving them and
+jumping to them later,
+<LI>
+<TT>`mail-hist.el'</TT>, a history mechanism for outgoing mail messages, and
+<LI>
+<TT>`saveplace.el'</TT>, for preserving point's location in files between
+editing sessions.
+</UL>
+<P>
+
+<LI>
+Gary Foster wrote <TT>`crisp.el'</TT>, the emulation for CRiSP and Brief
+editors, and <TT>`scroll-lock.el'</TT> (now <TT>`scroll-all.el'</TT>) a mode
+for scrolling several buffers together.
+<P>
+
+<LI>
+Noah Friedman wrote <TT>`rlogin.el'</TT>, an interface to Rlogin,
+<TT>`type-break.el'</TT>, which reminds you to take periodic breaks from
+typing, and <CODE>eldoc-mode</CODE>, a mode to show the defined parameters or
+the doc string for the Lisp function near point.  With Roland McGrath,
+he wrote <TT>`rsz-mini.el'</TT>, a minor mode to automatically resize the
+minibuffer to fit the text it contains.
+<P>
+
+<LI>
+Keith Gabryelski wrote <TT>`hexl.el'</TT>, a mode for editing binary files.
+<P>
+
+<LI>
+Kevin Gallagher rewrote and enhanced the EDT emulation, and wrote
+<TT>`flow-ctrl.el'</TT>, a package for coping with unsuppressible XON/XOFF
+flow control.
+<P>
+
+<LI>
+Kevin Gallo added multiple-frame support for Windows NT and wrote
+<TT>`w32-win.el'</TT>, support functions for the MS-Windows window system.
+<P>
+
+<LI>
+Howard Gayle wrote:
+<P>
+
+<UL>
+<LI>
+the C and lisp code for display tables and case tables,
+<LI>
+<TT>`rot13.el'</TT>, a command to display the plain-text form of a buffer
+encoded with the Caesar cipher,
+<LI>
+<TT>`case-table.el'</TT>, code to extend the character set and support case
+tables,
+<LI>
+much of the support for the ISO-8859 European character sets (which
+includes <TT>`iso-ascii.el'</TT>, <TT>`iso-insert.el'</TT>, <TT>`iso-swed.el'</TT>,
+<TT>`latin-1.el'</TT>, <TT>`iso-syntax.el'</TT>, <TT>`iso-transl.el'</TT>,
+<TT>`swedish.el'</TT>), and
+<LI>
+<TT>`vt100-led.el'</TT>, a package for controlling the LED's on
+VT100-compatible terminals.
+</UL>
+<P>
+
+<LI>
+Stephen Gildea made the Emacs quick reference card, and made many
+contributions for <TT>`time-stamp.el'</TT>, a package for maintaining
+last-change time stamps in files.
+<P>
+
+<LI>
+Julien Gilles wrote <TT>`gnus-ml.el'</TT>, a mailing list minor mode for
+Gnus.
+<P>
+
+<LI>
+David Gillespie wrote:
+<P>
+
+<UL>
+<LI>
+Emacs 19's Common Lisp compatibility packages, replacing the old package
+by Cesar Augusto Quiroz Gonzalez,
+<LI>
+<TT>`complete.el'</TT>, a partial completion mechanism, and
+<LI>
+<TT>`edmacro.el'</TT>, a package for editing keyboard macros.
+</UL>
+<P>
+
+<LI>
+Bob Glickstein contributed the <TT>`sregex.el'</TT> feature, a facility for
+writing regexps using a Lisp-like syntax.
+<P>
+
+<LI>
+Boris Goldowsky wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`avoid.el'</TT>, a package to keep the mouse cursor out of the way of
+the text cursor,
+<LI>
+<TT>`shadowfile.el'</TT>, a package for keeping identical copies of files in
+more than one place,
+<LI>
+<TT>`format.el'</TT>, a package for reading and writing files in various
+formats,
+<LI>
+<TT>`enriched.el'</TT>, a package for saving text properties in files, and
+<LI>
+<TT>`facemenu.el'</TT>, a package for specifying faces.
+</UL>
+<P>
+
+<LI>
+Michelangelo Grigni wrote <TT>`ffap.el'</TT> which visits a file,
+taking the file name from the buffer.
+<P>
+
+<LI>
+Odd Gripenstam wrote <TT>`dcl-mode.el'</TT> for editing DCL command files.
+<P>
+
+<LI>
+Michael Gschwind wrote <TT>`iso-cvt.el'</TT>, a package to convert between
+the ISO 8859-1 character set and the notations for non-ASCII
+characters used by TeX and net tradition, and <TT>`latin-2.el'</TT>, code
+which sets up case-conversion and syntax tables for the ISO Latin-2
+character set.
+<P>
+
+<LI>
+Henry Guillaume wrote <TT>`find-file.el'</TT>, a package to visit files
+related to the currently visited file.
+<P>
+
+<LI>
+Doug Gwyn wrote the portable <CODE>alloca</CODE> implementation.
+<P>
+
+<LI>
+Ken'ichi Handa implemented most of the support for international
+character sets, and wrote <TT>`isearch-x.el'</TT>, a facility for searching
+non-ASCII text.  Together with Naoto Takahashi, he wrote
+<TT>`quail.el'</TT>, a simple input facility for typing non-ASCII text from
+an ASCII keyboard.  Ken'ichi also wrote <TT>`ps-bdf.el'</TT>, a BDF font
+support for printing non-ASCII text on a PostScript printer.
+<P>
+
+<LI>
+Chris Hanson wrote <TT>`netuname.el'</TT>, a package to use HP-UX's Remote
+File Access facility from Emacs.
+<P>
+
+<LI>
+K. Shane Hartman wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`chistory.el'</TT> and <TT>`echistory.el'</TT>, packages for browsing
+command history lists,
+<LI>
+<TT>`electric.el'</TT> and <TT>`helper.el'</TT>, providing an alternative
+command loop and appropriate help facilities,
+<LI>
+<TT>`emacsbug.el'</TT>, a package for reporting Emacs bugs,
+<LI>
+<TT>`picture.el'</TT>, a mode for editing ASCII pictures, and
+<LI>
+<TT>`view.el'</TT>, a package for perusing files and buffers without editing
+them.
+</UL>
+<P>
+
+<LI>
+John Heidemann wrote <TT>`mouse-copy.el'</TT> and <TT>`mouse-drag.el'</TT>,
+which provide alternative mouse-based editing and scrolling features.
+He also contributed <TT>`zone-mode.el'</TT>, a major mode for editing DNS
+zone files.
+<P>
+
+<LI>
+Jon K Hellan wrote <TT>`utf7.el'</TT>, support for mail-safe transformation
+format of Unicode.
+<P>
+
+<LI>
+Markus Heritsch co-wrote Ada mode (<TT>`ada-mode.el'</TT>).
+<P>
+
+<LI>
+Karl Heuer wrote the original blessmail script, implemented the
+<CODE>intangible</CODE> text property, and rearranged the structure of the
+<CODE>Lisp_Object</CODE> type to allow for more data bits.
+<P>
+
+<LI>
+Manabu Higashida ported Emacs to MS-DOS.
+<P>
+
+<LI>
+Anders Holst wrote <TT>`hippie-exp.el'</TT>, a versatile completion and
+expansion package.
+<P>
+
+<LI>
+Kurt Hornik co-wrote Octave mode (<TT>`octave.el'</TT> and related files).
+<P>
+
+<LI>
+Tom Houlder wrote <TT>`mantemp.el'</TT>, which generates manual C<TT>++</TT>
+template instantiations.
+<P>
+
+<LI>
+Denis Howe wrote <TT>`browse-url.el'</TT>, a package for invoking a WWW
+browser to display a URL.
+<P>
+
+<LI>
+Lars Magne Ingebrigtsen did a major redesign of the Gnus news-reader and
+wrote many of its parts.
+<P>
+
+<LI>
+Andrew Innes contributed extensively to the MS-Windows support.
+<P>
+
+<LI>
+Seiichiro Inoue improved Emacs's XIM support.
+<P>
+
+<LI>
+Kyle Jones wrote <TT>`life.el'</TT>, a package to play Conway's "life" game,
+and <TT>`mldrag.el'</TT>, a package which allows the user to resize windows
+by dragging mode lines and vertical window separators with the mouse.
+<P>
+
+<LI>
+Terry Jones wrote <TT>`shadow.el'</TT>, a package for finding potential
+load-path problems when some Lisp file "shadows" another.
+<P>
+
+<LI>
+Simon Josefsson wrote <TT>`flow-fill.el'</TT>, a package for interpreting
+RFC2646 formatted text in messages, <TT>`imap.el'</TT>, an Emacs Lips
+library for talking to IMAP servers, <TT>`nnimap'</TT>, the IMAP
+back-end for Gnus, nd <TT>`rfc2104.el'</TT>, a hashed message authentication
+facility.
+<P>
+
+<LI>
+Tomoji Kagatani implemented <TT>`smtpmail.el'</TT>, used for sending out
+mail with SMTP.
+<P>
+
+<LI>
+David Kaufman wrote <TT>`yow.c'</TT>, an essential utility program for the
+hopelessly pinheaded.
+<P>
+
+<LI>
+Henry Kautz wrote <TT>`bib-mode.el'</TT>, a mode for maintaining
+bibliography databases compatible with <CODE>refer</CODE> (the <CODE>troff</CODE>
+version) and <CODE>lookbib</CODE>, and <TT>`refbib.el'</TT>, a package to convert
+those databases to the format used by the LaTeX text formatting package.
+<P>
+
+<LI>
+Howard Kaye wrote <TT>`sort.el'</TT>, commands to sort text in Emacs
+buffers.
+<P>
+
+<LI>
+Michael Kifer wrote <TT>`ediff.el'</TT>, an interactive interface to the
+<CODE>diff</CODE>, <CODE>patch</CODE>, and <CODE>merge</CODE> programs, and
+Viper, the newest emulation for VI.
+<P>
+
+<LI>
+Richard King wrote the first version of <TT>`userlock.el'</TT> and
+<TT>`filelock.c'</TT>, which provide simple support for multiple users
+editing the same file.  He also wrote the initial version of
+<TT>`uniquify.el'</TT>, a facility to make buffer names unique by adding
+parts of the file's name to the buffer name.
+<P>
+
+<LI>
+Peter Kleiweg wrote <TT>`ps-mode.el'</TT>, a major mode for editing
+PostScript files and running a PostScript interpreter interactively from
+within Emacs.
+<P>
+
+<LI>
+Larry K. Kolodney wrote <TT>`cvtmail.c'</TT>, a program to convert the mail
+directories used by Gosling Emacs into RMAIL format.
+<P>
+
+<LI>
+David M. Koppelman wrote <TT>`hi-lock.el'</TT>, a minor mode for
+interactive automatic highlighting of parts of the buffer text.
+<P>
+
+<LI>
+Robert Krawitz wrote the original <TT>`xmenu.c'</TT>, part of Emacs's pop-up
+menu support.
+<P>
+
+<LI>
+Sebastian Kremer wrote Emacs 19's <CODE>dired-mode</CODE>, with contributions
+by Lawrence R. Dodd.  He also wrote <TT>`ls-lisp.el'</TT>, a Lisp emulation
+of the <CODE>ls</CODE> command for platforms which don't have <CODE>ls</CODE> as a
+standard program.
+<P>
+
+<LI>
+Geoff Kuenning wrote Emacs 19's <TT>`ispell.el'</TT>, based on work by Ken
+Stevens and others.
+<P>
+
+<LI>
+David Ka*gedal wrote <TT>`tempo.el'</TT>, providing support for
+easy insertion of boilerplate text and other common constructions.
+<P>
+
+<LI>
+Daniel LaLiberte wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`edebug.el'</TT>, a source-level debugger for Emacs Lisp,
+<LI>
+<TT>`cl-specs.el'</TT>, specifications to help <CODE>edebug</CODE> debug code
+written using David Gillespie's Common Lisp support,
+<LI>
+<TT>`cust-print.el'</TT>, a customizable package for printing lisp objects,
+<LI>
+<TT>`eval-reg.el'</TT>, a re-implementation of <CODE>eval-region</CODE> in Emacs
+Lisp, and
+<LI>
+<TT>`isearch.el'</TT>, Emacs's incremental search minor mode.
+</UL>
+<P>
+
+<LI>
+James R. Larus wrote <TT>`mh-e.el'</TT>, an interface to the MH mail system.
+<P>
+
+<LI>
+Vinicius Jose Latorre wrote:
+<P>
+
+<UL>
+<LI>
+<CODE>ps-print</CODE>, a package for pretty-printing Emacs buffers to
+PostScript printers,
+<LI>
+<TT>`delim-col.el'</TT>, a package to arrange text into columns,
+<LI>
+<TT>`ebnf2ps.el'</TT>, a package that translates EBNF grammar to a syntactic
+chart that can be printed to a PostScript printer.
+</UL>
+<P>
+
+<LI>
+Frederic Lepied contributed <TT>`expand.el'</TT>, which uses the abbrev
+mechanism for inserting programming constructs.
+<P>
+
+<LI>
+Peter Liljenberg wrote <TT>`elint.el'</TT>, a Lint-style code checker for
+Emacs Lisp programs.
+<P>
+
+<LI>
+Lars Lindberg wrote <TT>`msb.el'</TT>, which provides more flexible menus
+for buffer selection, and rewrote <TT>`dabbrev.el'</TT>.
+<P>
+
+<LI>
+Anders Lindgren wrote <TT>`autorevert.el'</TT>, a package for automatically
+reverting files visited by Emacs that were changed on disk;
+<TT>`cwarn.el'</TT>, a package to highlight suspicious C and C<TT>++</TT>
+constructs; and <TT>`follow.el'</TT>, a minor mode to synchronize windows
+that show the same buffer.
+<P>
+
+<LI>
+Dave Love wrote:
+<P>
+
+<UL>
+<LI>
+<CODE>autoarg-mode</CODE>, a global minor mode whereby digit keys supply
+prefix arguments, and <CODE>autoarg-kp-mode</CODE> which redefines the keypad
+numeric keys to digit arguments,
+<LI>
+<TT>`autoconf.el'</TT>, a mode for editing Autoconf <TT>`configure.in'</TT>
+files,
+<LI>
+<TT>`elide-head.el'</TT>, a package for eliding boilerplate text, such as
+copyright notices, from file headers,
+<LI>
+<TT>`hl-line.el'</TT>, a package that provides a minor mode for highlighting
+the line in the current window on which point is,
+<LI>
+<TT>`latin-8.el'</TT> and <TT>`latin-9.el'</TT>, code which sets up
+case-conversion and syntax tables for the ISO Latin-8 and Latin-9
+character sets,
+<LI>
+<TT>`latin1-disp.el'</TT>, a package that lets you display ISO 8859
+characters on Latin-1 terminals by setting up appropriate display
+tables,
+<LI>
+<TT>`refill.el'</TT>, a mode for automatic paragraph refilling, akin to
+typical word processors,
+<LI>
+<TT>`smiley-ems.el'</TT>, a facility for displaying smiley faces, and
+<LI>
+<TT>`tool-bar.el'</TT>, a mode to control the display of the Emacs tool bar.
+</UL>
+<P>
+
+<LI>
+Eric Ludlam wrote the Speedbar package and <TT>`checkdoc.el'</TT>, a package
+for checking doc strings in Emacs Lisp programs.
+<P>
+
+<LI>
+Christopher J. Madsen wrote <TT>`decipher.el'</TT>, a package for cracking
+simple substitution ciphers.
+<P>
+
+<LI>
+Neil M. Mager wrote <TT>`appt.el'</TT>, functions to notify users of their
+appointments.  It finds appointments recorded in the diary files
+generated by Edward M. Reingold's <CODE>calendar</CODE> package.
+<P>
+
+<LI>
+Ken Manheimer wrote <TT>`allout.el'</TT>, a mode for manipulating and
+formatting outlines, and <TT>`icomplete.el'</TT>, which provides incremental
+completion feedback in the minibuffer.
+<P>
+
+<LI>
+Bill Mann wrote <TT>`perl-mode.el'</TT>, a mode for editing Perl code.
+<P>
+
+<LI>
+Brian Marick and Daniel LaLiberte wrote <TT>`hideif.el'</TT>, support for
+hiding selected code within C <CODE>#ifdef</CODE> clauses.
+<P>
+
+<LI>
+Simon Marshall wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`fast-lock.el'</TT>, which caches the face data computed by Font Lock mode,
+<LI>
+<TT>`lazy-lock.el'</TT>, which delays fontification in Font Lock mode
+until text is actually displayed, and
+<LI>
+<TT>`regexp-opt.el'</TT>, which generates a regular expression from a list
+of strings.
+</UL>
+<P>
+
+Simon also extended <TT>`comint.el'</TT>, originally written by Olin
+Shivers.
+</P><P>
+
+<LI>
+Bengt Martensson, Mark Shapiro, Mike Newton, Aaron Larson, and Stefan
+Schoef, wrote <TT>`bibtex.el'</TT>, a mode for editing BibTeX
+bibliography files.
+ 
+<LI>
+Charlie Martin wrote <TT>`autoinsert.el'</TT>, which provides automatic
+mode-sensitive insertion of text into new files.
+<P>
+
+<LI>
+Thomas May wrote <TT>`blackbox.el'</TT>, a version of the traditional
+blackbox game.
+<P>
+
+<LI>
+Roland McGrath wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`compile.el'</TT>, a package for running compilations in a buffer, and
+then visiting the locations reported in error messages,
+<LI>
+<TT>`etags.el'</TT>, a package for jumping to function definitions and
+searching or replacing in all the files mentioned in a <TT>`TAGS'</TT> file,
+<LI>
+<TT>`find-dired.el'</TT>, for using <CODE>dired</CODE> commands on output from the
+<CODE>find</CODE> program, with Sebastian Kremer,
+<LI>
+<TT>`map-ynp.el'</TT>, a general purpose boolean question-asker,
+<LI>
+<TT>`autoload.el'</TT>, providing semi-automatic maintenance of autoload
+files, and
+<LI>
+<TT>`upd-copyr.el'</TT>, providing semi-automatic maintenance of copyright
+notices in source code.
+</UL>
+<P>
+
+<LI>
+David Megginson wrote <TT>`derived.el'</TT>, which allows one to define new
+major modes by inheriting key bindings and commands from existing major
+modes.
+<P>
+
+<LI>
+Will Mengarini wrote <TT>`repeat.el'</TT>, a command to repeat the preceding
+command with its arguments.
+<P>
+
+<LI>
+Wayne Mesard wrote <TT>`hscroll.el'</TT> which does horizontal scrolling
+automatically.
+<P>
+
+<LI>
+Brad Miller wrote <TT>`gnus-gl.el'</TT>, a Gnus interface for GroupLens.
+<P>
+
+<LI>
+Richard Mlynarik wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`cl-indent.el'</TT>, a package for indenting Common Lisp code,
+<LI>
+<TT>`ebuff-menu.el'</TT>, an "electric" browser for buffer listings,
+<LI>
+<TT>`ehelp.el'</TT>, bindings for browsing help screens,
+<LI>
+<TT>`rfc822.el'</TT>, a parser for E-mail addresses in the RFC-822 format,
+used in mail messages and news articles,
+<LI>
+<TT>`terminal.el'</TT>, a terminal emulator for Emacs subprocesses, and 
+<LI>
+<TT>`yow.el'</TT>, an essential utility (try <KBD>M-x yow</KBD>).
+</UL>
+<P>
+
+<LI>
+Gerd Moellmann wrote:
+<P>
+
+<UL>
+<LI>
+the new display engine for Emacs 21,
+<LI>
+the asynchronous timers facility (<TT>`atimer.c'</TT>),
+<LI>
+the <CODE>ebrowse</CODE> C<TT>++</TT> browser,
+<LI>
+<TT>`jit-lock.el'</TT>, the Just-In-Time font-lock support mode,
+<LI>
+<TT>`tooltip.el'</TT>, a package for displaying tooltips, and
+<LI>
+<TT>`authors.el'</TT> package for maintaining the <TT>`AUTHORS'</TT> files.
+</UL>
+<P>
+
+Gerd took over the Emacs maintenance as the head maintainer since the
+beginning of Emacs 21 development.
+</P><P>
+
+<LI>
+Stefan Monnier wrote:
+<P>
+
+<UL>
+<LI>
+<CODE>PCL-CVS</CODE>, a directory-level front end to the CVS version control
+system,
+<LI>
+<TT>`smerge-mode.el'</TT>, a minor mode for resolving <CODE>diff3</CODE>
+conflicts, and
+<LI>
+<TT>`diff-mode.el'</TT>, a mode for viewing and editing context diffs.
+</UL>
+<P>
+
+<LI>
+Morioka Tomohiko wrote several packages for MIME support in Gnus and
+elsewhere.
+<P>
+
+<LI>
+Sen Nagata wrote <TT>`crm.el'</TT>, a package for reading multiple strings
+with completion, and <TT>`rfc2368.el'</TT>, support for <CODE>mailto:</CODE>
+URLs.
+<P>
+
+<LI>
+Erik Naggum wrote the time-conversion functions.  He also wrote
+<TT>`disp-table.el'</TT>, a package for dealing with display tables,
+<TT>`latin-4.el'</TT> and <TT>`latin-5.el'</TT>, code which sets up
+case-conversion and syntax tables for the ISO Latin-4 and Latin-5
+character sets, <TT>`mailheader.el'</TT>, a pacakage for parsing email
+headers, and <TT>`parse-time.el'</TT>, a package for parsing time strings.
+<P>
+
+<LI>
+Thomas Neumann and Eric Raymond wrote <TT>`makefile.el'</TT> (now
+<TT>`make-mode.el'</TT>), a mode for editing makefiles.
+<P>
+
+<LI>
+Thien-Thi Nguyen and Dan Nicolaescu wrote <TT>`hideshow.el'</TT>, a minor
+mode for selectively displaying blocks of text.
+<P>
+
+<LI>
+Dan Nicolaescu wrote <TT>`romanian.el'</TT>, support for editing Romanian
+text, and <TT>`iris-ansi.el'</TT>, support for running Emacs on SGI's
+<CODE>xwsh</CODE> and <CODE>winterm</CODE> terminal emulators.
+<P>
+
+<LI>
+Jurgen Nickelsen wrote <TT>`ws-mode.el'</TT>, providing WordStar emulation.
+<P>
+
+<LI>
+Jeff Norden wrote <TT>`kermit.el'</TT>, a package to help the Kermit
+dialup communications program run comfortably in an Emacs shell buffer.
+<P>
+
+<LI>
+Andrew Norman wrote <TT>`ange-ftp.el'</TT>, providing transparent FTP
+support.
+<P>
+
+<LI>
+Alexandre Oliva wrote <TT>`gnus-mlspl.el'</TT>, a group params-based mail
+splitting mechanism.
+<P>
+
+<LI>
+David Pearson contributed <TT>`quickurl.el'</TT>, a simple method of
+inserting a URL into the current buffer based on text at point;
+<TT>`5x5.el'</TT>, a game to fill all squares on the field.
+<P>
+
+<LI>
+Jeff Peck wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`emacstool.c'</TT>, support for running Emacs under SunView/Sun Windows,
+<LI>
+<TT>`sun.el'</TT>, key bindings for sunterm keys,
+<LI>
+<TT>`sun-curs.el'</TT>, cursor definitions for Sun Windows, and 
+<LI>
+<TT>`sun-fns.el'</TT> and <TT>`sun-mouse.el'</TT>, providing mouse support for
+Sun Windows.
+</UL>
+<P>
+
+<LI>
+Damon Anton Permezel wrote <TT>`hanoi.el'</TT>, an animated demonstration of
+the "Towers of Hanoi" puzzle.
+<P>
+
+<LI>
+William M. Perry wrote <TT>`mailcap.el'</TT>, a MIME media types
+configuration facility, and <TT>`mwheel.el'</TT>, support for MS
+Intellimouse type mice with wheels.
+<P>
+
+<LI>
+Per Persson wrote <TT>`gnus-vm.el'</TT>, the VM interface for Gnus.
+<P>
+
+<LI>
+Jens Petersen wrote <TT>`find-func.el'</TT>, which makes it easy to find
+the source code for an Emacs Lisp function or variable.
+<P>
+
+<LI>
+Daniel Pfeiffer wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`copyright.el'</TT>, a package for updating copyright notices in files,
+<LI>
+<TT>`executable.el'</TT>, a package for executing interpreter scripts,
+<LI>
+<TT>`sh-script.el'</TT>, a mode for editing shell scripts,
+<LI>
+<TT>`skeleton.el'</TT>, implementing a concise language for writing
+statement skeletons, and
+<LI>
+<TT>`two-column.el'</TT>, a minor mode for simultaneous two-column editing.
+</UL>
+<P>
+
+Daniel also rewrote <TT>`apropos.el'</TT>, originally written by Joe Wells,
+and, together with Jim Blandy, co-authored <TT>`wyse50.el'</TT>, support for
+Wyse 50 terminals.
+</P><P>
+
+<LI>
+Richard L. Pieri wrote <TT>`pop3.el'</TT>, a Post Office Protocol (RFC
+1460) interface for Emacs.
+<P>
+
+<LI>
+Fred Pierresteguy and Paul Reilly made Emacs work with X Toolkit
+widgets.
+<P>
+
+<LI>
+Christian Plaunt wrote <TT>`soundex.el'</TT>, an implementation of the
+Soundex algorithm for comparing English words by their pronunciation.
+<P>
+
+<LI>
+David Ponce wrote <TT>`recentf.el'</TT>, a package that puts a menu of
+recently visited files in the Emacs menu bar.
+<P>
+
+<LI>
+Francesco A. Potorti wrote <TT>`cmacexp.el'</TT>, providing a command which
+runs the C preprocessor on a region of a file and displays the results.
+He also expanded and redesigned the <CODE>etags</CODE> program.
+<P>
+
+<LI>
+Michael D. Prange and Steven A. Wood wrote <TT>`fortran.el'</TT>, a mode for
+editing FORTRAN code.
+<P>
+
+<LI>
+Mukesh Prasad contributed <TT>`vmsproc.el'</TT>, a facility for running
+asynchronous subprocesses on VMS.
+<P>
+
+<LI>
+Marko Rahamaa wrote <TT>`latin-3.el'</TT>, code which sets up
+case-conversion and syntax tables for the ISO Latin-3 charact set.
+<P>
+
+<LI>
+Ashwin Ram wrote <TT>`refer.el'</TT>, commands to look up references in
+bibliography files by keyword.
+<P>
+
+<LI>
+Eric S. Raymond wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`vc.el'</TT>, an interface to the RCS and SCCS source code version
+control systems, with Paul Eggert,
+<LI>
+<TT>`gud.el'</TT>, a package for running source-level debuggers like GDB
+and SDB in Emacs,
+<LI>
+<TT>`asm-mode.el'</TT>, a mode for editing assembly language code,
+<LI>
+<TT>`AT386.el'</TT>, terminal support package for IBM's AT keyboards,
+<LI>
+<TT>`cookie1.el'</TT>, support for "fortune-cookie" programs like
+<TT>`yow.el'</TT> and <TT>`spook.el'</TT>,
+<LI>
+<TT>`finder.el'</TT>, a package for finding Emacs Lisp packages by keyword
+and topic,
+<LI>
+<TT>`keyswap.el'</TT>, code to swap the <KBD>BS</KBD> and <KBD>DEL</KBD> keys,
+<LI>
+<TT>`loadhist.el'</TT>, functions for loading and unloading Emacs features,
+<LI>
+<TT>`lisp-mnt.el'</TT>, functions for working with the special headers used
+in Emacs Lisp library files, and
+<LI>
+code to set and make use of the <CODE>load-history</CODE> lisp variable, which
+records the source file from which each lisp function loaded into Emacs
+came.
+</UL>
+<P>
+
+<LI>
+Edward M. Reingold wrote the extensive calendar and diary support (try
+<KBD>M-x calendar</KBD>), with contributions from Stewart Clamen, Nachum
+Dershowitz, Paul Eggert, Steve Fisk, Michael Kifer, and Lara Rios.  Andy
+Oram contributed to its documentation.  Reingold has also contributed to
+<TT>`tex-mode.el'</TT>, a mode for editing TeX files, as have William
+F. Schelter, Dick King, Stephen Gildea, Michael Prange, and Jacob Gore.
+<P>
+
+<LI>
+Alex Rezinsky contributed <TT>`which-func.el'</TT>, a mode that shows the
+name of the current function in the mode line.
+<P>
+
+<LI>
+Rob Riepel contributed <TT>`tpu-edt.el'</TT> and its associated files,
+providing an emulation of the VMS TPU text editor emulating the VMS EDT
+editor, and <TT>`vt-control.el'</TT>, providing some control functions for
+the DEC VT line of terminals.
+<P>
+
+<LI>
+Roland B. Roberts contributed much of the VMS support distributed with
+Emacs 19, along with Joseph M. Kelsey, and <TT>`vms-pmail.el'</TT>, support
+for using Emacs within VMS MAIL.
+<P>
+
+<LI>
+John Robinson wrote <TT>`bg-mouse.el'</TT>, support for the mouse on the BBN
+Bitgraph terminal.
+<P>
+
+<LI>
+Danny Roozendaal implemented <TT>`handwrite.el'</TT>, which converts text
+into "handwriting."
+<P>
+
+<LI>
+William Rosenblatt wrote <TT>`float.el'</TT>, implementing a floating-point
+numeric type using Lisp cons cells and integers.
+<P>
+
+<LI>
+Guillermo J. Rozas wrote <TT>`scheme.el'</TT>, a mode for editing Scheme and
+DSSSL code, and <TT>`fakemail.c'</TT>, an interface to the System V mailer.
+<P>
+
+<LI>
+Ivar Rummelhoff provided <TT>`winner.el'</TT>, which records
+recent window configurations so you can move back to them.
+<P>
+
+<LI>
+Jason Rumney has ported the Emacs 21 display engine to MS-Windows, and
+contributed extensively to the MS-Windows port of Emacs.
+<P>
+
+<LI>
+Wolfgang Rupprecht contributed Emacs 19's floating-point support
+(including <TT>`float-sup.el'</TT> and <TT>`floatfns.c'</TT>), and
+<TT>`sup-mouse.el'</TT>, support for the Supdup mouse on lisp machines.
+<P>
+
+<LI>
+James B. Salem and Brewster Kahle wrote <TT>`completion.el'</TT>, providing
+dynamic word completion.
+<P>
+
+<LI>
+Masahiko Sato wrote <TT>`vip.el'</TT>, an emulation of the VI editor.
+<P>
+
+<LI>
+Holger Schauer wrote <TT>`fortune.el'</TT>, a package for using fortune in
+message signatures.
+<P>
+
+<LI>
+William Schelter wrote <TT>`telnet.el'</TT>, support for <CODE>telnet</CODE>
+sessions within Emacs.
+<P>
+
+<LI>
+Ralph Schleicher contributed <TT>`battery.el'</TT>, a package for displaying
+laptop computer battery status, and <TT>`info-look.el'</TT>, a package for
+looking up Info documentation for symbols in the buffer.
+<P>
+
+<LI>
+Michael Schmidt and Tom Perrine wrote <TT>`modula2.el'</TT>, a mode for
+editing Modula-2 code, based on work by Mick Jordan and Peter Robinson.
+<P>
+
+<LI>
+Ronald S. Schnell wrote <TT>`dunnet.el'</TT>, a text adventure game.
+<P>
+
+<LI>
+Philippe Schnoebelen wrote <TT>`gomoku.el'</TT>, a Go Moku game played
+against Emacs, and <TT>`mpuz.el'</TT>, a multiplication puzzle.
+<P>
+
+<LI>
+Jan Schormann wrote <TT>`solitaire.el'</TT>, an Emacs Lisp implementation of
+the Solitaire game.
+<P>
+
+<LI>
+Alex Schroeder wrote <TT>`ansi-color.el'</TT>, a package for translating
+ANSI color escape sequences to Emacs faces, and <TT>`sql.el'</TT>, a package
+for interactively running an SQL interpreter in an Emacs buffer.
+<P>
+
+<LI>
+Randal Schwartz wrote <TT>`pp.el'</TT>, a pretty-printer for lisp objects.
+<P>
+
+<LI>
+Oliver Seidel wrote <TT>`todo-mode.el'</TT>, a package for maintaining
+<TT>`TODO'</TT> list files.
+<P>
+
+<LI>
+Manuel Serrano contributed the Flyspell package that does spell checking
+as you type.
+<P>
+
+<LI>
+Hovav Shacham wrote <TT>`windmove.el'</TT>, a set of commands for selecting
+windows based on their geometrical position on the frame.
+<P>
+
+<LI>
+Stanislav Shalunov wrote <TT>`uce.el'</TT>, for responding to unsolicited
+commercial email.
+<P>
+
+<LI>
+Richard Sharman contributed <TT>`hilit-chg.el'</TT>, which uses colors
+to show recent editing changes.
+<P>
+
+<LI>
+Olin Shivers wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`comint.el'</TT>, a library for modes running interactive command-line-
+oriented subprocesses,
+<LI>
+<TT>`cmuscheme.el'</TT>, for running inferior Scheme processes,
+<LI>
+<TT>`inf-lisp.el'</TT>, for running inferior Lisp process, and
+<LI>
+<TT>`shell.el'</TT>, for running inferior shells.
+</UL>
+<P>
+
+<LI>
+Espen Skoglund wrote <TT>`pascal.el'</TT>, a mode for editing Pascal code.
+<P>
+
+<LI>
+Rick Sladkey wrote <TT>`backquote.el'</TT>, a lisp macro for creating
+mostly-constant data.
+<P>
+
+<LI>
+Lynn Slater wrote <TT>`help-macro.el'</TT>, a macro for writing interactive
+help for key bindings.
+<P>
+
+<LI>
+Chris Smith wrote <TT>`icon.el'</TT>, a mode for editing Icon code.
+<P>
+
+<LI>
+David Smith wrote <TT>`ielm.el'</TT>, a mode for interacting with the Emacs
+Lisp interpreter as a subprocess.
+<P>
+
+<LI>
+Paul D. Smith wrote <TT>`snmp-mode.el'</TT>.
+<P>
+
+<LI>
+William Sommerfeld wrote <TT>`scribe.el'</TT>, a mode for editing Scribe
+files, and <TT>`server.el'</TT>, a package allowing programs to send files
+to an extant Emacs job to be edited.
+<P>
+
+<LI>
+Andre Spiegel made many contributions to the Emacs Version Control
+package, and in particular made it support multiple back ends.
+<P>
+
+<LI>
+Michael Staats wrote <TT>`pc-select.el'</TT>, which rebinds keys for
+selecting regions to follow many other systems.
+<P>
+
+<LI>
+Richard Stallman invented Emacs, and then wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`easymeny.el'</TT>, a facility for defining Emacs menus,
+<LI>
+<TT>`menu-bar.el'</TT>, the Emacs menu bar support code,
+<LI>
+<TT>`paren.el'</TT>, a package to make matching parentheses stand out in
+color, and
+<LI>
+most of the rest of Emacs code.
+</UL>
+<P>
+
+<LI>
+Sam Steingold wrote <TT>`gulp.el'</TT>, a facility for asking package
+maintainers for updated versions of their packages via e-mail, and
+<TT>`midnight.el'</TT>, a package for running a command every midnight.
+<P>
+
+<LI>
+Ake Stenhoff and Lars Lindberg wrote <TT>`imenu.el'</TT>, a framework for
+browsing indices made from buffer contents.
+<P>
+
+<LI>
+Peter Stephenson contributed <TT>`vcursor.el'</TT>, which implements a
+"virtual cursor" that you can move with the keyboard and use for
+copying text.
+<P>
+
+<LI>
+Ken Stevens wrote the initial version of <TT>`ispell.el'</TT> and maintains
+that package since Ispell 3.1 release.
+<P>
+
+<LI>
+Jonathan Stigelman wrote <TT>`hilit19.el'</TT>, a package providing
+automatic highlighting in source code buffers, mail readers, and other
+contexts.
+<P>
+
+<LI>
+Martin Stjernholm co-authored CC Mode, a major editing mode for C,
+C<TT>++</TT>, Objective-C, and Java code.
+<P>
+
+<LI>
+Steve Strassman did not write <TT>`spook.el'</TT>, and even if he did, he
+really didn't mean for you to use it in an anarchistic way.
+<P>
+
+<LI>
+Olaf Sylvester wrote <TT>`bs.el'</TT>, a package for manipulating Emacs
+buffers.
+<P>
+
+<LI>
+Tibor S&lt;imko and Milan Zamazal wrote <TT>`slovak.el'</TT>, support for
+editing text in Slovak language.
+<P>
+
+<LI>
+Naoto Takahashi wrote <TT>`utf-8.el'</TT>, support for encoding and
+decoding UTF-8 data.
+<P>
+
+<LI>
+Taichi Kawabata wrote support for Devanagari script and the Indian
+languages.
+<P>
+
+<LI>
+Jens T. Berger Thielemann wrote <TT>`word-help.el'</TT>, which is
+part of the basis for <TT>`info-look.el'</TT>.
+<P>
+
+<LI>
+Spencer Thomas wrote the original <TT>`dabbrev.el'</TT>, providing a command
+which completes the partial word before point, based on other nearby
+words for which it is a prefix.  He also wrote the original dumping
+support.
+<P>
+
+<LI>
+Jim Thompson wrote <TT>`ps-print.el'</TT>, which converts
+Emacs text to Postscript.
+<P>
+
+<LI>
+Tom Tromey and Chris Lindblad wrote <TT>`tcl.el'</TT>, a major mode for
+editing Tcl/Tk source files and running a Tcl interpeter as an Emacs
+subprocess.
+<P>
+
+<LI>
+Daiki Ueno wrote <TT>`starttls.el'</TT>, support for Transport Layer
+Security protocol.
+<P>
+
+<LI>
+Masanobu Umeda wrote:
+<P>
+
+<UL>
+<LI>
+GNUS, a feature-full reader for Usenet news,
+<LI>
+<TT>`prolog.el'</TT>, a mode for editing Prolog code,
+<LI>
+<TT>`rmailsort.el'</TT>, a package for sorting messages in RMAIL folders,
+<LI>
+<TT>`metamail.el'</TT>, an interface to the Metamail program,
+<LI>
+<TT>`gnus-kill.el'</TT>, the Kill File mode for Gnus,
+<LI>
+<TT>`gnus-mh.el'</TT>, an mh-e interface for Gnus,
+<LI>
+<TT>`gnus-msg.el'</TT>, a mail and post interface for Gnus,
+<LI>
+<TT>`tcp.el'</TT>, emulation of the <CODE>open-network-stream</CODE> function for
+some Emacs configurations which lack it, and
+<LI>
+<TT>`timezone.el'</TT>, providing functions for dealing with time zones.
+</UL>
+<P>
+
+<LI>
+Rajesh Vaidheeswarran wrote <TT>`whitespace.el'</TT>, a package that
+detects and cleans up excess whitespace in a file.
+<P>
+
+<LI>
+Neil W. Van Dyke wrote <TT>`webjump.el'</TT>, a "hot links" package.
+<P>
+
+<LI>
+Didier Verna contributed <TT>`rect.el'</TT>, a package of functions for
+operations on rectangle regions of text.
+<P>
+
+<LI>
+Ulrik Vieth implemented <TT>`meta-mode.el'</TT>, for editing MetaFont code.
+<P>
+
+<LI>
+Geoffrey Voelker wrote the Windows NT support.  He also wrote
+<TT>`dos-w32.el'</TT>, functions shared by the MS-DOS and MS-Windows ports
+of Emacs, and <TT>`w32-fns.el'</TT>, MS-Windows specific support functions.
+<P>
+
+<LI>
+Johan Vromans wrote <TT>`forms.el'</TT> and its associated files, defining a
+mode for filling in forms, and <TT>`iso-acc.el'</TT>, a minor mode providing
+electric accent keys for text using the ISO-8859 character set.
+<P>
+
+<LI>
+Barry Warsaw wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`assoc.el'</TT>, a set of utility functions for working with association
+lists,
+<LI>
+<TT>`cc-mode.el'</TT>, a major mode for editing C, C<TT>++</TT>, and Java code,
+based on earlier work by Dave Detlefs, Stewart Clamen, and Richard
+Stallman,
+<LI>
+<TT>`elp.el'</TT>, a new profiler for Emacs Lisp programs.
+<LI>
+<TT>`man.el'</TT>, a mode for reading UNIX manual pages,
+<LI>
+<TT>`regi.el'</TT>, providing an AWK-like functionality for use in lisp
+programs,
+<LI>
+<TT>`reporter.el'</TT>, providing customizable bug reporting for lisp
+packages, and
+<LI>
+<TT>`supercite.el'</TT>, a minor mode for quoting sections of mail messages
+and news articles.
+</UL>
+<P>
+
+<LI>
+Morten Welinder introduced face support into the MS-DOS port of Emacs,
+and also wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`desktop.el'</TT>, facilities for saving some of Emacs's state between
+sessions,
+<LI>
+<TT>`timer.el'</TT>, the Emacs facility to run commands at a given time or
+frequency, or when Emacs is idle, and its C-level support code,
+<LI>
+<TT>`pc-win.el'</TT>, the MS-DOS "window-system" support,
+<LI>
+<TT>`internal.el'</TT>, an "internal terminal" emulator for the MS-DOS
+port of Emacs,
+<LI>
+<TT>`arc-mode.el'</TT>, the mode for editing compressed archives,
+<LI>
+<TT>`s-region.el'</TT>, commands for setting the region using the shift key
+and motion commands, and
+<LI>
+<TT>`dos-fns.el'</TT>, functions for use under MS-DOS.
+</UL>
+<P>
+
+He also helped port Emacs to MS-DOS.
+</P><P>
+
+<LI>
+Joseph Brian Wells wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`apropos.el'</TT>, a command to find commands, functions, and variables
+whose names contain matches for a regular expression,
+<LI>
+<TT>`resume.el'</TT>, support for processing command-line arguments after
+resuming a suspended Emacs job, and
+<LI>
+<TT>`mail-extr.el'</TT>, a package for extracting names and addresses from
+mail headers, with contributions from Jamie Zawinski.
+</UL>
+<P>
+
+<LI>
+Rodney Whitby and Reto Zimmermann wrote <TT>`vhdl-mode.el'</TT>, a major
+mode for editing VHDL source code.
+<P>
+
+<LI>
+John Wiegley wrote <TT>`align.el'</TT>, a set of commands for aligning text
+according to regular-expression based rules; <TT>`timeclock.el'</TT>, a
+package for keeping track of time spent on projects;
+<TT>`pcomplete.el'</TT>, a programmable completion facility; and
+<CODE>eshell</CODE>, a command shell implemented entirely in Emacs Lisp.
+<P>
+
+<LI>
+Ed Wilkinson wrote <TT>`b2m.c'</TT>, a program to convert mail files from
+RMAIL format to Unix <CODE>mbox</CODE> format.
+<P>
+
+<LI>
+Mike Williams wrote <TT>`mouse-sel.el'</TT>, providing enhanced mouse
+selection, and <TT>`thingatpt.el'</TT>, a library of functions for finding
+the "thing" (word, line, s-expression) containing point.
+<P>
+
+<LI>
+Bill Wohler wrote the Emacs interface to the MH mail system.
+<P>
+
+<LI>
+Dale R. Worley wrote <TT>`emerge.el'</TT>, a package for interactively
+merging two versions of a file.
+<P>
+
+<LI>
+Francis J. Wright wrote <CODE>WoMan</CODE>, a package for browsing
+manual pages without the <CODE>man</CODE> command.
+<P>
+
+<LI>
+Tom Wurgler wrote <TT>`emacs-lock.el'</TT>, which makes it harder
+to exit with valuable buffers unsaved.
+<P>
+
+<LI>
+Ilya Zakharevich and Bob Olson contributed <TT>`cperl-mode.el'</TT>, a major
+mode for editing Perl code.  Ilya Zakharevich also wrote <TT>`tmm.el'</TT>,
+a mode for accessing the Emacs menu bar on a text-mode terminal.
+<P>
+
+<LI>
+Milan Zamazal wrote <TT>`czech.el'</TT>, support for editing Czech text,
+<TT>`glasses.el'</TT>, a package for easier reading of source code which
+uses illegible identifier names such as <CODE>cantReadThisVariable</CODE>, and
+<TT>`tildify.el'</TT>, commands for adding hard spaces to text, TeX, and
+SGML/HTML files.
+<P>
+
+<LI>
+Victor Zandy contributed <TT>`zone.el'</TT>, a package for people who like
+to zone out in front of Emacs.
+<P>
+
+<LI>
+Eli Zaretskii made many standard Emacs features work on MS-DOS.  He also
+wrote <TT>`tty-colors.el'</TT>, which implements transparent mapping of X
+colors to tty colors, and (together with Kenichi Handa)
+<TT>`codepage.el'</TT>, a package for editing text encoded in DOS/Windows
+code pages.
+<P>
+
+<LI>
+Jamie Zawinski wrote:
+<P>
+
+<UL>
+<LI>
+Emacs 19's optimizing byte compiler, with Hallvard Furuseth,
+<LI>
+much of the support for faces and X selections,
+<LI>
+<TT>`mailabbrev.el'</TT>, a package providing automatic expansion of mail
+aliases, and
+<LI>
+<TT>`tar-mode.el'</TT>, providing simple viewing and editing commands for
+tar files.
+</UL>
+<P>
+
+<LI>
+Shenghuo Zhu wrote:
+<P>
+
+<UL>
+<LI>
+<TT>`binhex.el'</TT>, a package for reading and writing binhex files,
+<LI>
+<TT>`mm-partial.el'</TT>, message/partial support for MIME messages,
+<LI>
+<TT>`rfc1843.el'</TT>, an HZ decoding package,
+<LI>
+<TT>`uudecode.el'</TT>, an Emacs Lisp decoder for uuencoded data,
+<LI>
+<TT>`webmail.el'</TT>, an interface to Web mail.
+</UL>
+<P>
+
+<LI>
+Ian T. Zimmerman wrote <TT>`gametree.el'</TT>.
+<P>
+
+<LI>
+Neal Ziring and Felix S. T. Wu wrote <TT>`vi.el'</TT>, an emulation of the
+VI text editor.
+<P>
+
+<LI>
+Detlev Zundel wrote <TT>`re-builder.el'</TT>, a package for building regexps
+with visual feedback.
+<P>
+
+</UL>
+<P>
+
+Others too numerous to mention have reported and fixed bugs, and added
+features to many parts of Emacs.  (Many are mentioned in the
+<TT>`ChangeLog'</TT> files which are summarized in the file <TT>`AUTHORS'</TT>
+in the distribution.)  We thank them for their generosity as well.
+</P><P>
+
+This list intended to mention every contributor of a major package or
+feature we currently distribute; if you know of someone we have omitted,
+please report that as a manual bug.
+</P><P>
+
+<A NAME="Key Index"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_45.html#SEC579"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_5.html#SEC8"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

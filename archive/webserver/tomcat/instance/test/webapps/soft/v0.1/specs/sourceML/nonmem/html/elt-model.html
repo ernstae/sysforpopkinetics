@@ -1,0 +1,62 @@
+<html><body><p><a href=dtd-overview.html>Overview</a> <a href=dtd-tree.html>Tree</a> <a href=dtd-index.html>Index</a> <a href=dtd-notations.html>Notations</a> <a href=dtd-entities.html>Entities</a> </p><h1>Element &lt;model&gt;</h1><p>Definition of NONMEM mixed effect model. </p><p>
+<ul>
+   <li>All variables are treated as double-precision scalars.
+   The data type of contant (literal) values retain as it is.
+   </li>
+   <li>Array specification is not supported. 
+   </li>
+   <li>Cases are ignored.
+   </li>
+   <li>The following unary functions are supported:
+      <ul>
+         <li>ATAN ( real )</li>
+         <li>COS  ( real )</li>
+         <li>EXP  ( real )</li>
+         <li>LOG  ( real )</li>
+         <li>LOG10( real )</li>
+         <li>SIN  ( real )</li>
+         <li>SQRT ( real )</li>
+         <li>ABS  ( real )</li>
+         <li>ACOS ( real )</li>
+         <li>ASIN ( real )</li>
+         <li>ATAN2( real )</li>
+         <li>COSH ( real )</li>
+         <li>MAX  ( real )</li>
+         <li>MIN  ( real )</li>
+         <li>MOD  ( real )</li>
+         <li>SINH ( real )</li>
+         <li>TAN  ( real )</li>
+         <li>TANH ( real )</li>
+      </ul>
+   </li>
+   <li>
+      <ul>
+         <li>LININTERP()</li>
+      </ul>
+   </li>
+</ul>
+
+The valid combinations of PREDPP library model and TRANS:
+<dl>
+   <dt>Advan1: One compartmental linear model</dt>
+      <dd>Trans1, Trans2</dd>
+   <dt>Advan2: One compartmental linear model with first order absorption</dt>
+      <dd>Trans1, Trans2</dd>
+   <dt>Advan3: Two compartmental linear model</dt>
+      <dd>Trans1, Trans3, Trans4, Trans5</dd>
+   <dt>Advan4: Two compartmental linear model with first order absorption</dt>
+      <dd>Trans1, Trans3, Trans4, Trans5</dd>
+   <dt>Advan5: General linear model</dt>
+      <dd>Trans1</dd>
+   <dt>Advan6: General nonlinear model</dt>
+      <dd>Trans1</dd>
+   <dt>Advan7: General linear model with real eigenvalues</dt>
+      <dd>Trans1</dd>
+   <dt>Advan8: General nonlinera model with stiff differential equations</dt>
+      <dd>Trans1</dd>
+   <dt>Advan9: General nonlinear model with equilibrium compartments</dt>
+      <dd>Trans1</dd>
+   <dt>Advan10: One compartmental model with Michaelis-Menten elimination</dt>
+      <dd>Trans1</dd>
+</dl>
+</p><h2>Attributes</h2><dl><dt>tolerance IMPLIED </dt><dd><p>Number of digits of accuracy, used when an ADVAN model is selected.</p></dd><dt>advan IMPLIED </dt><dd><p>The number that corresponds to PREDPP library model from ADVAN1 - ADVAN10.  Currently supported models are { 6 }.  If this attribute is omitted, <a href=elt-pred.html>pred</a> must be defined.  The attribute setting will be ignored if <a href=elt-pred.html>pred</a> is specified.  </p></dd><dt>trans IMPLIED </dt><dd><p>The number that corresponds to parameterization for the selected ADVAN model.  Choose from {1,2,3,4,5}, default to "1".  If no ADVAN model is used, this setting is ignored.</p></dd></dl><h2>Content</h2><p>(<a href=elt-description.html>description</a>? | (<a href=elt-pred.html>pred</a> | (<a href=elt-comp_model.html>comp_model</a> | <a href=elt-pk.html>pk</a> | <a href=elt-diffeqn.html>diffeqn</a> | <a href=elt-error.html>error</a>)))</p><h2>Parents</h2><p><a href=elt-nonmem.html>nonmem</a> </p></body></html>

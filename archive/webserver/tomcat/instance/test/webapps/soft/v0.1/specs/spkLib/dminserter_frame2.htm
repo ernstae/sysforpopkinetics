@@ -1,0 +1,42 @@
+<html><head>
+<title>Inserter &lt;&lt;</title>
+<meta name="description" id="description" content="Inserter &lt;&lt;">
+<meta name="keywords" id="keywords" content=" Doublematrix operator&lt;&lt; matrix output the to ostream "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="dminserter.htm" target="_top">section</a>, <a href="dminserter_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+The operator inserts a <code><font color="blue">DoubleMatrix</font></code> object, <i>ob</i>, to the left hand side
+<code><font color="blue">ostream&amp;</font></code>, <i>os</i>, in the format shown below.
+If the matrix is empty, it inserts nothing.
+
+For a 3 by 2 matrix, <i>A</i>, <code><font color="blue">cout &lt;&lt; &quot;A = &quot; &lt;&lt; A;</font></code> produces:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;by&nbsp;2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a11&nbsp;&nbsp;a12&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a21&nbsp;&nbsp;a22&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a31&nbsp;&nbsp;a32&nbsp;]<br>
+</span>
+</font></code>
+If <i>A</i> were empty, then the same code produces:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;by&nbsp;0<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;]<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/DoubleMatrix.cpp
+
+</body>
+</html>

@@ -1,0 +1,229 @@
+<html><head>
+<title>Calculating Residuals and Weighted Residuals</title>
+<meta name="description" id="description" content="Calculating Residuals and Weighted Residuals">
+<meta name="keywords" id="keywords" content=" wres residual weighted ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_wres_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>statistical</option>
+<option>wres</option>
+</select>
+</td>
+<td><a href="residuals.htm" target="_top">Prev</a>
+</td><td><a href="simulation.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>statistical-&gt;</option>
+<option>statistics</option>
+<option>statisticsInactiveElem</option>
+<option>derParStatistics</option>
+<option>derParStatisticsFixedElem</option>
+<option>calcMean</option>
+<option>residuals</option>
+<option>wres</option>
+</select>
+</td>
+<td>wres</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Arguments</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>Calculating Residuals and Weighted Residuals</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype:</b>   </td><td align='left'  valign='top'>
+  
+<code><font color="blue"><span style='white-space: nowrap'>void&nbsp;wres(&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>f</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>cov</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>pResOut</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>pWresOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)</span></font></code>
+</td></tr>
+</table>
+<br>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Calculates residuals and weighted residuals using the covariance 
+of the data <code><span style='white-space: nowrap'><i>cov</i></span></code> as the weight.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The residuals <code><span style='white-space: nowrap'><i>res</i></span></code> and weighted residuals <code><span style='white-space: nowrap'><i>wres</i></span></code> 
+are calculated as follows:
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>res</i>&nbsp;&nbsp;=&nbsp;&nbsp;<i>y</i>&nbsp;-&nbsp;<i>f</i><br>
+<br>
+</span></code>and
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1/2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>wres</i>&nbsp;&nbsp;=&nbsp;&nbsp;<i>cov</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;*&nbsp;<i>res</i>&nbsp;&nbsp;,<br>
+<br>
+</span></code>where the term multiplying the residuals is the matrix square 
+root of the inverse of the covariance.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&amp;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>contains the actual measurement values to be fitted.
+The size of <code><span style='white-space: nowrap'><i>y</i></span></code> is <code><span style='white-space: nowrap'><i>n</i></span></code>, where <code><span style='white-space: nowrap'><i>n</i>&nbsp;&gt;=&nbsp;0</span></code>.
+If <code><span style='white-space: nowrap'><i>y</i></span></code> were empty, the function returns immediately.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&amp;</span></font></code><i><span style='white-space: nowrap'>f</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>contains the predicted values calculated by the model.
+The size of <code><span style='white-space: nowrap'><i>f</i></span></code> must be equal to <code><span style='white-space: nowrap'><i>n</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&amp;</span></font></code><i><span style='white-space: nowrap'>cov</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>represents a matrix in the column major order that contains
+the covariance of the measurement data.  The matrix, therefore,
+is assumed to have the positive definite property.
+The size of <code><span style='white-space: nowrap'><i>cov</i></span></code> must be equal to <code><span style='white-space: nowrap'><i>n</i>^2</span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pResOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>pResOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>pResOut</i> 
+must be declared in the function that calls this function, 
+and its size must be equal to <i>n</i>.  
+If <i>pResOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pResOut</i> will contain the vector of residuals 
+<code><span style='white-space: nowrap'><i>res</i></span></code> in the same order as the data values.  
+Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pResOut</i>. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pWresOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>pWresOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>pWresOut</i> 
+must be declared in the function that calls this function, 
+and its size must be equal to <i>n</i>.  
+If <i>pWresOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pWresOut</i> will contain the vector of weighted
+residuals <code><span style='white-space: nowrap'><i>wres</i></span></code> in the same order as the data values.  
+Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>pWresOut</i>. 
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;valarray&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;spk/wres.h&gt;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;n&nbsp;=&nbsp;2;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;y&nbsp;=&nbsp;[&nbsp;1.1&nbsp;&nbsp;2.2&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;yIn[]&nbsp;=&nbsp;{&nbsp;1.1,&nbsp;2.2&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;y(&nbsp;yIn,&nbsp;n&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;f&nbsp;=&nbsp;[&nbsp;1.0&nbsp;&nbsp;2.0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;fIn[]&nbsp;=&nbsp;{&nbsp;1.0,&nbsp;2.0&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;f(&nbsp;fIn,&nbsp;n&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;1.0&nbsp;&nbsp;0.0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;cov&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0.0&nbsp;&nbsp;4.0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;covIn[]&nbsp;=&nbsp;{&nbsp;1.0,&nbsp;0.0,&nbsp;0.0,&nbsp;4.0&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;cov(&nbsp;covIn,&nbsp;n*n&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;resOut(n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;wresOut(n);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;wres(&nbsp;y,&nbsp;f,&nbsp;cov,&nbsp;&amp;resOut,&nbsp;&amp;wresOut&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;res&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;&nbsp;resOut&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;wres&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;wresOut&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;res&nbsp;&nbsp;=&nbsp;{&nbsp;0.1,&nbsp;0.2&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;wres&nbsp;=&nbsp;{&nbsp;0.1,&nbsp;0.4&nbsp;}<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/wres.cpp
+
+</body>
+</html>

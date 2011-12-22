@@ -1,0 +1,348 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: libltdl Module Loader</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: libltdl Module Loader">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: libltdl Module Loader">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC169"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_168.html#SEC168" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: libltdl Memory Management" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_170.html#SEC170" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: libltdl Dependent Libraries" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_170.html#SEC170" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: libltdl Dependent Libraries" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_166.html#SEC166" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Using libltdl" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_172.html#SEC172" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Portable Library Design" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 18.2.3 Module Loader </H3>
+<!--docid::SEC169::-->
+<P>
+
+This section contains a fairly minimal libltdl based dynamic
+module loader that you can use as a base for your own code.  It
+implements the same API as the simple module loader in <A HREF="autobook_162.html#SEC162">17.4 A Simple GNU/Linux Module Loader</A>, and because of the way libltdl
+is written is able to load modules written for that loader, too.  The
+only part of this code which is arguably more complex than the
+equivalent from the previous example loader, is that <CODE>lt_dlinit</CODE>
+and <CODE>lt_dlexit</CODE> must be called in the appropriate places.  In
+contrast, The module search path initialisation is much simplified 
+thanks to another relative improvement in the libltdl API:
+</P><P>
+
+<A NAME="IDX34"></A>
+<DL>
+<DT><U>Function:</U> int <B>lt_dlsetsearchpath</B> <I>(const char *<VAR>path</VAR>)</I>
+<DD>This function takes a colon separated list of directories, which
+will be the first directories libltdl will search when trying to
+locate a dynamic module.
+</DL>
+</P><P>
+
+Another new API function is used to actually load the module:
+</P><P>
+
+<A NAME="IDX35"></A>
+<DL>
+<DT><U>Function:</U> lt_dlhandle <B>lt_dlopenext</B> <I>(const char *<VAR>filename</VAR>)</I>
+<DD>This function is used in precisely the same way as <CODE>lt_dlopen</CODE>.
+However, if the search for the named module by exact match
+against <VAR>filename</VAR> fails, it will try again with a <SAMP>`.la'</SAMP> extension,
+and then the native shared library extension (<SAMP>`.sl'</SAMP> on HP-UX,
+for example).
+</DL>
+</P><P>
+
+The advantage of using <CODE>lt_dlopenext</CODE> to load dynamic modules is
+that it will work equally well when loading modules not compiled with
+Libtool.  Also, by passing the module name parameter with no extension,
+this function allows module coders to manage without Libtool.
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#include &#60;stdio.h&#62;
+#include &#60;stdlib.h&#62;
+#ifndef EXIT_FAILURE
+#  define EXIT_FAILURE        1
+#  define EXIT_SUCCESS        0
+#endif
+
+#include &#60;limits.h&#62;
+#ifndef PATH_MAX
+#  define PATH_MAX 255
+#endif
+
+#include &#60;string.h&#62;
+#include &#60;ltdl.h&#62;
+
+#ifndef MODULE_PATH_ENV
+#  define MODULE_PATH_ENV        "MODULE_PATH"
+#endif
+
+typedef int entrypoint (const char *argument);
+
+/* Save and return a copy of the dlerror() error  message,
+   since the next API call may overwrite the original. */
+static char *dlerrordup (char *errormsg);
+
+int
+main (int argc, const char *argv[])
+{
+  char *errormsg = NULL;
+  lt_dlhandle module = NULL;
+  entrypoint *run = NULL;
+  int errors = 0;
+
+  if (argc != 3)
+    {
+      fprintf (stderr, "USAGE: main MODULENAME ARGUMENT\n");
+      exit (EXIT_FAILURE);
+    }
+
+  /* Initialise libltdl. */
+  errors = lt_dlinit ();
+
+  /* Set the module search path. */
+  if (!errors)
+    {
+      const char *path = getenv (MODULE_PATH_ENV);
+
+      if (path != NULL)
+        errors = lt_dlsetsearchpath (path);
+    }
+  
+  /* Load the module. */
+  if (!errors)
+    module = lt_dlopenext (argv[1]);
+
+  /* Find the entry point. */
+  if (module)
+    {
+      run = (entrypoint *) lt_dlsym (module, "run");
+
+      /* In principle, run might legitimately be NULL, so
+         I don't use run == NULL as an error indicator
+         in general. */
+      errormsg = dlerrordup (errormsg);
+      if (errormsg != NULL)
+        {
+          errors = lt_dlclose (module);
+          module = NULL;
+        }
+    }
+  else
+    errors = 1;
+
+  /* Call the entry point function. */
+  if (!errors)
+    {
+      int result = (*run) (argv[2]);
+      if (result &#60; 0)
+        errormsg = strdup ("module entry point execution failed");
+      else
+        printf ("\t=> %d\n", result);
+    }
+
+  /* Unload the module, now that we are done with it. */
+  if (!errors)
+    errors = lt_dlclose (module);
+
+  if (errors)
+    {
+      /* Diagnose the encountered error. */
+      errormsg = dlerrordup (errormsg);
+
+      if (!errormsg)
+        {
+          fprintf (stderr, "%s: dlerror() failed.\n", argv[0]);
+          return EXIT_FAILURE;
+        }
+    }
+
+  /* Finished with ltdl now. */
+  if (!errors)
+    if (lt_dlexit () != 0)
+      errormsg = dlerrordup (errormsg);
+
+  if (errormsg)
+    {
+      fprintf (stderr, "%s: %s.\n", argv[0], errormsg);
+      free (errormsg);
+      exit (EXIT_FAILURE);
+    }
+
+  return EXIT_SUCCESS;
+}
+
+/* Be careful to save a copy of the error message,
+   since the  next API call may overwrite the original. */
+static char *
+dlerrordup (char *errormsg)
+{
+  char *error = (char *) lt_dlerror ();
+  if (error &#38;&#38; !errormsg)
+    errormsg = strdup (error);
+  return errormsg;
+}
+
+</pre></td></tr></table></P><P>
+
+This file must be compiled with <CODE>libtool</CODE>, so that the dependent
+libraries (<TT>`libdl.so'</TT> on my GNU/Linux machine) are handled
+correctly, and so that the dlpreopen support is compiled in correctly
+(see section <A HREF="autobook_173.html#SEC173">18.4 dlpreopen Loading</A>):
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ libtool --mode=link gcc -g -o ltdl-loader -dlopen self \
+-rpath /tmp/lib ltdl-loader.c -lltdl
+gcc -g -o ltdl-loader -Wl,--rpath,/tmp/lib ltdl-loader.c -lltdl -ldl
+</pre></td></tr></table></P><P>
+
+By using <EM>both</EM> of <CODE>lt_dlopenext</CODE> and
+<CODE>lt_dlsetsearchpath</CODE>, this module loader will make a valiant
+attempt at loading anything you pass to it -- including the module I
+wrote for the simple GNU/Linux module loader earlier (see section <A HREF="autobook_163.html#SEC163">17.5 A Simple GNU/Linux Dynamic Module</A>).  Here, you can see the new
+<CODE>ltdl-loader</CODE> loading and using the <TT>`simple-module'</TT> module
+from <A HREF="autobook_163.html#SEC163">17.5 A Simple GNU/Linux Dynamic Module</A>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ ltdl-loader simple-module World
+Hello, World!
+        =&#62; 0
+</pre></td></tr></table></P><P>
+
+<A NAME="libltdl Dependent Libraries"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

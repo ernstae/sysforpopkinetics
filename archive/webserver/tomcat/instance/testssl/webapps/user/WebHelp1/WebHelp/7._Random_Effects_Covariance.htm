@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+ <meta name="generator" content="Adobe RoboHelp 8" />
+<title>7. Random Effects Covariance</title>
+<link rel="StyleSheet" href="default.css" type="text/css" />
+<script type="text/javascript" language="JavaScript">
+//<![CDATA[
+function reDo() {
+  if (innerWidth != origWidth || innerHeight != origHeight)
+     location.reload();
+}
+if ((parseInt(navigator.appVersion) == 4) && (navigator.appName == "Netscape")) {
+	origWidth = innerWidth;
+	origHeight = innerHeight;
+	onresize = reDo;
+}
+onerror = null; 
+//]]>
+</script>
+<style type="text/css">
+<!--
+div.WebHelpPopupMenu { position:absolute;
+left:0px;
+top:0px;
+z-index:4;
+visibility:hidden; }
+-->
+</style>
+<script type="text/javascript" language="javascript1.2" src="whmsg.js"></script>
+<script type="text/javascript" language="javascript" src="whver.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whproxy.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whutils.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whlang.js"></script>
+<script type="text/javascript" language="javascript1.2" src="whtopic.js"></script>
+
+</head>
+
+<body><script type="text/javascript" language="javascript1.2">//<![CDATA[
+<!--
+if (window.gbWhTopic)
+{
+	var strUrl = document.location.href;
+	var bc = 0;
+	var n = strUrl.toLowerCase().indexOf("bc-");
+	if(n != -1)
+	{
+		document.location.href = strUrl.substring(0, n);
+		bc = strUrl.substring(n+3);
+	}
+
+	if (window.addTocInfo)
+	{
+	addTocInfo("SPKStart\n7. Random Effects Covariance.");
+addButton("show",BTN_TEXT,"Show","","","","",0,0,"","","");
+
+	}
+	if (window.writeBtnStyle)
+		writeBtnStyle();
+
+	if (window.writeIntopicBar)
+		writeIntopicBar(1);
+
+	
+	document.write("<p style=\"text-align:right\"> ");
+AddMasterBreadcrumbs("SPKStart.htm", "", ">", "Home", "Getting_Startted_with_SPK.htm");
+document.write("<a href=\"Getting_Startted_with_SPK.htm\">SPKStart<\/a> > 7. Random Effects Covariance.<\/p>");
+
+
+	if (window.setRelStartPage)
+	{
+	setRelStartPage("SPKStart.htm");
+
+		autoSync(1);
+		sendSyncInfo();
+		sendAveInfoOut();
+	}
+}
+else
+	if (window.gbIE4)
+		document.location.reload();
+
+//-->
+//]]></script>
+<h1>7. Random Effects Covariance</h1>
+<p>In this screen, enter the initial estimate for the population variance 
+ term OMEGA. A reasonable overestimate of the standard deviation is 30, 
+ so use an initial estimate of 900 for the variance term OMEGA.</p>
+<p>&#160;</p>
+<ul type="disc">
+	<li>Check &quot;New Block&quot; and &quot;Diagonal&quot; (&quot;Full 
+	 Matrix&quot; would be OK too since the matrix is 1x1). </li>
+	<li>In the &quot;Block Size&quot; menu, select &quot;1&quot; (since 
+	 we only have a single variance term) and click &quot;Enter data&quot;. 
+	 The &quot;Diagonal Matrix Entry Form&quot; will pop open. </li>
+	<li>Enter the estimated variance 900.</li>
+	<li>Click &quot;Add&quot;. The entry form will close and $OMEGA DIAGONAL(1) 
+	 900 will appear in the window below.</li>
+</ul>
+<p>&#160;</p>
+<p><img src="CapturedImg8.gif" style="border: none;" alt="CapturedImg8.gif" width="720" height="509" border="0" /></p>
+<p>&#160;</p>
+<p>Click Next&gt; to continue.</p>
+<p>&#160;</p>
+<p>(In a more complex example where the covariance matrix OMEGA has higher 
+ dimension, select the matrix dimension in the &quot;Block Size&quot; menu 
+ and click &quot;Enter data&quot; to get the entry form for filling in 
+ variance/covariance initial estimates.)</p>
+<script type="text/javascript" language="javascript1.2">//<![CDATA[
+<!--
+if (window.writeIntopicBar)
+	writeIntopicBar(0);
+
+
+highlightSearch();
+//-->
+//]]></script>
+</body>
+</html>

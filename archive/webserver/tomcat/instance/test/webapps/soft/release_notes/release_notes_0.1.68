@@ -1,0 +1,93 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.64
+----------------------------------
+USER VISIBLE CHANGES
+Support the MDV (Missing Dependent Variable) feature
+at the ASPK level.
+
+OTHER CHANGES
+Added getRecordIndex() and getMeasurementIndex()
+to IndData and DataSet classes to support MDV.
+
+RELATED BUG REPORTS: 21
+
+BY: Sachiko Honda
+
+WHEN: June 13, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.65
+----------------------------------
+USER VISIBLE CHANGES
+POSTHOC option is in effect.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 182
+
+BY: Sachiko Honda
+
+WHEN: June 13, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.66
+----------------------------------
+USER VISIBLE CHANGES
+None
+
+OTHER CHANGES
+
+The capability to try to back up was added to the optimizer.
+
+RELATED BUG REPORTS:  None
+
+BY:  Mitch Watrous
+
+WHEN:  June 17, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.67
+----------------------------------
+USER VISIBLE CHANGES
+
+Added population level back up capabilities to SPK that are used when the 
+Hessian of an individual's objective function is not positive definite.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  166
+
+BY:  Mitch Watrous
+
+WHEN:  June 20, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.68
+----------------------------------
+USER VISIBLE CHANGES
+
+Additional residuals are computed and returned to the user:
+FO Population residuals (PPRED, PRES, PWRES, PETARES, PWETARES)
+Conditional Population residuals (CPRED, CRES, CWRES, CETARES, CWETARES)
+Inidividualized residuals (IPRED, IRES, IWRES, IETARES, IWETARES)
+
+The traditional placeholders such as PRED, RES, WRES, ETARES and WETARES
+contain different values depending on the approximation method used:
+
+For FO w/o POSTHOC
+PRED = PPRED, RES=PRES, WRES=PWRES, ETARES=PETARES, WETARES=PWETARES
+
+For FO w/ POSTHOC
+PRED = IPRED, RES=IRES, WRES=IWRES, ETARES=IETARES, WETARES=IWETARES
+
+For FOCE/LAPLACE
+PRED = CPRED, RES=CRES, WRES=CWRES, ETARES=CETARES, WETARES=CWETARES
+
+
+OTHER CHANGES
+
+ORGDV is initialized to the values of DV.
+
+RELATED BUG REPORTS: 154, 183
+
+BY: Sachiko Honda
+
+WHEN: June 20, 2005

@@ -1,0 +1,77 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.69
+----------------------------------
+USER VISIBLE CHANGES
+
+None.
+
+OTHER CHANGES
+
+Pred library now supports data records with missing dependent variables (DV).
+
+RELATED BUG REPORTS:  21
+
+BY:  Mitch Watrous
+
+WHEN:  June 27, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.70
+----------------------------------
+USER VISIBLE CHANGES
+
+When simulation & estimation are repeated n times,
+the output xml (result.xml) now contains n number of
+complete XML instances.  In other words,
+each instance begins with <?xml>.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 188
+
+BY: Sachiko Honda
+
+WHEN: June 28, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.71
+----------------------------------
+USER VISIBLE CHANGES
+An SPK library function, simulate(), can be now called without
+a seed.  This version, for both population data and individual data
+sets, assumes the caller has set a seed.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 
+
+BY: Sachiko Honda
+
+WHEN: June 30, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.72
+----------------------------------
+USER VISIBLE CHANGES
+Use the original initial parameters for each subproblem (iteration of 
+the whole process: simulation, estimation, statistics, data plot).
+Seed only once at the begining.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 208
+
+BY: Sachiko Honda
+
+WHEN: June 30, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.73
+----------------------------------
+USER VISIBLE CHANGES
+
+MDV (Missing Dependent Variable) feature enabled.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 21
+
+BY: Sachiko Honda
+
+WHEN: July 05, 2005

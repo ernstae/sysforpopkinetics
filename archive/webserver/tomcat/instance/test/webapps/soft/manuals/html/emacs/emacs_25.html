@@ -1,0 +1,1207 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Building</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Building">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Building">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC316"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC315"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC317"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> V. Compiling and Testing Programs </H1>
+<!--docid::SEC316::-->
+<P>
+
+  The previous chapter discusses the Emacs commands that are useful for
+making changes in programs.  This chapter deals with commands that assist
+in the larger process of developing and maintaining programs.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC317">V.1 Running Compilations under Emacs</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Compiling programs in languages other
+                          than Lisp (C, Pascal, etc.).</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC318">V.2 Searching with Grep under Emacs</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Running grep as if it were a compiler.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC319">V.3 Compilation Mode</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">The mode for visiting compiler errors.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC320">V.4 Subshells for Compilation</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Customizing your shell properly
+                          for use in the compilation buffer.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC321">V.5 Running Debuggers Under Emacs</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Running symbolic debuggers for non-Lisp programs.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC327">V.6 Executing Lisp Expressions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Various modes for editing Lisp programs, 
+                          with different facilities for running
+                          the Lisp programs.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC328">V.7 Libraries of Lisp Code for Emacs</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Creating Lisp programs to run in Emacs.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC330">V.9 Lisp Interaction Buffers</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Executing Lisp in an Emacs buffer.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC329">V.8 Evaluating Emacs-Lisp Expressions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Executing a single Lisp expression in Emacs.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC331">V.10 Running an External Lisp</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Communicating through Emacs with a separate Lisp.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Compilation"></A>
+<HR SIZE="6">
+<A NAME="SEC317"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC316"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC318"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC316"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC316"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> V.1 Running Compilations under Emacs </H2>
+<!--docid::SEC317::-->
+<P>
+
+  Emacs can run compilers for noninteractive languages such as C and
+Fortran as inferior processes, feeding the error log into an Emacs buffer.
+It can also parse the error messages and show you the source lines where
+compilation errors occurred.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-x compile</KBD>
+<DD>Run a compiler asynchronously under Emacs, with error messages going to
+the <SAMP>`*compilation*'</SAMP> buffer.
+<DT><KBD>M-x recompile</KBD>
+<DD>Invoke a compiler with the same command as in the last invocation of
+<KBD>M-x compile</KBD>.
+<DT><KBD>M-x grep</KBD>
+<DD>Run <CODE>grep</CODE> asynchronously under Emacs, with matching lines
+listed in the buffer named <SAMP>`*grep*'</SAMP>.
+<DT><KBD>M-x grep-find</KBD>
+<DD>Run <CODE>grep</CODE> via <CODE>find</CODE>, with user-specified arguments, and
+collect output in the buffer named <SAMP>`*grep*'</SAMP>.
+<DT><KBD>M-x kill-compilation</KBD>
+<DD><DT><KBD>M-x kill-grep</KBD>
+<DD>Kill the running compilation or <CODE>grep</CODE> subprocess.
+</DL>
+<P>
+
+<A NAME="IDX1595"></A>
+  To run <CODE>make</CODE> or another compilation command, do <KBD>M-x
+compile</KBD>.  This command reads a shell command line using the minibuffer,
+and then executes the command in an inferior shell, putting output in
+the buffer named <SAMP>`*compilation*'</SAMP>.  The current buffer's default
+directory is used as the working directory for the execution of the
+command; normally, therefore, the compilation happens in this
+directory.
+</P><P>
+
+<A NAME="IDX1596"></A>
+  When the shell command line is read, the minibuffer appears containing
+a default command line, which is the command you used the last time you
+did <KBD>M-x compile</KBD>.  If you type just <KBD>RET</KBD>, the same command
+line is used again.  For the first <KBD>M-x compile</KBD>, the default is
+<SAMP>`make -k'</SAMP>.  The default compilation command comes from the variable
+<CODE>compile-command</CODE>; if the appropriate compilation command for a
+file is something other than <SAMP>`make -k'</SAMP>, it can be useful for the
+file to specify a local value for <CODE>compile-command</CODE> (see section <A HREF="emacs_33.html#SEC486">AD.2.5 Local Variables in Files</A>).
+</P><P>
+
+  Starting a compilation displays the buffer <SAMP>`*compilation*'</SAMP> in
+another window but does not select it.  The buffer's mode line tells you
+whether compilation is finished, with the word <SAMP>`run'</SAMP> or <SAMP>`exit'</SAMP>
+inside the parentheses.  You do not have to keep this buffer visible;
+compilation continues in any case.  While a compilation is going on, the
+string <SAMP>`Compiling'</SAMP> appears in the mode lines of all windows.  When
+this string disappears, the compilation is finished.
+</P><P>
+
+  If you want to watch the compilation transcript as it appears, switch
+to the <SAMP>`*compilation*'</SAMP> buffer and move point to the end of the
+buffer.  When point is at the end, new compilation output is inserted
+above point, which remains at the end.  If point is not at the end of
+the buffer, it remains fixed while more compilation output is added at
+the end of the buffer.
+</P><P>
+
+<A NAME="IDX1597"></A>
+<A NAME="IDX1598"></A>
+  If you set the variable <CODE>compilation-scroll-output</CODE> to a
+non-<CODE>nil</CODE> value, then the compilation buffer always scrolls to
+follow output as it comes in.
+</P><P>
+
+<A NAME="IDX1599"></A>
+  To kill the compilation process, do <KBD>M-x kill-compilation</KBD>.  When
+the compiler process terminates, the mode line of the
+<SAMP>`*compilation*'</SAMP> buffer changes to say <SAMP>`signal'</SAMP> instead of
+<SAMP>`run'</SAMP>.  Starting a new compilation also kills any running
+compilation, as only one can exist at any time.  However, <KBD>M-x
+compile</KBD> asks for confirmation before actually killing a compilation
+that is running.
+</P><P>
+
+<A NAME="IDX1600"></A>
+  To rerun the last compilation with the same command, type <KBD>M-x
+recompile</KBD>.  This automatically reuses the compilation command from the
+last invocation of <KBD>M-x compile</KBD>.
+</P><P>
+
+<A NAME="Grep Searching"></A>
+<HR SIZE="6">
+<A NAME="SEC318"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC317"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC319"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC319"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC316"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> V.2 Searching with Grep under Emacs </H2>
+<!--docid::SEC318::-->
+<P>
+
+<A NAME="IDX1601"></A>
+  Just as you can run a compiler from Emacs and then visit the lines
+where there were compilation errors, you can also run <CODE>grep</CODE> and
+then visit the lines on which matches were found.  This works by
+treating the matches reported by <CODE>grep</CODE> as if they were "errors."
+</P><P>
+
+  To do this, type <KBD>M-x grep</KBD>, then enter a command line that
+specifies how to run <CODE>grep</CODE>.  Use the same arguments you would give
+<CODE>grep</CODE> when running it normally: a <CODE>grep</CODE>-style regexp
+(usually in single-quotes to quote the shell's special characters)
+followed by file names, which may use wildcards.  The output from
+<CODE>grep</CODE> goes in the <SAMP>`*grep*'</SAMP> buffer.  You can find the
+corresponding lines in the original files using <KBD>C-x `</KBD> and
+<KBD>RET</KBD>, as with compilation errors.
+</P><P>
+
+  If you specify a prefix argument for <KBD>M-x grep</KBD>, it figures out
+the tag (see section <A HREF="emacs_26.html#SEC334">W.2 Tags Tables</A>) around point, and puts that into the default
+<CODE>grep</CODE> command.
+</P><P>
+
+<A NAME="IDX1602"></A>
+  The command <KBD>M-x grep-find</KBD> is similar to <KBD>M-x grep</KBD>, but it
+supplies a different initial default for the command--one that runs
+both <CODE>find</CODE> and <CODE>grep</CODE>, so as to search every file in a
+directory tree.  See also the <CODE>find-grep-dired</CODE> command,
+in <A HREF="emacs_31.html#SEC411">AB.15 Dired and <CODE>find</CODE></A>.
+</P><P>
+
+<A NAME="Compilation Mode"></A>
+<HR SIZE="6">
+<A NAME="SEC319"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC318"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC320"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC320"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC316"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> V.3 Compilation Mode </H2>
+<!--docid::SEC319::-->
+<P>
+
+<A NAME="IDX1603"></A>
+<A NAME="IDX1604"></A>
+<A NAME="IDX1605"></A>
+  The <SAMP>`*compilation*'</SAMP> buffer uses a special major mode, Compilation
+mode, whose main feature is to provide a convenient way to look at the
+source line where the error happened.
+</P><P>
+
+  If you set the variable <CODE>compilation-scroll-output</CODE> to a
+non-<CODE>nil</CODE> value, then the compilation buffer always scrolls to
+follow output as it comes in.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-x `</KBD>
+<DD>Visit the locus of the next compiler error message or <CODE>grep</CODE> match.
+<DT><KBD><KBD>RET</KBD></KBD>
+<DD>Visit the locus of the error message that point is on.
+This command is used in the compilation buffer.
+<DT><KBD>Mouse-2</KBD>
+<DD>Visit the locus of the error message that you click on.
+</DL>
+<P>
+
+<A NAME="IDX1606"></A>
+<A NAME="IDX1607"></A>
+  You can visit the source for any particular error message by moving
+point in the <SAMP>`*compilation*'</SAMP> buffer to that error message and
+typing <KBD>RET</KBD> (<CODE>compile-goto-error</CODE>).  Alternatively, you can
+click <KBD>Mouse-2</KBD> on the error message; you need not switch to the
+<SAMP>`*compilation*'</SAMP> buffer first.
+</P><P>
+
+  To parse the compiler error messages sequentially, type <KBD>C-x `</KBD>
+(<CODE>next-error</CODE>).  The character following the <KBD>C-x</KBD> is the
+backquote or "grave accent," not the single-quote.  This command is
+available in all buffers, not just in <SAMP>`*compilation*'</SAMP>; it displays
+the next error message at the top of one window and source location of
+the error in another window.
+</P><P>
+
+  The first time <KBD>C-x `</KBD> is used after the start of a compilation,
+it moves to the first error's location.  Subsequent uses of <KBD>C-x `</KBD>
+advance down to subsequent errors.  If you visit a specific error
+message with <KBD>RET</KBD> or <KBD>Mouse-2</KBD>, subsequent <KBD>C-x `</KBD>
+commands advance from there.  When <KBD>C-x `</KBD> gets to the end of the
+buffer and finds no more error messages to visit, it fails and signals
+an Emacs error.
+</P><P>
+
+  <KBD>C-u C-x `</KBD> starts scanning from the beginning of the compilation
+buffer.  This is one way to process the same set of errors again.
+</P><P>
+
+<A NAME="IDX1608"></A>
+<A NAME="IDX1609"></A>
+  To parse messages from the compiler, Compilation mode uses the
+variable <CODE>compilation-error-regexp-alist</CODE> which lists various
+formats of error messages and tells Emacs how to extract the source file
+and the line number from the text of a message.  If your compiler isn't
+supported, you can tailor Compilation mode to it by adding elements to
+that list.  A similar variable <CODE>grep-regexp-alist</CODE> tells Emacs how
+to parse output of a <CODE>grep</CODE> command.
+</P><P>
+
+  Compilation mode also redefines the keys <KBD>SPC</KBD> and <KBD>DEL</KBD> to
+scroll by screenfuls, and <KBD>M-n</KBD> and <KBD>M-p</KBD> to move to the next or
+previous error message.  You can also use <KBD>M-{</KBD> and <KBD>M-}</KBD> to
+move up or down to an error message for a different source file.
+</P><P>
+
+  The features of Compilation mode are also available in a minor mode
+called Compilation Minor mode.  This lets you parse error messages in
+any buffer, not just a normal compilation output buffer.  Type <KBD>M-x
+compilation-minor-mode</KBD> to enable the minor mode.  This defines the keys
+<KBD>RET</KBD> and <KBD>Mouse-2</KBD>, as in the Compilation major mode.
+</P><P>
+
+  Compilation minor mode works in any buffer, as long as the contents
+are in a format that it understands.  In an Rlogin buffer (see section <A HREF="emacs_32.html#SEC455">AC.15.10 Remote Host Shell</A>), Compilation minor mode automatically accesses remote source
+files by FTP (see section <A HREF="emacs_16.html#SEC111">M.1 File Names</A>).
+</P><P>
+
+<A NAME="Compilation Shell"></A>
+<HR SIZE="6">
+<A NAME="SEC320"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC319"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC321"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC321"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC316"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> V.4 Subshells for Compilation </H2>
+<!--docid::SEC320::-->
+<P>
+
+  Emacs uses a shell to run the compilation command, but specifies
+the option for a noninteractive shell.  This means, in particular, that
+the shell should start with no prompt.  If you find your usual shell
+prompt making an unsightly appearance in the <SAMP>`*compilation*'</SAMP>
+buffer, it means you have made a mistake in your shell's init file by
+setting the prompt unconditionally.  (This init file's name may be
+<TT>`.bashrc'</TT>, <TT>`.profile'</TT>, <TT>`.cshrc'</TT>, <TT>`.shrc'</TT>, or various
+other things, depending on the shell you use.)  The shell init file
+should set the prompt only if there already is a prompt.  In csh, here
+is how to do it:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>if ($?prompt) set prompt = <small>...</small>
+</pre></td></tr></table></P><P>
+
+And here's how to do it in bash:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>if [ "${PS1+set}" = set ]
+then PS1=<small>...</small>
+fi
+</pre></td></tr></table></P><P>
+
+  There may well be other things that your shell's init file
+ought to do only for an interactive shell.  You can use the same
+method to conditionalize them.
+</P><P>
+
+  The MS-DOS "operating system" does not support asynchronous
+subprocesses; to work around this lack, <KBD>M-x compile</KBD> runs the
+compilation command synchronously on MS-DOS.  As a consequence, you must
+wait until the command finishes before you can do anything else in
+Emacs.  See section <A HREF="emacs_37.html#SEC554">AH. Emacs and MS-DOS</A>.
+</P><P>
+
+<A NAME="Debuggers"></A>
+<HR SIZE="6">
+<A NAME="SEC321"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC320"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC322"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC327"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC316"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC327"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> V.5 Running Debuggers Under Emacs </H2>
+<!--docid::SEC321::-->
+<P>
+
+The GUD (Grand Unified Debugger) library provides an interface to
+various symbolic debuggers from within Emacs.  We recommend the debugger
+GDB, which is free software, but you can also run DBX, SDB or XDB if you
+have them.  GUD can also serve as an interface to the Perl's debugging
+mode, the Python debugger PDB, and to JDB, the Java Debugger.
+See section `The Lisp Debugger' in <CITE>the Emacs Lisp Reference Manual</CITE>,
+for information on debugging Emacs Lisp programs.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC322">V.5.1 Starting GUD</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to start a debugger subprocess.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC323">V.5.2 Debugger Operation</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Connection between the debugger and source buffers.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC324">V.5.3 Commands of GUD</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Key bindings for common commands.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC325">V.5.4 GUD Customization</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Defining your own commands for GUD.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_25.html#SEC326">V.5.5 GUD Tooltips</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Showing variable values by pointing with the mouse.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Starting GUD"></A>
+<HR SIZE="6">
+<A NAME="SEC322"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC321"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC323"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC327"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC321"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC327"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> V.5.1 Starting GUD </H3>
+<!--docid::SEC322::-->
+<P>
+
+  There are several commands for starting a debugger, each corresponding
+to a particular debugger program.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-x gdb <KBD>RET</KBD> <VAR>file</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX1610"></A>
+Run GDB as a subprocess of Emacs.  This command creates a buffer
+for input and output to GDB, and switches to it.  If a GDB buffer
+already exists, it just switches to that buffer.
+<P>
+
+<DT><KBD>M-x dbx <KBD>RET</KBD> <VAR>file</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX1611"></A>
+Similar, but run DBX instead of GDB.
+<P>
+
+<DT><KBD>M-x xdb <KBD>RET</KBD> <VAR>file</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX1612"></A>
+<A NAME="IDX1613"></A>
+Similar, but run XDB instead of GDB.  Use the variable
+<CODE>gud-xdb-directories</CODE> to specify directories to search for source
+files.
+<P>
+
+<DT><KBD>M-x sdb <KBD>RET</KBD> <VAR>file</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX1614"></A>
+Similar, but run SDB instead of GDB.
+<P>
+
+  Some versions of SDB do not mention source file names in their
+messages.  When you use them, you need to have a valid tags table
+(see section <A HREF="emacs_26.html#SEC334">W.2 Tags Tables</A>) in order for GUD to find functions in the source code.
+If you have not visited a tags table or the tags table doesn't list one
+of the functions, you get a message saying <SAMP>`The sdb support
+requires a valid tags table to work'</SAMP>.  If this happens, generate a valid
+tags table in the working directory and try again.
+</P><P>
+
+<DT><KBD>M-x perldb <KBD>RET</KBD> <VAR>file</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX1615"></A>
+Run the Perl interpreter in debug mode to debug <VAR>file</VAR>, a Perl program.
+<P>
+
+<DT><KBD>M-x jdb <KBD>RET</KBD> <VAR>file</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX1616"></A>
+Run the Java debugger to debug <VAR>file</VAR>.
+<P>
+
+<DT><KBD>M-x pdb <KBD>RET</KBD> <VAR>file</VAR> <KBD>RET</KBD></KBD>
+<DD><A NAME="IDX1617"></A>
+Run the Python debugger to debug <VAR>file</VAR>.
+</DL>
+<P>
+
+  Each of these commands takes one argument: a command line to invoke
+the debugger.  In the simplest case, specify just the name of the
+executable file you want to debug.  You may also use options that the
+debugger supports.  However, shell wildcards and variables are not
+allowed.  GUD assumes that the first argument not starting with a
+<SAMP>`-'</SAMP> is the executable file name.
+</P><P>
+
+  Emacs can only run one debugger process at a time.
+</P><P>
+
+<A NAME="Debugger Operation"></A>
+<HR SIZE="6">
+<A NAME="SEC323"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC322"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC324"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC324"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC321"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC327"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> V.5.2 Debugger Operation </H3>
+<!--docid::SEC323::-->
+<P>
+
+  When you run a debugger with GUD, the debugger uses an Emacs buffer
+for its ordinary input and output.  This is called the GUD buffer.  The
+debugger displays the source files of the program by visiting them in
+Emacs buffers.  An arrow (<SAMP>`=&#62;'</SAMP>) in one of these buffers indicates
+the current execution line.<A NAME="DOCF12" HREF="emacs_fot.html#FOOT12">(12)</A>  Moving point in
+this buffer does not move the arrow.
+</P><P>
+
+  You can start editing these source files at any time in the buffers
+that display them.  The arrow is not part of the file's
+text; it appears only on the screen.  If you do modify a source file,
+keep in mind that inserting or deleting lines will throw off the arrow's
+positioning; GUD has no way of figuring out which line corresponded
+before your changes to the line number in a debugger message.  Also,
+you'll typically have to recompile and restart the program for your
+changes to be reflected in the debugger's tables.
+</P><P>
+
+  If you wish, you can control your debugger process entirely through the
+debugger buffer, which uses a variant of Shell mode.  All the usual
+commands for your debugger are available, and you can use the Shell mode
+history commands to repeat them.  See section <A HREF="emacs_32.html#SEC445">AC.15.3 Shell Mode</A>.
+</P><P>
+
+<A NAME="Commands of GUD"></A>
+<HR SIZE="6">
+<A NAME="SEC324"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC323"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC325"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC325"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC321"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC327"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> V.5.3 Commands of GUD </H3>
+<!--docid::SEC324::-->
+<P>
+
+  The GUD interaction buffer uses a variant of Shell mode, so the
+commands of Shell mode are available (see section <A HREF="emacs_32.html#SEC445">AC.15.3 Shell Mode</A>).  GUD mode
+also provides commands for setting and clearing breakpoints, for
+selecting stack frames, and for stepping through the program.  These
+commands are available both in the GUD buffer and globally, but with
+different key bindings.
+</P><P>
+
+  The breakpoint commands are normally used in source file buffers,
+because that is the easiest way to specify where to set or clear the
+breakpoint.  Here's the global command to set a breakpoint:
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-x <KBD>SPC</KBD></KBD>
+<DD><A NAME="IDX1618"></A>
+Set a breakpoint on the source line that point is on.
+</DL>
+<P>
+
+<A NAME="IDX1619"></A>
+  Here are the other special commands provided by GUD.  The keys
+starting with <KBD>C-c</KBD> are available only in the GUD interaction
+buffer.  The key bindings that start with <KBD>C-x C-a</KBD> are available in
+the GUD interaction buffer and also in source files.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-c C-l</KBD>
+<DD><A NAME="IDX1620"></A>
+<DT><KBD>C-x C-a C-l</KBD>
+<DD><A NAME="IDX1621"></A>
+Display in another window the last line referred to in the GUD
+buffer (that is, the line indicated in the last location message).
+This runs the command <CODE>gud-refresh</CODE>.
+<P>
+
+<DT><KBD>C-c C-s</KBD>
+<DD><A NAME="IDX1622"></A>
+<DT><KBD>C-x C-a C-s</KBD>
+<DD><A NAME="IDX1623"></A>
+Execute a single line of code (<CODE>gud-step</CODE>).  If the line contains
+a function call, execution stops after entering the called function.
+<P>
+
+<DT><KBD>C-c C-n</KBD>
+<DD><A NAME="IDX1624"></A>
+<DT><KBD>C-x C-a C-n</KBD>
+<DD><A NAME="IDX1625"></A>
+Execute a single line of code, stepping across entire function calls
+at full speed (<CODE>gud-next</CODE>).
+<P>
+
+<DT><KBD>C-c C-i</KBD>
+<DD><A NAME="IDX1626"></A>
+<DT><KBD>C-x C-a C-i</KBD>
+<DD><A NAME="IDX1627"></A>
+Execute a single machine instruction (<CODE>gud-stepi</CODE>).
+<P>
+
+<DT><KBD>C-c C-r</KBD>
+<DD><A NAME="IDX1628"></A>
+<DT><KBD>C-x C-a C-r</KBD>
+<DD><A NAME="IDX1629"></A>
+Continue execution without specifying any stopping point.  The program
+will run until it hits a breakpoint, terminates, or gets a signal that
+the debugger is checking for (<CODE>gud-cont</CODE>).
+<P>
+
+<DT><KBD>C-c C-d</KBD>
+<DD><A NAME="IDX1630"></A>
+<DT><KBD>C-x C-a C-d</KBD>
+<DD><A NAME="IDX1631"></A>
+Delete the breakpoint(s) on the current source line, if any
+(<CODE>gud-remove</CODE>).  If you use this command in the GUD interaction
+buffer, it applies to the line where the program last stopped.
+<P>
+
+<DT><KBD>C-c C-t</KBD>
+<DD><A NAME="IDX1632"></A>
+<DT><KBD>C-x C-a C-t</KBD>
+<DD><A NAME="IDX1633"></A>
+Set a temporary breakpoint on the current source line, if any.
+If you use this command in the GUD interaction buffer,
+it applies to the line where the program last stopped.
+</DL>
+<P>
+
+  The above commands are common to all supported debuggers.  If you are
+using GDB or (some versions of) DBX, these additional commands are available:
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-c &#60;</KBD>
+<DD><A NAME="IDX1634"></A>
+<DT><KBD>C-x C-a &#60;</KBD>
+<DD><A NAME="IDX1635"></A>
+Select the next enclosing stack frame (<CODE>gud-up</CODE>).  This is
+equivalent to the <SAMP>`up'</SAMP> command.
+<P>
+
+<DT><KBD>C-c &#62;</KBD>
+<DD><A NAME="IDX1636"></A>
+<DT><KBD>C-x C-a &#62;</KBD>
+<DD><A NAME="IDX1637"></A>
+Select the next inner stack frame (<CODE>gud-down</CODE>).  This is
+equivalent to the <SAMP>`down'</SAMP> command.
+</DL>
+<P>
+
+  If you are using GDB, these additional key bindings are available:
+</P><P>
+
+<DL COMPACT>
+<DT><KBD><KBD>TAB</KBD></KBD>
+<DD><A NAME="IDX1638"></A>
+<A NAME="IDX1639"></A>
+With GDB, complete a symbol name (<CODE>gud-gdb-complete-command</CODE>).
+This key is available only in the GUD interaction buffer, and requires
+GDB versions 4.13 and later.
+<P>
+
+<DT><KBD>C-c C-f</KBD>
+<DD><A NAME="IDX1640"></A>
+<DT><KBD>C-x C-a C-f</KBD>
+<DD><A NAME="IDX1641"></A>
+Run the program until the selected stack frame returns (or until it
+stops for some other reason).
+</DL>
+<P>
+
+  These commands interpret a numeric argument as a repeat count, when
+that makes sense.
+</P><P>
+
+  Because <KBD>TAB</KBD> serves as a completion command, you can't use it to
+enter a tab as input to the program you are debugging with GDB.
+Instead, type <KBD>C-q <KBD>TAB</KBD></KBD> to enter a tab.
+</P><P>
+
+<A NAME="GUD Customization"></A>
+<HR SIZE="6">
+<A NAME="SEC325"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC324"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC326"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC326"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC321"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC327"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> V.5.4 GUD Customization </H3>
+<!--docid::SEC325::-->
+<P>
+
+<A NAME="IDX1642"></A>
+<A NAME="IDX1643"></A>
+<A NAME="IDX1644"></A>
+<A NAME="IDX1645"></A>
+<A NAME="IDX1646"></A>
+<A NAME="IDX1647"></A>
+<A NAME="IDX1648"></A>
+  On startup, GUD runs one of the following hooks: <CODE>gdb-mode-hook</CODE>,
+if you are using GDB; <CODE>dbx-mode-hook</CODE>, if you are using DBX;
+<CODE>sdb-mode-hook</CODE>, if you are using SDB; <CODE>xdb-mode-hook</CODE>, if you
+are using XDB; <CODE>perldb-mode-hook</CODE>, for Perl debugging mode;
+<CODE>pdb-mode-hook</CODE>, for PDB; <CODE>jdb-mode-hook</CODE>, for JDB.  You can
+use these hooks to define custom key bindings for the debugger
+interaction buffer.  See section <A HREF="emacs_33.html#SEC484">AD.2.3 Hooks</A>.
+</P><P>
+
+  Here is a convenient way to define a command that sends a particular
+command string to the debugger, and set up a key binding for it in the
+debugger interaction buffer:
+</P><P>
+
+<A NAME="IDX1649"></A>
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(gud-def <VAR>function</VAR> <VAR>cmdstring</VAR> <VAR>binding</VAR> <VAR>docstring</VAR>)
+</pre></td></tr></table></P><P>
+
+  This defines a command named <VAR>function</VAR> which sends
+<VAR>cmdstring</VAR> to the debugger process, and gives it the documentation
+string <VAR>docstring</VAR>.  You can then use the command <VAR>function</VAR> in any
+buffer.  If <VAR>binding</VAR> is non-<CODE>nil</CODE>, <CODE>gud-def</CODE> also binds
+the command to <KBD>C-c <VAR>binding</VAR></KBD> in the GUD buffer's mode and to
+<KBD>C-x C-a <VAR>binding</VAR></KBD> generally.
+</P><P>
+
+  The command string <VAR>cmdstring</VAR> may contain certain
+<SAMP>`%'</SAMP>-sequences that stand for data to be filled in at the time
+<VAR>function</VAR> is called:
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`%f'</SAMP>
+<DD>The name of the current source file.  If the current buffer is the GUD
+buffer, then the "current source file" is the file that the program
+stopped in.
+<P>
+
+<DT><SAMP>`%l'</SAMP>
+<DD>The number of the current source line.  If the current buffer is the GUD
+buffer, then the "current source line" is the line that the program
+stopped in.
+<P>
+
+<DT><SAMP>`%e'</SAMP>
+<DD>The text of the C lvalue or function-call expression at or adjacent to point.
+<P>
+
+<DT><SAMP>`%a'</SAMP>
+<DD>The text of the hexadecimal address at or adjacent to point.
+<P>
+
+<DT><SAMP>`%p'</SAMP>
+<DD>The numeric argument of the called function, as a decimal number.  If
+the command is used without a numeric argument, <SAMP>`%p'</SAMP> stands for the
+empty string.
+<P>
+
+If you don't use <SAMP>`%p'</SAMP> in the command string, the command you define
+ignores any numeric argument.
+</DL>
+<P>
+
+<A NAME="GUD Tooltips"></A>
+<HR SIZE="6">
+<A NAME="SEC326"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC325"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC327"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC327"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC321"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC327"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> V.5.5 GUD Tooltips </H3>
+<!--docid::SEC326::-->
+<P>
+
+<A NAME="IDX1650"></A>
+The Tooltip facility (see section <A HREF="emacs_19.html#SEC209">P.18 Tooltips (or "Balloon Help")</A>) provides support for GUD.  If
+GUD support is activated by customizing the <CODE>tooltip</CODE> group,
+variable values can be displayed in tooltips by pointing at them with
+the mouse in the GUD buffer or in source buffers with major modes in the
+customizable list <CODE>tooltip-gud-modes</CODE>.
+</P><P>
+
+<A NAME="Executing Lisp"></A>
+<HR SIZE="6">
+<A NAME="SEC327"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC326"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC328"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC328"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC316"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> V.6 Executing Lisp Expressions </H2>
+<!--docid::SEC327::-->
+<P>
+
+  Emacs has several different major modes for Lisp and Scheme.  They are
+the same in terms of editing commands, but differ in the commands for
+executing Lisp expressions.  Each mode has its own purpose.
+</P><P>
+
+<DL COMPACT>
+<DT>Emacs-Lisp mode
+<DD>The mode for editing source files of programs to run in Emacs Lisp.
+This mode defines <KBD>C-M-x</KBD> to evaluate the current defun.
+See section <A HREF="emacs_25.html#SEC328">V.7 Libraries of Lisp Code for Emacs</A>.
+<DT>Lisp Interaction mode
+<DD>The mode for an interactive session with Emacs Lisp.  It defines
+<KBD>C-j</KBD> to evaluate the sexp before point and insert its value in the
+buffer.  See section <A HREF="emacs_25.html#SEC330">V.9 Lisp Interaction Buffers</A>.
+<DT>Lisp mode
+<DD>The mode for editing source files of programs that run in Lisps other
+than Emacs Lisp.  This mode defines <KBD>C-M-x</KBD> to send the current defun
+to an inferior Lisp process.  See section <A HREF="emacs_25.html#SEC331">V.10 Running an External Lisp</A>.
+<DT>Inferior Lisp mode
+<DD>The mode for an interactive session with an inferior Lisp process.
+This mode combines the special features of Lisp mode and Shell mode
+(see section <A HREF="emacs_32.html#SEC445">AC.15.3 Shell Mode</A>).
+<DT>Scheme mode
+<DD>Like Lisp mode but for Scheme programs.
+<DT>Inferior Scheme mode
+<DD>The mode for an interactive session with an inferior Scheme process.
+</DL>
+<P>
+
+  Most editing commands for working with Lisp programs are in fact
+available globally.  See section <A HREF="emacs_24.html#SEC268">U. Editing Programs</A>.
+</P><P>
+
+<A NAME="Lisp Libraries"></A>
+<HR SIZE="6">
+<A NAME="SEC328"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC327"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC329"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC329"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC316"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> V.7 Libraries of Lisp Code for Emacs </H2>
+<!--docid::SEC328::-->
+<P>
+
+  Lisp code for Emacs editing commands is stored in files whose names
+conventionally end in <TT>`.el'</TT>.  This ending tells Emacs to edit them in
+Emacs-Lisp mode (see section <A HREF="emacs_25.html#SEC327">V.6 Executing Lisp Expressions</A>).
+</P><P>
+
+<A NAME="IDX1651"></A>
+  To execute a file of Emacs Lisp code, use <KBD>M-x load-file</KBD>.  This
+command reads a file name using the minibuffer and then executes the
+contents of that file as Lisp code.  It is not necessary to visit the
+file first; in any case, this command reads the file as found on disk,
+not text in an Emacs buffer.
+</P><P>
+
+<A NAME="IDX1652"></A>
+<A NAME="IDX1653"></A>
+  Once a file of Lisp code is installed in the Emacs Lisp library
+directories, users can load it using <KBD>M-x load-library</KBD>.  Programs can
+load it by calling <CODE>load-library</CODE>, or with <CODE>load</CODE>, a more primitive
+function that is similar but accepts some additional arguments.
+</P><P>
+
+  <KBD>M-x load-library</KBD> differs from <KBD>M-x load-file</KBD> in that it
+searches a sequence of directories and tries three file names in each
+directory.  Suppose your argument is <VAR>lib</VAR>; the three names are
+<TT>`<VAR>lib</VAR>.elc'</TT>, <TT>`<VAR>lib</VAR>.el'</TT>, and lastly just
+<TT>`<VAR>lib</VAR>'</TT>.  If <TT>`<VAR>lib</VAR>.elc'</TT> exists, it is by convention
+the result of compiling <TT>`<VAR>lib</VAR>.el'</TT>; it is better to load the
+compiled file, since it will load and run faster.
+</P><P>
+
+  If <CODE>load-library</CODE> finds that <TT>`<VAR>lib</VAR>.el'</TT> is newer than
+<TT>`<VAR>lib</VAR>.elc'</TT> file, it issues a warning, because it's likely that
+somebody made changes to the <TT>`.el'</TT> file and forgot to recompile
+it.
+</P><P>
+
+  Because the argument to <CODE>load-library</CODE> is usually not in itself
+a valid file name, file name completion is not available.  Indeed, when
+using this command, you usually do not know exactly what file name
+will be used.
+</P><P>
+
+<A NAME="IDX1654"></A>
+  The sequence of directories searched by <KBD>M-x load-library</KBD> is
+specified by the variable <CODE>load-path</CODE>, a list of strings that are
+directory names.  The default value of the list contains the directory where
+the Lisp code for Emacs itself is stored.  If you have libraries of
+your own, put them in a single directory and add that directory
+to <CODE>load-path</CODE>.  <CODE>nil</CODE> in this list stands for the current default
+directory, but it is probably not a good idea to put <CODE>nil</CODE> in the
+list.  If you find yourself wishing that <CODE>nil</CODE> were in the list,
+most likely what you really want to do is use <KBD>M-x load-file</KBD>
+this once.
+</P><P>
+
+<A NAME="IDX1655"></A>
+  Often you do not have to give any command to load a library, because
+the commands defined in the library are set up to <EM>autoload</EM> that
+library.  Trying to run any of those commands calls <CODE>load</CODE> to load
+the library; this replaces the autoload definitions with the real ones
+from the library.
+</P><P>
+
+<A NAME="IDX1656"></A>
+  Emacs Lisp code can be compiled into byte-code which loads faster,
+takes up less space when loaded, and executes faster.  See section `Byte Compilation' in <CITE>the Emacs Lisp Reference Manual</CITE>.
+By convention, the compiled code for a library goes in a separate file
+whose name consists of the library source file with <SAMP>`c'</SAMP> appended.
+Thus, the compiled code for <TT>`foo.el'</TT> goes in <TT>`foo.elc'</TT>.
+That's why <CODE>load-library</CODE> searches for <SAMP>`.elc'</SAMP> files first.
+</P><P>
+
+<A NAME="IDX1657"></A>
+<A NAME="IDX1658"></A>
+  By default, Emacs refuses to load compiled Lisp files which were
+compiled with XEmacs, a modified versions of Emacs--they can cause
+Emacs to crash.  Set the variable <CODE>load-dangerous-libraries</CODE> to
+<CODE>t</CODE> if you want to try loading them.
+</P><P>
+
+<A NAME="Lisp Eval"></A>
+<HR SIZE="6">
+<A NAME="SEC329"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC328"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC330"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC330"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC316"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> V.8 Evaluating Emacs-Lisp Expressions </H2>
+<!--docid::SEC329::-->
+<P>
+
+<A NAME="IDX1659"></A>
+  Lisp programs intended to be run in Emacs should be edited in
+Emacs-Lisp mode; this happens automatically for file names ending in
+<TT>`.el'</TT>.  By contrast, Lisp mode itself is used for editing Lisp
+programs intended for other Lisp systems.  To switch to Emacs-Lisp mode
+explicitly, use the command <KBD>M-x emacs-lisp-mode</KBD>.
+</P><P>
+
+  For testing of Lisp programs to run in Emacs, it is often useful to
+evaluate part of the program as it is found in the Emacs buffer.  For
+example, after changing the text of a Lisp function definition,
+evaluating the definition installs the change for future calls to the
+function.  Evaluation of Lisp expressions is also useful in any kind of
+editing, for invoking noninteractive functions (functions that are
+not commands).
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-:</KBD>
+<DD>Read a single Lisp expression in the minibuffer, evaluate it, and print
+the value in the echo area (<CODE>eval-expression</CODE>).
+<DT><KBD>C-x C-e</KBD>
+<DD>Evaluate the Lisp expression before point, and print the value in the
+echo area (<CODE>eval-last-sexp</CODE>).
+<DT><KBD>C-M-x</KBD>
+<DD>Evaluate the defun containing or after point, and print the value in
+the echo area (<CODE>eval-defun</CODE>).
+<DT><KBD>M-x eval-region</KBD>
+<DD>Evaluate all the Lisp expressions in the region.
+<DT><KBD>M-x eval-current-buffer</KBD>
+<DD>Evaluate all the Lisp expressions in the buffer.
+</DL>
+<P>
+
+<A NAME="IDX1660"></A>
+<A NAME="IDX1661"></A>
+  <KBD>M-:</KBD> (<CODE>eval-expression</CODE>) is the most basic command for evaluating
+a Lisp expression interactively.  It reads the expression using the
+minibuffer, so you can execute any expression on a buffer regardless of
+what the buffer contains.  When the expression is evaluated, the current
+buffer is once again the buffer that was current when <KBD>M-:</KBD> was
+typed.
+</P><P>
+
+<A NAME="IDX1662"></A>
+<A NAME="IDX1663"></A>
+  In Emacs-Lisp mode, the key <KBD>C-M-x</KBD> is bound to the command
+<CODE>eval-defun</CODE>, which parses the defun containing or following point
+as a Lisp expression and evaluates it.  The value is printed in the echo
+area.  This command is convenient for installing in the Lisp environment
+changes that you have just made in the text of a function definition.
+</P><P>
+
+  <KBD>C-M-x</KBD> treats <CODE>defvar</CODE> expressions specially.  Normally,
+evaluating a <CODE>defvar</CODE> expression does nothing if the variable it
+defines already has a value.  But <KBD>C-M-x</KBD> unconditionally resets the
+variable to the initial value specified in the <CODE>defvar</CODE> expression.
+<CODE>defcustom</CODE> expressions are treated similarly.
+This special feature is convenient for debugging Lisp programs.
+</P><P>
+
+<A NAME="IDX1664"></A>
+<A NAME="IDX1665"></A>
+  The command <KBD>C-x C-e</KBD> (<CODE>eval-last-sexp</CODE>) evaluates the Lisp
+expression preceding point in the buffer, and displays the value in the
+echo area.  It is available in all major modes, not just Emacs-Lisp
+mode.  It does not treat <CODE>defvar</CODE> specially.
+</P><P>
+
+  If <KBD>C-M-x</KBD>, <KBD>C-x C-e</KBD>, or <KBD>M-:</KBD> is given a numeric
+argument, it inserts the value into the current buffer at point, rather
+than displaying it in the echo area.  The argument's value does not
+matter.
+</P><P>
+
+<A NAME="IDX1666"></A>
+<A NAME="IDX1667"></A>
+  The most general command for evaluating Lisp expressions from a buffer
+is <CODE>eval-region</CODE>.  <KBD>M-x eval-region</KBD> parses the text of the
+region as one or more Lisp expressions, evaluating them one by one.
+<KBD>M-x eval-current-buffer</KBD> is similar but evaluates the entire
+buffer.  This is a reasonable way to install the contents of a file of
+Lisp code that you are ready to test.  Later, as you find bugs and
+change individual functions, use <KBD>C-M-x</KBD> on each function that you
+change.  This keeps the Lisp world in step with the source file.
+</P><P>
+
+<A NAME="IDX1668"></A>
+<A NAME="IDX1669"></A>
+<A NAME="IDX1670"></A>
+The customizable variables <CODE>eval-expression-print-level</CODE> and
+<CODE>eval-expression-print-length</CODE> control the maximum depth and length
+of lists to print in the result of the evaluation commands before
+abbreviating them.  <CODE>eval-expression-debug-on-error</CODE> controls
+whether evaluation errors invoke the debugger when these commands are
+used.
+</P><P>
+
+<A NAME="Lisp Interaction"></A>
+<HR SIZE="6">
+<A NAME="SEC330"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC329"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC331"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC316"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC316"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> V.9 Lisp Interaction Buffers </H2>
+<!--docid::SEC330::-->
+<P>
+
+  The buffer <SAMP>`*scratch*'</SAMP> which is selected when Emacs starts up is
+provided for evaluating Lisp expressions interactively inside Emacs.
+</P><P>
+
+  The simplest way to use the <SAMP>`*scratch*'</SAMP> buffer is to insert Lisp
+expressions and type <KBD>C-j</KBD> after each expression.  This command
+reads the Lisp expression before point, evaluates it, and inserts the
+value in printed representation before point.  The result is a complete
+typescript of the expressions you have evaluated and their values.
+</P><P>
+
+  The <SAMP>`*scratch*'</SAMP> buffer's major mode is Lisp Interaction mode, which
+is the same as Emacs-Lisp mode except for the binding of <KBD>C-j</KBD>.
+</P><P>
+
+<A NAME="IDX1671"></A>
+  The rationale for this feature is that Emacs must have a buffer when
+it starts up, but that buffer is not useful for editing files since a
+new buffer is made for every file that you visit.  The Lisp interpreter
+typescript is the most useful thing I can think of for the initial
+buffer to do.  Type <KBD>M-x lisp-interaction-mode</KBD> to put the current
+buffer in Lisp Interaction mode.
+</P><P>
+
+<A NAME="IDX1672"></A>
+  An alternative way of evaluating Emacs Lisp expressions interactively
+is to use Inferior Emacs-Lisp mode, which provides an interface rather
+like Shell mode (see section <A HREF="emacs_32.html#SEC445">AC.15.3 Shell Mode</A>) for evaluating Emacs Lisp
+expressions.  Type <KBD>M-x ielm</KBD> to create an <SAMP>`*ielm*'</SAMP> buffer
+which uses this mode.
+</P><P>
+
+<A NAME="External Lisp"></A>
+<HR SIZE="6">
+<A NAME="SEC331"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC330"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC318"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC316"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> V.10 Running an External Lisp </H2>
+<!--docid::SEC331::-->
+<P>
+
+  Emacs has facilities for running programs in other Lisp systems.  You can
+run a Lisp process as an inferior of Emacs, and pass expressions to it to
+be evaluated.  You can also pass changed function definitions directly from
+the Emacs buffers in which you edit the Lisp programs to the inferior Lisp
+process.
+</P><P>
+
+<A NAME="IDX1673"></A>
+<A NAME="IDX1674"></A>
+<A NAME="IDX1675"></A>
+  To run an inferior Lisp process, type <KBD>M-x run-lisp</KBD>.  This runs
+the program named <CODE>lisp</CODE>, the same program you would run by typing
+<CODE>lisp</CODE> as a shell command, with both input and output going through
+an Emacs buffer named <SAMP>`*lisp*'</SAMP>.  That is to say, any "terminal
+output" from Lisp will go into the buffer, advancing point, and any
+"terminal input" for Lisp comes from text in the buffer.  (You can
+change the name of the Lisp executable file by setting the variable
+<CODE>inferior-lisp-program</CODE>.)
+</P><P>
+
+  To give input to Lisp, go to the end of the buffer and type the input,
+terminated by <KBD>RET</KBD>.  The <SAMP>`*lisp*'</SAMP> buffer is in Inferior Lisp
+mode, which combines the special characteristics of Lisp mode with most
+of the features of Shell mode (see section <A HREF="emacs_32.html#SEC445">AC.15.3 Shell Mode</A>).  The definition of
+<KBD>RET</KBD> to send a line to a subprocess is one of the features of Shell
+mode.
+</P><P>
+
+<A NAME="IDX1676"></A>
+  For the source files of programs to run in external Lisps, use Lisp
+mode.  This mode can be selected with <KBD>M-x lisp-mode</KBD>, and is used
+automatically for files whose names end in <TT>`.l'</TT>, <TT>`.lsp'</TT>, or
+<TT>`.lisp'</TT>, as most Lisp systems usually expect.
+</P><P>
+
+<A NAME="IDX1677"></A>
+<A NAME="IDX1678"></A>
+  When you edit a function in a Lisp program you are running, the easiest
+way to send the changed definition to the inferior Lisp process is the key
+<KBD>C-M-x</KBD>.  In Lisp mode, this runs the function <CODE>lisp-eval-defun</CODE>,
+which finds the defun around or following point and sends it as input to
+the Lisp process.  (Emacs can send input to any inferior process regardless
+of what buffer is current.)
+</P><P>
+
+  Contrast the meanings of <KBD>C-M-x</KBD> in Lisp mode (for editing programs
+to be run in another Lisp system) and Emacs-Lisp mode (for editing Lisp
+programs to be run in Emacs): in both modes it has the effect of installing
+the function definition that point is in, but the way of doing so is
+different according to where the relevant Lisp environment is found.
+See section <A HREF="emacs_25.html#SEC327">V.6 Executing Lisp Expressions</A>.
+<A NAME="Maintaining"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC318"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

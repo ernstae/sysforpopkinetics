@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.250
+----------------------------------
+USER VISIBLE CHANGES
+
+Fixes for the individual optimizatoin reaching maximum iteration bug.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  None.
+
+BY:  Mitch Watrous
+
+WHEN:  September 29, 2008

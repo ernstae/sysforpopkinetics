@@ -1,0 +1,54 @@
+<html><body><p><a href=dtd-overview.html>Overview</a> <a href=dtd-tree.html>Tree</a> <a href=dtd-index.html>Index</a> <a href=dtd-notations.html>Notations</a> <a href=dtd-entities.html>Entities</a> </p><h1>Element &lt;data_labels&gt;</h1><p>Sequence of data labels.  The <a href=elt-label.html>label</a>s are matched to the columns of data values from left to rigth, in the order of appearance.</p><p>
+
+For example, given the &lt;data_labels&gt; definition,
+<pre><code>
+   &lt;data_labels &gt;
+      &lt;<a href=elt-label.html>label</a> name="ID"/&gt;
+      &lt;<a href=elt-label.html>label</a> name="TIME"/&gt;
+      &lt;<a href=elt-label.html>label</a> name="CP" synonym="DV"/&gt;
+   &lt;/data_labels&gt; 
+</code></pre>
+
+and the data below,
+<pre><code>
+   woo   0.0   0.15
+   woo   1.0   0.23
+   foo   0.1   0.2
+   foo   1.1   0.31
+   foo   2.2   0.4
+</code></pre>
+
+the labels (and synonyms) are associated with values as follows:
+<ul>
+   <li>The first individual's ID is "woo". Its sample, CP or DV, was 0.15 at TIME=0.0 and 0.23 at TIME=1.0.
+   </li>
+   <li>
+The second individual's ID is "foo", Its sample, CP or DV was 0.2 at TIME=0.1, 0.31 at TIME=1.1 and 0.4 at TIME=2.2.
+   </li>
+</ul>
+Either label or synonym may be one of the NONMEM reserved identifiers, among which the (bare minimally) required identifiers are emphasized:
+<ul>
+   <li><b>ID</b> (to group each individual's data block)</li>
+   <li>L1</li>
+   <li>L2</li>
+   <li><b>DV</b> (to indicate the measurements to fit)</li>
+   <li>MDV</li>
+   <li>TIME</li>
+   <li>DATA</li>
+   <li>DAT1</li>
+   <li>DAT2</li>
+   <li>DAT3</li>
+   <li>DROP</li>
+   <li>SKIP</li>
+   <li>EVID</li>
+   <li>AMT</li>
+   <li>RATE</li>
+   <li>SS</li>
+   <li>II</li>
+   <li>ADDL</li>
+   <li>CMT</li>
+   <li>PCMT</li>
+   <li>CALL</li>
+   <li>CONT</li>
+<//ul>
+</p><h2>Attributes</h2><p><em>None</em></p><h2>Content</h2><p>(<a href=elt-label.html>label</a>)+</p><h2>Parents</h2><p><a href=elt-ind_analysis.html>ind_analysis</a> <a href=elt-pop_analysis.html>pop_analysis</a> </p></body></html>

@@ -1,0 +1,313 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Utilities</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Utilities">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Utilities">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC220"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_219.html#SEC219" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Environment" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_221.html#SEC221" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Writing New Macros for Autoconf" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_208.html#SEC208" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Writing Portable Bourne Shell" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_208.html#SEC208" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Writing Portable Bourne Shell" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_221.html#SEC221" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Writing New Macros for Autoconf" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 22.4 Utilities </H2>
+<!--docid::SEC220::-->
+<P>
+
+The utility programs commonly executed by shell scripts can have a huge
+impact on the portability of shell scripts, and it is important to know
+which utilities are universally available, and any differences certain
+implementations of these utilities may exhibit.  According to the
+GNU standards document, you can rely on having access to these
+utilities from your scripts:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>cat cmp cp diff echo egrep expr false grep install-info
+ln ls mkdir mv pwd rm rmdir sed sleep sort tar test touch true
+</pre></td></tr></table></P><P>
+
+Here are some things that you must be aware of when using some of the
+tools listed above:
+</P><P>
+
+<DL COMPACT>
+<DT><CODE>cat</CODE>
+<DD>Host architectures supply <CODE>cat</CODE> implementations with
+conflicting interpretations of, or entirely missing, the various command
+line options.  You should avoid using any ocommand line options to this
+command.
+<P>
+
+<DT><CODE>cp</CODE> and <CODE>mv</CODE>
+<DD>Unconditionally duplicated or otherwise open file descriptors can not be
+deleted on many operating systems, and worse on Windows the destination
+files cannot even be moved.  Constructs like this must be avoided, for
+example.
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>exec &#62; foo
+mv foo bar
+</pre></td></tr></table></P><P>
+
+<DT><CODE>echo</CODE>
+<DD>The <CODE>echo</CODE> command has at least two flavors:  the one takes a
+<SAMP>`-n'</SAMP> option to suppress the automatic newline at the end of the
+echoed string; the other uses an embedded <SAMP>`\c'</SAMP> notation as the last
+character in the echoed string for the same purpose.
+<P>
+
+If you need to emit a string without a trailing newline character, you
+can use the following script fragment to discover which flavor of
+<CODE>echo</CODE> you are using:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>case echo "testing\c"`,`echo -n testing` in
+  *c*,-n*) echo_n=   echo_c='<A NAME="DOCF53" HREF="autobook_fot.html#FOOT53">(53)</A>
+' ;;
+  *c*,*)   echo_n=-n echo_c= ;;
+  *)       echo_n=   echo_c='\c ;;
+esac
+</pre></td></tr></table></P><P>
+
+Any <CODE>echo</CODE> command after the shell fragment above, which
+shouldn't move the cursor to a new line, can now be written like so:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>echo $echo_n "prompt:$echo_c"
+</pre></td></tr></table></P><P>
+
+In addition, you should try to avoid backslashes in <CODE>echo</CODE>
+arguments unless they are expanded by the shell.  Some implementations
+interpret them and effectively perform another backslash expansion pass,
+where equally many implementations do not.  This can become a really
+hairy problem if you need to have an <CODE>echo</CODE> command which
+doesn't perform backslash expansion, and in fact the first 150 lines of
+the <CODE>ltconfig</CODE> script distributed with Libtool are devoted to
+finding such a command.
+</P><P>
+
+<DT><CODE>ln</CODE>
+<DD>Not all systems support soft links.  You should use the Autoconf macro
+<SAMP>`AC_PROG_LN_S'</SAMP> to discover what the target architecture supports,
+and assign the result of that test to a variable.  Whenever you
+subsequently need to create a link you can use the command stored in the
+variable to do so.
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>LN_S=@LN_S@
+...
+$LN_S $top_srcdir/foo $dist_dir/foo
+</pre></td></tr></table></P><P>
+
+Also, you cannot rely on support for the <SAMP>`-f'</SAMP> option from all
+implementations of <CODE>ln</CODE>.  Use <CODE>rm</CODE> before calling
+<CODE>ln</CODE> instead.
+</P><P>
+
+<DT><CODE>mkdir</CODE>
+<DD>Unfortunately, <SAMP>`mkdir -p'</SAMP> is not as portable as we might like.  You
+must either create each directory in the path in turn, or use the
+<CODE>mkinstalldirs</CODE> script supplied by Automake.
+<P>
+
+<DT><CODE>sed</CODE>
+<DD>When you resort to using <CODE>sed</CODE> (rather, use <CODE>case</CODE> or
+<CODE>expr</CODE> if you can), there is no need to introduce command line
+scripts using the <SAMP>`-e'</SAMP> option.  Even when you want to supply more
+than one script, you can use <SAMP>`;'</SAMP> as a command separator.  The
+following two lines are equivalent, though the latter is cleaner:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ sed -e 's/foo/bar/g -e '12q' &#60; infile &#62; outfile
+$ sed 's/foo/bar/g;12q' &#60; infile &#62; outfile
+</pre></td></tr></table></P><P>
+
+Some portability zealots still go to great lengths to avoid <EM>here
+documents</EM> of more than twelve lines.  The twelve line limit is actually
+a limitation in some implementations of <CODE>sed</CODE>, which has
+gradually seeped into the portable shell folklore as a general limit in
+all here documents.  Autoconf, however, includes many here documents
+with far more than twelve lines, and has not generated any complaints
+from users.  This is testament to the fact that at worst the limit is
+only encountered in very obscure cases -- and most likely that it is not
+a real limit after all.
+</P><P>
+
+Also, be aware that branch labels of more than eight characters are not
+portable to some imlementations of <CODE>sed</CODE>.
+</DL>
+<P>
+
+<BLOCKQUOTE>
+<EM>Here documents</EM> are a way of redirecting literal strings into the
+standard input of a command.  You have certainly seen them before if you
+have looked at other peoples shell scripts, though you may not have
+realised what they were called:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>cat &#62;&#62; /tmp/file$$ &#60;&#60; _EOF_
+This is the text of a "here document"
+_EOF_
+</pre></td></tr></table></P><P>
+
+</BLOCKQUOTE>
+<P>
+
+Something else to be aware of is that the temporary files created by
+your scripts can become a security problem if they are left in
+<TT>`/tmp'</TT> or if the names are predictable.  A simple way around this
+is to create a directory in <TT>`/tmp'</TT> that is unique to the process
+and owned by the process user.  Some machines have a utility program for
+just this purpose -- <CODE>mktemp -d</CODE> -- or else you can always fall
+back to <CODE>umask 077 &#38;&#38; mkdir /tmp/$$</CODE>.  Having created this
+directory, all of the temporary files for this process should be written
+to that directory, and its contents removed as soon as possible.
+</P><P>
+
+Armed with the knowledge of how to write shell code in a portable
+fashion as discussed in this chapter, in combination with the M4 details
+from the last chapter, the specifics of combining the two to write your
+own Autoconf macros are covered in the next chapter.
+</P><P>
+
+<A NAME="Writing New Macros for Autoconf"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

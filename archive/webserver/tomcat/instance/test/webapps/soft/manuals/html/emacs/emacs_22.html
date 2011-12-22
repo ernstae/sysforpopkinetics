@@ -1,0 +1,326 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Indentation</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Indentation">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Indentation">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC229"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC228"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC230"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_21.html#SEC227"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> S. Indentation </H1>
+<!--docid::SEC229::-->
+<P>
+
+  This chapter describes the Emacs commands that add, remove, or
+adjust indentation.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD><KBD>TAB</KBD></KBD>
+<DD>Indent the current line "appropriately" in a mode-dependent fashion.
+<DT><KBD><KBD>C-j</KBD></KBD>
+<DD>Perform <KBD>RET</KBD> followed by <KBD>TAB</KBD> (<CODE>newline-and-indent</CODE>).
+<DT><KBD>M-^</KBD>
+<DD>Merge the previous and the current line (<CODE>delete-indentation</CODE>).
+This would cancel out the effect of <KBD>C-j</KBD>.
+<DT><KBD>C-M-o</KBD>
+<DD>Split the current line at point; text on the line after point becomes a
+new line indented to the same column where point is located
+(<CODE>split-line</CODE>).
+<DT><KBD>M-m</KBD>
+<DD>Move (forward or back) to the first nonblank character on the current
+line (<CODE>back-to-indentation</CODE>).
+<DT><KBD>C-M-\</KBD>
+<DD>Indent several lines to the same column (<CODE>indent-region</CODE>).
+<DT><KBD>C-x <KBD>TAB</KBD></KBD>
+<DD>Shift a block of lines rigidly right or left (<CODE>indent-rigidly</CODE>).
+<DT><KBD>M-i</KBD>
+<DD>Indent from point to the next prespecified tab stop column
+(<CODE>tab-to-tab-stop</CODE>).
+<DT><KBD>M-x indent-relative</KBD>
+<DD>Indent from point to under an indentation point in the previous line.
+</DL>
+<P>
+
+  Most programming languages have some indentation convention.  For Lisp
+code, lines are indented according to their nesting in parentheses.  The
+same general idea is used for C code, though many details are different.
+</P><P>
+
+<A NAME="IDX1074"></A>
+  Whatever the language, to indent a line, use the <KBD>TAB</KBD> command.  Each
+major mode defines this command to perform the sort of indentation
+appropriate for the particular language.  In Lisp mode, <KBD>TAB</KBD> aligns
+the line according to its depth in parentheses.  No matter where in the
+line you are when you type <KBD>TAB</KBD>, it aligns the line as a whole.  In C
+mode, <KBD>TAB</KBD> implements a subtle and sophisticated indentation style that
+knows about many aspects of C syntax.
+</P><P>
+
+  In Text mode, <KBD>TAB</KBD> runs the command <CODE>tab-to-tab-stop</CODE>, which
+indents to the next tab stop column.  You can set the tab stops with
+<KBD>M-x edit-tab-stops</KBD>.
+</P><P>
+
+  Normally, <KBD>TAB</KBD> inserts an optimal mix of tabs and spaces for
+the intended indentation.  See section <A HREF="emacs_22.html#SEC232">S.3 Tabs vs. Spaces</A>, for how to prevent use
+of tabs.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_22.html#SEC230">S.1 Indentation Commands and Techniques</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Various commands and techniques for indentation.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_22.html#SEC231">S.2 Tab Stops</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">You can set arbitrary "tab stops" and then
+                            indent to the next tab stop when you want to.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_22.html#SEC232">S.3 Tabs vs. Spaces</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">You can request indentation using just spaces.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Indentation Commands"></A>
+<HR SIZE="6">
+<A NAME="SEC230"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC229"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC231"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC229"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC229"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> S.1 Indentation Commands and Techniques </H2>
+<!--docid::SEC230::-->
+<P>
+
+<A NAME="IDX1075"></A>
+<A NAME="IDX1076"></A>
+  To move over the indentation on a line, do <KBD>M-m</KBD>
+(<CODE>back-to-indentation</CODE>).  This command, given anywhere on a line,
+positions point at the first nonblank character on the line.
+</P><P>
+
+  To insert an indented line before the current line, do <KBD>C-a C-o
+<KBD>TAB</KBD></KBD>.  To make an indented line after the current line, use
+<KBD>C-e C-j</KBD>.
+</P><P>
+
+  If you just want to insert a tab character in the buffer, you can type
+<KBD>C-q <KBD>TAB</KBD></KBD>.
+</P><P>
+
+<A NAME="IDX1077"></A>
+<A NAME="IDX1078"></A>
+  <KBD>C-M-o</KBD> (<CODE>split-line</CODE>) moves the text from point to the end of
+the line vertically down, so that the current line becomes two lines.
+<KBD>C-M-o</KBD> first moves point forward over any spaces and tabs.  Then it
+inserts after point a newline and enough indentation to reach the same
+column point is on.  Point remains before the inserted newline; in this
+regard, <KBD>C-M-o</KBD> resembles <KBD>C-o</KBD>.
+</P><P>
+
+<A NAME="IDX1079"></A>
+<A NAME="IDX1080"></A>
+  To join two lines cleanly, use the <KBD>M-^</KBD>
+(<CODE>delete-indentation</CODE>) command.  It deletes the indentation at the
+front of the current line, and the line boundary as well, replacing them
+with a single space.  As a special case (useful for Lisp code) the
+single space is omitted if the characters to be joined are consecutive
+open parentheses or closing parentheses, or if the junction follows
+another newline.  To delete just the indentation of a line, go to the
+beginning of the line and use <KBD>M-\</KBD>
+(<CODE>delete-horizontal-space</CODE>), which deletes all spaces and tabs
+around the cursor.
+</P><P>
+
+  If you have a fill prefix, <KBD>M-^</KBD> deletes the fill prefix if it
+appears after the newline that is deleted.  See section <A HREF="emacs_23.html#SEC242">T.5.4 The Fill Prefix</A>.
+</P><P>
+
+<A NAME="IDX1081"></A>
+<A NAME="IDX1082"></A>
+<A NAME="IDX1083"></A>
+<A NAME="IDX1084"></A>
+  There are also commands for changing the indentation of several lines
+at once.  <KBD>C-M-\</KBD> (<CODE>indent-region</CODE>) applies to all the lines
+that begin in the region; it indents each line in the "usual" way, as
+if you had typed <KBD>TAB</KBD> at the beginning of the line.  A numeric
+argument specifies the column to indent to, and each line is shifted
+left or right so that its first nonblank character appears in that
+column.  <KBD>C-x <KBD>TAB</KBD></KBD> (<CODE>indent-rigidly</CODE>) moves all of the
+lines in the region right by its argument (left, for negative
+arguments).  The whole group of lines moves rigidly sideways, which is
+how the command gets its name.</P><P>
+
+<A NAME="IDX1085"></A>
+  <KBD>M-x indent-relative</KBD> indents at point based on the previous line
+(actually, the last nonempty line).  It inserts whitespace at point, moving
+point, until it is underneath an indentation point in the previous line.
+An indentation point is the end of a sequence of whitespace or the end of
+the line.  If point is farther right than any indentation point in the
+previous line, the whitespace before point is deleted and the first
+indentation point then applicable is used.  If no indentation point is
+applicable even then, <CODE>indent-relative</CODE> runs <CODE>tab-to-tab-stop</CODE>
+(see section <A HREF="emacs_22.html#SEC231">S.2 Tab Stops</A>),
+unless it is called with a numeric argument, in which case it does
+nothing.
+</P><P>
+
+  <CODE>indent-relative</CODE> is the definition of <KBD>TAB</KBD> in Indented Text
+mode.  See section <A HREF="emacs_23.html#SEC233">T. Commands for Human Languages</A>.
+</P><P>
+
+  See section <A HREF="emacs_23.html#SEC264">T.11.6 Indentation in Formatted Text</A>, for another way of specifying the
+indentation for part of your text.
+</P><P>
+
+<A NAME="Tab Stops"></A>
+<HR SIZE="6">
+<A NAME="SEC231"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC230"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC232"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC229"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC229"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> S.2 Tab Stops </H2>
+<!--docid::SEC231::-->
+<P>
+
+<A NAME="IDX1086"></A>
+<A NAME="IDX1087"></A>
+<A NAME="IDX1088"></A>
+<A NAME="IDX1089"></A>
+<A NAME="IDX1090"></A>
+  For typing in tables, you can use Text mode's definition of <KBD>TAB</KBD>,
+<CODE>tab-to-tab-stop</CODE>.  This command inserts indentation before point,
+enough to reach the next tab stop column.  If you are not in Text mode,
+this command can be found on the key <KBD>M-i</KBD>.
+</P><P>
+
+<A NAME="IDX1091"></A>
+<A NAME="IDX1092"></A>
+<A NAME="IDX1093"></A>
+<A NAME="IDX1094"></A>
+  You can specify the tab stops used by <KBD>M-i</KBD>.  They are stored in a
+variable called <CODE>tab-stop-list</CODE>, as a list of column-numbers in
+increasing order.
+</P><P>
+
+  The convenient way to set the tab stops is with <KBD>M-x
+edit-tab-stops</KBD>, which creates and selects a buffer containing a
+description of the tab stop settings.  You can edit this buffer to
+specify different tab stops, and then type <KBD>C-c C-c</KBD> to make those
+new tab stops take effect.  <CODE>edit-tab-stops</CODE> records which buffer
+was current when you invoked it, and stores the tab stops back in that
+buffer; normally all buffers share the same tab stops and changing them
+in one buffer affects all, but if you happen to make
+<CODE>tab-stop-list</CODE> local in one buffer then <CODE>edit-tab-stops</CODE> in
+that buffer will edit the local settings.
+</P><P>
+
+  Here is what the text representing the tab stops looks like for ordinary
+tab stops every eight columns.
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>        :       :       :       :       :       :
+0         1         2         3         4
+0123456789012345678901234567890123456789012345678
+To install changes, type C-c C-c
+</pre></td></tr></table></P><P>
+
+  The first line contains a colon at each tab stop.  The remaining lines
+are present just to help you see where the colons are and know what to do.
+</P><P>
+
+  Note that the tab stops that control <CODE>tab-to-tab-stop</CODE> have nothing
+to do with displaying tab characters in the buffer.  See section <A HREF="emacs_13.html#SEC89">J.12 Customization of Display</A>,
+for more information on that.
+</P><P>
+
+<A NAME="Just Spaces"></A>
+<HR SIZE="6">
+<A NAME="SEC232"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC231"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC229"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC229"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> S.3 Tabs vs. Spaces </H2>
+<!--docid::SEC232::-->
+<P>
+
+<A NAME="IDX1095"></A>
+  Emacs normally uses both tabs and spaces to indent lines.  If you
+prefer, all indentation can be made from spaces only.  To request
+this, set <CODE>indent-tabs-mode</CODE> to <CODE>nil</CODE>.  This is a per-buffer
+variable, so altering the variable affects only the current buffer,
+but there is a default value which you can change as well.
+See section <A HREF="emacs_33.html#SEC485">AD.2.4 Local Variables</A>.
+</P><P>
+
+<A NAME="IDX1096"></A>
+<A NAME="IDX1097"></A>
+  There are also commands to convert tabs to spaces or vice versa, always
+preserving the columns of all nonblank text.  <KBD>M-x tabify</KBD> scans the
+region for sequences of spaces, and converts sequences of at least three
+spaces to tabs if that can be done without changing indentation.  <KBD>M-x
+untabify</KBD> changes all tabs in the region to appropriate numbers of spaces.
+<A NAME="Text"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC229"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

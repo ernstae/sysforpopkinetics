@@ -1,0 +1,114 @@
+<html><head>
+<title>Set state information for a warm start</title>
+<meta name="description" id="description" content="Set state information for a warm start">
+<meta name="keywords" id="keywords" content=" Optimizer warm start state information setstateinfo "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="setstateinfo.htm" target="_top">section</a>, <a href="setstateinfo_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This function sets state information required for a warm start.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>nIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The argument <i>nIn</i> specifies the number of free objective
+function parameters.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>bIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The argument <i>bIn</i> specifies the number of Bfgs updates
+that have been made to the Hessian approximation <i>hIn</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>rIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The argument <i>rIn</i> contains the current trust region radius
+(as an infinity norm bound on the step size).
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>fIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The argument <i>fIn</i> contains the value for <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code>
+at the point <code><span style='white-space: nowrap'><i>xIn</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>xIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The array pointed to by <i>xIn</i> must have length 
+<i>nIn</i>.
+It specifies the point at which the objective function, 
+its gradient, and its Hessian were evaluated.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>gIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The array pointed to by <i>gIn</i> must have length 
+<i>nIn</i>.
+It contains the gradient of <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code>
+at the point <code><span style='white-space: nowrap'><i>xIn</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>hIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The array pointed to by <i>hIn</i> must have length 
+<i>nIn</i> * <i>nIn</i>.
+It contains an approximation for the Hessian of <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code>
+at the point <code><span style='white-space: nowrap'><i>xIn</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>mIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The argument <i>mIn</i> specifies the total number of objective 
+function parameters, i.e., the number of free parameters plus the 
+number of parameters that are constrained by both their lower and 
+upper bounds.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>lowIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The array pointed to by <i>lowIn</i> must have length 
+<i>mIn</i>.
+It specifies the lower bounds for all of the objective function 
+parameters in their original coordinates.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>upIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The array pointed to by <i>upIn</i> must have length 
+<i>mIn</i>.
+It specifies the upper bounds for all of the objective function 
+parameters in their original coordinates.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>posIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The array pointed to by <i>posIn</i> must have length 
+<i>nIn</i>.
+It specifies the positions, i.e., indices, of the free objective 
+function parameters in the full objective function parameter.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>acceptStepCountIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The argument <i>acceptStepCountIn</i> specifies 
+the number of consecutive iterations that acceptable 
+step values have been calculated.
+
+
+<hr>Input File: ../../spk/Optimizer.cpp
+
+</body>
+</html>

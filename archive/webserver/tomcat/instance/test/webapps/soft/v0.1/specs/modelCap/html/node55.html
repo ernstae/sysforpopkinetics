@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Comparison of the Models for an Individual's Data</TITLE>
+<META NAME="description" CONTENT="Comparison of the Models for an Individual's Data">
+<META NAME="keywords" CONTENT="modelCap">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="modelCap.css">
+
+<LINK REL="previous" HREF="node54.html">
+<LINK REL="up" HREF="node52.html">
+<LINK REL="next" HREF="node56.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html803"
+  HREF="node56.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="file:/usr/share/latex2html/icons/next.png"></A> 
+<A NAME="tex2html799"
+  HREF="node52.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="file:/usr/share/latex2html/icons/up.png"></A> 
+<A NAME="tex2html795"
+  HREF="node54.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="file:/usr/share/latex2html/icons/prev.png"></A> 
+<A NAME="tex2html801"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents"
+ SRC="file:/usr/share/latex2html/icons/contents.png"></A>  
+<BR>
+<B> Next:</B> <A NAME="tex2html804"
+  HREF="node56.html">Appendix: Population Level Models</A>
+<B> Up:</B> <A NAME="tex2html800"
+  HREF="node52.html">Appendix: Individual Level Models</A>
+<B> Previous:</B> <A NAME="tex2html796"
+  HREF="node54.html">NONMEM Model for an</A>
+ &nbsp; <B>  <A NAME="tex2html802"
+  HREF="node1.html">Contents</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00083000000000000000">
+Comparison of the Models for an Individual's Data</A>
+</H2>
+<P>
+<FONT SIZE="+1">In these two formulations, <IMG
+ WIDTH="11" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img4.png"
+ ALT="$b$"> and <IMG
+ WIDTH="12" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img167.png"
+ ALT="$\eta$"> are not equivalent,
+and  there is no relationship between the covariance matrices 
+<IMG
+ WIDTH="17" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img168.png"
+ ALT="$D$"> and <IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img163.png"
+ ALT="$\Omega$">.
+</FONT>
+<P>
+<FONT SIZE="+1">Although <IMG
+ WIDTH="11" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img5.png"
+ ALT="$e$"> and <IMG
+ WIDTH="12" HEIGHT="30" ALIGN="MIDDLE" BORDER="0"
+ SRC="img167.png"
+ ALT="$\eta$"> are also not equivalent, 
+the covariance matrices <IMG
+ WIDTH="35" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img169.png"
+ ALT="$R(b)$"> and 
+<IMG
+ WIDTH="15" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img163.png"
+ ALT="$\Omega$"> are related as follows,
+  </FONT><P></P>
+<DIV ALIGN="CENTER">
+<!-- MATH
+ \begin{eqnarray*}
+R_{(j,k)}(b) & = &  \mbox{cov} \left[
+      \sum_{m=1}^{n_{\Omega}} h_{(m)}(x_{j}, \theta) \eta_{(m)},
+      \sum_{n=1}^{n_{\Omega}} h_{(n)}(x_{k}, \theta) \eta_{(n)} \right] \\
+    & = & \sum_{m=1}^{n_{\Omega}} \sum_{n=1}^{n_{\Omega}} 
+      h_{(m)}(x_{j}, \theta) 
+      \mbox{cov} [ \eta_{(m)} , \eta_{(n)} ]
+      h_{(n)}(x_{k}, \theta)  \\
+    & = & \sum_{m=1}^{n_{\Omega}} \sum_{n=1}^{n_{\Omega}} 
+      h_{(m)}(x_{j}, \theta) 
+      \Omega_{(m,n)}
+      h_{(n)}(x_{k}, \theta) \\
+    & = & \sum_{m=1}^{n_{\Omega}}
+      h_{(m)}(x_{j}, \theta) 
+      \Omega_{(m,m)}
+      h_{(m)}(x_{k}, \theta) .
+\end{eqnarray*}
+ -->
+<IMG
+ WIDTH="409" HEIGHT="213" BORDER="0"
+ SRC="img170.png"
+ ALT="\begin{eqnarray*}
+R_{(j,k)}(b) &amp; = &amp; \mbox{cov} \left[
+\sum_{m=1}^{n_{\Omega}}...
+...{(m)}(x_{j}, \theta)
+\Omega_{(m,m)}
+h_{(m)}(x_{k}, \theta) .
+\end{eqnarray*}"></DIV>
+<BR CLEAR="ALL"><P></P>
+<P>
+
+<P>
+<BR><HR>
+<ADDRESS>
+Mitch Watrous
+2007-12-17
+</ADDRESS>
+</BODY>
+</HTML>

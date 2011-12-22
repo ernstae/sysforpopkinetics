@@ -1,0 +1,64 @@
+<html><head>
+<title>Get a Single Value from a Subelement of the Current Element (Char Tag Version)</title>
+<meta name="description" id="description" content="Get a Single Value from a Subelement of the Current Element (Char Tag Version)">
+<meta name="keywords" id="keywords" content=" Get Subelement Current Element Optimizer single value getvalue "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="getvaluechartag.htm" target="_top">section</a>, <a href="getvaluechartag_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Gets the value from a single &quot;value&quot; element that 
+is contained in a subelement of the current element, i.e.,
+<code><font color="blue">
+
+    &lt;current_element&gt;
+        ...
+        &lt;subelement&gt;
+            &lt;value&gt;########&lt;/value&gt;
+        &lt;/subelement&gt;
+        ...
+    &lt;/current_element&gt;
+
+</font></code>
+where the sequence of number signs (#) represents the sequence of
+characters that constitute a single value.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>This function assumes that the current element has been set
+before this function is called.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>ValType</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The type of the value.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pSubelementTag</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This argument specifies the name of the subelement of the current
+element that contains the single &quot;value&quot; element.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>valueOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This argument will be set equal to the value that 
+corresponds to the contents of the &quot;value&quot; element.
+after it has been converted to the type of <i>ValueType</i> 
+using the std::istream extraction operator (&gt;&gt;).
+
+
+<hr>Input File: ../../spk/Optimizer.cpp
+
+</body>
+</html>

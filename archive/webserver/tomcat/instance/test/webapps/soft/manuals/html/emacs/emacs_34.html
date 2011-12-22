@@ -1,0 +1,1810 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Command Arguments</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Command Arguments">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Command Arguments">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC528"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_33.html#SEC527"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC529"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_33.html#SEC527"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> AE. Command Line Arguments </H1>
+<!--docid::SEC528::-->
+<P>
+
+  GNU Emacs supports command line arguments to request various actions
+when invoking Emacs.  These are for compatibility with other editors and
+for sophisticated activities.  We don't recommend using them for
+ordinary editing.
+</P><P>
+
+  Arguments starting with <SAMP>`-'</SAMP> are <EM>options</EM>.  Other arguments
+specify files to visit.  Emacs visits the specified files while it
+starts up.  The last file name on your command line becomes the
+current buffer; the other files are also visited in other buffers.  If
+there are two files, they are both displayed; otherwise the last file
+is displayed along with a buffer list that shows what other buffers
+there are.  As with most programs, the special argument <SAMP>`--'</SAMP> says
+that all subsequent arguments are file names, not options, even if
+they start with <SAMP>`-'</SAMP>.
+</P><P>
+
+  Emacs command options can specify many things, such as the size and
+position of the X window Emacs uses, its colors, and so on.  A few
+options support advanced usage, such as running Lisp functions on files
+in batch mode.  The sections of this chapter describe the available
+options, arranged according to their purpose.
+</P><P>
+
+  There are two ways of writing options: the short forms that start with
+a single <SAMP>`-'</SAMP>, and the long forms that start with <SAMP>`--'</SAMP>.  For
+example, <SAMP>`-d'</SAMP> is a short form and <SAMP>`--display'</SAMP> is the
+corresponding long form.
+</P><P>
+
+  The long forms with <SAMP>`--'</SAMP> are easier to remember, but longer to
+type.  However, you don't have to spell out the whole option name; any
+unambiguous abbreviation is enough.  When a long option takes an
+argument, you can use either a space or an equal sign to separate the
+option name and the argument.  Thus, you can write either
+<SAMP>`--display sugar-bombs:0.0'</SAMP> or <SAMP>`--display=sugar-bombs:0.0'</SAMP>.
+We recommend an equal sign because it makes the relationship clearer,
+and the tables below always show an equal sign.
+</P><P>
+
+<A NAME="IDX2831"></A>
+<A NAME="IDX2832"></A>
+  Most options specify how to initialize Emacs, or set parameters for
+the Emacs session.  We call them <EM>initial options</EM>.  A few options
+specify things to do: for example, load libraries, call functions, or
+terminate Emacs.  These are called <EM>action options</EM>.  These and file
+names together are called <EM>action arguments</EM>.  Emacs processes all
+the action arguments in the order they are written.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC529">AE.1 Action Arguments</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Arguments to visit files, load libraries,
+			  and call functions.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC530">AE.2 Initial Options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Arguments that take effect while starting Emacs.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC531">AE.3 Command Argument Example</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Examples of using command line arguments.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC532">AE.4 Resuming Emacs with Arguments</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Specifying arguments when you resume a running Emacs.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC533">AE.5 Environment Variables</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Environment variables that Emacs uses.</TD></TR>
+</TABLE>
+
+<br>
+<TABLE BORDER=0 CELLSPACING=0>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC536">AE.6 Specifying the Display Name</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Changing the default display and using remote login.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC537">AE.7 Font Specification Options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Choosing a font for text, under X.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC538">AE.8 Window Color Options</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Choosing colors, under X.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC539">AE.9 Options for Window Geometry</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Start-up window size, under X.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC540">AE.10 Internal and External Borders</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Internal and external borders, under X.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC541">AE.11 Frame Titles</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Specifying the initial frame's title.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC542">AE.12 Icons</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Choosing what sort of icon to use, under X.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC543">AE.13 X Resources</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Advanced use of classes and resources, under X.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC544">AE.14 Lucid Menu X Resources</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">X resources for Lucid menus.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC545">AE.15 LessTif Menu X Resources</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">X resources for LessTif and Motif menus.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Action Arguments"></A>
+<HR SIZE="6">
+<A NAME="SEC529"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC530"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.1 Action Arguments </H2>
+<!--docid::SEC529::-->
+<P>
+
+  Here is a table of the action arguments and options:
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`<VAR>file</VAR>'</SAMP>
+<DD><A NAME="IDX2833"></A>
+<DT><SAMP>`--visit=<VAR>file</VAR>'</SAMP>
+<DD><A NAME="IDX2834"></A>
+<DT><SAMP>`--file=<VAR>file</VAR>'</SAMP>
+<DD><A NAME="IDX2835"></A>
+Visit <VAR>file</VAR> using <CODE>find-file</CODE>.  See section <A HREF="emacs_16.html#SEC112">M.2 Visiting Files</A>.
+<P>
+
+<DT><SAMP>`+<VAR>linenum</VAR> <VAR>file</VAR>'</SAMP>
+<DD><A NAME="IDX2836"></A>
+Visit <VAR>file</VAR> using <CODE>find-file</CODE>, then go to line number
+<VAR>linenum</VAR> in it.
+<P>
+
+<DT><SAMP>`+<VAR>linenum</VAR>:<VAR>columnnum</VAR> <VAR>file</VAR>'</SAMP>
+<DD>Visit <VAR>file</VAR> using <CODE>find-file</CODE>, then go to line number
+<VAR>linenum</VAR> and put point at column number <VAR>columnnum</VAR>.
+<P>
+
+<DT><SAMP>`-l <VAR>file</VAR>'</SAMP>
+<DD><A NAME="IDX2837"></A>
+<DT><SAMP>`--load=<VAR>file</VAR>'</SAMP>
+<DD><A NAME="IDX2838"></A>
+<A NAME="IDX2839"></A>
+Load a Lisp library named <VAR>file</VAR> with the function <CODE>load</CODE>.
+See section <A HREF="emacs_25.html#SEC328">V.7 Libraries of Lisp Code for Emacs</A>.  The library can be found either in the current
+directory, or in the Emacs library search path as specified
+with <CODE>EMACSLOADPATH</CODE> (see section <A HREF="emacs_34.html#SEC534">AE.5.1 General Variables</A>).
+<P>
+
+<DT><SAMP>`-f <VAR>function</VAR>'</SAMP>
+<DD><A NAME="IDX2840"></A>
+<DT><SAMP>`--funcall=<VAR>function</VAR>'</SAMP>
+<DD><A NAME="IDX2841"></A>
+<A NAME="IDX2842"></A>
+Call Lisp function <VAR>function</VAR> with no arguments.
+<P>
+
+<DT><SAMP>`--eval=<VAR>expression</VAR>'</SAMP>
+<DD><A NAME="IDX2843"></A>
+<DT><SAMP>`--execute=<VAR>expression</VAR>'</SAMP>
+<DD><A NAME="IDX2844"></A>
+<A NAME="IDX2845"></A>
+Evaluate Lisp expression <VAR>expression</VAR>.
+<P>
+
+<DT><SAMP>`--insert=<VAR>file</VAR>'</SAMP>
+<DD><A NAME="IDX2846"></A>
+<A NAME="IDX2847"></A>
+Insert the contents of <VAR>file</VAR> into the current buffer.  This is like
+what <KBD>M-x insert-file</KBD> does.  See section <A HREF="emacs_16.html#SEC165">M.10 Miscellaneous File Operations</A>.
+<P>
+
+<DT><SAMP>`--kill'</SAMP>
+<DD><A NAME="IDX2848"></A>
+Exit from Emacs without asking for confirmation.
+</DL>
+<P>
+
+<A NAME="IDX2849"></A>
+  The init file can access the values of the action arguments as the
+elements of a list in the variable <CODE>command-line-args</CODE>.  The init
+file can override the normal processing of the action arguments, or
+define new ones, by reading and setting this variable.
+</P><P>
+
+<A NAME="Initial Options"></A>
+<HR SIZE="6">
+<A NAME="SEC530"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC529"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC531"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC531"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.2 Initial Options </H2>
+<!--docid::SEC530::-->
+<P>
+
+  The initial options specify parameters for the Emacs session.  This
+section describes the more general initial options; some other options
+specifically related to the X Window System appear in the following
+sections.
+</P><P>
+
+  Some initial options affect the loading of init files.  The normal
+actions of Emacs are to first load <TT>`site-start.el'</TT> if it exists,
+then your own init file <TT>`~/.emacs'</TT> if it exists, and finally
+<TT>`default.el'</TT> if it exists; certain options prevent loading of some
+of these files or substitute other files for them.
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`-t <VAR>device</VAR>'</SAMP>
+<DD><A NAME="IDX2850"></A>
+<DT><SAMP>`--terminal=<VAR>device</VAR>'</SAMP>
+<DD><A NAME="IDX2851"></A>
+<A NAME="IDX2852"></A>
+Use <VAR>device</VAR> as the device for terminal input and output.
+<P>
+
+<DT><SAMP>`-d <VAR>display</VAR>'</SAMP>
+<DD><A NAME="IDX2853"></A>
+<DT><SAMP>`--display=<VAR>display</VAR>'</SAMP>
+<DD><A NAME="IDX2854"></A>
+<A NAME="IDX2855"></A>
+Use the X Window System and use the display named <VAR>display</VAR> to open
+the initial Emacs frame.  See section <A HREF="emacs_34.html#SEC536">AE.6 Specifying the Display Name</A>, for more details.
+<P>
+
+<DT><SAMP>`-nw'</SAMP>
+<DD><A NAME="IDX2856"></A>
+<DT><SAMP>`--no-windows'</SAMP>
+<DD><A NAME="IDX2857"></A>
+<A NAME="IDX2858"></A>
+Don't communicate directly with the window system, disregarding the
+<CODE>DISPLAY</CODE> environment variable even if it is set.  This forces Emacs
+to run as if the display were a text-only terminal.
+<P>
+
+<A NAME="IDX2859"></A>
+<DT><SAMP>`-batch'</SAMP>
+<DD><A NAME="IDX2860"></A>
+<DT><SAMP>`--batch'</SAMP>
+<DD>Run Emacs in <EM>batch mode</EM>, which means that the text being edited is
+not displayed and the standard terminal interrupt characters such as
+<KBD>C-z</KBD> and <KBD>C-c</KBD> continue to have their normal effect.  Emacs in
+batch mode outputs to <CODE>stderr</CODE> only what would normally be displayed
+in the echo area under program control, and functions which would
+normally read from the minibuffer take their input from <CODE>stdin</CODE>.
+<P>
+
+Batch mode is used for running programs written in Emacs Lisp from
+shell scripts, makefiles, and so on.  Normally the <SAMP>`-l'</SAMP> option
+or <SAMP>`-f'</SAMP> option will be used as well, to invoke a Lisp program
+to do the batch processing.
+</P><P>
+
+<SAMP>`-batch'</SAMP> implies <SAMP>`-q'</SAMP> (do not load an init file).  It also
+causes Emacs to exit after processing all the command options.  In
+addition, it disables auto-saving except in buffers for which it has
+been explicitly requested.
+</P><P>
+
+<DT><SAMP>`-q'</SAMP>
+<DD><A NAME="IDX2861"></A>
+<DT><SAMP>`--no-init-file'</SAMP>
+<DD><A NAME="IDX2862"></A>
+<A NAME="IDX2863"></A>
+<A NAME="IDX2864"></A>
+<A NAME="IDX2865"></A>
+Do not load your Emacs init file <TT>`~/.emacs'</TT>, or <TT>`default.el'</TT>
+either.  When invoked like this, Emacs does not allow saving options
+changed with the <KBD>M-x customize</KBD> command and its variants.
+See section <A HREF="emacs_33.html#SEC479">AD.2.2 Easy Customization Interface</A>.
+<P>
+
+<DT><SAMP>`--no-site-file'</SAMP>
+<DD><A NAME="IDX2866"></A>
+<A NAME="IDX2867"></A>
+Do not load <TT>`site-start.el'</TT>.  The options <SAMP>`-q'</SAMP>, <SAMP>`-u'</SAMP>
+and <SAMP>`-batch'</SAMP> have no effect on the loading of this file--this is
+the only option that blocks it.
+<P>
+
+<DT><SAMP>`-u <VAR>user</VAR>'</SAMP>
+<DD><A NAME="IDX2868"></A>
+<DT><SAMP>`--user=<VAR>user</VAR>'</SAMP>
+<DD><A NAME="IDX2869"></A>
+<A NAME="IDX2870"></A>
+Load <VAR>user</VAR>'s Emacs init file <TT>`~<VAR>user</VAR>/.emacs'</TT> instead of
+your own.
+<P>
+
+<DT><SAMP>`--debug-init'</SAMP>
+<DD><A NAME="IDX2871"></A>
+<A NAME="IDX2872"></A>
+Enable the Emacs Lisp debugger for errors in the init file.
+<P>
+
+<DT><SAMP>`--unibyte'</SAMP>
+<DD><A NAME="IDX2873"></A>
+<A NAME="IDX2874"></A>
+Do almost everything with single-byte buffers and strings.
+All buffers and strings are unibyte unless you (or a Lisp program)
+explicitly ask for a multibyte buffer or string.  (Note that Emacs
+always loads Lisp files in multibyte mode, even if <SAMP>`--unibyte'</SAMP> is
+specified; see <A HREF="emacs_20.html#SEC215">Q.2 Enabling Multibyte Characters</A>.)  Setting the environment
+variable <CODE>EMACS_UNIBYTE</CODE> has the same effect.
+<P>
+
+<DT><SAMP>`--multibyte'</SAMP>
+<DD><A NAME="IDX2875"></A>
+Inhibit the effect of <CODE>EMACS_UNIBYTE</CODE>, so that Emacs
+uses multibyte characters by default, as usual.
+</DL>
+<P>
+
+<A NAME="Command Example"></A>
+<HR SIZE="6">
+<A NAME="SEC531"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC530"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC532"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC532"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.3 Command Argument Example </H2>
+<!--docid::SEC531::-->
+<P>
+
+  Here is an example of using Emacs with arguments and options.  It
+assumes you have a Lisp program file called <TT>`hack-c.el'</TT> which, when
+loaded, performs some useful operation on the current buffer, expected
+to be a C program.
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>emacs -batch foo.c -l hack-c -f save-buffer &#62;&#38; log
+</pre></td></tr></table></P><P>
+
+This says to visit <TT>`foo.c'</TT>, load <TT>`hack-c.el'</TT> (which makes
+changes in the visited file), save <TT>`foo.c'</TT> (note that
+<CODE>save-buffer</CODE> is the function that <KBD>C-x C-s</KBD> is bound to), and
+then exit back to the shell (because of <SAMP>`-batch'</SAMP>).  <SAMP>`-batch'</SAMP>
+also guarantees there will be no problem redirecting output to
+<TT>`log'</TT>, because Emacs will not assume that it has a display terminal
+to work with.
+</P><P>
+
+<A NAME="Resume Arguments"></A>
+<HR SIZE="6">
+<A NAME="SEC532"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC531"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC533"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC533"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.4 Resuming Emacs with Arguments </H2>
+<!--docid::SEC532::-->
+<P>
+
+  You can specify action arguments for Emacs when you resume it after
+a suspension.  To prepare for this, put the following code in your
+<TT>`.emacs'</TT> file (see section <A HREF="emacs_33.html#SEC484">AD.2.3 Hooks</A>):
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(add-hook 'suspend-hook 'resume-suspend-hook)
+(add-hook 'suspend-resume-hook 'resume-process-args)
+</pre></td></tr></table></P><P>
+
+  As further preparation, you must execute the shell script
+<TT>`emacs.csh'</TT> (if you use csh as your shell) or <TT>`emacs.bash'</TT>
+(if you use bash as your shell).  These scripts define an alias named
+<CODE>edit</CODE>, which will resume Emacs giving it new command line
+arguments such as files to visit.  The scripts are found in the
+<TT>`etc'</TT> subdirectory of the Emacs distribution.
+</P><P>
+
+  Only action arguments work properly when you resume Emacs.  Initial
+arguments are not recognized--it's too late to execute them anyway.
+</P><P>
+
+  Note that resuming Emacs (with or without arguments) must be done from
+within the shell that is the parent of the Emacs job.  This is why
+<CODE>edit</CODE> is an alias rather than a program or a shell script.  It is
+not possible to implement a resumption command that could be run from
+other subjobs of the shell; there is no way to define a command that could
+be made the value of <CODE>EDITOR</CODE>, for example.  Therefore, this feature
+does not take the place of the Emacs Server feature (see section <A HREF="emacs_32.html#SEC456">AC.16 Using Emacs as a Server</A>).
+</P><P>
+
+  The aliases use the Emacs Server feature if you appear to have a
+server Emacs running.  However, they cannot determine this with complete
+accuracy.  They may think that a server is still running when in
+actuality you have killed that Emacs, because the file
+<TT>`/tmp/esrv<small>...</small>'</TT> still exists.  If this happens, find that
+file and delete it.
+</P><P>
+
+<A NAME="Environment"></A>
+<HR SIZE="6">
+<A NAME="SEC533"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC532"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC534"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC536"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC536"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.5 Environment Variables </H2>
+<!--docid::SEC533::-->
+<P>
+
+  The <EM>environment</EM> is a feature of the operating system; it
+consists of a collection of variables with names and values.  Each
+variable is called an <EM>environment variable</EM>; environment variable
+names are case-sensitive, and it is conventional to use upper case
+letters only.  The values are all text strings.
+</P><P>
+
+  What makes the environment useful is that subprocesses inherit the
+environment automatically from their parent process.  This means you
+can set up an environment variable in your login shell, and all the
+programs you run (including Emacs) will automatically see it.
+Subprocesses of Emacs (such as shells, compilers, and version-control
+software) inherit the environment from Emacs, too.
+</P><P>
+
+<A NAME="IDX2876"></A>
+<A NAME="IDX2877"></A>
+  Inside Emacs, the command <KBD>M-x getenv</KBD> gets the value of an
+environment variable.  <KBD>M-x setenv</KBD> sets a variable in the Emacs
+environment.  The way to set environment variables outside of Emacs
+depends on the operating system, and especially the shell that you are
+using.  For example, here's how to set the environment variable
+<CODE>ORGANIZATION</CODE> to <SAMP>`not very much'</SAMP> using Bash:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>export ORGANIZATION="not very much"
+</pre></td></tr></table></P><P>
+
+and here's how to do it in csh or tcsh:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>setenv ORGANIZATION "not very much"
+</pre></td></tr></table></P><P>
+
+  When Emacs is uses the X Window System, it inherits the use
+of a large number of environment variables from the X libraries.  See
+the X documentation for more information.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC534">AE.5.1 General Variables</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Environment variables that all versions of Emacs use.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_34.html#SEC535">AE.5.2 Miscellaneous Variables</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Certain system-specific variables.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="General Variables"></A>
+<HR SIZE="6">
+<A NAME="SEC534"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC533"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC535"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC536"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC533"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC536"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> AE.5.1 General Variables </H3>
+<!--docid::SEC534::-->
+<P>
+
+  Here is an alphabetical list of specific environment variables that
+have special meanings in Emacs, giving the name of each variable and
+its meaning.  Most of these variables are also used by some other
+programs.  Emacs does not require any of these environment variables
+to be set, but it uses their values if they are set.
+</P><P>
+
+<DL COMPACT>
+<DT><CODE>CDPATH</CODE>
+<DD>Used by the <CODE>cd</CODE> command to search for the directory you specify,
+when you specify a relative directory name.
+<DT><CODE>EMACS_UNIBYTE</CODE>
+<DD><A NAME="IDX2878"></A>
+Defining this environment variable with a nonempty value directs Emacs
+to do almost everything with single-byte buffers and strings.  It is
+equivalent to using the <SAMP>`--unibyte'</SAMP> command-line option on each
+invocation.  See section <A HREF="emacs_34.html#SEC530">AE.2 Initial Options</A>.
+<DT><CODE>EMACSDATA</CODE>
+<DD>Directory for the architecture-independent files that come with Emacs.
+This is used to initialize the Lisp variable <CODE>data-directory</CODE>.
+<DT><CODE>EMACSDOC</CODE>
+<DD>Directory for the documentation string file,
+<TT>`DOC-<VAR>emacsversion</VAR>'</TT>.  This is used to initialize the Lisp
+variable <CODE>doc-directory</CODE>.
+<DT><CODE>EMACSLOADPATH</CODE>
+<DD>A colon-separated list of directories<A NAME="DOCF17" HREF="emacs_fot.html#FOOT17">(17)</A>
+to search for Emacs Lisp files--used to initialize <CODE>load-path</CODE>.
+<DT><CODE>EMACSPATH</CODE>
+<DD>A colon-separated list of directories to search for executable
+files--used to initialize <CODE>exec-path</CODE>.
+<DT><CODE>ESHELL</CODE>
+<DD>Used for shell-mode to override the <CODE>SHELL</CODE> environment variable.
+<DT><CODE>HISTFILE</CODE>
+<DD>The name of the file that shell commands are saved in between logins.
+This variable defaults to <TT>`~/.bash_history'</TT> if you use Bash, to
+<TT>`~/.sh_history'</TT> if you use ksh, and to <TT>`~/.history'</TT>
+otherwise.
+<DT><CODE>HOME</CODE>
+<DD>The location of the user's files in the directory tree; used for
+expansion of file names starting with a tilde (<TT>`~'</TT>).  On MS-DOS, it
+defaults to the directory from which Emacs was started, with <SAMP>`/bin'</SAMP>
+removed from the end if it was present.  On Windows, the default value
+of <CODE>HOME</CODE> is <TT>`C:/'</TT>, the root directory of drive <TT>`C:'</TT>.
+<DT><CODE>HOSTNAME</CODE>
+<DD>The name of the machine that Emacs is running on.
+<DT><CODE>INCPATH</CODE>
+<DD>A colon-separated list of directories.  Used by the <CODE>complete</CODE> package
+to search for files.
+<DT><CODE>INFOPATH</CODE>
+<DD>A colon-separated list of directories in which to search for Info files.
+<DT><CODE>LC_ALL</CODE>
+<DD><DT><CODE>LC_COLLATE</CODE>
+<DD><DT><CODE>LC_CTYPE</CODE>
+<DD><DT><CODE>LC_MESSAGES</CODE>
+<DD><DT><CODE>LC_MONETARY</CODE>
+<DD><DT><CODE>LC_NUMERIC</CODE>
+<DD><DT><CODE>LC_TIME</CODE>
+<DD><DT><CODE>LANG</CODE>
+<DD>The user's preferred locale.  The locale has six categories, specified
+by the environment variables <CODE>LC_COLLATE</CODE> for sorting,
+<CODE>LC_CTYPE</CODE> for character encoding, <CODE>LC_MESSAGES</CODE> for system
+messages, <CODE>LC_MONETARY</CODE> for monetary formats, <CODE>LC_NUMERIC</CODE> for
+numbers, and <CODE>LC_TIME</CODE> for dates and times.  If one of these
+variables is not set, the category defaults to the value of the
+<CODE>LANG</CODE> environment variable, or to the default <SAMP>`C'</SAMP> locale if
+<CODE>LANG</CODE> is not set.  But if <CODE>LC_ALL</CODE> is specified, it overrides
+the settings of all the other locale environment variables.
+<P>
+
+The value of the LC_CTYPE category is
+matched against entries in <CODE>locale-language-names</CODE>,
+<CODE>locale-charset-language-names</CODE>, and
+<CODE>locale-preferred-coding-systems</CODE>, to select a default language
+environment and coding system.  See section <A HREF="emacs_20.html#SEC216">Q.3 Language Environments</A>.
+<DT><CODE>LOGNAME</CODE>
+<DD>The user's login name.  See also <CODE>USER</CODE>.
+<DT><CODE>MAIL</CODE>
+<DD>The name of the user's system mail inbox.
+<DT><CODE>MAILRC</CODE>
+<DD>Name of file containing mail aliases.  (The default is
+<TT>`~/.mailrc'</TT>.)
+<DT><CODE>MH</CODE>
+<DD>Name of setup file for the mh system.  (The default is <TT>`~/.mh_profile'</TT>.)
+<DT><CODE>NAME</CODE>
+<DD>The real-world name of the user.
+<DT><CODE>NNTPSERVER</CODE>
+<DD>The name of the news server.  Used by the mh and Gnus packages.
+<DT><CODE>ORGANIZATION</CODE>
+<DD>The name of the organization to which you belong.  Used for setting the
+`Organization:' header in your posts from the Gnus package.
+<DT><CODE>PATH</CODE>
+<DD>A colon-separated list of directories in which executables reside.  This
+is used to initialize the Emacs Lisp variable <CODE>exec-path</CODE>.
+<DT><CODE>PWD</CODE>
+<DD>If set, this should be the default directory when Emacs was started.
+<DT><CODE>REPLYTO</CODE>
+<DD>If set, this specifies an initial value for the variable
+<CODE>mail-default-reply-to</CODE>.  See section <A HREF="emacs_29.html#SEC365">Z.2 Mail Header Fields</A>.
+<DT><CODE>SAVEDIR</CODE>
+<DD>The name of a directory in which news articles are saved by default.
+Used by the Gnus package.
+<DT><CODE>SHELL</CODE>
+<DD>The name of an interpreter used to parse and execute programs run from
+inside Emacs.
+<A NAME="IDX2879"></A>
+<DT><CODE>TERM</CODE>
+<DD>The type of the terminal that Emacs is using.  This variable must be
+set unless Emacs is run in batch mode.  On MS-DOS, it defaults to
+<SAMP>`internal'</SAMP>, which specifies a built-in terminal emulation that
+handles the machine's own display.  If the value of <CODE>TERM</CODE> indicates
+that Emacs runs in non-windowed mode from <CODE>xterm</CODE> or a similar
+terminal emulator, the background mode defaults to <SAMP>`light'</SAMP>, and
+Emacs will choose colors that are appropriate for a light background.
+<DT><CODE>TERMCAP</CODE>
+<DD>The name of the termcap library file describing how to program the
+terminal specified by the <CODE>TERM</CODE> variable.  This defaults to
+<TT>`/etc/termcap'</TT>.
+<DT><CODE>TMPDIR</CODE>
+<DD>Used by the Emerge package as a prefix for temporary files.
+<DT><CODE>TZ</CODE>
+<DD>This specifies the current time zone and possibly also daylight
+saving time information.  On MS-DOS, if <CODE>TZ</CODE> is not set in the
+environment when Emacs starts, Emacs defines a default value as
+appropriate for the country code returned by DOS.  On MS-Windows, Emacs
+does not use <CODE>TZ</CODE> at all.
+<DT><CODE>USER</CODE>
+<DD>The user's login name.  See also <CODE>LOGNAME</CODE>.  On MS-DOS, this
+defaults to <SAMP>`root'</SAMP>.
+<DT><CODE>VERSION_CONTROL</CODE>
+<DD>Used to initialize the <CODE>version-control</CODE> variable (see section <A HREF="emacs_16.html#SEC115">M.3.1.1 Single or Numbered Backups</A>).
+</DL>
+<P>
+
+<A NAME="Misc Variables"></A>
+<HR SIZE="6">
+<A NAME="SEC535"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC534"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC536"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC536"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC533"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC536"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> AE.5.2 Miscellaneous Variables </H3>
+<!--docid::SEC535::-->
+<P>
+
+These variables are used only on particular configurations:
+</P><P>
+
+<DL COMPACT>
+<DT><CODE>COMSPEC</CODE>
+<DD>On MS-DOS and MS-Windows, the name of the command interpreter to use
+when invoking batch files and commands internal to the shell.  On MS-DOS
+this is also used to make a default value for the <CODE>SHELL</CODE> environment
+variable.
+<P>
+
+<DT><CODE>NAME</CODE>
+<DD>On MS-DOS, this variable defaults to the value of the <CODE>USER</CODE>
+variable.
+<P>
+
+<DT><CODE>TEMP</CODE>
+<DD><DT><CODE>TMP</CODE>
+<DD>On MS-DOS and MS-Windows, these specify the name of the directory for
+storing temporary files in.
+<P>
+
+<DT><CODE>EMACSTEST</CODE>
+<DD>On MS-DOS, this specifies a file to use to log the operation of the
+internal terminal emulator.  This feature is useful for submitting bug
+reports.
+<P>
+
+<DT><CODE>EMACSCOLORS</CODE>
+<DD>On MS-DOS, this specifies the screen colors.  It is useful to set them
+this way, since otherwise Emacs would display the default colors
+momentarily when it starts up.
+<P>
+
+The value of this variable should be the two-character encoding of the
+foreground (the first character) and the background (the second
+character) colors of the default face.  Each character should be the
+hexadecimal code for the desired color on a standard PC text-mode
+display.  For example, to get blue text on a light gray background,
+specify <SAMP>`EMACSCOLORS=17'</SAMP>, since 1 is the code of the blue color and
+7 is the code of the light gray color.
+</P><P>
+
+The PC display usually supports only eight background colors.  However,
+Emacs switches the DOS display to a mode where all 16 colors can be used
+for the background, so all four bits of the background color are
+actually used.
+</P><P>
+
+<DT><CODE>WINDOW_GFX</CODE>
+<DD>Used when initializing the Sun windows system.
+</DL>
+<P>
+
+<A NAME="Display X"></A>
+<HR SIZE="6">
+<A NAME="SEC536"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC535"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC537"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC537"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.6 Specifying the Display Name </H2>
+<!--docid::SEC536::-->
+<P>
+
+  The environment variable <CODE>DISPLAY</CODE> tells all X clients, including
+Emacs, where to display their windows.  Its value is set by default
+in ordinary circumstances, when you start an X server and run jobs
+locally.  Occasionally you may need to specify the display yourself; for
+example, if you do a remote login and want to run a client program
+remotely, displaying on your local screen.
+</P><P>
+
+  With Emacs, the main reason people change the default display is to
+let them log into another system, run Emacs on that system, but have the
+window displayed at their local terminal.  You might need to log in
+to another system because the files you want to edit are there, or
+because the Emacs executable file you want to run is there.
+</P><P>
+
+  The syntax of the <CODE>DISPLAY</CODE> environment variable is
+<SAMP>`<VAR>host</VAR>:<VAR>display</VAR>.<VAR>screen</VAR>'</SAMP>, where <VAR>host</VAR> is the
+host name of the X Window System server machine, <VAR>display</VAR> is an
+arbitrarily-assigned number that distinguishes your server (X terminal)
+from other servers on the same machine, and <VAR>screen</VAR> is a
+rarely-used field that allows an X server to control multiple terminal
+screens.  The period and the <VAR>screen</VAR> field are optional.  If
+included, <VAR>screen</VAR> is usually zero.
+</P><P>
+
+  For example, if your host is named <SAMP>`glasperle'</SAMP> and your server is
+the first (or perhaps the only) server listed in the configuration, your
+<CODE>DISPLAY</CODE> is <SAMP>`glasperle:0.0'</SAMP>.
+</P><P>
+
+  You can specify the display name explicitly when you run Emacs, either
+by changing the <CODE>DISPLAY</CODE> variable, or with the option <SAMP>`-d
+<VAR>display</VAR>'</SAMP> or <SAMP>`--display=<VAR>display</VAR>'</SAMP>.  Here is an example:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>emacs --display=glasperle:0 &#38;
+</FONT></pre></td></tr></table></P><P>
+
+  You can inhibit the direct use of the window system and GUI with the
+<SAMP>`-nw'</SAMP> option.  It tells Emacs to display using ordinary ASCII on
+its controlling terminal.  This is also an initial option.
+</P><P>
+
+  Sometimes, security arrangements prevent a program on a remote system
+from displaying on your local system.  In this case, trying to run Emacs
+produces messages like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Xlib:  connection to "glasperle:0.0" refused by server
+</FONT></pre></td></tr></table></P><P>
+
+You might be able to overcome this problem by using the <CODE>xhost</CODE>
+command on the local system to give permission for access from your
+remote machine.
+</P><P>
+
+<A NAME="Font X"></A>
+<HR SIZE="6">
+<A NAME="SEC537"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC536"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC538"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC538"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.7 Font Specification Options </H2>
+<!--docid::SEC537::-->
+<P>
+
+  By default, Emacs displays text in the font named <SAMP>`9x15'</SAMP>, which
+makes each character nine pixels wide and fifteen pixels high.  You can
+specify a different font on your command line through the option
+<SAMP>`-fn <VAR>name</VAR>'</SAMP> (or <SAMP>`--font'</SAMP>, which is an alias for
+<SAMP>`-fn'</SAMP>).
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`-fn <VAR>name</VAR>'</SAMP>
+<DD><A NAME="IDX2880"></A>
+<DT><SAMP>`--font=<VAR>name</VAR>'</SAMP>
+<DD><A NAME="IDX2881"></A>
+<A NAME="IDX2882"></A>
+Use font <VAR>name</VAR> as the default font.
+</DL>
+<P>
+
+  Under X, each font has a long name which consists of eleven words or
+numbers, separated by dashes.  Some fonts also have shorter
+nicknames---<SAMP>`9x15'</SAMP> is such a nickname.  You can use either kind of
+name.  You can use wildcard patterns for the font name; then Emacs lets
+X choose one of the fonts that match the pattern.  Here is an example,
+which happens to specify the font whose nickname is <SAMP>`6x13'</SAMP>:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>emacs -fn "-misc-fixed-medium-r-semicondensed--13-*-*-*-c-60-iso8859-1" &#38;
+</FONT></pre></td></tr></table></P><P>
+
+You can also specify the font in your <TT>`.Xdefaults'</TT> file:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>emacs.font: -misc-fixed-medium-r-semicondensed--13-*-*-*-c-60-iso8859-1
+</FONT></pre></td></tr></table></P><P>
+
+  A long font name has the following form:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>-<VAR>maker</VAR>-<VAR>family</VAR>-<VAR>weight</VAR>-<VAR>slant</VAR>-<VAR>widthtype</VAR>-<VAR>style</VAR><small>...</small>
+<small>...</small>-<VAR>pixels</VAR>-<VAR>height</VAR>-<VAR>horiz</VAR>-<VAR>vert</VAR>-<VAR>spacing</VAR>-<VAR>width</VAR>-<VAR>charset</VAR>
+</FONT></pre></td></tr></table></P><P>
+
+<DL COMPACT>
+<DT><VAR>maker</VAR>
+<DD>This is the name of the font manufacturer.
+<DT><VAR>family</VAR>
+<DD>This is the name of the font family--for example, <SAMP>`courier'</SAMP>.
+<DT><VAR>weight</VAR>
+<DD>This is normally <SAMP>`bold'</SAMP>, <SAMP>`medium'</SAMP> or <SAMP>`light'</SAMP>.  Other
+words may appear here in some font names.
+<DT><VAR>slant</VAR>
+<DD>This is <SAMP>`r'</SAMP> (roman), <SAMP>`i'</SAMP> (italic), <SAMP>`o'</SAMP> (oblique),
+<SAMP>`ri'</SAMP> (reverse italic), or <SAMP>`ot'</SAMP> (other).
+<DT><VAR>widthtype</VAR>
+<DD>This is normally <SAMP>`condensed'</SAMP>, <SAMP>`extended'</SAMP>, <SAMP>`semicondensed'</SAMP>
+or <SAMP>`normal'</SAMP>.  Other words may appear here in some font names.
+<DT><VAR>style</VAR>
+<DD>This is an optional additional style name.  Usually it is empty--most
+long font names have two hyphens in a row at this point.
+<DT><VAR>pixels</VAR>
+<DD>This is the font height, in pixels.
+<DT><VAR>height</VAR>
+<DD>This is the font height on the screen, measured in tenths of a printer's
+point--approximately 1/720 of an inch.  In other words, it is the point
+size of the font, times ten.  For a given vertical resolution,
+<VAR>height</VAR> and <VAR>pixels</VAR> are proportional; therefore, it is common
+to specify just one of them and use <SAMP>`*'</SAMP> for the other.
+<DT><VAR>horiz</VAR>
+<DD>This is the horizontal resolution, in pixels per inch, of the screen for
+which the font is intended.
+<DT><VAR>vert</VAR>
+<DD>This is the vertical resolution, in pixels per inch, of the screen for
+which the font is intended.  Normally the resolution of the fonts on
+your system is the right value for your screen; therefore, you normally
+specify <SAMP>`*'</SAMP> for this and <VAR>horiz</VAR>.
+<DT><VAR>spacing</VAR>
+<DD>This is <SAMP>`m'</SAMP> (monospace), <SAMP>`p'</SAMP> (proportional) or <SAMP>`c'</SAMP>
+(character cell).
+<DT><VAR>width</VAR>
+<DD>This is the average character width, in pixels, multiplied by ten.
+<DT><VAR>charset</VAR>
+<DD>This is the character set that the font depicts.
+Normally you should use <SAMP>`iso8859-1'</SAMP>.
+</DL>
+<P>
+
+<A NAME="IDX2883"></A>
+  You will probably want to use a fixed-width default font--that is,
+a font in which all characters have the same width.  Any font with
+<SAMP>`m'</SAMP> or <SAMP>`c'</SAMP> in the <VAR>spacing</VAR> field of the long name is a
+fixed-width font.  Here's how to use the <CODE>xlsfonts</CODE> program to
+list all the fixed-width fonts available on your system:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>xlsfonts -fn '*x*' | egrep "^[0-9]+x[0-9]+"
+xlsfonts -fn '*-*-*-*-*-*-*-*-*-*-*-m*'
+xlsfonts -fn '*-*-*-*-*-*-*-*-*-*-*-c*'
+</pre></td></tr></table></P><P>
+
+To see what a particular font looks like, use the <CODE>xfd</CODE> command.
+For example:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>xfd -fn 6x13
+</pre></td></tr></table></P><P>
+
+displays the entire font <SAMP>`6x13'</SAMP>.
+</P><P>
+
+  While running Emacs, you can set the font of the current frame
+(see section <A HREF="emacs_19.html#SEC203">P.12 Setting Frame Parameters</A>) or for a specific kind of text
+(see section <A HREF="emacs_13.html#SEC78">J.1 Using Multiple Typefaces</A>).
+</P><P>
+
+<A NAME="Colors X"></A>
+<HR SIZE="6">
+<A NAME="SEC538"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC537"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC539"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC539"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.8 Window Color Options </H2>
+<!--docid::SEC538::-->
+<P>
+
+<A NAME="IDX2884"></A>
+<A NAME="IDX2885"></A>
+  On a color display, you can specify which color to use for various
+parts of the Emacs display.  To find out what colors are available on
+your system, type <KBD>M-x list-colors-display</KBD>, or press
+<KBD>C-Mouse-2</KBD> and select <SAMP>`Display Colors'</SAMP> from the pop-up menu.
+If you do not specify colors, on windowed displays the default for the
+background is white and the default for all other colors is black.  On a
+monochrome display, the foreground is black, the background is white,
+and the border is gray if the display supports that.  On terminals, the
+background is usually black and the foreground is white.
+</P><P>
+
+  Here is a list of the command-line options for specifying colors:
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`-fg <VAR>color</VAR>'</SAMP>
+<DD><A NAME="IDX2886"></A>
+<DT><SAMP>`--foreground-color=<VAR>color</VAR>'</SAMP>
+<DD><A NAME="IDX2887"></A>
+<A NAME="IDX2888"></A>
+Specify the foreground color.  <VAR>color</VAR> should be a standard color
+name, or a numeric specification of the color's red, green, and blue
+components as in <SAMP>`#4682B4'</SAMP> or <SAMP>`RGB:46/82/B4'</SAMP>.
+<DT><SAMP>`-bg <VAR>color</VAR>'</SAMP>
+<DD><A NAME="IDX2889"></A>
+<DT><SAMP>`--background-color=<VAR>color</VAR>'</SAMP>
+<DD><A NAME="IDX2890"></A>
+<A NAME="IDX2891"></A>
+Specify the background color.
+<DT><SAMP>`-bd <VAR>color</VAR>'</SAMP>
+<DD><A NAME="IDX2892"></A>
+<DT><SAMP>`--border-color=<VAR>color</VAR>'</SAMP>
+<DD><A NAME="IDX2893"></A>
+<A NAME="IDX2894"></A>
+Specify the color of the border of the X window.
+<DT><SAMP>`-cr <VAR>color</VAR>'</SAMP>
+<DD><A NAME="IDX2895"></A>
+<DT><SAMP>`--cursor-color=<VAR>color</VAR>'</SAMP>
+<DD><A NAME="IDX2896"></A>
+<A NAME="IDX2897"></A>
+Specify the color of the Emacs cursor which indicates where point is.
+<DT><SAMP>`-ms <VAR>color</VAR>'</SAMP>
+<DD><A NAME="IDX2898"></A>
+<DT><SAMP>`--mouse-color=<VAR>color</VAR>'</SAMP>
+<DD><A NAME="IDX2899"></A>
+<A NAME="IDX2900"></A>
+Specify the color for the mouse cursor when the mouse is in the Emacs window.
+<DT><SAMP>`-r'</SAMP>
+<DD><A NAME="IDX2901"></A>
+<DT><SAMP>`-rv'</SAMP>
+<DD><A NAME="IDX2902"></A>
+<DT><SAMP>`--reverse-video'</SAMP>
+<DD><A NAME="IDX2903"></A>
+<A NAME="IDX2904"></A>
+Reverse video--swap the foreground and background colors.
+</DL>
+<P>
+
+  For example, to use a coral mouse cursor and a slate blue text cursor,
+enter:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>emacs -ms coral -cr 'slate blue' &#38;
+</pre></td></tr></table></P><P>
+
+  You can reverse the foreground and background colors through the
+<SAMP>`-rv'</SAMP> option or with the X resource <SAMP>`reverseVideo'</SAMP>.
+</P><P>
+
+  The <SAMP>`-fg'</SAMP>, <SAMP>`-bg'</SAMP>, and <SAMP>`-rv'</SAMP> options function on
+text-only terminals as well as on window systems.
+</P><P>
+
+<A NAME="Window Size X"></A>
+<HR SIZE="6">
+<A NAME="SEC539"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC538"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC540"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.9 Options for Window Geometry </H2>
+<!--docid::SEC539::-->
+<P>
+
+  The <SAMP>`--geometry'</SAMP> option controls the size and position of the
+initial Emacs frame.  Here is the format for specifying the window
+geometry:
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`-g <VAR>width</VAR>x<VAR>height</VAR>[{+-}<VAR>xoffset</VAR>{+-}<VAR>yoffset</VAR>]]'</SAMP>
+<DD><A NAME="IDX2905"></A>
+Specify window size <VAR>width</VAR> and <VAR>height</VAR> (measured in character
+columns and lines), and positions <VAR>xoffset</VAR> and <VAR>yoffset</VAR>
+(measured in pixels).
+<P>
+
+<DT><SAMP>`--geometry=<VAR>width</VAR>x<VAR>height</VAR>[{+-}<VAR>xoffset</VAR>{+-}<VAR>yoffset</VAR>]]'</SAMP>
+<DD><A NAME="IDX2906"></A>
+This is another way of writing the same thing.
+</DL>
+<P>
+
+<CODE>{+-}</CODE> means either a plus sign or a minus sign.  A plus
+sign before <VAR>xoffset</VAR> means it is the distance from the left side of
+the screen; a minus sign means it counts from the right side.  A plus
+sign before <VAR>yoffset</VAR> means it is the distance from the top of the
+screen, and a minus sign there indicates the distance from the bottom.
+The values <VAR>xoffset</VAR> and <VAR>yoffset</VAR> may themselves be positive or
+negative, but that doesn't change their meaning, only their direction.
+</P><P>
+
+  Emacs uses the same units as <CODE>xterm</CODE> does to interpret the geometry.
+The <VAR>width</VAR> and <VAR>height</VAR> are measured in characters, so a large font
+creates a larger frame than a small font.  (If you specify a proportional
+font, Emacs uses its maximum bounds width as the width unit.)  The
+<VAR>xoffset</VAR> and <VAR>yoffset</VAR> are measured in pixels.
+</P><P>
+
+  Since the mode line and the echo area occupy the last 2 lines of the
+frame, the height of the initial text window is 2 less than the height
+specified in your geometry.  In non-X-toolkit versions of Emacs, the
+menu bar also takes one line of the specified number.  But in the X
+toolkit version, the menu bar is additional and does not count against
+the specified height.  The tool bar, if present, is also additional.
+</P><P>
+
+  You do not have to specify all of the fields in the geometry
+specification.
+</P><P>
+
+  If you omit both <VAR>xoffset</VAR> and <VAR>yoffset</VAR>, the window manager
+decides where to put the Emacs frame, possibly by letting you place
+it with the mouse.  For example, <SAMP>`164x55'</SAMP> specifies a window 164
+columns wide, enough for two ordinary width windows side by side, and 55
+lines tall.
+</P><P>
+
+  The default width for Emacs is 80 characters and the default height is
+40 lines.  You can omit either the width or the height or both.  If
+you start the geometry with an integer, Emacs interprets it as the
+width.  If you start with an <SAMP>`x'</SAMP> followed by an integer, Emacs
+interprets it as the height.  Thus, <SAMP>`81'</SAMP> specifies just the width;
+<SAMP>`x45'</SAMP> specifies just the height.
+</P><P>
+
+  If you start with <SAMP>`+'</SAMP> or <SAMP>`-'</SAMP>, that introduces an offset,
+which means both sizes are omitted.  Thus, <SAMP>`-3'</SAMP> specifies the
+<VAR>xoffset</VAR> only.  (If you give just one offset, it is always
+<VAR>xoffset</VAR>.)  <SAMP>`+3-3'</SAMP> specifies both the <VAR>xoffset</VAR> and the
+<VAR>yoffset</VAR>, placing the frame near the bottom left of the screen.
+</P><P>
+
+  You can specify a default for any or all of the fields in
+<TT>`.Xdefaults'</TT> file, and then override selected fields with a
+<SAMP>`--geometry'</SAMP> option.
+</P><P>
+
+<A NAME="Borders X"></A>
+<HR SIZE="6">
+<A NAME="SEC540"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC539"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC541"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC530"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.10 Internal and External Borders </H2>
+<!--docid::SEC540::-->
+<P>
+
+  An Emacs frame has an internal border and an external border.  The
+internal border is an extra strip of the background color around the
+text portion of the frame.  Emacs itself draws the internal border.
+The external border is added by the window manager outside the frame;
+depending on the window manager you use, it may contain various boxes
+you can click on to move or iconify the window.
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`-ib <VAR>width</VAR>'</SAMP>
+<DD><A NAME="IDX2907"></A>
+<DT><SAMP>`--internal-border=<VAR>width</VAR>'</SAMP>
+<DD><A NAME="IDX2908"></A>
+<A NAME="IDX2909"></A>
+Specify <VAR>width</VAR> as the width of the internal border, in pixels.
+<P>
+
+<DT><SAMP>`-bw <VAR>width</VAR>'</SAMP>
+<DD><A NAME="IDX2910"></A>
+<DT><SAMP>`--border-width=<VAR>width</VAR>'</SAMP>
+<DD><A NAME="IDX2911"></A>
+Specify <VAR>width</VAR> as the width of the main border, in pixels.
+</DL>
+<P>
+
+  When you specify the size of the frame, that does not count the
+borders.  The frame's position is measured from the outside edge of the
+external border.
+</P><P>
+
+  Use the <SAMP>`-ib <VAR>n</VAR>'</SAMP> option to specify an internal border
+<VAR>n</VAR> pixels wide.  The default is 1.  Use <SAMP>`-bw <VAR>n</VAR>'</SAMP> to
+specify the width of the external border (though the window manager may
+not pay attention to what you specify).  The default width of the
+external border is 2.
+</P><P>
+
+<A NAME="Title X"></A>
+<HR SIZE="6">
+<A NAME="SEC541"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC540"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC542"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC530"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.11 Frame Titles </H2>
+<!--docid::SEC541::-->
+<P>
+
+  An Emacs frame may or may not have a specified title.  The frame
+title, if specified, appears in window decorations and icons as the
+name of the frame.  If an Emacs frame has no specified title, the
+default title has the form <SAMP>`<VAR>invocation-name</VAR>@<VAR>machine</VAR>'</SAMP>
+(if there is only one frame) or the selected window's buffer name (if
+there is more than one frame).
+</P><P>
+
+  You can specify a title for the initial Emacs frame with a command
+line option:
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`-title <VAR>title</VAR>'</SAMP>
+<DD><A NAME="IDX2912"></A>
+<DT><SAMP>`--title=<VAR>title</VAR>'</SAMP>
+<DD><DT><SAMP>`-T <VAR>title</VAR>'</SAMP>
+<DD><A NAME="IDX2913"></A>
+<A NAME="IDX2914"></A>
+Specify <VAR>title</VAR> as the title for the initial Emacs frame.
+</DL>
+<P>
+
+  The <SAMP>`--name'</SAMP> option (see section <A HREF="emacs_34.html#SEC543">AE.13 X Resources</A>) also specifies the title
+for the initial Emacs frame.
+</P><P>
+
+<A NAME="Icons X"></A>
+<HR SIZE="6">
+<A NAME="SEC542"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC541"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC543"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC530"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.12 Icons </H2>
+<!--docid::SEC542::-->
+<P>
+
+  Most window managers allow the user to "iconify" a frame, removing
+it from sight, and leaving a small, distinctive "icon" window in its
+place.  Clicking on the icon window makes the frame itself appear again.
+If you have many clients running at once, you can avoid cluttering up
+the screen by iconifying most of the clients.
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`-i'</SAMP>
+<DD><A NAME="IDX2915"></A>
+<DT><SAMP>`--icon-type'</SAMP>
+<DD><A NAME="IDX2916"></A>
+<A NAME="IDX2917"></A>
+Use a picture of a gnu as the Emacs icon.
+<P>
+
+<DT><SAMP>`-iconic'</SAMP>
+<DD><A NAME="IDX2918"></A>
+<DT><SAMP>`--iconic'</SAMP>
+<DD><A NAME="IDX2919"></A>
+Start Emacs in iconified state.
+</DL>
+<P>
+
+  The <SAMP>`-i'</SAMP> or <SAMP>`--icon-type'</SAMP> option tells Emacs to use an icon
+window containing a picture of the GNU gnu.  If omitted, Emacs lets the
+window manager choose what sort of icon to use--usually just a small
+rectangle containing the frame's title.
+</P><P>
+
+  The <SAMP>`-iconic'</SAMP> option tells Emacs to begin running as an icon,
+rather than showing a frame right away.  In this situation, the icon
+is the only indication that Emacs has started; the text frame doesn't
+appear until you deiconify it.
+</P><P>
+
+<A NAME="Resources X"></A>
+<HR SIZE="6">
+<A NAME="SEC543"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC542"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC544"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC530"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.13 X Resources </H2>
+<!--docid::SEC543::-->
+<P>
+
+<A NAME="IDX2920"></A>
+  Programs running under the X Window System organize their user options
+under a hierarchy of classes and resources.  You can specify default
+values for these options in your X resources file, usually named
+<TT>`~/.Xdefaults'</TT>.
+</P><P>
+
+  Each line in the file specifies a value for one option or for a
+collection of related options, for one program or for several programs
+(optionally even for all programs).
+</P><P>
+
+<A NAME="IDX2921"></A>
+<A NAME="IDX2922"></A>
+  MS-Windows systems don't support <TT>`~/.Xdefaults'</TT> files, but
+Emacs compiled for Windows looks for X resources in the Windows
+Registry, under the keys <SAMP>`HKEY_CURRENT_USER\SOFTWARE\GNU\Emacs'</SAMP>
+and <SAMP>`HKEY_LOCAL_MACHINE\SOFTWARE\GNU\Emacs'</SAMP>.
+</P><P>
+
+  Programs define named resources with particular meanings.  They also
+define how to group resources into named classes.  For instance, in
+Emacs, the <SAMP>`internalBorder'</SAMP> resource controls the width of the
+internal border, and the <SAMP>`borderWidth'</SAMP> resource controls the width
+of the external border.  Both of these resources are part of the
+<SAMP>`BorderWidth'</SAMP> class.  Case distinctions are significant in these
+names.
+</P><P>
+
+  In <TT>`~/.Xdefaults'</TT>, you can specify a value for a single resource
+on one line, like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>emacs.borderWidth: 2
+</pre></td></tr></table></P><P>
+
+Or you can use a class name to specify the same value for all resources
+in that class.  Here's an example:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>emacs.BorderWidth: 2
+</pre></td></tr></table></P><P>
+
+  If you specify a value for a class, it becomes the default for all
+resources in that class.  You can specify values for individual
+resources as well; these override the class value, for those particular
+resources.  Thus, this example specifies 2 as the default width for all
+borders, but overrides this value with 4 for the external border:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>emacs.BorderWidth: 2
+emacs.borderWidth: 4
+</pre></td></tr></table></P><P>
+
+  The order in which the lines appear in the file does not matter.
+Also, command-line options always override the X resources file.
+</P><P>
+
+  The string <SAMP>`emacs'</SAMP> in the examples above is also a resource
+name.  It actually represents the name of the executable file that you
+invoke to run Emacs.  If Emacs is installed under a different name, it
+looks for resources under that name instead of <SAMP>`emacs'</SAMP>.
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`-name <VAR>name</VAR>'</SAMP>
+<DD><A NAME="IDX2923"></A>
+<DT><SAMP>`--name=<VAR>name</VAR>'</SAMP>
+<DD><A NAME="IDX2924"></A>
+Use <VAR>name</VAR> as the resource name (and the title) for the initial
+Emacs frame.  This option does not affect subsequent frames, but Lisp
+programs can specify frame names when they create frames.
+<P>
+
+If you don't specify this option, the default is to use the Emacs
+executable's name as the resource name.
+</P><P>
+
+<DT><SAMP>`-xrm <VAR>resource-values</VAR>'</SAMP>
+<DD><A NAME="IDX2925"></A>
+<DT><SAMP>`--xrm=<VAR>resource-values</VAR>'</SAMP>
+<DD><A NAME="IDX2926"></A>
+Specify X resource values for this Emacs job (see below).
+</DL>
+<P>
+
+  For consistency, <SAMP>`-name'</SAMP> also specifies the name to use for
+other resource values that do not belong to any particular frame.
+</P><P>
+
+  The resources that name Emacs invocations also belong to a class; its
+name is <SAMP>`Emacs'</SAMP>.  If you write <SAMP>`Emacs'</SAMP> instead of
+<SAMP>`emacs'</SAMP>, the resource applies to all frames in all Emacs jobs,
+regardless of frame titles and regardless of the name of the executable
+file.  Here is an example:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>Emacs.BorderWidth: 2
+Emacs.borderWidth: 4
+</pre></td></tr></table></P><P>
+
+  You can specify a string of additional resource values for Emacs to
+use with the command line option <SAMP>`-xrm <VAR>resources</VAR>'</SAMP>.  The text
+<VAR>resources</VAR> should have the same format that you would use inside a file
+of X resources.  To include multiple resource specifications in
+<VAR>resources</VAR>, put a newline between them, just as you would in a file.
+You can also use <SAMP>`#include "<VAR>filename</VAR>"'</SAMP> to include a file full
+of resource specifications.  Resource values specified with <SAMP>`-xrm'</SAMP>
+take precedence over all other resource specifications.
+</P><P>
+
+  The following table lists the resource names that designate options
+for Emacs, each with the class that it belongs to:
+</P><P>
+
+<DL COMPACT>
+<DT><CODE>background</CODE> (class <CODE>Background</CODE>)
+<DD>Background color name.
+<P>
+
+<DT><CODE>bitmapIcon</CODE> (class <CODE>BitmapIcon</CODE>)
+<DD>Use a bitmap icon (a picture of a gnu) if <SAMP>`on'</SAMP>, let the window
+manager choose an icon if <SAMP>`off'</SAMP>.
+<P>
+
+<DT><CODE>borderColor</CODE> (class <CODE>BorderColor</CODE>)
+<DD>Color name for the external border.
+<P>
+
+<DT><CODE>borderWidth</CODE> (class <CODE>BorderWidth</CODE>)
+<DD>Width in pixels of the external border.
+<P>
+
+<DT><CODE>cursorColor</CODE> (class <CODE>Foreground</CODE>)
+<DD>Color name for text cursor (point).
+<P>
+
+<DT><CODE>font</CODE> (class <CODE>Font</CODE>)
+<DD>Font name for text (or fontset name, see section <A HREF="emacs_20.html#SEC223">Q.10 Fontsets</A>).
+<P>
+
+<DT><CODE>foreground</CODE> (class <CODE>Foreground</CODE>)
+<DD>Color name for text.
+<P>
+
+<DT><CODE>geometry</CODE> (class <CODE>Geometry</CODE>)
+<DD>Window size and position.  Be careful not to specify this resource as
+<SAMP>`emacs*geometry'</SAMP>, because that may affect individual menus as well
+as the Emacs frame itself.
+<P>
+
+If this resource specifies a position, that position applies only to the
+initial Emacs frame (or, in the case of a resource for a specific frame
+name, only that frame).  However, the size, if specified here, applies to
+all frames.
+</P><P>
+
+<DT><CODE>iconName</CODE> (class <CODE>Title</CODE>)
+<DD>Name to display in the icon.
+<P>
+
+<DT><CODE>internalBorder</CODE> (class <CODE>BorderWidth</CODE>)
+<DD>Width in pixels of the internal border.
+<P>
+
+<DT><CODE>lineSpacing</CODE> (class <CODE>LineSpacing</CODE>)
+<DD><A NAME="IDX2927"></A>
+<A NAME="IDX2928"></A>
+Additional space (<EM>leading</EM>) between lines, in pixels.
+<P>
+
+<DT><CODE>menuBar</CODE> (class <CODE>MenuBar</CODE>)
+<DD>Give frames menu bars if <SAMP>`on'</SAMP>; don't have menu bars if <SAMP>`off'</SAMP>.
+<P>
+
+<DT><CODE>toolBar</CODE> (class <CODE>ToolBar</CODE>)
+<DD>Number of lines to reserve for the tool bar.  A zero value suppresses
+the tool bar.  If the value is non-zero and
+<CODE>auto-resize-tool-bars</CODE> is non-<CODE>nil</CODE>, the tool bar's size
+will be changed automatically so that all tool bar items are visible.
+<P>
+
+<DT><CODE>minibuffer</CODE> (class <CODE>Minibuffer</CODE>)
+<DD>If <SAMP>`none'</SAMP>, don't make a minibuffer in this frame.
+It will use a separate minibuffer frame instead.
+<P>
+
+<DT><CODE>paneFont</CODE> (class <CODE>Font</CODE>)
+<DD><A NAME="IDX2929"></A>
+Font name for menu pane titles, in non-toolkit versions of Emacs.
+<P>
+
+<DT><CODE>pointerColor</CODE> (class <CODE>Foreground</CODE>)
+<DD>Color of the mouse cursor.
+<P>
+
+<DT><CODE>reverseVideo</CODE> (class <CODE>ReverseVideo</CODE>)
+<DD>Switch foreground and background default colors if <SAMP>`on'</SAMP>, use colors as
+specified if <SAMP>`off'</SAMP>.
+<P>
+
+<DT><CODE>screenGamma</CODE> (class <CODE>ScreenGamma</CODE>)
+<DD><A NAME="IDX2930"></A>
+Gamma correction for colors, equivalent to the frame parameter
+<CODE>screen-gamma</CODE>.
+<P>
+
+<DT><CODE>selectionFont</CODE> (class <CODE>Font</CODE>)
+<DD>Font name for pop-up menu items, in non-toolkit versions of Emacs.  (For
+toolkit versions, see <A HREF="emacs_34.html#SEC544">AE.14 Lucid Menu X Resources</A>, also see <A HREF="emacs_34.html#SEC545">AE.15 LessTif Menu X Resources</A>.)
+<P>
+
+<DT><CODE>synchronous</CODE> (class <CODE>Synchronous</CODE>)
+<DD><A NAME="IDX2931"></A>
+<A NAME="IDX2932"></A>
+Run Emacs in synchronous mode if <SAMP>`on'</SAMP>.  Synchronous mode is
+useful for debugging X problems.
+<P>
+
+<DT><CODE>title</CODE> (class <CODE>Title</CODE>)
+<DD>Name to display in the title bar of the initial Emacs frame.
+<P>
+
+<DT><CODE>verticalScrollBars</CODE> (class <CODE>ScrollBars</CODE>)
+<DD>Give frames scroll bars if <SAMP>`on'</SAMP>; don't have scroll bars if
+<SAMP>`off'</SAMP>.
+</DL>
+<P>
+
+  Here are resources for controlling the appearance of particular faces
+(see section <A HREF="emacs_13.html#SEC78">J.1 Using Multiple Typefaces</A>):
+</P><P>
+
+<DL COMPACT>
+<DT><CODE><VAR>face</VAR>.attributeFont</CODE>
+<DD>Font for face <VAR>face</VAR>.
+<DT><CODE><VAR>face</VAR>.attributeForeground</CODE>
+<DD>Foreground color for face <VAR>face</VAR>.
+<DT><CODE><VAR>face</VAR>.attributeBackground</CODE>
+<DD>Background color for face <VAR>face</VAR>.
+<DT><CODE><VAR>face</VAR>.attributeUnderline</CODE>
+<DD>Underline flag for face <VAR>face</VAR>.  Use <SAMP>`on'</SAMP> or <SAMP>`true'</SAMP> for
+yes.
+<DT><CODE><VAR>face</VAR>.attributeFamily</CODE>
+<DD>Font family for face <VAR>face</VAR>.
+<DT><CODE><VAR>face</VAR>.attributeWidth</CODE>
+<DD>Relative proportional width of the font to use for face <VAR>face</VAR>.
+It should be one of <CODE>ultra-condensed</CODE>, <CODE>extra-condensed</CODE>,
+<CODE>condensed</CODE>, <CODE>semi-condensed</CODE>, <CODE>normal</CODE>,
+<CODE>semi-expanded</CODE>, <CODE>expanded</CODE>, <CODE>extra-expanded</CODE>, or
+<CODE>ultra-expanded</CODE>.
+<DT><CODE><VAR>face</VAR>.attributeHeight</CODE>
+<DD>Height of the font to use for face <VAR>face</VAR>: either an integer
+specifying the height in units of 1/10pt, or a floating point
+number that specifies a scale factor to scale the underlying face's
+default font, or a function to be called with the default height which
+will return a new height.
+<DT><CODE><VAR>face</VAR>.attributeWeight</CODE>
+<DD>A weight to use for the face <VAR>face</VAR>.  It must be one of
+<CODE>ultra-bold</CODE>, <CODE>extra-bold</CODE>, <CODE>bold</CODE>,
+<CODE>semi-bold</CODE>, <CODE>normal</CODE>, <CODE>semi-light</CODE>, <CODE>light</CODE>,
+<CODE>extra-light</CODE>, <CODE>ultra-light</CODE>.
+<DT><CODE><VAR>face</VAR>.attributeSlant</CODE>
+<DD>The slant to use for the font of face <VAR>face</VAR>.  It must be one of
+<CODE>italic</CODE>, <CODE>oblique</CODE>, <CODE>normal</CODE>,
+<CODE>reverse-italic</CODE>, or <CODE>reverse-oblique</CODE>.
+<DT><CODE><VAR>face</VAR>.attributeStrikeThrough</CODE>
+<DD>Whether the face <VAR>face</VAR> should be drawn with a line striking
+through the characters.
+<DT><CODE><VAR>face</VAR>.attributeOverline</CODE>
+<DD>Whether the characters in the face <VAR>face</VAR> should be overlined.
+<DT><CODE><VAR>face</VAR>.attributeBox</CODE>
+<DD>Whether to draw a box around the characters in face <VAR>face</VAR>.
+<DT><CODE><VAR>face</VAR>.attributeInverse</CODE>
+<DD>Whether to display the characters in face <VAR>face</VAR> in inverse
+video.
+<DT><CODE><VAR>face</VAR>.attributeStipple</CODE>
+<DD>The name of a pixmap data file to use for the stipple pattern, or
+<CODE>false</CODE> to not use stipple for the face <VAR>face</VAR>.
+<DT><CODE><VAR>face</VAR>.attributeBackgroundPixmap</CODE>
+<DD>The background pixmap for the face <VAR>face</VAR>.  Should be a name of a
+pixmap file or <CODE>false</CODE>.
+<DT><CODE><VAR>face</VAR>.attributeBold</CODE>
+<DD>Whether to draw the characters in the face <VAR>face</VAR> as bold.
+<DT><CODE><VAR>face</VAR>.attributeItalic</CODE>
+<DD>Whether to draw the characters in the face <VAR>face</VAR> as italic.
+</DL>
+<P>
+
+<A NAME="Lucid Resources"></A>
+<HR SIZE="6">
+<A NAME="SEC544"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC543"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC545"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC530"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.14 Lucid Menu X Resources </H2>
+<!--docid::SEC544::-->
+<P>
+
+  If the Emacs installed at your site was built to use the X toolkit
+with the Lucid menu widgets, then the menu bar is a separate widget and
+has its own resources.  The resource names contain <SAMP>`pane.menubar'</SAMP>
+(following, as always, the name of the Emacs invocation, or <SAMP>`Emacs'</SAMP>,
+which stands for all Emacs invocations).  Specify them like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>Emacs.pane.menubar.<VAR>resource</VAR>:  <VAR>value</VAR>
+</pre></td></tr></table></P><P>
+
+For example, to specify the font <SAMP>`8x16'</SAMP> for the menu-bar items,
+write this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>Emacs.pane.menubar.font:  8x16
+</pre></td></tr></table></P><P>
+
+Resources for <EM>non-menubar</EM> toolkit pop-up menus have
+<SAMP>`menu*'</SAMP>, in like fashion.  For example, to specify the font
+<SAMP>`8x16'</SAMP> for the pop-up menu items, write this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>Emacs.menu*.font:	8x16
+</pre></td></tr></table></P><P>
+
+For dialog boxes, use <SAMP>`dialog'</SAMP> instead of <SAMP>`menu'</SAMP>:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>Emacs.dialog*.font:	8x16
+</pre></td></tr></table></P><P>
+
+Experience shows that on some systems you may need to add
+<SAMP>`shell.'</SAMP> before the <SAMP>`pane.menubar'</SAMP> or <SAMP>`menu*'</SAMP>.  On
+some other systems, you must not add <SAMP>`shell.'</SAMP>.
+</P><P>
+
+  Here is a list of the specific resources for menu bars and pop-up menus:
+</P><P>
+
+<DL COMPACT>
+<DT><CODE>font</CODE>
+<DD>Font for menu item text.
+<DT><CODE>foreground</CODE>
+<DD>Color of the foreground.
+<DT><CODE>background</CODE>
+<DD>Color of the background.
+<DT><CODE>buttonForeground</CODE>
+<DD>In the menu bar, the color of the foreground for a selected item.
+<DT><CODE>horizontalSpacing</CODE>
+<DD>Horizontal spacing in pixels between items.  Default is 3.
+<DT><CODE>verticalSpacing</CODE>
+<DD>Vertical spacing in pixels between items.  Default is 1.
+<DT><CODE>arrowSpacing</CODE>
+<DD>Horizontal spacing between the arrow (which indicates a submenu) and
+the associated text.  Default is 10.
+<DT><CODE>shadowThickness</CODE>
+<DD>Thickness of shadow line around the widget.
+<DT><CODE>margin</CODE>
+<DD>The margin of the menu bar, in characters.  The default of 4 makes the
+menu bar appear like the LessTif/Motif one.
+</DL>
+<P>
+
+<A NAME="LessTif Resources"></A>
+<HR SIZE="6">
+<A NAME="SEC545"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC544"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC530"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC528"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> AE.15 LessTif Menu X Resources </H2>
+<!--docid::SEC545::-->
+<P>
+
+  If the Emacs installed at your site was built to use the X toolkit
+with the LessTif or Motif widgets, then the menu bar, the dialog
+boxes, the pop-up menus, and the file-selection box are separate
+widgets and have their own resources.
+</P><P>
+
+  The resource names for the menu bar contain <SAMP>`pane.menubar'</SAMP>
+(following, as always, the name of the Emacs invocation, or
+<SAMP>`Emacs'</SAMP>, which stands for all Emacs invocations).  Specify them
+like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Emacs.pane.menubar.<VAR>subwidget</VAR>.<VAR>resource</VAR>:  <VAR>value</VAR>
+</FONT></pre></td></tr></table></P><P>
+
+  Each individual string in the menu bar is a subwidget; the subwidget's
+name is the same as the menu item string.  For example, the word
+<SAMP>`File'</SAMP> in the menu bar is part of a subwidget named
+<SAMP>`emacs.pane.menubar.File'</SAMP>.  Most likely, you want to specify the
+same resources for the whole menu bar.  To do this, use <SAMP>`*'</SAMP> instead
+of a specific subwidget name.  For example, to specify the font
+<SAMP>`8x16'</SAMP> for the menu-bar items, write this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Emacs.pane.menubar.*.fontList:  8x16
+</FONT></pre></td></tr></table></P><P>
+
+This also specifies the resource value for submenus.
+</P><P>
+
+  Each item in a submenu in the menu bar also has its own name for X
+resources; for example, the <SAMP>`File'</SAMP> submenu has an item named
+<SAMP>`Save (current buffer)'</SAMP>.  A resource specification for a submenu
+item looks like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Emacs.pane.menubar.popup_*.<VAR>menu</VAR>.<VAR>item</VAR>.<VAR>resource</VAR>: <VAR>value</VAR>
+</FONT></pre></td></tr></table></P><P>
+
+For example, here's how to specify the font for the <SAMP>`Save (current
+buffer)'</SAMP> item:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Emacs.pane.menubar.popup_*.File.Save (current buffer).fontList: 8x16
+</FONT></pre></td></tr></table></P><P>
+
+For an item in a second-level submenu, such as <SAMP>`Complete Word'</SAMP>
+under <SAMP>`Spell Checking'</SAMP> under <SAMP>`Tools'</SAMP>, the resource fits this
+template:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Emacs.pane.menubar.popup_*.popup_*.<VAR>menu</VAR>.<VAR>resource</VAR>: <VAR>value</VAR>
+</FONT></pre></td></tr></table></P><P>
+
+For example,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Emacs.pane.menubar.popup_*.popup_*.Spell Checking.Complete Word: <VAR>value</VAR>
+</FONT></pre></td></tr></table></P><P>
+
+(This should be one long line.)
+  
+  It's impossible to specify a resource for all the menu-bar items
+without also specifying it for the submenus as well.  So if you want the
+submenu items to look different from the menu bar itself, you must ask
+for that in two steps.  First, specify the resource for all of them;
+then, override the value for submenus alone.  Here is an example:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Emacs.pane.menubar.*.fontList:  8x16
+Emacs.pane.menubar.popup_*.fontList: 8x16
+</FONT></pre></td></tr></table></P><P>
+
+For LessTif pop-up menus, use <SAMP>`menu*'</SAMP> instead of
+<SAMP>`pane.menubar'</SAMP>.  For example, to specify the font <SAMP>`8x16'</SAMP> for
+the pop-up menu items, write this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Emacs.menu*.fontList:  8x16
+</FONT></pre></td></tr></table></P><P>
+
+For LessTif dialog boxes, use <SAMP>`dialog'</SAMP> instead of <SAMP>`menu'</SAMP>:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>Emacs.dialog*.fontList: 8x16
+Emacs.dialog*.foreground: hotpink
+</pre></td></tr></table></P><P>
+
+To specify resources for the LessTif file-selection box, use
+<SAMP>`fsb*'</SAMP>, like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>Emacs.fsb*.fontList: 8x16
+</pre></td></tr></table></P><P>
+
+  Here is a list of the specific resources for LessTif menu bars and
+pop-up menus:
+</P><P>
+
+<DL COMPACT>
+<DT><CODE>armColor</CODE>
+<DD>The color to show in an armed button.
+<DT><CODE>fontList</CODE>
+<DD>The font to use.
+<DT><CODE>marginBottom</CODE>
+<DD><DT><CODE>marginHeight</CODE>
+<DD><DT><CODE>marginLeft</CODE>
+<DD><DT><CODE>marginRight</CODE>
+<DD><DT><CODE>marginTop</CODE>
+<DD><DT><CODE>marginWidth</CODE>
+<DD>Amount of space to leave around the item, within the border.
+<DT><CODE>borderWidth</CODE>
+<DD>The width of the border around the menu item, on all sides.
+<DT><CODE>shadowThickness</CODE>
+<DD>The width of the border shadow.
+<DT><CODE>bottomShadowColor</CODE>
+<DD>The color for the border shadow, on the bottom and the right.
+<DT><CODE>topShadowColor</CODE>
+<DD>The color for the border shadow, on the top and the left.
+</DL>
+<P>
+
+<A NAME="Antinews"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_34.html#SEC530"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_35.html#SEC546"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

@@ -1,0 +1,748 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html40/loose.dtd">
+<HTML>
+<!-- Created on April, 18 2002 by texi2html 1.66 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<HEAD>
+<TITLE>CVS--Concurrent Versions System v1.11.2: Troubleshooting</TITLE>
+
+<META NAME="description" CONTENT="CVS--Concurrent Versions System v1.11.2: Troubleshooting">
+<META NAME="keywords" CONTENT="CVS--Concurrent Versions System v1.11.2: Troubleshooting">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.66">
+
+</HEAD>
+
+<BODY LANG="en" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC182"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_20.html#SEC181"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_21.html#SEC183"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_20.html#SEC181"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_22.html#SEC186"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> F. Troubleshooting </H1>
+<!--docid::SEC182::-->
+<P>
+
+If you are having trouble with CVS, this appendix
+may help.  If there is a particular error message which
+you are seeing, then you can look up the message
+alphabetically.  If not, you can look through the
+section on other problems to see if your problem is
+mentioned there.
+</P>
+<P>
+
+<TABLE BORDER="0" CELLSPACING="0">
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_21.html#SEC183">F.1 Partial list of error messages</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Partial list of CVS errors</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_21.html#SEC184">F.2 Trouble making a connection to a CVS server</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP"></TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="cvs_21.html#SEC185">F.3 Other common problems</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Problems not readily listed by error message</TD></TR>
+</TABLE>
+<P>
+
+<A NAME="Error messages"></A>
+<HR SIZE="6">
+<A NAME="SEC183"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_21.html#SEC182"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_21.html#SEC184"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_21.html#SEC182"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_21.html#SEC182"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_22.html#SEC186"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> F.1 Partial list of error messages </H2>
+<!--docid::SEC183::-->
+<P>
+
+Here is a partial list of error messages that you may
+see from CVS.  It is not a complete list---CVS
+is capable of printing many, many error messages, often
+with parts of them supplied by the operating system,
+but the intention is to list the common and/or
+potentially confusing error messages.
+</P>
+<P>
+
+The messages are alphabetical, but introductory text
+such as `<SAMP>cvs update: </SAMP>' is not considered in
+ordering them.
+</P>
+<P>
+
+In some cases the list includes messages printed by old
+versions of CVS (partly because users may not be
+sure which version of CVS they are using at any
+particular moment).
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE><VAR>file</VAR>:<VAR>line</VAR>: Assertion '<VAR>text</VAR>' failed</CODE>
+<DD>The exact format of this message may vary depending on
+your system.  It indicates a bug in CVS, which can
+be handled as described in <A HREF="cvs_23.html#SEC187">H. Dealing with bugs in CVS or this manual</A>.
+<P>
+
+</P>
+<DT><CODE>cvs <VAR>command</VAR>: authorization failed: server <VAR>host</VAR> rejected access</CODE>
+<DD>This is a generic response when trying to connect to a
+pserver server which chooses not to provide a
+specific reason for denying authorization.  Check that
+the username and password specified are correct and
+that the <CODE>CVSROOT</CODE> specified is allowed by `<SAMP>--allow-root</SAMP>'
+in `<TT>inetd.conf</TT>'.  See <A HREF="cvs_2.html#SEC29">2.9.3 Direct connection with password authentication</A>.
+<P>
+
+</P>
+<DT><CODE>cvs <VAR>command</VAR>: conflict: removed <VAR>file</VAR> was modified by second party</CODE>
+<DD>This message indicates that you removed a file, and
+someone else modified it.  To resolve the conflict,
+first run `<SAMP>cvs add <VAR>file</VAR></SAMP>'.  If desired, look
+at the other party's modification to decide whether you
+still want to remove it.  If you don't want to remove
+it, stop here.  If you do want to remove it, proceed
+with `<SAMP>cvs remove <VAR>file</VAR></SAMP>' and commit your
+removal.
+<P>
+
+</P>
+<DT><CODE>cannot change permissions on temporary directory</CODE>
+<DD><TABLE><tr><td>&nbsp;</td><td class=example><pre>Operation not permitted
+</pre></td></tr></table>This message has been happening in a non-reproducible,
+occasional way when we run the client/server testsuite,
+both on Red Hat Linux 3.0.3 and 4.1.  We haven't been
+able to figure out what causes it, nor is it known
+whether it is specific to linux (or even to this
+particular machine!).  If the problem does occur on
+other unices, `<SAMP>Operation not permitted</SAMP>' would be
+likely to read `<SAMP>Not owner</SAMP>' or whatever the system
+in question uses for the unix <CODE>EPERM</CODE> error.  If
+you have any information to add, please let us know as
+described in <A HREF="cvs_23.html#SEC187">H. Dealing with bugs in CVS or this manual</A>.  If you experience this error
+while using CVS, retrying the operation which
+produced it should work fine.
+<P>
+
+</P>
+<DT><CODE>cvs [server aborted]: Cannot check out files into the repository itself</CODE>
+<DD>The obvious cause for this message (especially for
+non-client/server CVS) is that the CVS root
+is, for example, `<TT>/usr/local/cvsroot</TT>' and you try
+to check out files when you are in a subdirectory, such
+as `<TT>/usr/local/cvsroot/test</TT>'.  However, there is a
+more subtle cause, which is that the temporary
+directory on the server is set to a subdirectory of the
+root (which is also not allowed).  If this is the
+problem, set the temporary directory to somewhere else,
+for example `<TT>/var/tmp</TT>'; see <CODE>TMPDIR</CODE> in
+<A HREF="cvs_19.html#SEC180">D. All environment variables which affect CVS</A>, for how to set the
+temporary directory.
+<P>
+
+</P>
+<DT><CODE>cannot commit files as 'root'</CODE>
+<DD>See `<SAMP>'root' is not allowed to commit files</SAMP>'.
+<P>
+
+</P>
+<DT><CODE>cannot open CVS/Entries for reading: No such file or directory</CODE>
+<DD>This generally indicates a CVS internal error, and
+can be handled as with other CVS bugs
+(see section <A HREF="cvs_23.html#SEC187">H. Dealing with bugs in CVS or this manual</A>).  Usually there is a workaround--the
+exact nature of which would depend on the situation but
+which hopefully could be figured out.
+<P>
+
+</P>
+<DT><CODE>cvs [init aborted]: cannot open CVS/Root: No such file or directory</CODE>
+<DD>This message is harmless.  Provided it is not
+accompanied by other errors, the operation has
+completed successfully.  This message should not occur
+with current versions of CVS, but it is documented
+here for the benefit of CVS 1.9 and older.
+<P>
+
+</P>
+<DT><CODE>cvs server: cannot open /root/.cvsignore: Permission denied</CODE>
+<DD><DT><CODE>cvs [server aborted]: can't chdir(/root): Permission denied</CODE>
+<DD>See <A HREF="cvs_21.html#SEC184">F.2 Trouble making a connection to a CVS server</A>.
+<P>
+
+</P>
+<DT><CODE>cvs [checkout aborted]: cannot rename file <VAR>file</VAR> to CVS/,,<VAR>file</VAR>: Invalid argument</CODE>
+<DD>This message has been reported as intermittently
+happening with CVS 1.9 on Solaris 2.5.  The cause is
+unknown; if you know more about what causes it, let us
+know as described in <A HREF="cvs_23.html#SEC187">H. Dealing with bugs in CVS or this manual</A>.
+<P>
+
+</P>
+<DT><CODE>cvs [<VAR>command</VAR> aborted]: cannot start server via rcmd</CODE>
+<DD>This, unfortunately, is a rather nonspecific error
+message which CVS 1.9 will print if you are
+running the CVS client and it is having trouble
+connecting to the server.  Current versions of CVS
+should print a much more specific error message.  If
+you get this message when you didn't mean to run the
+client at all, you probably forgot to specify
+<CODE>:local:</CODE>, as described in <A HREF="cvs_2.html#SEC9">2. The Repository</A>.
+<P>
+
+</P>
+<DT><CODE>ci: <VAR>file</VAR>,v: bad diff output line: Binary files - and /tmp/T2a22651 differ</CODE>
+<DD>CVS 1.9 and older will print this message
+when trying to check in a binary file if
+RCS is not correctly installed.  Re-read the
+instructions that came with your RCS distribution
+and the INSTALL file in the CVS
+distribution.  Alternately, upgrade to a current
+version of CVS, which checks in files itself
+rather than via RCS.
+<P>
+
+</P>
+<DT><CODE>cvs checkout: could not check out <VAR>file</VAR></CODE>
+<DD>With CVS 1.9, this can mean that the <CODE>co</CODE> program
+(part of RCS) returned a failure.  It should be
+preceded by another error message, however it has been
+observed without another error message and the cause is
+not well-understood.  With the current version of CVS,
+which does not run <CODE>co</CODE>, if this message occurs
+without another error message, it is definitely a CVS
+bug (see section <A HREF="cvs_23.html#SEC187">H. Dealing with bugs in CVS or this manual</A>).
+<P>
+
+</P>
+<DT><CODE>cvs [login aborted]: could not find out home directory</CODE>
+<DD>This means that you need to set the environment
+variables that CVS uses to locate your home directory.
+See the discussion of <CODE>HOME</CODE>, <CODE>HOMEDRIVE</CODE>, and <CODE>HOMEPATH</CODE> in
+<A HREF="cvs_19.html#SEC180">D. All environment variables which affect CVS</A>.
+<P>
+
+</P>
+<DT><CODE>cvs update: could not merge revision <VAR>rev</VAR> of <VAR>file</VAR>: No such file or directory</CODE>
+<DD>CVS 1.9 and older will print this message if there was
+a problem finding the <CODE>rcsmerge</CODE> program.  Make
+sure that it is in your <CODE>PATH</CODE>, or upgrade to a
+current version of CVS, which does not require
+an external <CODE>rcsmerge</CODE> program.
+<P>
+
+</P>
+<DT><CODE>cvs [update aborted]: could not patch <VAR>file</VAR>: No such file or directory</CODE>
+<DD>This means that there was a problem finding the
+<CODE>patch</CODE> program.  Make sure that it is in your
+<CODE>PATH</CODE>.  Note that despite appearances the message
+is <EM>not</EM> referring to whether it can find <VAR>file</VAR>.
+If both the client and the server are running a current
+version of CVS, then there is no need for an
+external patch program and you should not see this
+message.  But if either client or server is running
+CVS 1.9, then you need <CODE>patch</CODE>.
+<P>
+
+</P>
+<DT><CODE>cvs update: could not patch <VAR>file</VAR>; will refetch</CODE>
+<DD>This means that for whatever reason the client was
+unable to apply a patch that the server sent.  The
+message is nothing to be concerned about, because
+inability to apply the patch only slows things down and
+has no effect on what CVS does.
+<P>
+
+</P>
+<DT><CODE>dying gasps from <VAR>server</VAR> unexpected</CODE>
+<DD>There is a known bug in the server for CVS 1.9.18
+and older which can cause this.  For me, this was
+reproducible if I used the `<SAMP>-t</SAMP>' global option.  It
+was fixed by Andy Piper's 14 Nov 1997 change to
+src/filesubr.c, if anyone is curious.
+If you see the message,
+you probably can just retry the operation which failed,
+or if you have discovered information concerning its
+cause, please let us know as described in <A HREF="cvs_23.html#SEC187">H. Dealing with bugs in CVS or this manual</A>.
+<P>
+
+</P>
+<DT><CODE>end of file from server (consult above messages if any)</CODE>
+<DD>The most common cause for this message is if you are
+using an external <CODE>rsh</CODE> program and it exited with
+an error.  In this case the <CODE>rsh</CODE> program should
+have printed a message, which will appear before the
+above message.  For more information on setting up a
+CVS client and server, see <A HREF="cvs_2.html#SEC26">2.9 Remote repositories</A>.
+<P>
+
+</P>
+<DT><CODE>cvs [update aborted]: EOF in key in RCS file <VAR>file</VAR>,v</CODE>
+<DD><DT><CODE>cvs [checkout aborted]: EOF while looking for end of string in RCS file <VAR>file</VAR>,v</CODE>
+<DD>This means that there is a syntax error in the given
+RCS file.  Note that this might be true even if RCS can
+read the file OK; CVS does more error checking of
+errors in the RCS file.  That is why you may see this
+message when upgrading from CVS 1.9 to CVS
+1.10.  The likely cause for the original corruption is
+hardware, the operating system, or the like.  Of
+course, if you find a case in which CVS seems to
+corrupting the file, by all means report it,
+(see section <A HREF="cvs_23.html#SEC187">H. Dealing with bugs in CVS or this manual</A>).
+There are quite a few variations of this error message,
+depending on exactly where in the RCS file CVS
+finds the syntax error.
+<P>
+
+<A NAME="IDX346"></A>
+</P>
+<DT><CODE>cvs commit: Executing 'mkmodules'</CODE>
+<DD>This means that your repository is set up for a version
+of CVS prior to CVS 1.8.  When using CVS
+1.8 or later, the above message will be preceded by
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs commit: Rebuilding administrative file database
+</pre></td></tr></table><P>
+
+If you see both messages, the database is being rebuilt
+twice, which is unnecessary but harmless.  If you wish
+to avoid the duplication, and you have no versions of
+CVS 1.7 or earlier in use, remove <CODE>-i mkmodules</CODE>
+every place it appears in your <CODE>modules</CODE>
+file.  For more information on the <CODE>modules</CODE> file,
+see <A HREF="cvs_18.html#SEC157">C.1 The modules file</A>.
+</P>
+<P>
+
+</P>
+<DT><CODE>missing author</CODE>
+<DD>Typically this can happen if you created an RCS file
+with your username set to empty.  CVS will, bogusly,
+create an illegal RCS file with no value for the author
+field.  The solution is to make sure your username is
+set to a non-empty value and re-create the RCS file.
+<P>
+
+</P>
+<DT><CODE>cvs [checkout aborted]: no such tag <VAR>tag</VAR></CODE>
+<DD>This message means that CVS isn't familiar with
+the tag <VAR>tag</VAR>.  Usually this means that you have
+mistyped a tag name; however there are (relatively
+obscure) cases in which CVS will require you to
+try a few other CVS commands involving that tag,
+before you find one which will cause CVS to update
+the `<TT>val-tags</TT>' file; see discussion of val-tags in
+<A HREF="cvs_2.html#SEC13">2.2.2 File permissions</A>.  You only need to worry about
+this once for a given tag; when a tag is listed in
+`<TT>val-tags</TT>', it stays there.  Note that using
+`<SAMP>-f</SAMP>' to not require tag matches does not override
+this check; see <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>*PANIC* administration files missing</CODE>
+<DD>This typically means that there is a directory named
+CVS but it does not contain the administrative files
+which CVS puts in a CVS directory.  If the problem is
+that you created a CVS directory via some mechanism
+other than CVS, then the answer is simple, use a name
+other than CVS.  If not, it indicates a CVS bug
+(see section <A HREF="cvs_23.html#SEC187">H. Dealing with bugs in CVS or this manual</A>).
+<P>
+
+</P>
+<DT><CODE>rcs error: Unknown option: -x,v/</CODE>
+<DD>This message will be followed by a usage message for
+RCS.  It means that you have an old version of
+RCS (probably supplied with your operating
+system), as well as an old version of CVS.
+CVS 1.9.18 and earlier only work with RCS version 5 and
+later; current versions of CVS do not run RCS programs.
+<P>
+
+</P>
+<DT><CODE>cvs [server aborted]: received broken pipe signal</CODE>
+<DD>This message seems to be caused by a hard-to-track-down
+bug in CVS or the systems it runs on (we don't
+know--we haven't tracked it down yet!).  It seems to
+happen only after a CVS command has completed, and
+you should be able to just ignore the message.
+However, if you have discovered information concerning its
+cause, please let us know as described in <A HREF="cvs_23.html#SEC187">H. Dealing with bugs in CVS or this manual</A>.
+<P>
+
+</P>
+<DT><CODE>'root' is not allowed to commit files</CODE>
+<DD>When committing a permanent change, CVS makes a log entry of
+who committed the change.  If you are committing the change logged
+in as &quot;root&quot; (not under &quot;su&quot; or other root-priv giving program),
+CVS cannot determine who is actually making the change.
+As such, by default, CVS disallows changes to be committed by users
+logged in as &quot;root&quot;.  (You can disable this option by commenting out
+the definition of <CODE>CVS_BADROOT</CODE> in `<TT>options.h</TT>' before
+building CVS.
+<P>
+
+</P>
+<DT><CODE>Too many arguments!</CODE>
+<DD>This message is typically printed by the `<TT>log.pl</TT>'
+script which is in the `<TT>contrib</TT>' directory in the
+CVS source distribution.  In some versions of
+CVS, `<TT>log.pl</TT>' has been part of the default
+CVS installation.  The `<TT>log.pl</TT>' script gets
+called from the `<TT>loginfo</TT>' administrative file.
+Check that the arguments passed in `<TT>loginfo</TT>' match
+what your version of `<TT>log.pl</TT>' expects.  In
+particular, the `<TT>log.pl</TT>' from CVS 1.3 and
+older expects the logfile as an argument whereas the
+`<TT>log.pl</TT>' from CVS 1.5 and newer expects the
+logfile to be specified with a `<SAMP>-f</SAMP>' option.  Of
+course, if you don't need `<TT>log.pl</TT>' you can just
+comment it out of `<TT>loginfo</TT>'.
+<P>
+
+</P>
+<DT><CODE>cvs [update aborted]: unexpected EOF reading <VAR>file</VAR>,v</CODE>
+<DD>See `<SAMP>EOF in key in RCS file</SAMP>'.
+<P>
+
+</P>
+<DT><CODE>cvs [login aborted]: unrecognized auth response from <VAR>server</VAR></CODE>
+<DD>This message typically means that the server is not set
+up properly.  For example, if `<TT>inetd.conf</TT>' points
+to a nonexistent cvs executable.  To debug it further,
+find the log file which inetd writes
+(`<TT>/var/log/messages</TT>' or whatever inetd uses on
+your system).  For details, see <A HREF="cvs_21.html#SEC184">F.2 Trouble making a connection to a CVS server</A>, and
+<A HREF="cvs_2.html#SEC30">2.9.3.1 Setting up the server for password authentication</A>.
+<P>
+
+</P>
+<DT><CODE>cvs commit: Up-to-date check failed for `<VAR>file</VAR>'</CODE>
+<DD>This means that someone else has committed a change to
+that file since the last time that you did a <CODE>cvs
+update</CODE>.  So before proceeding with your <CODE>cvs
+commit</CODE> you need to <CODE>cvs update</CODE>.  CVS will merge
+the changes that you made and the changes that the
+other person made.  If it does not detect any conflicts
+it will report `<SAMP>M <VAR>file</VAR></SAMP>' and you are ready
+to <CODE>cvs commit</CODE>.  If it detects conflicts it will
+print a message saying so, will report `<SAMP>C <VAR>file</VAR></SAMP>',
+and you need to manually resolve the
+conflict.  For more details on this process see
+<A HREF="cvs_10.html#SEC86">10.3 Conflicts example</A>.
+<P>
+
+</P>
+<DT><CODE>Usage:	diff3 [-exEX3 [-i | -m] [-L label1 -L label3]] file1 file2 file3</CODE>
+<DD><TABLE><tr><td>&nbsp;</td><td class=example><pre>Only one of [exEX3] allowed
+</pre></td></tr></table>This indicates a problem with the installation of
+<CODE>diff3</CODE> and <CODE>rcsmerge</CODE>.  Specifically
+<CODE>rcsmerge</CODE> was compiled to look for GNU diff3, but
+it is finding unix diff3 instead.  The exact text of
+the message will vary depending on the system.  The
+simplest solution is to upgrade to a current version of
+CVS, which does not rely on external
+<CODE>rcsmerge</CODE> or <CODE>diff3</CODE> programs.
+<P>
+
+</P>
+<DT><CODE>warning: unrecognized response `<VAR>text</VAR>' from cvs server</CODE>
+<DD>If <VAR>text</VAR> contains a valid response (such as
+`<SAMP>ok</SAMP>') followed by an extra carriage return
+character (on many systems this will cause the second
+part of the message to overwrite the first part), then
+it probably means that you are using the `<SAMP>:ext:</SAMP>'
+access method with a version of rsh, such as most
+non-unix rsh versions, which does not by default
+provide a transparent data stream.  In such cases you
+probably want to try `<SAMP>:server:</SAMP>' instead of
+`<SAMP>:ext:</SAMP>'.  If <VAR>text</VAR> is something else, this
+may signify a problem with your CVS server.
+Double-check your installation against the instructions
+for setting up the CVS server.
+<P>
+
+</P>
+<DT><CODE>cvs commit: [<VAR>time</VAR>] waiting for <VAR>user</VAR>'s lock in <VAR>directory</VAR></CODE>
+<DD>This is a normal message, not an error.  See
+<A HREF="cvs_10.html#SEC88">10.5 Several developers simultaneously attempting to run CVS</A>, for more details.
+<P>
+
+</P>
+<DT><CODE>cvs commit: warning: editor session failed</CODE>
+<DD><A NAME="IDX347"></A>
+This means that the editor which CVS is using exits with a nonzero
+exit status.  Some versions of vi will do this even when there was not
+a problem editing the file.  If so, point the
+<CODE>CVSEDITOR</CODE> environment variable to a small script
+such as:
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>#!/bin/sh
+vi $*
+exit 0
+</pre></td></tr></table><P>
+
+</DL>
+<P>
+
+<A NAME="Connection"></A>
+<HR SIZE="6">
+<A NAME="SEC184"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_21.html#SEC183"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_21.html#SEC185"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_21.html#SEC182"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_21.html#SEC182"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_22.html#SEC186"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> F.2 Trouble making a connection to a CVS server </H2>
+<!--docid::SEC184::-->
+<P>
+
+This section concerns what to do if you are having
+trouble making a connection to a CVS server.  If
+you are running the CVS command line client
+running on Windows, first upgrade the client to
+CVS 1.9.12 or later.  The error reporting in
+earlier versions provided much less information about
+what the problem was.  If the client is non-Windows,
+CVS 1.9 should be fine.
+</P>
+<P>
+
+If the error messages are not sufficient to track down
+the problem, the next steps depend largely on which
+access method you are using.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<A NAME="IDX348"></A>
+<DT><CODE>:ext:</CODE>
+<DD>Try running the rsh program from the command line.  For
+example: &quot;rsh servername cvs -v&quot; should print CVS
+version information.  If this doesn't work, you need to
+fix it before you can worry about CVS problems.
+<P>
+
+<A NAME="IDX349"></A>
+</P>
+<DT><CODE>:server:</CODE>
+<DD>You don't need a command line rsh program to use this
+access method, but if you have an rsh program around,
+it may be useful as a debugging tool.  Follow the
+directions given for :ext:.
+<P>
+
+<A NAME="IDX350"></A>
+</P>
+<DT><CODE>:pserver:</CODE>
+<DD>Errors along the lines of &quot;connection refused&quot; typically indicate
+that inetd isn't even listening for connections on port 2401
+whereas errors like &quot;connection reset by peer&quot;,
+&quot;received broken pipe signal&quot;, or &quot;recv() from server: EOF&quot;
+typically indicate that inetd is listening for
+connections but is unable to start CVS (this is frequently
+caused by having an incorrect path in `<TT>inetd.conf</TT>').
+&quot;unrecognized auth response&quot; errors are caused by a bad command
+line in `<TT>inetd.conf</TT>', typically an invalid option or forgetting
+to put the `<SAMP>pserver</SAMP>' command at the end of the line.
+Another less common problem is invisible control characters that
+your editor &quot;helpfully&quot; added without you noticing.
+<P>
+
+One good debugging tool is to &quot;telnet servername
+2401&quot;.  After connecting, send any text (for example
+&quot;foo&quot; followed by return).  If CVS is working
+correctly, it will respond with
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs [pserver aborted]: bad auth protocol start: foo
+</pre></td></tr></table><P>
+
+If instead you get:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>Usage: cvs [cvs-options] command [command-options-and-arguments]
+...
+</pre></td></tr></table><P>
+
+then you're missing the `<SAMP>pserver</SAMP>' command at the end of the
+line in `<TT>inetd.conf</TT>'; check to make sure that the entire command
+is on one line and that it's complete.
+</P>
+<P>
+
+Likewise, if you get something like:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>Unknown command: `pserved'
+
+CVS commands are:
+        add          Add a new file/directory to the repository
+...
+</pre></td></tr></table><P>
+
+then you've misspelled `<SAMP>pserver</SAMP>' in some way.  If it isn't
+obvious, check for invisible control characters (particularly
+carriage returns) in `<TT>inetd.conf</TT>'.
+</P>
+<P>
+
+If it fails to work at all, then make sure inetd is working
+right.  Change the invocation in `<TT>inetd.conf</TT>' to run the
+echo program instead of cvs.  For example:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>2401  stream  tcp  nowait  root /bin/echo echo hello
+</pre></td></tr></table><P>
+
+After making that change and instructing inetd to
+re-read its configuration file, &quot;telnet servername
+2401&quot; should show you the text hello and then the
+server should close the connection.  If this doesn't
+work, you need to fix it before you can worry about
+CVS problems.
+</P>
+<P>
+
+On AIX systems, the system will often have its own
+program trying to use port 2401.  This is AIX's problem
+in the sense that port 2401 is registered for use with
+CVS.  I hear that there is an AIX patch available
+to address this problem.
+</P>
+<P>
+
+Another good debugging tool is the `<SAMP>-d</SAMP>'
+(debugging) option to inetd.  Consult your system
+documentation for more information.
+</P>
+<P>
+
+If you seem to be connecting but get errors like:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs server: cannot open /root/.cvsignore: Permission denied
+cvs [server aborted]: can't chdir(/root): Permission denied
+</pre></td></tr></table><P>
+
+then you probably haven't specified `<SAMP>-f</SAMP>' in `<TT>inetd.conf</TT>'.
+(In releases prior to CVS 1.11.1, this problem can be caused by
+your system setting the <CODE>$HOME</CODE> environment variable
+for programs being run by inetd.  In this case, you can either
+have inetd run a shell script that unsets <CODE>$HOME</CODE> and then runs
+CVS, or you can use <CODE>env</CODE> to run CVS with a pristine
+environment.)
+</P>
+<P>
+
+If you can connect successfully for a while but then can't,
+you've probably hit inetd's rate limit.
+(If inetd receives too many requests for the same service
+in a short period of time, it assumes that something is wrong
+and temporarily disables the service.)
+Check your inetd documentation to find out how to adjust the
+rate limit (some versions of inetd have a single rate limit,
+others allow you to set the limit for each service separately.)
+</DL>
+<P>
+
+<A NAME="Other problems"></A>
+<HR SIZE="6">
+<A NAME="SEC185"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_21.html#SEC184"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_22.html#SEC186"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_21.html#SEC182"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_21.html#SEC182"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_22.html#SEC186"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> F.3 Other common problems </H2>
+<!--docid::SEC185::-->
+<P>
+
+Here is a list of problems which do not fit into the
+above categories.  They are in no particular order.
+</P>
+<P>
+
+<UL>
+<LI>
+On Windows, if there is a 30 second or so delay when
+you run a CVS command, it may mean that you have
+your home directory set to `<TT>C:/</TT>', for example (see
+<CODE>HOMEDRIVE</CODE> and <CODE>HOMEPATH</CODE> in
+<A HREF="cvs_19.html#SEC180">D. All environment variables which affect CVS</A>).  CVS expects the home
+directory to not end in a slash, for example `<TT>C:</TT>'
+or `<TT>C:\cvs</TT>'.
+<P>
+
+</P>
+<LI>
+If you are running CVS 1.9.18 or older, and
+<CODE>cvs update</CODE> finds a conflict and tries to
+merge, as described in <A HREF="cvs_10.html#SEC86">10.3 Conflicts example</A>, but
+doesn't tell you there were conflicts, then you may
+have an old version of RCS.  The easiest solution
+probably is to upgrade to a current version of
+CVS, which does not rely on external RCS
+programs.
+</UL>
+<P>
+
+<A NAME="Credits"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_21.html#SEC182"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_22.html#SEC186"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>
+<FONT SIZE="-1">
+This document was generated
+by <I>Derek Robert Price</I> on <I>April, 18 2002</I>
+using <A HREF="http://texi2html.cvshome.org"><I>texi2html</I></A>
+</FONT>
+
+</BODY>
+</HTML>

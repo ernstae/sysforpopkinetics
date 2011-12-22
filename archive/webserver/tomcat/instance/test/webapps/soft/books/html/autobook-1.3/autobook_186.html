@@ -1,0 +1,288 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Loading a Module</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Loading a Module">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Loading a Module">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC186"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_185.html#SEC185" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Managing Module Loader Errors" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_187.html#SEC187" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Unloading a Module" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_187.html#SEC187" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Unloading a Module" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_183.html#SEC183" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: A Module Loading Subsystem" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_188.html#SEC188" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: A Loadable Module" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 20.1.3 Loading a Module </H3>
+<!--docid::SEC186::-->
+<P>
+
+Individual modules are managed by finding specified <EM>entry points</EM>
+(prescribed exported symbols) in the module:
+</P><P>
+
+<A NAME="IDX49"></A>
+<DL>
+<DT><U>Variable:</U> const Builtin * <B>builtin_table</B>
+<DD>An array of names of built-in commands implemented by a module, with
+associated handler functions.
+</DL>
+</P><P>
+
+<A NAME="IDX50"></A>
+<DL>
+<DT><U>Function:</U> void <B>module_init</B> <I>(Sic *<VAR>sic</VAR>)</I>
+<DD>If present, this function will be called when the module is loaded.
+</DL>
+</P><P>
+
+<A NAME="IDX51"></A>
+<DL>
+<DT><U>Function:</U> void <B>module_finish</B> <I>(Sic *<VAR>sic</VAR>)</I>
+<DD>If supplied, this function will be called just before the module is
+unloaded.
+</DL>
+</P><P>
+
+<A NAME="IDX52"></A>
+<DL>
+<DT><U>Variable:</U> const Syntax * <B>syntax_table</B>
+<DD>An array of syntactically significant symbols, and associated handler
+functions.
+</DL>
+</P><P>
+
+<A NAME="IDX53"></A>
+<DL>
+<DT><U>Function:</U> int <B>syntax_init</B> <I>(Sic *<VAR>sic</VAR>)</I>
+<DD>If specified, this function will be called by Sic before the syntax of
+each input line is analysed.
+</DL>
+</P><P>
+
+<A NAME="IDX54"></A>
+<DL>
+<DT><U>Function:</U> int <B>syntax_finish</B> <I>(Sic *<VAR>sic</VAR>, BufferIn *<VAR>in</VAR>, BufferOut *<VAR>out</VAR>)</I>
+<DD>Similarly, this function will be call after the syntax analysis of each
+line has completed.
+</DL>
+</P><P>
+
+All of the hard work in locating and loading the module, and extracting
+addresses for the symbols described above is performed by
+libltdl.  The <CODE>module_load</CODE> function below simply registers
+these symbols with the Sic interpreter so that they are called at the
+appropriate times -- or diagnoses any errors if things don't go
+according to plan:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>int
+module_load (Sic *sic, const char *name)
+{
+  lt_dlhandle module;
+  Builtin *builtin_table;
+  Syntax *syntax_table;
+  int status = SIC_OKAY;
+
+  last_error = NULL;
+
+  module = lt_dlopenext (name);
+
+  if (module)
+    {
+      builtin_table = (Builtin*) lt_dlsym (module, "builtin_table");
+      syntax_table = (Syntax *) lt_dlsym (module, "syntax_table");
+      if (!builtin_table &#38;&#38; !syntax_table)
+        {
+          lt_dlclose (module);
+          last_error = no_builtin_table_error;
+          module = NULL;
+        }
+    }
+
+  if (module)
+    {
+      ModuleInit *init_func
+        = (ModuleInit *) lt_dlsym (module, "module_init");
+      if (init_func)
+          (*init_func) (sic);
+    }
+
+  if (module)
+    {
+      SyntaxFinish *syntax_finish
+        = (SyntaxFinish *) lt_dlsym (module, "syntax_finish");
+      SyntaxInit *syntax_init
+        = (SyntaxInit *) lt_dlsym (module, "syntax_init");
+
+      if (syntax_finish)
+        sic-&#62;syntax_finish = list_cons (list_new (syntax_finish),
+                                        sic-&#62;syntax_finish);
+      if (syntax_init)
+        sic-&#62;syntax_init = list_cons (list_new (syntax_init),
+                                      sic-&#62;syntax_init);
+    }
+
+  if (module)
+    {
+      if (builtin_table)
+        status = builtin_install (sic, builtin_table);
+
+      if (syntax_table &#38;&#38; status == SIC_OKAY)
+        status = syntax_install (sic, module, syntax_table);
+
+      return status;
+    }
+
+  last_error = lt_dlerror();
+  if (!last_error)
+    last_error = module_not_found_error;
+
+  return SIC_ERROR;
+}
+
+</pre></td></tr></table></P><P>
+
+Notice that the generalised <CODE>List</CODE> data type introduced earlier
+(see section <A HREF="autobook_44.html#SEC44">9. A Small GNU Autotools Project</A>) is reused to keep a list of
+accumulated module initialisation and finalisation functions.
+</P><P>
+
+<A NAME="Unloading a Module"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

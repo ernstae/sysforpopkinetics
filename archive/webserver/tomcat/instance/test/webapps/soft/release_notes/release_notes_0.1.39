@@ -1,0 +1,14 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.39
+----------------------------------
+USER VISIBLE CHANGES
+Removed final likelihood estimates for theta, Omega and Sigma 
+that are translated from SPK's alpha.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 
+
+BY: Sachiko Honda
+
+WHEN: January 26, 2005

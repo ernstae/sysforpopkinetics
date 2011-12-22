@@ -1,0 +1,165 @@
+<html><head>
+<title>Constructor</title>
+<meta name="description" id="description" content="Constructor">
+<meta name="keywords" id="keywords" content=" Eqindmodel ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_eqindmodel_eqindmodel_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>population</option>
+<option>EqIndModel</option>
+<option>EqIndModel_EqIndModel</option>
+</select>
+</td>
+<td><a href="eqindmodel.htm" target="_top">Prev</a>
+</td><td><a href="eqindmodel_setindpar.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>population-&gt;</option>
+<option>estimateB</option>
+<option>expectedHessian</option>
+<option>ExpectedHessianFuncOb</option>
+<option>ExpectedHessianValarrayFuncOb</option>
+<option>firstOrderOpt</option>
+<option>fitPopulation</option>
+<option>EqIndModel</option>
+<option>lambda</option>
+<option>lambda_alp</option>
+<option>lambda_b</option>
+<option>lambdaFuncOb</option>
+<option>lambdaDiff</option>
+<option>lambda2diff</option>
+<option>lTilde</option>
+<option>NaiveFoModel</option>
+<option>namespace_population_analysis</option>
+<option>Objective</option>
+<option>ppkaOpt</option>
+<option>popResiduals</option>
+<option>popStatistics</option>
+<option>popStatistics_DerivExist</option>
+<option>popStatistics_DerivExist_AllElemActive</option>
+<option>twoStageMethod</option>
+<option>spk_non_par</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>EqIndModel-&gt;</option>
+<option>EqIndModel_EqIndModel</option>
+<option>EqIndModel_setIndPar</option>
+<option>EqIndModel_dataMean</option>
+<option>EqIndModel_dataMean_indPar</option>
+<option>EqIndModel_dataVariance</option>
+<option>EqIndModel_dataVariance_indPar</option>
+</select>
+</td>
+<td>EqIndModel_EqIndModel</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Arguments</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Constructor</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype:</b>   </td><td align='left'  valign='top'>
+  
+<code><font color="blue"><span style='white-space: nowrap'>EqIndModel::EqIndModel(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SpkModel&lt;double&gt;*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>pModel</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;valarray&lt;int&gt;&amp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>N</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;valarray&lt;double&gt;&amp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>bStep</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>nA</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)<br>
+</span></font></code></td></tr>
+</table>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This constructor takes four arguments, 
+<i>pModel</i>, <i>N</i>, <i>bStep</i> and <i>nA</i>,
+to initialize class member data.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>pModel</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>The <code><font color="blue">SpkModel*</font></code> <i>pModel</i> is a pointer to a 
+<a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+ class 
+instance that is used for population analysis. 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>N</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>The <code><font color="blue">valarray&lt;int&gt;</font></code> <i>N</i> contains an array of 
+int values, which specifies the number of data measurements for each 
+individual.  The number of elements in <i>N</i> must be equal to 
+<code><span style='white-space: nowrap'><i>nInd</i></span></code>, the number of individuals in the original 
+<a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+ class object.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>bStep</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>The <code><font color="blue">valarray&lt;double&gt;</font></code> <i>bStep</i> contains an array of 
+double values, which specifies the step size used for approximating
+
+     
+the derivatives with respect to the individual parameters.
+The size of <i>bStep</i> is equal to the length of 
+the individual parameter vector of the original 
+<a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+ class object.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nA</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>The <code><font color="blue">int</font></code> <i>nA</i> specifies the number of population 
+parameters of the original <a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+ class object.
+
+
+<hr>Input File: ../../spk/EqIndModel.cpp
+
+</body>
+</html>

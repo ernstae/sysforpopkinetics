@@ -1,0 +1,312 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: sic_builtin.c</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: sic_builtin.c">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: sic_builtin.c">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC66"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_65.html#SEC65" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: sic_syntax.c" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_67.html#SEC67" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: sic.c &#38; sic.h (again)" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_67.html#SEC67" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: sic.c &#38; sic.h (again)" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_63.html#SEC63" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: A Sample Shell Application" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_68.html#SEC68" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Introducing GNU Libtool" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 9.3.3 <TT>`sic_builtin.c'</TT> </H3>
+<!--docid::SEC66::-->
+<P>
+
+In addition to the syntax handlers I have just added to the Sic shell,
+the language of this shell is also defined by the builtin commands it
+provides.  The infrastructure for this file is built from a table of
+functions which is fed into various C preprocessor macros, just as I did
+for the syntax handlers.
+</P><P>
+
+One builtin handler function has special status, <CODE>builtin_unknown</CODE>.
+This is the builtin that is called, if the Sic library cannot find a
+suitable builtin function to handle the current input command.  At first
+this doesn't sound especially important -- but it is the key to any
+shell implementation.  When there is no builtin handler for the command,
+the shell will search the users command path, <SAMP>`$PATH'</SAMP>, to find a
+suitable executable.  And this is the job of <CODE>builtin_unknown</CODE>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>int
+builtin_unknown (Sic *sic, int argc, char *const argv[])
+{
+  char *path = path_find (argv[0]);
+  int status = SIC_ERROR;
+
+  if (!path)
+    {
+      sic_result_append (sic, "command \"");
+      sic_result_append (sic, argv[0]);
+      sic_result_append (sic, "\" not found");
+    }
+  else if (path_execute (sic, path, argv) != SIC_OKAY)
+    {
+      sic_result_append (sic, "command \"");
+      sic_result_append (sic, argv[0]);
+      sic_result_append (sic, "\" failed: ");
+      sic_result_append (sic, strerror (errno));
+    }
+  else
+    status = SIC_OKAY;
+
+  return status;
+}
+
+static char *
+path_find (const char *command)
+{
+  char *path = xstrdup (command);
+  
+  if (*command == '/')
+    {
+      if (access (command, X_OK) &#60; 0)
+        goto notfound;
+    }
+  else
+    {
+      char *PATH = getenv ("PATH");
+      char *pbeg, *pend;
+      size_t len;
+
+      for (pbeg = PATH; *pbeg != '\0'; pbeg = pend)
+        {
+          pbeg += strspn (pbeg, ":");
+          len = strcspn (pbeg, ":");
+          pend = pbeg + len;
+          path = XREALLOC (char, path, 2 + len + strlen(command));
+          *path = '\0';
+          strncat (path, pbeg, len);
+          if (path[len -1] != '/') strcat (path, "/");
+          strcat (path, command);
+          
+          if (access (path, X_OK) == 0)
+              break;
+        }
+
+      if (*pbeg == '\0')
+          goto notfound;
+    }
+
+  return path;
+
+ notfound:
+  XFREE (path);
+  return NULL;
+}  
+
+
+</pre></td></tr></table></P><P>
+
+Running <TT>`autoscan'</TT> again at this point adds
+<CODE>AC_CHECK_FUNCS(strcspn strspn)</CODE> to <TT>`configure.scan'</TT>.  This
+tells me that these functions are not truly portable.  As before I
+provide fallback implementations for these functions incase they are
+missing from the target host -- and as it turns out, they are easy to
+write:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>/* strcspn.c -- implement strcspn() for architectures without it */
+
+#if HAVE_CONFIG_H
+#  include &#60;sic/config.h&#62;
+#endif
+
+#include &#60;sys/types.h&#62;
+
+#if STDC_HEADERS
+#  include &#60;string.h&#62;
+#elif HAVE_STRINGS_H
+#  include &#60;strings.h&#62;
+#endif
+
+#if !HAVE_STRCHR
+#  ifndef strchr
+#    define strchr index
+#  endif
+#endif
+
+size_t
+strcspn (const char *string, const char *reject)
+{
+  size_t count = 0;
+  while (strchr (reject, *string) == 0)
+    ++count, ++string;
+
+  return count;
+}
+
+</pre></td></tr></table></P><P>
+
+There is no need to add any code to <TT>`Makefile.am'</TT>, because the
+<CODE>configure</CODE> script will automatically add the names of the
+missing function sources to <SAMP>`@LIBOBJS@'</SAMP>.
+</P><P>
+
+This implementation uses the <CODE>autoconf</CODE> generated
+<TT>`config.h'</TT> to get information about the availability of headers and
+type definitions.  It is interesting that <CODE>autoscan</CODE> reports
+that <CODE>strchr</CODE> and <CODE>strrchr</CODE>, which are used in the fallback
+implementations of <CODE>strcspn</CODE> and <CODE>strspn</CODE> respectively, are
+themselves not portable!  Luckily, the Autoconf manual tells me exactly
+how to deal with this:  by adding some code to my <TT>`common.h'</TT>
+(paraphrased from the literal code in the manual):
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if !STDC_HEADERS
+#  if !HAVE_STRCHR
+#    define strchr index
+#    define strrchr rindex
+#  endif
+#endif
+</pre></td></tr></table></P><P>
+
+And another macro in <TT>`configure.in'</TT>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>AC_CHECK_FUNCS(strchr strrchr)
+</pre></td></tr></table></P><P>
+
+<A NAME="sic.c &#38; sic.h (again)"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

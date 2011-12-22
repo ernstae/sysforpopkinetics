@@ -1,0 +1,36 @@
+<html><head>
+<title>Resize Dimension</title>
+<meta name="description" id="description" content="Resize Dimension">
+<meta name="keywords" id="keywords" content=" matrix Resize dimension Doublematrixresize(int int) "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="doublematrixresize.htm" target="_top">section</a>, <a href="doublematrixresize_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Changes the dimensions of the matrix.  <i>nr</i> and
+<i>nc</i> must be greater than or equal to zero.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If the product of <i>nr</i> and <i>nc</i> is
+different from of the original, it will re-allocate
+the data memory field.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If there is no enough resource available in the heap, it throws <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+ 
+of which the last <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+ is set to <code><font color="blue">SPK_INSUFFICIENT_MEM_ERR</font></code>.
+
+
+<hr>Input File: ../../spk/DoubleMatrix.cpp
+
+</body>
+</html>

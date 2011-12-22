@@ -1,0 +1,64 @@
+<html><head>
+<title>Write a Subelement of the Current Element that Contains a Single Value (Char Tag Version)</title>
+<meta name="description" id="description" content="Write a Subelement of the Current Element that Contains a Single Value (Char Tag Version)">
+<meta name="keywords" id="keywords" content=" Write Subelement Current Element Optimizer single value writevalue "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="writevalue.htm" target="_top">section</a>, <a href="writevalue_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Writes to the restart file a subelement of the current element
+that contains a single &quot;value&quot; element, i.e.,
+<code><font color="blue">
+
+    &lt;current_element&gt;
+        ...
+        &lt;subelement&gt;
+            &lt;value&gt;########&lt;/value&gt;
+        &lt;/subelement&gt;
+        ...
+    &lt;/current_element&gt;
+
+</font></code>
+where the sequence of number signs (#) represents the sequence of
+characters that constitute a single value.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>This function assumes that the current element start tag has 
+been written to the restart file before this function is called
+and that its end tag will be written after.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>ValType</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The type of the value.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pSubelementTag</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This argument specifies the name of the subelement of the current
+element that contains the single &quot;value&quot; element.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>valueIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This argument will be written as the contents of the single &quot;value&quot;
+element using the std::ostream insertion operator (&lt;&lt;), which converts
+it from type <i>ValueType</i> to a sequence of characters.
+
+
+<hr>Input File: ../../spk/Optimizer.cpp
+
+</body>
+</html>

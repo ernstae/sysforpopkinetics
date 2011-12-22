@@ -1,0 +1,415 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Backup to Whitechuck</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Backup to Whitechuck</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	The installation of a simple method to back up 
+	workstations to a remote server (the host whitechuck)
+	is described.
+    </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>April 22, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN12"
+>Prerequisites</A
+></DT
+><DT
+><A
+HREF="#AEN20"
+>Install the Shell Scripts</A
+></DT
+><DT
+><A
+HREF="#AEN24"
+>Set Up get-agent-data To Run at Startup</A
+></DT
+><DT
+><A
+HREF="#AEN43"
+>Edit Your Crontab</A
+></DT
+><DT
+><A
+HREF="#AEN59"
+>Check Your Work</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN12"
+></A
+>Prerequisites</H2
+><P
+>&#13;      Before attempting this installation, you should already have
+      followed the installation processes in the following RFPK
+      HOWTO documents:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    SSH Configuration HOWTO
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Electronic Notification HOWTO
+	  </P
+></LI
+></UL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN20"
+></A
+>Install the Shell Scripts</H2
+><P
+>&#13;      In a shell window, issue the following commands:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd
+mkdir bin
+cd bin
+scp whitechuck:/opt/download/shell.tgz .
+tar xvzf shell.tgz
+rm shell.tgz
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN24"
+></A
+>Set Up get-agent-data To Run at Startup</H2
+><P
+>&#13;      One of the scripts that you installed in the previous section
+      must be run by the Gnome desktop at startup, after the running
+      of <B
+CLASS="command"
+>ssh-add</B
+>.  The script,
+      named <B
+CLASS="command"
+>get-agent-data</B
+>, 
+      writes variable assignment statements (in shell script language) for
+      the environment variables that have just been set by 
+      <B
+CLASS="command"
+>ssh-agent</B
+> to a file, so that
+      they can later be read by other shell scripts running under the
+      cron batch scheduler.  
+    </P
+><P
+>&#13;      Perform the following menu sequence:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	  <B
+CLASS="guimenu"
+>Main</B
+> =&#62; <B
+CLASS="guimenu"
+>Extras</B
+> =&#62; <B
+CLASS="guimenu"
+>Preferences</B
+> =&#62; <B
+CLASS="guimenuitem"
+>Sessions</B
+> =&#62; left-click
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	This will open the <SPAN
+CLASS="interface"
+>Sessions</SPAN
+>
+	window.  Press the 
+	<B
+CLASS="guibutton"
+>Startup Programs</B
+> button
+	followed by
+	the <B
+CLASS="guibutton"
+>Add</B
+> button.  Then
+	set the following variables:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;Startup Command: /home/<I
+CLASS="emphasis"
+>username</I
+>/bin/shell/get-agent-data
+Priority: 75
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      where <I
+CLASS="emphasis"
+>username</I
+> is your username.
+      Close the window by pressing the
+      <B
+CLASS="guibutton"
+>OK</B
+> button.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN43"
+></A
+>Edit Your Crontab</H2
+><P
+>&#13;      The <B
+CLASS="command"
+>crontab -e</B
+> command will
+      open up an editor window, so that you can edit your 
+      <TT
+CLASS="filename"
+>crontab</TT
+> file.  The default
+      editor is <B
+CLASS="command"
+>vi</B
+>.  If you prefer
+      <B
+CLASS="command"
+>emacs</B
+>, add the following
+      two lines to your
+      <TT
+CLASS="filename"
+>~/.bash_profile</TT
+> file
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;EDITOR=emacs
+export EDITOR
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      and then restart your desktop.
+    </P
+><P
+>&#13;      Execute the following command:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;crontab -e
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      and an <B
+CLASS="command"
+>emacs</B
+> window should
+      appear, displaying the <TT
+CLASS="filename"
+>crontab</TT
+>
+      file, ready for editing.
+    </P
+><P
+>&#13;      Add the following line:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;30 2 * * 2-6 ~/bin/shell/backup-home-full
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      close the file, 
+      and your home directory will be backed up to
+      <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>
+      at 2:30 AM of each morning that follows a weekday.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN59"
+></A
+>Check Your Work</H2
+><P
+>&#13;      If everything goes well, you should be able to log into
+      <SPAN
+CLASS="systemitem"
+>whitechuck</SPAN
+>
+      the next morning and see the new file in the directory
+      <TT
+CLASS="filename"
+>~/backup</TT
+>.
+      If errors occur, they will be sent to the mail box on your
+      workstation, which you can read using
+      <B
+CLASS="command"
+>pine</B
+>.
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

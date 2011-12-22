@@ -1,0 +1,33 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.158
+----------------------------------
+USER VISIBLE CHANGES
+  None
+
+OTHER CHANGES
+  Converts fixed cov order from MinRep order to par order (since it is the cov pars that are being fixed, 
+  not the minimal representation of the covariance. 
+
+RELATED BUG REPORTS:
+  None
+
+BY:  David Salinger
+
+WHEN:  2/3/2006
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.159
+----------------------------------
+USER VISIBLE CHANGES
+
+Fixed bug related to the number of random effects elements allowed.
+
+OTHER CHANGES
+
+Improved specifications for the Two-Stage method function and its Pred
+library wrapper.
+
+RELATED BUG REPORTS:  539
+
+BY:  Mitch Watrous
+
+WHEN:  February 7, 2006

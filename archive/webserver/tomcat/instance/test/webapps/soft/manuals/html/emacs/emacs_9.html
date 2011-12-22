@@ -1,0 +1,135 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: M-x</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: M-x">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: M-x">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC41"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC40"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> F. Running Commands by Name </H1>
+<!--docid::SEC41::-->
+<P>
+
+  Every Emacs command has a name that you can use to run it.  Commands
+that are used often, or that must be quick to type, are also bound to
+keys--short sequences of characters--for convenient use.  You can
+run them by name if you don't remember the keys.  Other Emacs commands
+that do not need to be quick are not bound to keys; the only way to
+run them is by name.  See section <A HREF="emacs_33.html#SEC491">AD.4 Customizing Key Bindings</A>, for the description of
+how to bind commands to keys.
+</P><P>
+
+  By convention, a command name consists of one or more words,
+separated by hyphens; for example, <CODE>auto-fill-mode</CODE> or
+<CODE>manual-entry</CODE>.  The use of English words makes the command name
+easier to remember than a key made up of obscure characters, even
+though it is more characters to type.
+</P><P>
+
+<A NAME="IDX164"></A>
+  The way to run a command by name is to start with <KBD>M-x</KBD>, type the
+command name, and finish it with <KBD>RET</KBD>.  <KBD>M-x</KBD> uses the
+minibuffer to read the command name.  <KBD>RET</KBD> exits the minibuffer and
+runs the command.  The string <SAMP>`M-x'</SAMP> appears at the beginning of the
+minibuffer as a <EM>prompt</EM> to remind you to enter the name of a
+command to be run.  See section <A HREF="emacs_8.html#SEC31">E. The Minibuffer</A>, for full information on the
+features of the minibuffer.
+</P><P>
+
+  You can use completion to enter the command name.  For example, you
+can invoke the command <CODE>forward-char</CODE> by name by typing either
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>M-x forward-char <KBD>RET</KBD>
+</pre></td></tr></table></P><P>
+
+or
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>M-x forw <KBD>TAB</KBD> c <KBD>RET</KBD>
+</pre></td></tr></table></P><P>
+
+Note that <CODE>forward-char</CODE> is the same command that you invoke with
+the key <KBD>C-f</KBD>.  You can run any Emacs command by name using
+<KBD>M-x</KBD>, whether or not any keys are bound to it.
+</P><P>
+
+  If you type <KBD>C-g</KBD> while the command name is being read, you cancel
+the <KBD>M-x</KBD> command and get out of the minibuffer, ending up at top level.
+</P><P>
+
+  To pass a numeric argument to the command you are invoking with
+<KBD>M-x</KBD>, specify the numeric argument before the <KBD>M-x</KBD>.  <KBD>M-x</KBD>
+passes the argument along to the command it runs.  The argument value
+appears in the prompt while the command name is being read.
+</P><P>
+
+<A NAME="IDX165"></A>
+  If the command you type has a key binding of its own, Emacs mentions
+this in the echo area, two seconds after the command finishes (if you
+don't type anything else first).  For example, if you type <KBD>M-x
+forward-word</KBD>, the message says that you can run the same command more
+easily by typing <KBD>M-f</KBD>.  You can turn off these messages by setting
+<CODE>suggest-key-bindings</CODE> to <CODE>nil</CODE>.
+</P><P>
+
+  Normally, when describing in this manual a command that is run by
+name, we omit the <KBD>RET</KBD> that is needed to terminate the name.  Thus
+we might speak of <KBD>M-x auto-fill-mode</KBD> rather than <KBD>M-x
+auto-fill-mode <KBD>RET</KBD></KBD>.  We mention the <KBD>RET</KBD> only when there is
+a need to emphasize its presence, such as when we show the command
+together with following arguments.
+</P><P>
+
+<A NAME="IDX166"></A>
+  <KBD>M-x</KBD> works by running the command
+<CODE>execute-extended-command</CODE>, which is responsible for reading the
+name of another command and invoking it.
+<A NAME="Help"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_8.html#SEC31"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_10.html#SEC42"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

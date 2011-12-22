@@ -1,0 +1,34 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.142
+----------------------------------
+USER VISIBLE CHANGES
+0.1.141 contained extra materials that were untested.
+This version contains only the fixes promised for 0.1.141.
+
+OTHER CHANGES
+The previous version contained a new version of QN01Box (i.e. optimizer).
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: November 22, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.143
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Changed the directory structures under cspk/spk and cspk/spkpred.
+
+Changed configure.ac and Makefile.am under these directories/packages
+so that they can produce release (i.e. code-optimzied) verions
+of libraries.
+
+This candidate contains release versions of SPK and PRED libraries.
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: November 22, 2005

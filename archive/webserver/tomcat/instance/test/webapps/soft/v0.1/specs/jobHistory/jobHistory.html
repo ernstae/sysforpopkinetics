@@ -1,0 +1,613 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Job History Model</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Job History Model</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	The life history of an SPK job is represented as a
+	finite state automaton.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>July 31, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.1</TD
+><TD
+ALIGN="LEFT"
+>August 19, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: jiaji</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added job abortion.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN17"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN21"
+>Job State Diagram</A
+></DT
+><DT
+><A
+HREF="#AEN36"
+>Description of Elements</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN17"
+></A
+>Introduction</H2
+><P
+>&#13;      A job is created when the user combines a model with data and
+      submits this package to be run by Spk.  Submitting jobs is one
+      of the functions of the Model Design Agent (MDA), the graphical
+      interface that runs on the user's workstation.  The job is 
+      sent via the Internet to the Application Server (ASPK) to be
+      translated into computer source code.  Once compiled, it is 
+      sent onward, via the Internet to the Computational Server (CSPK)
+      to be translated into machine code and executed.
+    </P
+><P
+>&#13;      The life cycle of a job can be represented as a sequence of
+      states.  When a user inquires about the status of one of her
+      outstanding jobs, the answer is based on its current state.
+      The history
+      of a job is the sequences of states it has assumed, along
+      with the times of transition from one state to another and
+      any outputs that have occurred.  The purpose of this document
+      is to define the set of states that a job may pass through,
+      and the rules governing transitions from one state to the
+      next.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN21"
+></A
+>Job State Diagram</H2
+><P
+>&#13;      The following diagram represents the life cycle of a job as
+      a finite state automaton.  Four kinds of elements are present:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    States are represented by boxes.  
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Transitions are represented by arrows.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    An event is represented by text appearing near the 
+	    beginning of the arrow representing the transition 
+	    caused by the event.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    An output is represented by text appearing near the
+	    end of a transition arrow.  Not every transition 
+	    produces output.  To further distinguish an output
+	    from an event, the name of the output is preceded by
+	    the '&#62;' character.
+	  </P
+></LI
+></UL
+>
+      <DIV
+CLASS="figure"
+><A
+NAME="AEN33"
+></A
+><P
+><IMG
+SRC="job_state.png"></P
+><P
+><B
+>Figure 1. Job State Diagram</B
+></P
+></DIV
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN36"
+></A
+>Description of Elements</H2
+><P
+>&#13;      <DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>Begin</B
+></DT
+><DD
+><P
+>&#13;	      This state is purely formal.  The job is in this state
+	      until it is submitted.
+	    </P
+><P
+>&#13;	      <DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>submitted by MDA</B
+></DT
+><DD
+><P
+>&#13;		      This event occurs when the user commands the MDA
+		      to submit the job.  At that time, the job makes
+		      the transition to
+		      the <I
+CLASS="emphasis"
+>Queued to Compile</I
+> state.
+		    </P
+></DD
+></DL
+></DIV
+>
+	    </P
+></DD
+><DT
+><B
+>Queued to compile</B
+></DT
+><DD
+><P
+>&#13;	      The job is waiting in a prioritized queue until sufficient
+	      resources become available for the compiler to translate
+	      it from model specifications to computer source code.
+	      <DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>selected by ASPK compiler</B
+></DT
+><DD
+><P
+>&#13;		      occurs when compilation resources
+		      are available, there is no job of higher priority
+		      and there is no job of equal priority that has
+		      been waiting longer.
+		    </P
+></DD
+><DT
+><B
+>aborted by user</B
+></DT
+><DD
+><P
+>&#13;		      occurs when the user has requested to abort the job through the MDA.
+		    </P
+></DD
+><DT
+><B
+>aborted</B
+></DT
+><DD
+><P
+>&#13;		      When aborted the job comes to its <I
+CLASS="emphasis"
+>End</I
+> state. 
+		    </P
+></DD
+></DL
+></DIV
+>
+	    </P
+></DD
+><DT
+><B
+>Compiling</B
+></DT
+><DD
+><P
+>&#13;	      The compiler is processing the model specification.<DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>compiled error-free</B
+></DT
+><DD
+><P
+>&#13;		      When this event occurs, the job is ready to be
+		      queued for running
+		    </P
+></DD
+><DT
+><B
+>compiled with errors</B
+></DT
+><DD
+><P
+>&#13;		      If there are errors in the compilation, the
+		      job cannot be queued to run.  Instead, the
+		      next state is <I
+CLASS="emphasis"
+>End</I
+>.
+		    </P
+><P
+>&#13;		      An error report is output on this transition.
+		    </P
+></DD
+><DT
+><B
+>aborted by user</B
+></DT
+><DD
+><P
+>&#13;		      occurs when the user has requested to abort the job through the MDA.
+                      The next state is <I
+CLASS="emphasis"
+>Queued to abort compiling</I
+>.
+		    </P
+></DD
+><DT
+><B
+>aborted</B
+></DT
+><DD
+><P
+>&#13;		      When aborted the job comes to its <I
+CLASS="emphasis"
+>End</I
+> state. 
+		    </P
+></DD
+></DL
+></DIV
+>
+	    </P
+></DD
+><DT
+><B
+>Queued to run</B
+></DT
+><DD
+><P
+>&#13;	      The job is waiting in a prioritized queue for resources
+	      to assigned to it so that it can run.
+	      <DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>selected to run</B
+></DT
+><DD
+><P
+>&#13;		      The job is selected when sufficient resources
+		      become available for it to run, there is no job
+		      of higher priority in the queue, and there is 
+		      no job of equal priority that has been waiting
+		      longer.
+		    </P
+></DD
+><DT
+><B
+>priority changed</B
+></DT
+><DD
+><P
+>&#13;		      The priority of the job is changed.  It makes
+		      the transition back to the same state, but with
+		      the new priority.
+		    </P
+></DD
+><DT
+><B
+>aborted by user</B
+></DT
+><DD
+><P
+>&#13;		      occurs when the user has requested to abort the job through the MDA.
+		    </P
+></DD
+><DT
+><B
+>aborted</B
+></DT
+><DD
+><P
+>&#13;		      When aborted the job comes to its <I
+CLASS="emphasis"
+>End</I
+> state. 
+		    </P
+></DD
+></DL
+></DIV
+>
+	    </P
+></DD
+><DT
+><B
+>Running</B
+></DT
+><DD
+><P
+>&#13;	      The Computational Server (CSPK) is executing the job.
+	      <DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>finished</B
+></DT
+><DD
+><P
+>&#13;		      When finished (whether the problem converges
+		      satisfactorily or not) the job comes to 
+		      its <I
+CLASS="emphasis"
+>End</I
+> state. 
+		    </P
+><P
+>&#13;		      A report is output on this final transition.
+		    </P
+></DD
+><DT
+><B
+>aborted by user</B
+></DT
+><DD
+><P
+>&#13;		      occurs when the user has requested to abort the job through the MDA.
+                      The next state is <I
+CLASS="emphasis"
+>Queued to abort computation</I
+>.
+		    </P
+></DD
+></DL
+></DIV
+>
+	    </P
+></DD
+><DT
+><B
+>Queued to Abort Compiling</B
+></DT
+><DD
+><P
+>&#13;	      The job is waiting in a prioritized queue until sufficient
+	      resources become available for the compiler daemon to end the compilation.
+	      <DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>selected by compiler daemon</B
+></DT
+><DD
+><P
+>&#13;		      occurs when compiler daemon is available, there is 
+                      no aborting job of higher priority and there is no aborting 
+                      job of equal priority that has been waiting longer.
+		    </P
+></DD
+></DL
+></DIV
+>
+	    </P
+></DD
+><DT
+><B
+>Aborting Compilation</B
+></DT
+><DD
+><P
+>&#13;	      The compiler daemon is aborting the job.  
+	      <DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>aborted</B
+></DT
+><DD
+><P
+>&#13;		      When aborted the job comes to its <I
+CLASS="emphasis"
+>End</I
+> state.
+		    </P
+></DD
+></DL
+></DIV
+>
+	    </P
+></DD
+><DT
+><B
+>Queued to Abort Running</B
+></DT
+><DD
+><P
+>&#13;	      The job is waiting in a prioritized queue until sufficient
+	      resources become available for the run-time daemon to end the computation.
+	      <DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>selected by run-time daemon</B
+></DT
+><DD
+><P
+>&#13;		      occurs when run-time daemon is available, there is 
+                      no aborting job of higher priority and there is no aborting 
+                      job of equal priority that has been waiting longer.
+		    </P
+></DD
+></DL
+></DIV
+>
+	    </P
+></DD
+><DT
+><B
+>Aborting Computation</B
+></DT
+><DD
+><P
+>&#13;	      The run-time daemon is aborting the job.  
+	      <DIV
+CLASS="glosslist"
+><DL
+><DT
+><B
+>aborted</B
+></DT
+><DD
+><P
+>&#13;		      When aborted the job comes to its <I
+CLASS="emphasis"
+>End</I
+> state.
+		    </P
+></DD
+></DL
+></DIV
+>
+	    </P
+></DD
+><DT
+><B
+>End</B
+></DT
+><DD
+><P
+>&#13;	      This is the final state of every job.
+	    </P
+></DD
+></DL
+></DIV
+>
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

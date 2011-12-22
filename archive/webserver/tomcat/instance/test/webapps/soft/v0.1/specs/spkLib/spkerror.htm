@@ -1,0 +1,777 @@
+<html><head>
+<title>SpkError Class</title>
+<meta name="description" id="description" content="SpkError Class">
+<meta name="keywords" id="keywords" content=" Spkerror exception error handling ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_spkerror_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>general</option>
+<option>SpkError</option>
+</select>
+</td>
+<td><a href="rvecinverse.htm" target="_top">Prev</a>
+</td><td><a href="spkexception.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>general-&gt;</option>
+<option>ABA_x</option>
+<option>ABA_xVA</option>
+<option>addition</option>
+<option>AkronBtimesC</option>
+<option>AkronBtimesCRef</option>
+<option>AkronBtimesCVA</option>
+<option>AkronItimesC</option>
+<option>AkronItimesCVA</option>
+<option>allTrue</option>
+<option>allZero</option>
+<option>backDiv</option>
+<option>BlockAlloc</option>
+<option>blockDiagonalDerivative</option>
+<option>centdiff</option>
+<option>centdiffVA</option>
+<option>cholesky</option>
+<option>countTrues</option>
+<option>CovarianceClasses</option>
+<option>elsq</option>
+<option>elsqVA</option>
+<option>elsqFuncOb</option>
+<option>elsq_x</option>
+<option>elsq_xVA</option>
+<option>elsq_xDiag</option>
+<option>elsq_xBlockDiag</option>
+<option>DBL_EPS_EQUAL_MULT</option>
+<option>det</option>
+<option>detVA</option>
+<option>divByScalar</option>
+<option>DMclass</option>
+<option>elementwiseAnd</option>
+<option>elementwiseOr</option>
+<option>File</option>
+<option>FpErrorChecker</option>
+<option>ModelFunction</option>
+<option>ModelDerivative</option>
+<option>getCol</option>
+<option>getMulCols</option>
+<option>getMulRows</option>
+<option>getRow</option>
+<option>getSubblock</option>
+<option>identityNum</option>
+<option>identityVA</option>
+<option>IkronBtimesC</option>
+<option>IkronBtimesCVA</option>
+<option>inverse</option>
+<option>inverseVA</option>
+<option>inxToMax</option>
+<option>isDblEpsEqual</option>
+<option>isDmatEpsEqual</option>
+<option>isGreaterThanOrEqualTo</option>
+<option>isLessThanOrEqualTo</option>
+<option>isSymmetric</option>
+<option>matabs</option>
+<option>matmaxScalar</option>
+<option>matmaxMatrices</option>
+<option>matminScalar</option>
+<option>matminMatrices</option>
+<option>mulByScalar</option>
+<option>multiply</option>
+<option>norm</option>
+<option>Optimizer</option>
+<option>pi</option>
+<option>placeRows</option>
+<option>printInMatrix</option>
+<option>quasinewtonanybox</option>
+<option>replaceIth</option>
+<option>replaceJth</option>
+<option>replaceSubblockDoubleMatrix</option>
+<option>replaceSubblockValarray</option>
+<option>rvec</option>
+<option>rvecVA</option>
+<option>rvecInverse</option>
+<option>SpkError</option>
+<option>SpkException</option>
+<option>SpkValarray</option>
+<option>subtraction</option>
+<option>symmetrize</option>
+<option>symmetrizeVA</option>
+<option>System</option>
+<option>transpose</option>
+<option>transposeRef</option>
+<option>transposeVA</option>
+<option>transposeDerivative</option>
+<option>transposeDerivativeVA</option>
+<option>transposeRowBlocks</option>
+<option>transposeRowBlocksVA</option>
+<option>UTranTimesSymKronSymTimesU</option>
+<option>UTranTimesSymKronSymTimesU_x</option>
+<option>WarningsManager_constructor</option>
+<option>WarningsManager_addWarning</option>
+<option>WarningsManager_addWarningList</option>
+<option>WarningsManager_clearAllWarnings</option>
+<option>WarningsManager_anyWarnings</option>
+<option>WarningsManager_getWarningList</option>
+<option>WarningsManager_getAllWarnings</option>
+</select>
+</td>
+<td>SpkError</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Constructor Arguments</option>
+<option>Public Interfaces</option>
+<option>Class Members</option>
+<option>---..Error Codes</option>
+<option>---..Methods Returning Class Properties</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>SpkError Class</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Header: </b> </td><td align='left'  valign='top'>
+ 
+  SpkError.h </td></tr><tr><td align='left'  valign='top'>
+
+
+  <b>Constructor:</b> </td></tr><tr><td align='left'  valign='top'>
+
+  </td><td align='left'  valign='top'>
+ <code><font color="blue"><span style='white-space: nowrap'>SpkError()&nbsp;throw()</span></font></code>   </td></tr><tr><td align='left'  valign='top'>
+
+  </td><td align='left'  valign='top'>
+ <code><font color="blue"><span style='white-space: nowrap'>SpkError(enum&nbsp;ErrorCode&nbsp;</span></font></code><i><span style='white-space: nowrap'>errorcode</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>message</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;unsigned&nbsp;int&nbsp;</span></font></code><i><span style='white-space: nowrap'>line</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>filename</span></i><code><font color="blue"><span style='white-space: nowrap'>)&nbsp;throw()&nbsp;</span></font></code> </td></tr><tr><td align='left'  valign='top'>
+
+  </td><td align='left'  valign='top'>
+ <code><font color="blue"><span style='white-space: nowrap'>SpkError(const&nbsp;std::exception&nbsp;</span></font></code><i><span style='white-space: nowrap'>stde</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>message</span></i><code><font color="blue"><span style='white-space: nowrap'>,unsigned&nbsp;int&nbsp;</span></font></code><i><span style='white-space: nowrap'>line</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;char*&nbsp;</span></font></code><i><span style='white-space: nowrap'>filename</span></i><code><font color="blue"><span style='white-space: nowrap'>)&nbsp;throw()&nbsp;</span></font></code> </td></tr><tr><td align='left'  valign='top'>
+
+  </td><td align='left'  valign='top'>
+ <code><font color="blue"><span style='white-space: nowrap'>SpkError(const&nbsp;SpkError&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>right</span></i><code><font color="blue"><span style='white-space: nowrap'>)&nbsp;throw()&nbsp;</span></font></code> </td></tr><tr><td align='left'  valign='top'>
+
+  </td></tr>
+</table>
+<b>See also: </b> <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+
+  <br>
+<br>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+  </i>
+  </center><code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></code>
+  <b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+An object of this class represents an error.  It can record an error code
+  describing the nature of the detected error, the line number at which the
+  error was detected, the name of the file in which the error was detected,
+  and an additional arbitrary information.
+  <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></code>
+  An object of this class is not to be thrown by itself alone.  
+  Instead, <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+ is designed to represent
+  an exception that can be thrown and caught.  
+  <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></code>
+  This class should not be derived.  If derived, the pieces of information only
+  relevant to the derived class will not be carried out properly.
+
+
+  <br>
+<br>
+<b><big><a name="Constructor Arguments" id="Constructor Arguments">Constructor Arguments</a></big></b>
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>errorcode</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  is a legal value defined in <code><font color="blue">SpkError::ErrorCode</font></code> enumulator.
+  See the list of legal values under &quot;Error Codes&quot; in this document.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>message</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  is a NULL terminated string that represents an error message.
+  The number of characters must be greater than 0 and shall not exceed 
+  the value returned by <code><font color="blue">maxMessageLen()</font></code>.
+  A message may not contain the <code><font color="blue">\r</font></code> escape character.
+  The behavior when a value violating the above is given is undefined.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>linenum</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  should indicate the line number at which the error was detected.  
+  You might find it convenient to use an ANSII macro, <code><font color="blue">__LINE__</font></code>.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>filename</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  should indicate the filename in which the error was detected.
+  You might find it convenient to use an ANSII macro, <code><font color="blue">__FILE__</font></code>.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>stde</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  is an std::exception object.  The error code is set to <code><font color="blue">SpkError::SPK_STD_ERR</font></code>.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>right</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;</span></font></code>
+  is an <code><font color="blue">SpkError</font></code> object.  The state and information held within <i>right</i>
+  will be copied into the left hand side object.
+
+
+  <br>
+<br>
+<b><big><a name="Public Interfaces" id="Public Interfaces">Public Interfaces</a></big></b>
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;const&nbsp;SpkError&amp;&nbsp;operator=(const&nbsp;SpkError&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>right</span></i><code><font color="blue"><span style='white-space: nowrap'>)&nbsp;<br>
+&nbsp;&nbsp;</span></font></code>
+  Assignment operator.  The state and information held within the right hand side object
+  will be copied into the left hand side object.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;unsigned&nbsp;int&nbsp;code()&nbsp;const&nbsp;throw()<br>
+&nbsp;&nbsp;</span></font></code>
+  Returns the error code.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;unsigned&nbsp;int&nbsp;linenum()&nbsp;const&nbsp;throw()<br>
+&nbsp;&nbsp;</span></font></code>
+  Returns the line number.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;const&nbsp;char*&nbsp;filename()&nbsp;const&nbsp;throw()<br>
+&nbsp;&nbsp;</span></font></code>
+  Returns the name of the file.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;const&nbsp;char*&nbsp;message()&nbsp;const&nbsp;throw()<br>
+&nbsp;&nbsp;</span></font></code>
+  Returns the error message.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;friend&nbsp;std::istream&amp;&nbsp;operator&gt;&gt;(std::istream&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>stream</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;SpkError&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>e</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+&nbsp;&nbsp;</span></font></code>
+  Read information from <i>stream</i> and insert it into <i>e</i>.
+  <i>stream</i> may contain more than one serialized SpkError objects.
+
+  A serialized SpkError object is in the format of:
+  <code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&lt;error&gt;\n<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;code&gt;ERROR_CODE&lt;/code&gt;\n<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;file_name&gt;FILE_NAME&lt;/file_name&gt;\n<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;line_number&gt;LINE_NUMBER&lt;/line_number&gt;\n<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;message&gt;MESSAGE&lt;/message&gt;\n<br>
+&nbsp;&nbsp;&lt;/error&gt;\n<br>
+&nbsp;&nbsp;</span></code>
+  <table><tr><td align='left'  valign='top'>
+
+  <b>ERROR_CODE</b>  </td><td align='left'  valign='top'>
+ an SpkError::ErrorCode value associated with the error.</td></tr><tr><td align='left'  valign='top'>
+
+  <b>FILE_NAME</b>   </td><td align='left'  valign='top'>
+ the name of the file in which the error is found. </td></tr><tr><td align='left'  valign='top'>
+
+  <b>LINE_NUMBER</b> </td><td align='left'  valign='top'>
+ the line number at which the error is found. </td></tr><tr><td align='left'  valign='top'>
+
+  <b>MESSAGE</b>     </td><td align='left'  valign='top'>
+ an error message.</td></tr><tr><td align='left'  valign='top'>
+
+  </td></tr>
+</table>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;friend&nbsp;const&nbsp;std::string&amp;&nbsp;operator&gt;&gt;(const&nbsp;std::string&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>s</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;SpkError&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>e</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+&nbsp;&nbsp;</span></font></code>
+  Behaves the same as <code><font color="blue">std::istream&amp; SpkError::operator&gt;&gt;(std::istream&amp;, SpkError&amp;)</font></code>
+  does, except this version takes a std::string object in place of std::istream.
+
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;friend&nbsp;std::ostream&amp;&nbsp;operator&lt;&lt;(std::ostream&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>stream</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;SpkError&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>e</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+&nbsp;&nbsp;</span></font></code>
+  Read information from <i>e</i> and extract to <i>stream</i>
+  in the format described in the <code><font color="blue">
+  std::istream&amp; SpkError::operator&gt;&gt;(std::istream&amp;, SpkError&amp;)</font></code> section.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;friend&nbsp;std::string&amp;&nbsp;operator&lt;&lt;(std::string&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>s</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;SpkError&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>e</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+&nbsp;&nbsp;</span></font></code>
+  Behaves the same as <code><font color="blue">std::ostream&amp; SpkError::operator&lt;&lt;(std::ostream&amp;, SpkError&amp;)</font></code>
+  does, except this version takes a std::string object in place of std::ostream.
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;friend&nbsp;void&nbsp;formatLongError(<br>
+&nbsp;&nbsp;enum&nbsp;SpkError::ErrorCode&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>ecode</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;const&nbsp;std::string&amp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>mess</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;unsigned&nbsp;int&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>line</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;const&nbsp;char*&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>file</span></i><code><font color="blue"><span style='white-space: nowrap'>,<br>
+&nbsp;&nbsp;std::string&amp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>formattedError</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)<br>
+&nbsp;&nbsp;</span></font></code>
+
+  Formats error messages that are too long to be stored in SpkError
+  objects.
+  This allows these long messages to be displayed in the same
+  way as SpkError messages, but it does not allow them to be included
+  in the list of SpkErrors maintained by an
+  <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+.
+  <code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;</span></code>
+  In particular, this function sets <i>formattedError</i> equal to an
+  error message formatted as described in the 
+  <code><font color="blue">std::istream&amp; SpkError::operator&gt;&gt;(std::istream&amp;, SpkError&amp;)</font></code> 
+  section with the error code equal to <i>ecode</i>, the
+  message equal to <i>mess</i>, the line number equal to <i>
+  line</i>, and the file name equal to <i>file</i>.
+
+
+  <br>
+<br>
+<b><big><a name="Class Members" id="Class Members">Class Members</a></big></b>
+
+  <br>
+<br>
+<b><a name="Class Members.Error Codes" id="Class Members.Error Codes">Error Codes</a></b>
+<br>
+The following values have the type of <code><font color="blue">static enum ErrorCode</font></code> and are published as public class members:
+
+  <table><tr><td align='left'  valign='top'>
+
+  SPK_TOO_MANY_ITER       </td><td align='left'  valign='top'>
+
+  See the description of <code><font color="blue">NW_TOO_MANY_ITER</font></code> in <b>NAG C Library Mark 5</b>.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_NOT_CONVERGED       </td><td align='left'  valign='top'>
+
+  See the description of <code><font color="blue">NW_NOT_CONVERTED</font></code> in <b>NAG C Library Mark 5</b>.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_KT_CONDITIONS       </td><td align='left'  valign='top'>
+
+  See the description of <code><font color="blue">NW_KT_CONDITIONS</font></code> in <b>NAG C Library Mark 5</b>.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_LIN_NOT_FEASIBLE    </td><td align='left'  valign='top'>
+
+  See the description of <code><font color="blue">NW_LIN_NOT_FEASIBLE</font></code> in <b>NAG C Library Mark 5</b>.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_NONLIN_NOT_FEASIBLE </td><td align='left'  valign='top'>
+
+  See the description of <code><font color="blue">NW_NONLIN_NOT_FEASIBLE</font></code> in <b>NAG C Library Mark 5</b>.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_OPT_ERR     </td><td align='left'  valign='top'>
+
+  indicates a non-specific optimization-related error.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_OPT_WARNING     </td><td align='left'  valign='top'>
+
+  indicates a non-specific optimization-related <b>warning</b>.  
+  NOTE: This category of non-fatal errors should be later handled by
+  a mechanism different from the exception handling.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_UNKNOWN_OPT_ERR     </td><td align='left'  valign='top'>
+
+  indicates an yet-to-be-identified error reported by the optimizer.  
+  This should be further classified as more errors are identified.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  </td><td align='left'  valign='top'>
+
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_NOT_IMPLEMENTED_ERR       </td><td align='left'  valign='top'>
+
+  indicates that the virtual function representing the model is
+  not implemented by user.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_SET_IND_ERR               </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_setindpar.htm" target="_top"><span style='white-space: nowrap'>setIndPar</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_SET_POP_ERR               </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_setpoppar.htm" target="_top"><span style='white-space: nowrap'>setPopPar</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_SET_INDEX_ERR             </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_selectindividual.htm" target="_top"><span style='white-space: nowrap'>selectIndividual</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_DATA_MEAN_ERR             </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_datamean.htm" target="_top"><span style='white-space: nowrap'>dataMean</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_DATA_MEAN_POP_ERR         </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_datamean_poppar.htm" target="_top"><span style='white-space: nowrap'>dataMean_popPar</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_DATA_MEAN_IND_ERR         </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_datamean_indpar.htm" target="_top"><span style='white-space: nowrap'>dataMean_indPar</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+  SPK_MODEL_DATA_VARIANCE_ERR         </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_datavariance.htm" target="_top"><span style='white-space: nowrap'>dataVariance</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_DATA_VARIANCE_POP_ERR     </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_datavariance_poppar.htm" target="_top"><span style='white-space: nowrap'>dataVariance_popPar</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_DATA_VARIANCE_IND_ERR     </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_datavariance_indpar.htm" target="_top"><span style='white-space: nowrap'>dataVariance_indPar</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_INV_DATA_VARIANCE_ERR     </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_datavarianceinv.htm" target="_top"><span style='white-space: nowrap'>dataVarianceInv</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_INV_DATA_VARIANCE_POP_ERR </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_datavarianceinv_poppar.htm" target="_top"><span style='white-space: nowrap'>dataVarianceInv_popPar</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_INV_DATA_VARIANCE_IND_ERR </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_datavarianceinv_indpar.htm" target="_top"><span style='white-space: nowrap'>dataVarianceInv_indPar</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_IND_VARIANCE_ERR          </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_indparvariance.htm" target="_top"><span style='white-space: nowrap'>indParVariance</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_IND_VARIANCE_POP_ERR      </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_indparvariance_poppar.htm" target="_top"><span style='white-space: nowrap'>indParVariance_popPar</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_INV_IND_VARIANCE_ERR      </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_indparvarianceinv.htm" target="_top"><span style='white-space: nowrap'>indParVarianceInv</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_MODEL_INV_IND_VARIANCE_POP_ERR  </td><td align='left'  valign='top'>
+
+  indicates an error detected in <a href="spkmodel_indparvarianceinv_poppar.htm" target="_top"><span style='white-space: nowrap'>indParVarianceInv_popPar</span></a>
+.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  </td><td align='left'  valign='top'>
+
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_FP_UNDERFLOW_ERR    </td><td align='left'  valign='top'>
+
+  indicates an underflow has been detected.
+  </td></tr><tr><td align='left'  valign='top'>
+
+  SPK_FP_OVERFLOW_ERR     </td><td align='left'  valign='top'>
+
+  indicates an overflow has been detected.
+  </td></tr><tr><td align='left'  valign='top'>
+
+  SPK_FP_DENORMAL_ERR     </td><td align='left'  valign='top'>
+
+  indicates an denormal loss has been detected.
+  </td></tr><tr><td align='left'  valign='top'>
+
+  SPK_FP_INEXACT_ERR      </td><td align='left'  valign='top'>
+
+  indicates an inexact representation has been detected.
+  </td></tr><tr><td align='left'  valign='top'>
+
+  SPK_FP_INVALID_ERR      </td><td align='left'  valign='top'>
+
+  indicates an invalid representation has been detected.
+  </td></tr><tr><td align='left'  valign='top'>
+
+  SPK_FP_ZERODIVIDE_ERR   </td><td align='left'  valign='top'>
+
+  indicates a divide by zero error has been detected.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  </td><td align='left'  valign='top'>
+
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_STD_ERR             </td><td align='left'  valign='top'>
+
+  indicates an error from the standard library.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_DIFF_ERR            </td><td align='left'  valign='top'>
+
+  indicates an error occurred during differentiation.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_NOT_INVERTABLE_ERR  </td><td align='left'  valign='top'>
+
+  indicates that the matrix is not invertible.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_NOT_POS_DEF_ERR </td><td align='left'  valign='top'>
+
+  indicates that the matrix is not positive definite.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_NOT_SYMMETRIC_ERR </td><td align='left'  valign='top'>
+
+  indicates that the matrix is not symmetric.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_SIMULATION_ERR </td><td align='left'  valign='top'>
+
+  indicates some error occurred during data simulation.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_IND_PAR_AT_BOUNDS_ERR </td><td align='left'  valign='top'>
+
+  indicates that the parameter estimates for one of the
+  individuals is at its lower or upper bound.
+
+  SPK_IND_OBJ_HESS_ERR </td><td align='left'  valign='top'>
+
+  indicates some error occurred that involved the Hessian 
+  of one of an individual's objective function.
+
+  SPK_STATISTICS_ERR </td><td align='left'  valign='top'>
+
+  indicates some error occurred during calculating statistics.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_USER_INPUT_ERR      </td><td align='left'  valign='top'>
+
+  This constant value is to be used to indicate an invalid parameter value given by the end user.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_PARALLEL_ERR        </td><td align='left'  valign='top'>
+
+  indicates an error occurred during the Master-Node communication.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_PARALLEL_END_SIGNAL  </td><td align='left'  valign='top'>
+
+  indicates the end of Spk.  This is not an error; it is a signal generated in an exceptional circumstance. 
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_PROGRAMMER_ERR </td><td align='left'  valign='top'>
+
+  indicates the library implementor's programming error.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_INSUFFICIENT_MEM_ERR     </td><td align='left'  valign='top'>
+
+  indicates insufficiency in the heap to dynamically allocate more memory.
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  </td><td align='left'  valign='top'>
+
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_XMLDOM_ERR         </td><td align='left'  valign='top'>
+
+  This constant value is to be used to indicate a syntax error in DOMDocument.
+  </td></tr><tr><td align='left'  valign='top'>
+
+  
+  </td><td align='left'  valign='top'>
+
+  </td></tr><tr><td align='left'  valign='top'>
+
+
+  SPK_UNKNOWN_ERR         </td><td align='left'  valign='top'>
+
+  This constant value is to be used to indicate an invalid parameter value given by the end user.
+  </td></tr><tr><td align='left'  valign='top'>
+
+  </td></tr>
+</table>
+<br>
+<b><a name="Class Members.Methods Returning Class Properties" id="Class Members.Methods Returning Class Properties">Methods Returning Class Properties</a></b>
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;static&nbsp;unsigned&nbsp;int&nbsp;maxLinenum()&nbsp;const&nbsp;throw()<br>
+&nbsp;&nbsp;</span></font></code>
+  This class member function returns the maximum value allowed for a line number.
+  A line number greater than this value will lose digits.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;static&nbsp;unsigned&nbsp;int&nbsp;maxFilenameLen()&nbsp;const&nbsp;throw()<br>
+&nbsp;&nbsp;</span></font></code>
+  This class member function returns the maximum number of characters allowed for a file name
+  A file name (with path) longer than this value will be trancated.
+
+  <code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;static&nbsp;unsigned&nbsp;int&nbsp;maxMessageLen()&nbsp;const&nbsp;throw()<br>
+&nbsp;&nbsp;</span></font></code>
+  This class member function returns the maximum number of characters allowed for a message.
+  A message longer than this value will be trancated.
+
+
+
+  <br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you save the following as <code><font color="blue">main.cpp</font></code>, compile, link, and run:
+  <code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;SpkException.h&quot;<br>
+<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;int&nbsp;main()<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;SpkError&nbsp;e(SpkError::SPK_FP_ZERODIVIDE_ERR,&nbsp;&quot;Divide&nbsp;by&nbsp;zero&nbsp;error&quot;,&nbsp;__LINE__,&nbsp;__FILE__);<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;e&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;return&nbsp;0;<br>
+&nbsp;&nbsp;}<br>
+<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+  <code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;errorcode<br>
+</span>
+</font></code>
+<i>... an integer defined as SpkError::SPK_FP_ZERODIVIDE_ERR (e.x. 3) ... </i>
+  <code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;description<br>
+&nbsp;&nbsp;SPK_FP_ZERODIVIDE_ERR<br>
+&nbsp;&nbsp;linenum<br>
+&nbsp;&nbsp;8<br>
+&nbsp;&nbsp;filename<br>
+&nbsp;&nbsp;main.cpp<br>
+&nbsp;&nbsp;message<br>
+&nbsp;&nbsp;floating&nbsp;point&nbsp;error<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/SpkError.cpp
+
+</body>
+</html>

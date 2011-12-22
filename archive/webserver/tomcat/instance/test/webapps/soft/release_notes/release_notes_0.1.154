@@ -1,0 +1,71 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.150
+----------------------------------
+USER VISIBLE CHANGES
+Interrupted jobs will start from where they were left out.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 522
+
+BY: Sachiko Honda
+
+WHEN: December 19, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.151
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+SPK Compiler recognizes three new objectives as <pop_analysis::approximation>
+attribute values:
+
+  std_two_stage
+  global_two_stage
+  iterative_two_stage
+
+RELATED BUG REPORTS: 527
+
+BY: Sachiko Honda
+
+WHEN: December 19, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.152
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Map Bayesian based two stage methods are incorporated at the SPK Compiler level.
+
+RELATED BUG REPORTS: 528
+
+BY: Sachiko Honda
+
+WHEN: December 20, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.153
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+XML tags and attribute names/values used within SpkSourceML and SpkDataML
+are now bundled in an independent data structure, struct XmlConstants.
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: December 20, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.154
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Replaced the NonmemKeyword structure with the 'nonmem' namespace.
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: December 21, 2005

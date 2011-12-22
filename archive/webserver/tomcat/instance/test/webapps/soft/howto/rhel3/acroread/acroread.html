@@ -1,0 +1,413 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Acrobat Reader Installation</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Acrobat Reader Installation</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	RedHat Linux is no longer shipped with a version of the
+	Acrobat Reader. Instead, several less capable programs
+	are included for displaying .pdf files.  Fortunately,
+	it is easy to install <B
+CLASS="command"
+>acroread</B
+>,
+	the .pdf reader from Adobe.  This document describes the
+	installation process.
+    </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>April 28, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.01</TD
+><TD
+ALIGN="LEFT"
+>December 30, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Relative to RHEL Version 3..</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN18"
+>Download and Install the Package</A
+></DT
+><DT
+><A
+HREF="#AEN23"
+>Fix Up Internationalization</A
+></DT
+><DT
+><A
+HREF="#AEN37"
+>Test the Package Installation</A
+></DT
+><DT
+><A
+HREF="#AEN41"
+>Configure the Gnome Desktop</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN18"
+></A
+>Download and Install the Package</H2
+><P
+>&#13;      Open a shell window, as an ordinary user, and enter the
+      following commands:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /tmp
+scp 'whitechuck:/opt/download/AdobeReader*' .
+su
+
+    <I
+CLASS="emphasis"
+>enter your root password at this point</I
+>
+
+rpm -Uhv AdobeReader*.rpm
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN23"
+></A
+>Fix Up Internationalization</H2
+><P
+>&#13;      For some reason, this version of
+      <B
+CLASS="command"
+>acroread</B
+> does not work 
+      correctly with the defaults set by RedHat.  This is
+      easily corrected.
+    </P
+><P
+>&#13;      As <SPAN
+CLASS="systemitem"
+>root</SPAN
+>,
+      place the <TT
+CLASS="filename"
+>acroread</TT
+> shell
+      script under local source control: 
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /usr/lib/Acrobat5/bin
+ci -l acroread
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      With your favorite editor,
+      edit <TT
+CLASS="filename"
+>acroread</TT
+>.
+      Just after the comment that starts the file, enter
+      two lines:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;LANG=C
+export LANG
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      You can use <B
+CLASS="command"
+>rcsdiff -c</B
+> to
+      verify that your editing is correct:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;rcsdiff -c acroread
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN37"
+></A
+>Test the Package Installation</H2
+><P
+>&#13;      Open a shell window as an ordinary user, and enter the
+      command:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;acroread
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      If the Acrobat Reader comes up, your installation is a
+      success.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN41"
+></A
+>Configure the Gnome Desktop</H2
+><P
+>&#13;      To get full use of the Acrobat Reader, we will next 
+      make it the default reader that the desktop uses to open
+      a .pdf file.  Perform the following menu operations:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;<B
+CLASS="guimenu"
+>Main</B
+> =&#62; <B
+CLASS="guimenu"
+>Preferences</B
+> =&#62; <B
+CLASS="guimenu"
+>File Types and Programs</B
+>
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      At this point the "File Types and Programs" window will appear; continue:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;<B
+CLASS="guimenu"
+>Documents</B
+> =&#62; <B
+CLASS="guimenu"
+>Published Materials</B
+> =&#62; <B
+CLASS="guimenuitem"
+>PDF document</B
+>
+
+Press the <B
+CLASS="guibutton"
+>Edit</B
+> button
+      </PRE
+></TD
+></TR
+></TABLE
+>
+and the "Edit file type" window will appear.
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;	<I
+CLASS="emphasis"
+>From </I
+>
+
+<B
+CLASS="guimenu"
+>Default action</B
+>
+
+	<I
+CLASS="emphasis"
+>choose</I
+>
+
+<B
+CLASS="guimenuitem"
+>Adobe Acrobat Reader</B
+>
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      Test this by opening a Nautilus window
+      (it may be on your desktop as <I
+CLASS="emphasis"
+>username's Home</I
+>
+      where <I
+CLASS="emphasis"
+>username</I
+> is your username).  Click
+      on the image of a .pdf file, and the the Acrobat Reader should
+      start.
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

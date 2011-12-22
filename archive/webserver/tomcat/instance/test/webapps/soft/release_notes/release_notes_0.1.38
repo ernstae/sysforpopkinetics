@@ -1,0 +1,29 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.37
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+The likelihood estimate for the population parameter (ie. alpha)
+and its corresponding step size are returned in the column
+major order, which was supposed to be.
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: January 25, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.38
+----------------------------------
+USER VISIBLE CHANGES
+The final estimate of SPK's population parameter (ie. alpha)
+is reported back to the user in a proper format.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: January 26, 2005

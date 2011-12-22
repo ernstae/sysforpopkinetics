@@ -1,0 +1,79 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.192
+----------------------------------
+USER VISIBLE CHANGES
+  None
+
+OTHER CHANGES
+   Change generated DataSet.h to attempt to fix large dataset compile failures.
+
+RELATED BUG REPORTS:
+   637
+
+BY:
+  David Salinger
+
+WHEN:
+  11/29/2006
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.193
+----------------------------------
+USER VISIBLE CHANGES
+  None
+
+OTHER CHANGES
+  Change generated DataSet.h to attempt to fix large dataset compile failures... made teh data arrays "const".  <<Note:  this version did not make the changes.. they are made in the following verion>>
+RELATED BUG REPORTS:
+   637
+
+BY:
+  David Salinger
+WHEN:
+  11/30/2006
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.194
+----------------------------------
+USER VISIBLE CHANGES
+  None
+
+OTHER CHANGES
+  Change generated DataSet.h to attempt to fix large dataset compile failures... made the data arrays "const".
+RELATED BUG REPORTS:
+   637
+
+BY:
+  David Salinger
+WHEN:
+ 11/30/2006
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.195
+----------------------------------
+USER VISIBLE CHANGES
+
+Added identiability capabilities to SPK.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  None.
+
+BY:  Mitch Watrous
+
+WHEN:  December 5, 2006
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.196
+----------------------------------
+USER VISIBLE CHANGES
+
+Fixed bugs in SPK's identifiability capabilities.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  None.
+
+BY:  Mitch Watrous
+
+WHEN:  December 18, 2006

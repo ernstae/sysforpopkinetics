@@ -1,0 +1,694 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Convenience Libraries</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Convenience Libraries">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Convenience Libraries">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC92"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_91.html#SEC91" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Library Versioning" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_93.html#SEC93" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: A Large GNU Autotools Project" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_83.html#SEC83" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Using GNU Libtool" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_83.html#SEC83" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Using GNU Libtool" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_93.html#SEC93" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: A Large GNU Autotools Project" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 11.5 Convenience Libraries </H2>
+<!--docid::SEC92::-->
+<P>
+
+Sometimes it is useful to group objects together in an intermediate
+stage of a project's compilation to provide a useful handle for that
+group without having to specify all of the individual objects every 
+time.  Convenience libraries are a portable way of creating such a
+<EM>partially linked</EM> object:  Libtool will handle all of the 
+low level details in a way appropriate to the target host.  This section
+describes the use of convenience libraries in conjunction with
+Automake.  The principles of convenience libraries are
+discussed in <A HREF="autobook_74.html#SEC74">Creating Convenience Libraries</A>.
+</P><P>
+
+The key to creating Libtool convenience libraries with
+Automake is to use the<BR> <SAMP>`noinst_LTLIBRARIES'</SAMP> macro.  For
+the Libtool libraries named in this macro, Automake will
+create Libtool convenience libraries which can subsequently be linked
+into other Libtool libraries.
+</P><P>
+
+In this section I will create two convenience libraries, each in their 
+own subdirectory, and link them into a third Libtool library, which is 
+ultimately linked into an application.
+</P><P>
+
+If you want to follow this example, you should create a directory
+structure to hold the sources by running the following shell commands:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ mkdir convenience
+$ cd convenience
+$ mkdir lib
+$ mkdir replace
+</FONT></pre></td></tr></table></P><P>
+
+The first convenience library is built from two source files in the
+<TT>`lib'</TT> subdirectory.
+</P><P>
+
+<OL>
+<LI><TT>`source.c'</TT>:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if HAVE_CONFIG_H
+#  include &#60;config.h&#62;
+#endif
+
+#if HAVE_MATH_H
+#  include &#60;math.h&#62;
+#endif
+
+void
+foo (double argument)
+{
+  printf ("cos (%g) => %g\n", argument, cos (argument));
+}
+
+
+</pre></td></tr></table></P><P>
+
+This file defines a single function to display the cosine of its
+argument on standard output, and consequently relies on an
+implementation of the <CODE>cos</CODE> function from the system libraries.
+Note the conditional inclusion of <TT>`config.h'</TT>, which will contain a
+definition of <SAMP>`HAVE_MATH_H'</SAMP> if <TT>`configure'</TT> discovers a
+<TT>`math.h'</TT> system header (the usual location for the declaration of
+<CODE>cos</CODE>).  The <SAMP>`HAVE_CONFIG_H'</SAMP> guard is by convention, so that
+the source can be linked by passing the preprocessor macro definitions
+to the compiler on the command line -- if <TT>`configure.in'</TT> does not
+use <SAMP>`AM_CONFIG_HEADER'</SAMP> for instance.
+</P><P>
+
+<LI><TT>`source.h'</TT>:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>extern void foo        (double argument);
+
+</pre></td></tr></table></P><P>
+
+For brevity, there is no <CODE>#ifndef SOURCE_H</CODE> guard.  The header is
+not installed, so you have full control over where it is
+<CODE>#include</CODE>ed, and in any case, function declarations can be safely
+repeated if the header is accidentally processed more than once.  In a
+real program, it would be better to list the function parameters in 
+the declaration so that the compiler can do type checking.  This would
+limit the code to working only with ANSI compilers, unless you also
+use a <CODE>PARAMS</CODE> macro to conditionally preprocess away the
+parameters when a K&#38;R compiler is used.  These details are beyond
+the scope of this convenience library example, but are described in full
+in <A HREF="autobook_51.html#SEC51">9.1.6 K&#38;R Compilers</A>.
+</OL>
+<P>
+
+You also need a <TT>`Makefile.am'</TT> to hold the details of how this
+convenience library is linked:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>## Process this file with automake to produce Makefile.in
+
+noinst_LTLIBRARIES        = library.la
+library_la_SOURCES        = source.c source.h
+library_la_LIBADD        = -lm
+
+</pre></td></tr></table></P><P>
+
+The <SAMP>`noinst_LTLIBRARIES'</SAMP> macro names the Libtool convenience
+libraries to be built in this directory, <TT>`library.la'</TT>.   Although
+not required for compilation, <TT>`source.h'</TT> is listed in the
+<SAMP>`SOURCES'</SAMP> macro of <TT>`library.la'</TT> so that correct source
+dependencies are generated, and so that it is added to the distribution
+tarball by <CODE>automake</CODE>'s <SAMP>`dist'</SAMP> rule.
+</P><P>
+
+Finally, since the <CODE>foo</CODE> function relies on the <CODE>cos</CODE> function
+from the system math library, <SAMP>`-lm'</SAMP> is named as a required
+library in the <SAMP>`LIBADD'</SAMP> macro.  As with all Libtool libraries,
+interlibrary dependencies are maintained for convenience libraries so
+that you need only list the libraries you are using directly when you
+link your application later.  The libraries used by those libraries are
+added by Libtool.
+</P><P>
+
+The parent directory holds the sources for the main executable,
+<TT>`main.c'</TT>, and for a (non-convenience) Libtool library,
+<TT>`error.c'</TT> &#38; <TT>`error.h'</TT>.
+</P><P>
+
+Like <TT>`source.h'</TT>, the functions exported from the Libtool library
+<TT>`liberror.la'</TT> are listed in <TT>`error.h'</TT>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>extern void gratuitous          (void);
+extern void set_program_name    (char *path);
+extern void error               (char *message);
+
+
+</pre></td></tr></table></P><P>
+
+The corresponding functon definitions are in <TT>`error.c'</TT>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#include &#60;stdio.h&#62;
+
+#include "source.h"
+
+static char *program_name = NULL;
+
+void
+gratuitous (void)
+{
+  /* Gratuitous display of convenience library functionality!  */
+  double argument = 0.0;
+  foo (argument);
+}
+
+void
+set_program_name (char *path)
+{
+  if (!program_name)
+    program_name = basename (path);
+}
+
+void
+error (char *message)
+{
+  fprintf (stderr, "%s: ERROR: %s\n", program_name, message);
+  exit (1);
+}
+
+</pre></td></tr></table></P><P>
+
+The <CODE>gratuitous()</CODE> function calls the <CODE>foo()</CODE> function defined
+in the <TT>`library.la'</TT> convenience library in the <TT>`lib'</TT>
+directory, hence <TT>`source.h'</TT> is included.
+</P><P>
+
+The definition of <CODE>error()</CODE> displays an error message to standard
+error, along with the name of the program, <CODE>program_name</CODE>, which is
+set by calling <CODE>set_program_name()</CODE>.  This function, in turn,
+extracts the basename of the program from the full path using the system
+function, <CODE>basename()</CODE>, and stores it in the library private
+variable, <CODE>program_name</CODE>.
+</P><P>
+
+Usually, <CODE>basename()</CODE> is part of the system C library, though older
+systems did not include it.  Because of this, there is no portable
+header file that can be included to get a declaration, and you might see
+a harmless compiler warning due to the use of the function without a
+declaration.  The alternative would be to add your own declaration in
+<TT>`error.c'</TT>.  The problem with this approach is that different
+vendors will provide slightly different declarations (with or without
+<CODE>const</CODE> for instance), so compilation will fail on those
+architectures which <EM>do</EM> provide a declaration in the system
+headers that is different from the declaration you have guessed.
+</P><P>
+
+For the benefit of architectures which do not have an implementation of
+the <CODE>basename()</CODE> function, a fallback implementation is provided in
+the <TT>`replace'</TT> subdirectory.  The file <TT>`basename.c'</TT> follows:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if HAVE_CONFIG_H
+#  include &#60;config.h&#62;
+#endif
+
+#if HAVE_STRING_H
+#  include &#60;string.h&#62;
+#elif HAVE_STRINGS_H
+#  include &#60;strings.h&#62;
+#endif
+
+#if !HAVE_STRRCHR
+#  ifndef strrchr
+#    define strrchr rindex
+#  endif
+#endif
+
+char*
+basename (char *path)
+{
+  /* Search for the last directory separator in PATH.  */
+  char *basename = strrchr (path, '/');
+  
+  /* If found, return the address of the following character,
+     or the start of the parameter passed in.  */
+  return basename ? ++basename : path;
+}
+
+
+</pre></td></tr></table></P><P>
+
+For brevity, the implementation does not use any <CODE>const</CODE>
+declarations which would be good style for a real project, but would
+need to be checked at configure time in case the end user needs to
+compile the package with a K&#38;R compiler.
+</P><P>
+
+The use of <CODE>strrchr()</CODE> is noteworthy.  Sometimes it is declared in
+<TT>`string.h'</TT>, otherwise it might be declared in <TT>`strings.h'</TT>.
+<FONT SIZE="-1">BSD</FONT> based Unices, on the other hand, do not have this function at
+all, but provide an equivalent function, <CODE>rindex()</CODE>.  The
+preprocessor code at the start of the file is designed to cope with all
+of these eventualities.  The last block of preprocessor code assumes
+that if <CODE>strrchr</CODE> is already defined that it holds a working macro,
+and does not redefine it.
+</P><P>
+
+<TT>`Makefile.am'</TT> contains:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>## Process this file with automake to produce Makefile.in
+
+noinst_LTLIBRARIES      = libreplace.la
+libreplace_la_SOURCES   = 
+libreplace_la_LIBADD    = @LTLIBOBJS@
+
+</pre></td></tr></table></P><P>
+
+Once again, the <SAMP>`noinst_LTLIBRARIES'</SAMP> macro names the convenience
+library,<BR> <TT>`libreplace.la'</TT>.  By default there are no sources, since
+we expect to have a system definition of <CODE>basename()</CODE>.  Additional
+Libtool objects which should be added to the library based on tests at
+configure time are handled by the <SAMP>`LIBADD'</SAMP> macro.  <SAMP>`LTLIBOBJS'</SAMP>
+will contain <TT>`basename.lo'</TT> if the system does not provide
+<CODE>basename</CODE>, and will be empty otherwise.  Illustrating another
+feature of convenience libraries: on many architectures,
+<TT>`libreplace.la'</TT> will contain no objects.
+</P><P>
+
+Back in the toplevel project directory, all of the preceding objects are
+combined by another <TT>`Makefile.am'</TT>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>## Process this file with automake to produce Makefile.in
+
+AUTOMAKE_OPTIONS        = foreign
+
+SUBDIRS                 = replace lib .
+
+CPPFLAGS                = -I$(top_srcdir)/lib
+
+include_HEADERS         = error.h
+
+lib_LTLIBRARIES         = liberror.la
+liberror_la_SOURCES     = error.c
+liberror_la_LDFLAGS     = -no-undefined -version-info 0:0:0
+liberror_la_LIBADD      = replace/libreplace.la lib/library.la
+
+bin_PROGRAMS            = convenience
+convenience_SOURCES     = main.c
+convenience_LDADD       = liberror.la
+
+</pre></td></tr></table></P><P>
+
+The initial <SAMP>`SUBDIRS'</SAMP> macro is necessary to ensure that the
+libraries in the subdirectories are built before the final library and
+executable in this directory.
+</P><P>
+
+Notice that I have not listed <TT>`error.h'</TT> in
+<SAMP>`liberror_la_SOURCES'</SAMP> this time, since <TT>`liberror.la'</TT> is an
+installed library, and <TT>`error.h'</TT> defines the public interface to
+that library.  Since the <TT>`liberror.la'</TT> Libtool library is
+installed, I have used the <SAMP>`-version-info'</SAMP> option, and I have
+also used <SAMP>`-no-undefined'</SAMP> so that the project will compile on
+architectures which require all library symbols to be defined at link
+time -- the reason <CODE>program_name</CODE> is maintained in
+<TT>`liberror'</TT> rather than <TT>`main.c'</TT> is so that the library does
+not have a runtime dependency on the executable which links it.
+</P><P>
+
+The key to this example is that by linking the <TT>`libreplace.la'</TT> and
+<TT>`library.la'</TT> convenience libraries into <TT>`liberror.la'</TT>, all of
+the objects in both convenience libraries are compiled into the single
+installed library, <TT>`liberror.la'</TT>.  Additionally, all of the
+inter-library dependencies of the convenience libraries (<SAMP>`-lm'</SAMP>,
+from <TT>`library.la'</TT>) are propogated to <TT>`liberror.la'</TT>.
+</P><P>
+
+<BLOCKQUOTE>
+A common difficulty people experience with Automake is knowing when to
+use a <SAMP>`LIBADD'</SAMP> primary versus a <SAMP>`LDADD'</SAMP> primary.  A useful
+mnemonic is: <STRONG><SAMP>`LIBADD'</SAMP> is for ADDitional LIBrary objects.
+<SAMP>`LDADD'</SAMP> is for ADDitional linker (LD) objects.</STRONG>
+</BLOCKQUOTE>
+<P>
+
+The executable, <TT>`convenience'</TT>, is built from <TT>`main.c'</TT>, and
+requires only <TT>`liberror.la'</TT>.  All of the other implicit
+dependencies are encoded within <TT>`liberror.la'</TT>.  Here is
+<TT>`main.c'</TT>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#include &#60;stdio.h&#62;
+#include "error.h"
+
+int
+main (int argc, char *argv[])
+{
+  set_program_name (argv[0]);
+  gratuitous ();
+  error ("This program does nothing!");
+}
+
+</pre></td></tr></table></P><P>
+
+The only file that remains before you can compile the example is
+<TT>`configure.in'</TT>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre># Process this file with autoconf to create configure.
+
+AC_INIT(error.c)
+AM_CONFIG_HEADER(config.h)
+AM_INIT_AUTOMAKE(convenience, 1.0)
+
+AC_PROG_CC
+AM_PROG_LIBTOOL
+
+AC_CHECK_HEADERS(math.h)
+AC_CHECK_HEADERS(string.h strings.h, break)
+
+AC_CHECK_FUNCS(strrchr)
+AC_REPLACE_FUNCS(basename)
+
+Xsed="sed -e s/^X//"
+LTLIBOBJS=echo X"$LIBOBJS" | \
+    $Xsed -e "s,\.[^.]* ,.lo ,g;s,\.[^.]*\$,.lo,"`
+AC_SUBST(LTLIBOBJS)
+
+AC_OUTPUT(replace/Makefile lib/Makefile Makefile)
+
+</pre></td></tr></table></P><P>
+
+There are checks for all of the features used by the sources in the
+project: <TT>`math.h'</TT> and either <TT>`string.h'</TT> or <TT>`strings.h'</TT>;
+the existence of <CODE>strrchr</CODE> (<EM>after</EM> the tests for string
+headers); adding <TT>`basename.o'</TT> to <SAMP>`LIBOBJS'</SAMP> if there is no
+system implementation; and the shell code to set <SAMP>`LTLIBOBJS'</SAMP>.
+</P><P>
+
+With all the files in place, you can now bootstrap the project:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ ls -R
+.:
+Makefile.am  configure.in  error.c  error.h  lib  main.c  replace
+
+lib:
+Makefile.am  source.c  source.h
+
+replace:
+Makefile.am  basename.c
+$ aclocal
+$ autoheader
+$ automake --add-missing --copy
+automake: configure.in: installing ./install-sh
+automake: configure.in: installing ./mkinstalldirs
+automake: configure.in: installing ./missing
+configure.in: 7: required file ./ltconfig not found
+$ autoconf
+$ ls -R
+.:
+Makefile.am   config.h.in   error.c     ltconfig   mkinstalldirs
+Makefile.in   config.sub    error.h     ltmain.sh  replace
+aclocal.m4    configure     install-sh  main.c     
+config.guess  configure.in  lib         missing
+
+lib:
+Makefile.am  Makefile.in  source.c  source.h
+
+replace:
+Makefile.am  Makefile.in  basename.c
+</FONT></pre></td></tr></table></P><P>
+
+With these files in place, the package can now be configured:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ ./configure
+...
+checking how to run the C preprocessor... gcc -E
+checking for math.h... yes
+checking for string.h... yes
+checking for strrchr... yes
+checking for basename... yes
+updating cache ./config.cache
+creating ./config.status
+creating replace/Makefile
+creating lib/Makefile
+creating Makefile
+creating config.h
+</FONT></pre></td></tr></table></P><P>
+
+Notice that my host has an implementation of <CODE>basename()</CODE>.
+</P><P>
+
+Here are the highlights of the compilation itself:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ make
+Making all in replace
+make[1]: Entering directory /tmp/replace
+/bin/sh ../libtool --mode=link gcc  -g -O2  -o libreplace.la     
+rm -fr .libs/libreplace.la .libs/libreplace.* .libs/libreplace.*
+ar cru .libs/libreplace.al
+ranlib .libs/libreplace.al
+creating libreplace.la
+(cd .libs &#38;&#38; rm -f libreplace.la &#38;&#38; ln -s ../libreplace.la \
+libreplace.la)
+make[1]: Leaving directory /tmp/replace
+</FONT></pre></td></tr></table></P><P>
+
+Here the build descends into the <TT>`replace'</TT> subdirectory and creates
+<TT>`libreplace.la'</TT>, which is empty on my host since I don't need an
+implementation of <CODE>basename()</CODE>:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Making all in lib
+make[1]: Entering directory /tmp/lib
+/bin/sh ../libtool --mode=compile gcc -DHAVE_CONFIG_H  -I. -I. \
+-g -O2 -c source.c
+rm -f .libs/source.lo
+gcc -DHAVE_CONFIG_H -I. -I. -g -O2 -c -fPIC -DPIC source.c \
+-o .libs/source.lo
+gcc -DHAVE_CONFIG_H -I. -I. -g -O2 -c source.c \
+-o source.o &#62;/dev/null 2&#62;&#38;1
+mv -f .libs/source.lo source.lo
+/bin/sh ../libtool --mode=link gcc  -g -O2  -o library.la source.lo -lm 
+rm -fr .libs/library.la .libs/library.* .libs/library.*
+ar cru .libs/library.al source.lo
+ranlib .libs/library.al
+creating library.la
+(cd .libs &#38;&#38; rm -f library.la &#38;&#38; ln -s ../library.la library.la)
+make[1]: Leaving directory /tmp/lib
+</FONT></pre></td></tr></table></P><P>
+
+Next, the build enters the <TT>`lib'</TT> subdirectory to build
+<TT>`library.la'</TT>.  The <TT>`configure'</TT> preprocessor macros are passed
+on the command line, since no <TT>`config.h'</TT> was created by
+<CODE>AC_CONFIG_HEADER</CODE>:
+</P><P>
+
+Here, <TT>`main.c'</TT> is compiled (not to a Libtool object, since it is
+not compiled using <CODE>libtool</CODE>), and linked with the
+<TT>`liberror.la'</TT> Libtool library:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>gcc -DHAVE_CONFIG_H -I. -I.  -I./lib  -g -O2 -c main.c
+/bin/sh ./libtool --mode=link gcc  -g -O2  -o convenience  main.o \
+liberror.la 
+gcc -g -O2 -o .libs/convenience main.o ./.libs/liberror.so -lm \
+-Wl,--rpath -Wl,/usr/local/lib
+creating convenience
+make[1]: Leaving directory /tmp/convenience
+</FONT></pre></td></tr></table></P><P>
+
+<CODE>libtool</CODE> calls <CODE>gcc</CODE> to link the <CODE>convenience</CODE>
+executable from <TT>`main.o'</TT> and the shared library component of
+<TT>`liberror.la'</TT>.  <CODE>libtool</CODE> also links with <SAMP>`-lm'</SAMP>, the
+propogated inter-library dependency of the <TT>`library.la'</TT> convenience
+library.  Since <TT>`libreplace.la'</TT> and <TT>`library.la'</TT> were
+convenience libraries, their objects are already present in
+<TT>`liberror.la'</TT>, so they are not listed again in the final link line
+-- the whole point of convenience archives.
+</P><P>
+
+This just shows that it all works:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>$ ls
+Makefile      config.h       configure.in  install-sh   main.c
+Makefile.am   config.h.in    convenience   lib          main.o
+Makefile.in   config.log     error.c       liberror.la  missing
+aclocal.m4    config.status  error.h       libtool      mkinstalldirs
+config.cache  config.sub     error.lo      ltconfig     replace
+config.guess  configure      error.o       ltmain.sh
+$ libtool --mode=execute ldd convenience
+        liberror.so.0 =&#62; /tmp/.libs/liberror.so.0 (0x40014000)
+        libm.so.6 =&#62; /lib/libm.so.6 (0x4001c000)
+        libc.so.6 =&#62; /lib/libc.so.6 (0x40039000)
+        /lib/ld-linux.so.2 =&#62; /lib/ld-linux.so.2 (0x40000000)
+$ ./convenience
+cos (0) =&#62; 1
+lt-convenience: ERROR: This program does nothing!
+</FONT></pre></td></tr></table></P><P>
+
+Notice that you are running the uninstalled executable, which is in
+actual fact a wrapper script, See section <A HREF="autobook_79.html#SEC79">10.5 Executing Uninstalled Binaries</A>.
+That is why you need to use <CODE>libtool</CODE> to run <CODE>ldd</CODE> on
+the real executable.  The uninstalled executable called by the wrapper
+script is called <CODE>lt-convenience</CODE>, hence the output from
+<CODE>basename()</CODE>.
+</P><P>
+
+Finally, you can see from the output of <CODE>ldd</CODE>, that
+<CODE>convenience</CODE> really isn't linked against either
+<TT>`library.la'</TT> and <TT>`libreplace.la'</TT>.
+</P><P>
+
+<A NAME="A Large GNU Autotools Project"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

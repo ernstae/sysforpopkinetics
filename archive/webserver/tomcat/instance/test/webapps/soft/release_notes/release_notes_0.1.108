@@ -1,0 +1,41 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.107
+----------------------------------
+USER VISIBLE CHANGES
+Improved the short description of job end status.
+
+Eliminated the last error message inserted by the CSPK daemon.
+
+Jobs that teminate normally but failed in some computation
+are marked as "error", while ones that terminate abnormally
+due to errors are marked as "failure".
+
+OTHER CHANGES
+The CSPK daemon no longer append an error message to the preceding
+list of error messages generated within the job driver.
+
+RELATED BUG REPORTS: 441
+
+BY: Sachiko Honda
+
+WHEN:  September 30, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.108
+----------------------------------
+USER VISIBLE CHANGES
+
+Error message report when parameters are near their bounds as well as
+at them.
+
+Warnings are now issued when unstable parameter estimate covariances
+are used to calculate statistics.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  223, 269, 277, 347, 359, 410, 411, 427
+
+BY:  Mitch Watrous
+
+WHEN:  October 4, 2005

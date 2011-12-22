@@ -1,0 +1,690 @@
+<html><head>
+<title>Fitting Individual Parameter</title>
+<meta name="description" id="description" content="Fitting Individual Parameter">
+<meta name="keywords" id="keywords" content=" map bayesian optimization fitindividual individual "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="fitindividual.htm" target="_top">section</a>, <a href="fitindividual_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Minimizes the map Bayesian objective function.  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>To be specific, this function solves the problem 
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;minimize&nbsp;<i>MapObj</i>(<i>b</i>)&nbsp;with&nbsp;respect&nbsp;to&nbsp;<i>b</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;subject&nbsp;to&nbsp;<i>bLow</i>&nbsp;<u>&lt;</u>&nbsp;<i>b</i>&nbsp;<u>&lt;</u>&nbsp;<i>bUp</i><br>
+</span></code>where the function <code><span style='white-space: nowrap'><i>MapObj</i>(<i>b</i>)</span></code> is defined by
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>MapObj</i>(<i>b</i>)&nbsp;=&nbsp;-&nbsp;logdet[&nbsp;2&nbsp;pi&nbsp;<i>R</i>(<i>b</i>)&nbsp;]&nbsp;+&nbsp;-&nbsp;[<i>y</i>&nbsp;-&nbsp;<i>f</i>(<i>b</i>)]&nbsp;&nbsp;<i>R</i>(<i>b</i>)&nbsp;&nbsp;&nbsp;[<i>y</i>&nbsp;-&nbsp;<i>f</i>(<i>b</i>)]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;<i>T</i>&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;-&nbsp;logdet[&nbsp;2&nbsp;pi&nbsp;<i>D</i>&nbsp;]&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;-&nbsp;<i>b</i>&nbsp;&nbsp;<i>D</i>&nbsp;&nbsp;&nbsp;<i>b</i>&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2<br>
+</span></code>(The equation above uses
+<a href="glossary_frame1.htm#Individual Notation" target="frame1"><i><span style='white-space: nowrap'>individual&nbsp;notation</span></i></a>
+.)
+
+<br>
+<br>
+<b><big><a name="Reference" id="Reference">Reference</a></big></b>
+<br>
+B. M. Bell, <i>Approximating The Marginal Likelihood Estimate 
+For Models With Random Parameters</i>, Applied Mathematics and Computation, 
+Accepted 1999. 
+
+<br>
+<br>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+Upon a successful completion, the function sets
+the given output value place holders to point to the result values 
+(ones that are requested).  The case that too-many-iter occurred during 
+the optimization process is not a successful completion. 
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Upon the entry, the <b>universal</b> floating-point error flag set is 
+cleared.  Hence, any pending floating-point errors will be lost.
+The universal floating-point error detection bits are set to
+detect a certain set of errors (for details, see <a href="fperrorchecker.htm" target="_top"><span style='white-space: nowrap'>FpErrorChecker</span></a>
+).
+The detection bits are restored upon the exit.
+
+If an error is detected or failure occurs during the evaluation, a SpkException object is
+thrown.  The state at which an exception is thrown is defined in
+<a href="glossary_frame1.htm#Exception Handling Policy" target="frame1"><i><span style='white-space: nowrap'>Exception&nbsp;Handling&nbsp;Policy</span></i></a>
+.
+
+<br>
+<br>
+<b><big><a name="Note" id="Note">Note</a></big></b>
+<br>
+The length of the individual parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code> is 
+equal to the length of <i>indParIn</i>, 
+which is a vector containing the initial value for <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>indModel</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This function expects <i>indModel</i> to be a function of
+all three parameters: <code><span style='white-space: nowrap'><i>alp</i></span></code>, <code><span style='white-space: nowrap'><i>b</i></span></code> and <code><span style='white-space: nowrap'><i>i</i></span></code>.
+Refer <a href="glossary_frame1.htm#Model Functions Depend on only b" target="frame1"><i><span style='white-space: nowrap'>Model&nbsp;Functions&nbsp;Depend&nbsp;on&nbsp;only&nbsp;b</span></i></a>
+ for details.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>measurements</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>measurements</i> contains the array 
+<code><span style='white-space: nowrap'><i>y</i></span></code>, which specifies the measured data.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indOptimizer</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This <a href="optimizer.htm" target="_top"><span style='white-space: nowrap'>Optimizer</span></a>
+ object contains the information 
+that controls the individual level optimization process.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>It has attributes for holding the optimization state information 
+that is required to perform a warm start, i.e., to start the
+optimization process using a previous set of optimization state
+information.
+If a warm start is being performed, then before this function is 
+called the optimization state information must be set.
+This information may have been set during a previous call to this
+function, or the information may be set directly using the
+Optimizer class member function, setStateInfo().
+Note that the upper and lower bounds for <code><span style='white-space: nowrap'><i>b</i></span></code> must be the 
+same as they were during the earlier call to this function.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Most of the optimizer information is accessible directly via public
+get functions, e.g., the value epsilon is returned by the Optimizer 
+class function <code><font color="blue">getEpsilon()</font></code>.  
+The following subsections specify how this function uses 
+some of the elements of the Optimizer object that are accessed 
+directly using get functions.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.epsilon" id="Arguments.optInfo.epsilon">optInfo.epsilon</a></b>
+<br>
+This real number is used to specify the convergence criteria
+for the optimizer.
+It must be greater than <code><span style='white-space: nowrap'>0.0</span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>A individual parameter value <code><span style='white-space: nowrap'><i>bOut</i></span></code> is accepted as an estimate for 
+<code><span style='white-space: nowrap'><i>bHat</i></span></code> if 
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>abs</i>(&nbsp;<i>bOut</i>&nbsp;-&nbsp;<i>bHat</i>&nbsp;)&nbsp;<u>&lt;</u>&nbsp;<i>epsilon</i>&nbsp;(&nbsp;<i>bUp</i>&nbsp;-&nbsp;<i>bLow</i>&nbsp;)&nbsp;&nbsp;,<br>
+</span></code>where <code><span style='white-space: nowrap'><i>abs</i></span></code> is the element-by-element absolute value function
+and <code><span style='white-space: nowrap'><i>bHat</i></span></code> is a local minimizer of <code><span style='white-space: nowrap'><i>MapObj</i>(<i>b</i>)</span></code>.
+Since <code><span style='white-space: nowrap'><i>bHat</i></span></code> is unknown, this function estimates the left hand
+side of this inequality in a way that is a good approximation when 
+the Hessian of the objective function is positive definite.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Note that if <i>nMaxIter</i> is set to zero, then <code><span style='white-space: nowrap'><i>bIn</i></span></code> is 
+accepted as the estimate for <code><span style='white-space: nowrap'><i>bHat</i></span></code>.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.nMaxIter" id="Arguments.optInfo.nMaxIter">optInfo.nMaxIter</a></b>
+<br>
+This integer must be greater than or equal to zero.
+It specifies the maximum number of 
+iterations to attempt before giving up on convergence.
+If it is equal to zero, then the initial
+value for <code><span style='white-space: nowrap'><i>b</i></span></code> is accepted as the final value, and any requested output
+values are evaluated at that final value.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.traceLevel" id="Arguments.optInfo.traceLevel">optInfo.traceLevel</a></b>
+<br>
+This integer scalar specifies the amount of tracing.
+Larger values of <i>traceLevel</i> entail more tracing, 
+with <code><span style='white-space: nowrap'>4</span></code> being the highest level of tracing.
+If <code><span style='white-space: nowrap'><i>level</i>&nbsp;<u>&gt;</u>&nbsp;1</span></code>, trace values are directed to standard output 
+(stdout).  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Tracing is done using a scaled version of the
+objective function.  For this scaled version the elements of
+the parameter vector are constrained to the interval <code><span style='white-space: nowrap'>[0,&nbsp;1]</span></code>. 
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If <i>traceLevel</i> is equal to <code><span style='white-space: nowrap'>4</span></code>, then the tracing 
+will include the gradient of the objective and a finite difference 
+approximation for that gradient.
+These two gradients can be compared as a check on the consistency 
+of the objective function and its gradient.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>For more details on the tracing see the description of the level 
+parameter for the optimizer <code><font color="blue">QuasiNewton01Box</font></code>.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.nIterCompleted" id="Arguments.optInfo.nIterCompleted">optInfo.nIterCompleted</a></b>
+<br>
+This integer scalar holds the number of iteration that have been 
+completed in the optimizer.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.isTooManyIter" id="Arguments.optInfo.isTooManyIter">optInfo.isTooManyIter</a></b>
+<br>
+This flag indicates whether the too-many-iteration failure has occurred.  
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.saveStateAtEndOfOpt" id="Arguments.optInfo.saveStateAtEndOfOpt">optInfo.saveStateAtEndOfOpt</a></b>
+<br>
+This flag indicates if the state information required for a warm start
+should be saved at the end of the optimization process.
+This state information will not be saved if the optimization process
+results in an exception being thrown by <code><font color="blue">quasiNewtonAnyBox</font></code>.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.throwExcepIfMaxIter" id="Arguments.optInfo.throwExcepIfMaxIter">optInfo.throwExcepIfMaxIter</a></b>
+<br>
+This flag indicates if the optimizer should throw an exception when
+the maximum number of iterations is exhausted.
+If this parameter is true, then when
+the maximum number of iterations is exhausted, an exception will
+be thrown and the output values for this function will not be set.
+Otherwise, the calling program will
+need to check the parameter isTooManyIter to see if the 
+maximum number of iterations was exhausted.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.isWarmStartPossible" id="Arguments.optInfo.isWarmStartPossible">optInfo.isWarmStartPossible</a></b>
+<br>
+This flag indicates whether it is possible to perform a warm start 
+using the current optimizer state information.
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.isWarmStart" id="Arguments.optInfo.isWarmStart">optInfo.isWarmStart</a></b>
+<br>
+This flag indicates whether the optimization should run a warm start.  
+
+<br>
+<br>
+<b><a name="Arguments.optInfo.stateInfo" id="Arguments.optInfo.stateInfo">optInfo.stateInfo</a></b>
+<br>
+This <code><font color="blue">StateInfo</font></code> struct contains the optimization state information
+required to perform a warm start.
+Each of its elements is accessed using the Optimizer class member
+functions, <code><font color="blue">getStateInfo()</font></code> and <code><font color="blue">setStateInfo()</font></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParLow</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indParLow</i> contains the array 
+<code><span style='white-space: nowrap'><i>bLow</i></span></code>, which specifies the lower limit for the parameter vector 
+<code><span style='white-space: nowrap'><i>b</i></span></code> during the optimization procedure.  The size of <i>indParLow</i> 
+is equal to the length of the individual parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParUp</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indParUp</i> contains the vector 
+<code><span style='white-space: nowrap'><i>bUp</i></span></code>, which specifies the upper limit for the parameter vector 
+<code><span style='white-space: nowrap'><i>b</i></span></code> during the optimization procedure.  The size of <i>indParUp</i> 
+is equal to the length of the individual parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indParIn</i> contains the vector 
+<code><span style='white-space: nowrap'><i>bIn</i></span></code>, which specifies the initial value for the parameter vector 
+<code><span style='white-space: nowrap'><i>b</i></span></code>.
+The <a href="glossary_frame1.htm#Ordering Of Vectors" target="frame1"><i><span style='white-space: nowrap'>order&nbsp;condition</span></i></a>
+,
+<code><span style='white-space: nowrap'><i>bLow</i>&nbsp;<u>&lt;</u>&nbsp;<i>bIn</i>&nbsp;<u>&lt;</u>&nbsp;<i>bUp</i></span></code>, is assumed to hold.
+Note that the size of <i>indParIn</i> is equal to the length of 
+the individual parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParStep</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indParStep</i> contains the vector 
+<code><span style='white-space: nowrap'><i>bStep</i></span></code>, which specifies the step size used for approximating
+the derivative of <code><span style='white-space: nowrap'><i>MapObj</i>_<i>b</i>(<i>b</i>)</span></code>.  This argument is not used in the 
+function if the argument <i>indObj_indPar_indParOut</i> is set to <code><font color="blue">NULL</font></code>.
+The size of <i>indParStep</i> is equal to the length of the individual 
+parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>indParOut</i> is not <code><font color="blue">NULL</font></code>, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> 
+object pointed to by <i>indParOut</i> must be declared in the function that 
+calls this function, and it must have the same size as <i>indParIn</i>.
+If <i>indParOut</i> is not <code><font color="blue">NULL</font></code> and this function completed the optimization 
+successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by 
+<i>indParOut</i> will contain the vector <code><span style='white-space: nowrap'><i>bOut</i></span></code> that is the estimate 
+for the true minimizer of the objective function.  Otherwise, this function will 
+not attempt to change the contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>indParOut</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+*&nbsp;</span></font></code><i><span style='white-space: nowrap'>indObjOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>indObjOut</i> is not <code><font color="blue">NULL</font></code>, then the <code><font color="blue">double</font></code> value pointed 
+to by <i>indObjOut</i> must be declared in the function that calls this function.
+If <i>indObjOut</i> is not <code><font color="blue">NULL</font></code> and this function completed the optimization 
+successfully, then the <code><font color="blue">double</font></code> value pointed to by <i>indObjOut</i> will 
+be equal to <code><span style='white-space: nowrap'><i>MapObj</i>(<i>bOut</i>)</span></code>, which is the value of the objective function 
+evaluated at <code><span style='white-space: nowrap'><i>bOut</i></span></code>.  Otherwise, this function will not attempt to change 
+the contents of the <code><font color="blue">double</font></code> value pointed to by <i>indObjOut</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+*&nbsp;</span></font></code><i><span style='white-space: nowrap'>indObj_indParOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>indObj_indParOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indObj_indParOut</i> 
+must be declared in the function that calls this function, and its size
+must be equal to the length of the individual parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+If <i>indObj_bOut</i> is not <code><font color="blue">NULL</font></code> and this function completed the optimization 
+successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indObj_indParOut</i> 
+will contain the vector <code><span style='white-space: nowrap'><i>indObj</i>_<i>indPar</i>(<i>bOut</i>)</span></code> that is the derivative of the 
+objective function with respect to the individual parameter <code><span style='white-space: nowrap'><i>b</i></span></code>
+evaluated at <code><span style='white-space: nowrap'><i>bOut</i></span></code>.  Otherwise, this function will not attempt 
+to change the contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to 
+by <i>indObj_indParOut</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+*&nbsp;</span></font></code><i><span style='white-space: nowrap'>indObj_indPar_indParOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>indObj_indPar_indParOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indObj_indPar_indParOut</i> 
+must be declared in the function that calls this function, and its size 
+must equal to the square of the length of the individual parameter vector <code><span style='white-space: nowrap'><i>b</i></span></code>.
+If <i>indObj_indPar_indParOut</i> is not <code><font color="blue">NULL</font></code> and this function completed the 
+optimization successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by 
+<i>indObj_indPar_indPar</i> will contain the matrix <code><span style='white-space: nowrap'><i>MapObj</i>_<i>b</i>_<i>b</i>(<i>bOut</i>)</span></code>, 
+which is an approximation for the second derivative of the objective function with 
+respect to with respect to the individual parameter <code><span style='white-space: nowrap'><i>b</i></span></code> evaluated at 
+<code><span style='white-space: nowrap'><i>bOut</i></span></code>.  Otherwise, this function will not attempt to change the contents of 
+the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indObj_indPar_indParOut</i>.
+The approximation for the second derivative is obtained using central differences of 
+the function <code><span style='white-space: nowrap'><i>MapObj</i>_<i>b</i>(<i>b</i>)</span></code> with step sizes specified by <i>indParStep</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>withD</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;(optional)<br>
+</span></font></code>When this flag is set to <code><span style='white-space: nowrap'><i>false</i></span></code>, the terms involving the
+matrix <code><span style='white-space: nowrap'><i>D</i></span></code> are dropped from the map Bayesian objective 
+function <code><span style='white-space: nowrap'><i>MapObj</i>(<i>b</i>)</span></code>.  
+The default value for <i>withD</i> is <code><span style='white-space: nowrap'><i>true</i></span></code>.
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+
+
+<br>
+Suppose that
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;exp[<i>b</i>(1)]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;1&nbsp;&nbsp;0&nbsp;\<br>
+<i>R</i>(<i>b</i>)&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;<i>D</i>&nbsp;&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exp[<i>b</i>(1)]&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;0&nbsp;.5&nbsp;/<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;<i>b</i>(2)&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;2&nbsp;\<br>
+<i>f</i>(<i>b</i>)&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<i>y</i>&nbsp;=&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;<i>b</i>(2)&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;2&nbsp;/<br>
+</span></code>It follows that
+<code><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+<i>MapObj</i>(<i>b</i>)&nbsp;=&nbsp;log{2&nbsp;pi&nbsp;exp[<i>b</i>(1)]}&nbsp;+&nbsp;[2&nbsp;-&nbsp;<i>b</i>(2)]^2&nbsp;exp[-<i>b</i>(1)]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;log(2&nbsp;pi)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+&nbsp;(1/2)&nbsp;<i>b</i>(1)^2&nbsp;+&nbsp;&nbsp;<i>b</i>(2)^2<br>
+</span></code>The gradient of <code><span style='white-space: nowrap'><i>MapObj</i>(<i>b</i>)</span></code> is equal to
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;/&nbsp;1&nbsp;-&nbsp;[2&nbsp;-&nbsp;<i>b</i>(2)]^2&nbsp;exp[-<i>b</i>(1)]&nbsp;+&nbsp;<i>b</i>(1)&nbsp;\<br>
+&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;\&nbsp;-2&nbsp;[2&nbsp;-&nbsp;<i>b</i>(2)]&nbsp;exp[-<i>b</i>(1)]&nbsp;+&nbsp;2&nbsp;<i>b</i>(2)&nbsp;&nbsp;/<br>
+</span></code>The first order necessary condition for a minimum is 
+that the gradient is zero. This is true when
+<code><span style='white-space: nowrap'><i>b</i>(1)&nbsp;=&nbsp;0</span></code> and <code><span style='white-space: nowrap'><i>b</i>(2)&nbsp;=&nbsp;1</span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Taking the derivative of the gradient above,
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;[2-<i>b</i>(2)]^2exp[-<i>b</i>(1)]+1&nbsp;&nbsp;&nbsp;2[2-<i>b</i>(2)]exp[-<i>b</i>(1)]&nbsp;\<br>
+<i>MapObj</i>_<i>b</i>_<i>b</i>(<i>b</i>)&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;2[2-<i>b</i>(2)]exp[-<i>b</i>(1)]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2exp[-<i>b</i>(1)]&nbsp;+&nbsp;2&nbsp;&nbsp;&nbsp;/<br>
+</span></code>substituting in 
+<code><span style='white-space: nowrap'><i>b</i>(1)&nbsp;=&nbsp;0</span></code> and <code><span style='white-space: nowrap'><i>b</i>(2)&nbsp;=&nbsp;1</span></code>, we obtain
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;/&nbsp;2&nbsp;&nbsp;2&nbsp;\<br>
+&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;\&nbsp;2&nbsp;&nbsp;4&nbsp;/<br>
+</span></code><code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If you compile, link, and run the following program:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#include&nbsp;&quot;fitIndividual.h&quot;<br>
+#include&nbsp;&quot;SpkModel.h&quot;<br>
+#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+#include&nbsp;&quot;pi.h&quot;<br>
+#include&nbsp;&quot;Optimizer.h&quot;<br>
+#include&nbsp;&quot;SpkValarray.h&quot;<br>
+<br>
+#include&nbsp;&lt;iostream&gt;<br>
+#include&nbsp;&lt;iomanip&gt;<br>
+#include&nbsp;&lt;string&gt;<br>
+#include&nbsp;&lt;cmath&gt;<br>
+#include&nbsp;&lt;cstdlib&gt;<br>
+<br>
+using&nbsp;namespace&nbsp;std;<br>
+<br>
+static&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;funF(&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;&amp;dvecB&nbsp;);<br>
+static&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;funF_b(const&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;&amp;dvecFb,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;&amp;dvecB&nbsp;);<br>
+static&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;funR(&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;&amp;dvecB&nbsp;);<br>
+static&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;funR_b(const&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;&amp;dmatRb,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;&amp;dvecB&nbsp;);<br>
+<br>
+class&nbsp;IndModel&nbsp;:&nbsp;public&nbsp;SpkModel&lt;double&gt;<br>
+{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;_b;<br>
+public:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;IndModel(){}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;~IndModel(){}<br>
+protected:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doSetIndPar(const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;b)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;_b&nbsp;=&nbsp;b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataMean(&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funF(_b);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;doDataMean_indPar(&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doDataMean(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funF_b(ret,&nbsp;_b);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;!(&nbsp;ret.max()&nbsp;==&nbsp;0&nbsp;&amp;&amp;&nbsp;ret.min()&nbsp;==&nbsp;0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataVariance(&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funR(_b);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doDataVariance_indPar(&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;doDataVariance(ret);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret&nbsp;=&nbsp;funR_b(ret,&nbsp;_b);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;!(&nbsp;ret.max()&nbsp;==&nbsp;0&nbsp;&amp;&amp;&nbsp;ret.min()&nbsp;==&nbsp;0&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;doIndParVariance(&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;ret&nbsp;)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret.resize(&nbsp;4&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[0]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[1]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[2]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ret[3]&nbsp;=&nbsp;0.5;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+};<br>
+<br>
+//--------------------------------------------------------------<br>
+//<br>
+//&nbsp;Function:&nbsp;main<br>
+//<br>
+//--------------------------------------------------------------<br>
+<br>
+int&nbsp;main()<br>
+{<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Preliminaries.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;user-provided&nbsp;model.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;IndModel&nbsp;indModel;<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;data&nbsp;vector,&nbsp;y.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;int&nbsp;nY&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;measurements(&nbsp;2.,&nbsp;nY&nbsp;);<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;objective&nbsp;function&nbsp;parameter,&nbsp;b.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;int&nbsp;nB&nbsp;=&nbsp;2;<br>
+<br>
+&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;indParLow&nbsp;(&nbsp;&nbsp;-4.,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;indParUp&nbsp;&nbsp;(&nbsp;&nbsp;&nbsp;4.,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;indParIn&nbsp;&nbsp;(&nbsp;&nbsp;&nbsp;2.,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;indParStep(&nbsp;.001,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;indParOut&nbsp;(&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nB&nbsp;);<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Quantities&nbsp;related&nbsp;to&nbsp;the&nbsp;objective&nbsp;function,&nbsp;MapObj(b).<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;double&nbsp;indObjOut;<br>
+<br>
+&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;indObj_indParOut&nbsp;&nbsp;(&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;indObj_indPar_indParOut(&nbsp;nB&nbsp;*&nbsp;nB&nbsp;);<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Remaining&nbsp;inputs&nbsp;to&nbsp;mapOpt.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;Optimizer&nbsp;indOptimizer(&nbsp;1.e-3,&nbsp;40,&nbsp;0&nbsp;);<br>
+<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Optimize&nbsp;MapObj(b).<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;try<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;fitIndividual(&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indModel,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;measurements,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indOptimizer,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indParLow,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indParUp,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indParIn,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indParStep,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indParOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indObjOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indObj_indParOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indObj_indPar_indParOut,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;true<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;catch(&nbsp;...&nbsp;)<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cerr&nbsp;&lt;&lt;&nbsp;&quot;fitIndividual&nbsp;failed&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;abort();<br>
+&nbsp;&nbsp;}<br>
+<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+&nbsp;&nbsp;//&nbsp;Print&nbsp;the&nbsp;results.<br>
+&nbsp;&nbsp;//------------------------------------------------------------<br>
+<br>
+&nbsp;&nbsp;double&nbsp;indObjKnown&nbsp;=&nbsp;2.0&nbsp;*&nbsp;log(&nbsp;2.0&nbsp;*&nbsp;PI&nbsp;)&nbsp;-&nbsp;0.5&nbsp;*&nbsp;log(&nbsp;2.0&nbsp;)&nbsp;+&nbsp;2.0;<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;setiosflags(ios::scientific)&nbsp;&lt;&lt;&nbsp;setprecision(15);<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;(&nbsp;ok&nbsp;?&nbsp;&quot;True&quot;&nbsp;:&nbsp;&quot;False&quot;&nbsp;)&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;indParOut&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;BOut(&nbsp;indParOut&nbsp;);<br>
+&nbsp;&nbsp;BOut.print();<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;indObjOut&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;indObjOut&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;indObjKnown&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;indObjKnown&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;indObj_indParOut&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;MapObj_bOut(&nbsp;indObj_indParOut,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;MapObj_bOut.print();<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;indObj_indPar_indParOut&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;MapObj_b_bOut(&nbsp;indObj_indPar_indParOut,&nbsp;nB&nbsp;);<br>
+&nbsp;&nbsp;MapObj_b_bOut.print();<br>
+<br>
+&nbsp;&nbsp;return&nbsp;ok&nbsp;?&nbsp;EXIT_SUCCESS&nbsp;:&nbsp;EXIT_FAILURE;<br>
+}<br>
+<br>
+<br>
+//--------------------------------------------------------------<br>
+//<br>
+//&nbsp;Function:&nbsp;funR<br>
+//<br>
+//<br>
+//&nbsp;Calculates&nbsp;the&nbsp;covariance&nbsp;of&nbsp;the&nbsp;measurement&nbsp;error:<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;exp[b(1)]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;\&nbsp;<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R(b)&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;.<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;exp[b(1)]&nbsp;/&nbsp;<br>
+//<br>
+//--------------------------------------------------------------<br>
+<br>
+static&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;funR(&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;&amp;dvecB&nbsp;)<br>
+{<br>
+&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;dmatR(&nbsp;4&nbsp;);<br>
+<br>
+&nbsp;&nbsp;dmatR[0]&nbsp;=&nbsp;exp(&nbsp;dvecB[0]&nbsp;);<br>
+&nbsp;&nbsp;dmatR[1]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;dmatR[2]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;dmatR[3]&nbsp;=&nbsp;exp(&nbsp;dvecB[0]&nbsp;);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;return&nbsp;dmatR;<br>
+}<br>
+<br>
+<br>
+//--------------------------------------------------------------<br>
+//<br>
+//&nbsp;Function:&nbsp;funR_b<br>
+//<br>
+//<br>
+//&nbsp;Calculates&nbsp;the&nbsp;derivative&nbsp;of&nbsp;the&nbsp;measurement&nbsp;covariance<br>
+//&nbsp;with&nbsp;respect&nbsp;to&nbsp;b:<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;exp[b(1)]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;\&nbsp;<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;R_b(b)&nbsp;=&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;.<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;|&nbsp;<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;exp[b(1)]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;/&nbsp;<br>
+//<br>
+//--------------------------------------------------------------<br>
+<br>
+static&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;funR_b(&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;&amp;dmatR,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;&amp;dvecB&nbsp;)<br>
+{<br>
+&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;dmatR_b(&nbsp;0.,&nbsp;dmatR.size()&nbsp;*&nbsp;dvecB.size()&nbsp;);<br>
+<br>
+&nbsp;&nbsp;dmatR_b[0]&nbsp;=&nbsp;exp(&nbsp;dvecB[0]&nbsp;);<br>
+&nbsp;&nbsp;dmatR_b[3]&nbsp;=&nbsp;exp(&nbsp;dvecB[0]&nbsp;);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;return&nbsp;dmatR_b;<br>
+}<br>
+<br>
+<br>
+//--------------------------------------------------------------<br>
+//<br>
+//&nbsp;Function:&nbsp;funF<br>
+//<br>
+//<br>
+//&nbsp;Calculates&nbsp;the&nbsp;model&nbsp;for&nbsp;the&nbsp;mean&nbsp;of&nbsp;the&nbsp;measurements:<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;b(2)&nbsp;\&nbsp;<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f(b)&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;.<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;b(2)&nbsp;/<br>
+//<br>
+//--------------------------------------------------------------<br>
+<br>
+static&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;funF(&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;&amp;dvecB&nbsp;)<br>
+{<br>
+&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;dvecF(&nbsp;2&nbsp;);<br>
+<br>
+&nbsp;&nbsp;dvecF[0]&nbsp;=&nbsp;dvecB[1];<br>
+&nbsp;&nbsp;dvecF[1]&nbsp;=&nbsp;dvecB[1];<br>
+<br>
+&nbsp;&nbsp;return&nbsp;dvecF;<br>
+}<br>
+<br>
+<br>
+//--------------------------------------------------------------<br>
+//<br>
+//&nbsp;Function:&nbsp;funF_b<br>
+//<br>
+//<br>
+//&nbsp;Calculates&nbsp;the&nbsp;derivative&nbsp;of&nbsp;the&nbsp;model&nbsp;for&nbsp;the&nbsp;mean&nbsp;of&nbsp;the&nbsp;<br>
+//&nbsp;measurements&nbsp;with&nbsp;respect&nbsp;to&nbsp;b:<br>
+//<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;0&nbsp;&nbsp;&nbsp;1&nbsp;\&nbsp;<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;f_b(b)&nbsp;=&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;.<br>
+//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;0&nbsp;&nbsp;&nbsp;1&nbsp;/<br>
+//<br>
+//--------------------------------------------------------------<br>
+<br>
+static&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;funF_b(&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;&amp;dvecF,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;<br>
+&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;dmatF_b(&nbsp;4&nbsp;);<br>
+<br>
+&nbsp;&nbsp;dmatF_b[0]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;dmatF_b[1]&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;dmatF_b[2]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;dmatF_b[3]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;return&nbsp;dmatF_b;<br>
+}<br>
+&nbsp;&nbsp;<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+ok&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;True<br>
+indParOut&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=<br>
+[&nbsp;2.260754053295955e-006&nbsp;]<br>
+[&nbsp;9.999994638370806e-001&nbsp;]<br>
+indObjOut&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;5.329180542541980e+000<br>
+indObjKnown&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;5.329180542538718e+000<br>
+indObj_indParOut&nbsp;&nbsp;&nbsp;&nbsp;=<br>
+[&nbsp;3.449181849135563e-006&nbsp;2.376853741825613e-006&nbsp;]<br>
+indObj_indPar_indParOut&nbsp;&nbsp;=<br>
+[&nbsp;1.999998978238548e+000&nbsp;1.999996550820227e+000&nbsp;]<br>
+[&nbsp;1.999996884152977e+000&nbsp;3.999995478496610e+000&nbsp;]<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/fitIndividual.cpp
+
+</body>
+</html>

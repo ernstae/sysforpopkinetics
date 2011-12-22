@@ -1,0 +1,104 @@
+<html><head><META http-equiv="Content-Type" content="text/html; charset=iso-8859-1"><title>Server Configuration Reference - The AJP Connector</title><meta value="Remy Maucherat" name="author"><meta value="remm@apache.org" name="email"></head><body vlink="#525D76" alink="#525D76" link="#525D76" text="#000000" bgcolor="#ffffff"><table cellspacing="4" width="100%" border="0"><!--PAGE HEADER--><tr><td colspan="2"><!--JAKARTA LOGO--><a href="http://jakarta.apache.org/"><img border="0" alt="The Jakarta Project" align="left" src="../../images/jakarta-logo.gif"></a><!--PROJECT LOGO--><a href="http://jakarta.apache.org/tomcat/"><img border="0" alt="
+    The Tomcat Servlet/JSP Container
+  " align="right" src="../../images/tomcat.gif"></a></td></tr><!--HEADER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><tr><!--RIGHT SIDE MAIN BODY--><td align="left" valign="top" width="80%"><table cellspacing="4" width="100%" border="0"><tr><td nowrap="true" valign="top" align="left"><h1>Server Configuration Reference</h1><h2>The AJP Connector</h2></td><td nowrap="true" valign="top" align="right"><img border="0" hspace="0" vspace="0" height="1" width="1" src="../../images/void.gif"></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Introduction"><strong>Introduction</strong></a></font></td></tr><tr><td><blockquote>
+
+  <p>The <strong>AJP Connector</strong> element represents a
+  <strong>Connector</strong> component that communicates with a web
+  connector via the <code>AJP</code> protocol.  This is used for cases
+  where you wish to invisibly integrate Tomcat 5 into an existing (or new)
+  Apache installation, and you want Apache to handle the static content
+  contained in the web application, and/or utilize Apache's SSL
+  processing.</p>
+
+  <p>This connector supports load balancing when used in conjunction with
+  the <code>jvmRoute</code> attribute of the 
+  <a href="engine.html">Engine</a>.</p>
+
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Attributes"><strong>Attributes</strong></a></font></td></tr><tr><td><blockquote>
+
+  <table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#828DA6"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Common Attributes"><strong>Common Attributes</strong></a></font></td></tr><tr><td><blockquote>
+
+  <p>All implementations of <strong>Connector</strong>
+  support the following attributes:</p>
+
+  <table cellpadding="5" border="1"><tr><th bgcolor="#023264" width="15%"><font color="#ffffff">Attribute</font></th><th bgcolor="#023264" width="85%"><font color="#ffffff">Description</font></th></tr><tr><td valign="center" align="left"><code>allowTrace</code></td><td valign="center" align="left">
+      <p>A boolean value which can be used to enable or disable the TRACE
+      HTTP method. If not specified, this attribute is set to false.</p>
+    </td></tr><tr><td valign="center" align="left"><code>enableLookups</code></td><td valign="center" align="left">
+      <p>Set to <code>true</code> if you want calls to
+      <code>request.getRemoteHost()</code> to perform DNS lookups in
+      order to return the actual host name of the remote client.  Set
+      to <code>false</code> to skip the DNS lookup and return the IP
+      address in String form instead (thereby improving performance).
+      By default, DNS lookups are enabled.</p>
+    </td></tr><tr><td valign="center" align="left"><code>maxPostSize</code></td><td valign="center" align="left">
+      <p>The maximum size in bytes of the POST which will be handled by 
+      the container FORM URL parameter parsing. The feature can be disbled by 
+      setting this attribute to a value inferior or equal to 0. 
+      If not specified, this attribute is set to 2097152 (2 megabytes).</p>
+    </td></tr><tr><td valign="center" align="left"><code>redirectPort</code></td><td valign="center" align="left">
+      <p>If this <strong>Connector</strong> is supporting non-SSL
+      requests, and a request is received for which a matching
+      <code>&lt;security-constraint&gt;</code> requires SSL transport,
+      Catalina will automatically redirect the request to the port
+      number specified here.</p>
+    </td></tr><tr><td valign="center" align="left"><code>scheme</code></td><td valign="center" align="left">
+      <p>Set this attribute to the name of the protocol you wish to have
+      returned by calls to <code>request.getScheme()</code>.  For
+      example, you would set this attribute to "<code>https</code>"
+      for an SSL Connector.  The default value is "<code>http</code>".</p>
+    </td></tr><tr><td valign="center" align="left"><code>secure</code></td><td valign="center" align="left">
+      <p>Set this attribute to <code>true</code> if you wish to have
+      calls to <code>request.isSecure()</code> to return <code>true</code>
+      for requests received by this Connector (you would want this on an
+      SSL Connector).  The default value is <code>false</code>.</p>
+    </td></tr><tr><td valign="center" align="left"><code>URIEncoding</code></td><td valign="center" align="left">
+      <p>This specifies the character encoding used to decode the URI bytes,
+      after %xx decoding the URL. If not specified, ISO-8859-1 will be used.
+      </p>
+    </td></tr><tr><td valign="center" align="left"><code>useBodyEncodingForURI</code></td><td valign="center" align="left">
+      <p>This specifies if the encoding specified in contentType should be used
+      for URI query parameters, instead of using the URIEncoding. This 
+      setting is present for compatibility with Tomcat 4.1.x, where the 
+      encoding specified in the contentType, or explicitely set using 
+      Request.setCharacterEncoding method was also used for the parameters from
+      the URL. The default value is <code>false</code>.
+      </p>
+    </td></tr></table>
+
+  </blockquote></td></tr></table>
+
+  <table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#828DA6"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Standard Implementation"><strong>Standard Implementation</strong></a></font></td></tr><tr><td><blockquote>
+
+  <p>The standard implementation of <strong>AJP Connector</strong> is
+  <strong>org.apache.coyote.tomcat5.CoyoteConnector</strong>, but you
+  must specify the protocol attribute (see below).</p>
+
+  <p><strong>This implementation supports the AJP 1.3 protocol.</strong></p>
+
+  <p>It supports the following additional attributes (in addition to the
+  common attributes listed above):</p>
+
+  <table cellpadding="5" border="1"><tr><th bgcolor="#023264" width="15%"><font color="#ffffff">Attribute</font></th><th bgcolor="#023264" width="85%"><font color="#ffffff">Description</font></th></tr><tr><td valign="center" align="left"><code>debug</code></td><td valign="center" align="left">
+      <p>The debugging detail level of log messages generated by this
+      component, with higher numbers creating more detailed output.
+      If not specified, this attribute is set to zero (0).</p>
+    </td></tr><tr><td valign="center" align="left"><strong><code>protocol</code></strong></td><td valign="center" align="left">
+      <p>This attribute value must be <code>AJP/1.3</code> to use the AJP
+      handler.</p>
+    </td></tr></table>
+
+  </blockquote></td></tr></table>
+
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Nested Components"><strong>Nested Components</strong></a></font></td></tr><tr><td><blockquote>
+
+  <p></p>
+
+</blockquote></td></tr></table><table cellpadding="2" cellspacing="0" border="0"><tr><td bgcolor="#525D76"><font face="arial,helvetica.sanserif" color="#ffffff"><a name="Configuration HOWTOs"><strong>Configuration HOWTOs</strong></a></font></td></tr><tr><td><blockquote>
+
+  <p>Please refer to the <a href="http://jakarta.apache.org/builds/jakarta-tomcat-connectors/jk2/doc/">JK documentation</a> 
+     for HOWTOs and complete configuration information.</p>
+
+</blockquote></td></tr></table></td></tr><!--FOOTER SEPARATOR--><tr><td colspan="2"><hr size="1" noshade=""></td></tr><!--PAGE FOOTER--><tr><td colspan="2"><div align="center"><font size="-1" color="#525D76"><em>
+        Copyright &copy; 1999-2003, Apache Software Foundation
+        </em></font></div></td></tr></table></body></html>

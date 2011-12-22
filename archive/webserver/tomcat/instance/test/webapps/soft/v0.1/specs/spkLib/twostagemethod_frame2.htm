@@ -1,0 +1,444 @@
+<html><head>
+<title>Determining the Population Mean and Covariance of Individual Parameters Using a Two-Stage Method</title>
+<meta name="description" id="description" content="Determining the Population Mean and Covariance of Individual Parameters Using a Two-Stage Method">
+<meta name="keywords" id="keywords" content=" twostagemethod determining /the population mean /and covariance /of individual parameters /using /a Two-stage /method "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="twostagemethod.htm" target="_top">section</a>, <a href="twostagemethod_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Uses one of the Two-Stage methods to determine the population mean
+and covariance of the individual parameters.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>This function allows the following Two-Stage methods to be used:
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;STANDARD_TWO_STAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;Standard&nbsp;Two-Stage&nbsp;(STS)&nbsp;method,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ITERATIVE_TWO_STAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;Iterative&nbsp;Two-Stage&nbsp;(ITS)&nbsp;method,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;GLOBAL_TWO_STAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;Global&nbsp;Two-Stage&nbsp;(GTS)&nbsp;method.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;MAP_BAYES_STANDARD_TWO_STAGE&nbsp;&nbsp;=&nbsp;&nbsp;Standard&nbsp;Two-Stage&nbsp;(STS)&nbsp;method<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with&nbsp;MAP&nbsp;Bayesian&nbsp;objective,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;MAP_BAYES_ITERATIVE_TWO_STAGE&nbsp;=&nbsp;&nbsp;Iterative&nbsp;Two-Stage&nbsp;(ITS)&nbsp;method<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with&nbsp;MAP&nbsp;Bayesian&nbsp;objective,&nbsp;and<br>
+&nbsp;&nbsp;&nbsp;&nbsp;MAP_BAYES_GLOBAL_TWO_STAGE&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;Global&nbsp;Two-Stage&nbsp;(GTS)&nbsp;method&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;with&nbsp;MAP&nbsp;Bayesian&nbsp;objective.<br>
+<br>
+</span></code>For the Standard Two-Stage methods (STS), the population mean of
+the individuals' parameter estimates is calculated as
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>nInd</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;----<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>STS</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>bMean</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;------&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>bOut</i>_<i>i</i>&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>nInd</i>&nbsp;&nbsp;&nbsp;----&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;=&nbsp;1&nbsp;<br>
+<br>
+</span></code>and the population covariance of the individuals' estimates is
+calculated as
+<code><span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>nInd</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;----<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<i>STS</i>)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>bCov</i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&nbsp;------&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;<i>bOut</i>_<i>i</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>bMean</i>&nbsp;)&nbsp;(&nbsp;<i>bOut</i>_<i>i</i>&nbsp;&nbsp;-&nbsp;&nbsp;<i>bMean</i>&nbsp;)&nbsp;&nbsp;&nbsp;.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>nInd</i>&nbsp;&nbsp;&nbsp;----&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>i</i>&nbsp;=&nbsp;1&nbsp;<br>
+<br>
+</span></code>For the Iterative and Global Two-Stage methods (ITS and GTS), the
+population mean and the population covariance of the individuals' 
+estimates are calculated using the algorithms described in <font color="red">Schumitzky</font>
+(1995).
+
+<br>
+<br>
+<b><big><a name="Reference" id="Reference">Reference</a></big></b>
+<br>
+A. <font color="red">Schumitzky</font>, EM algorithms and two stage methods in <font color="red">phamacokinetic</font> population analysis.
+in <i>Advanced Methods of <font color="red">Pharmacokinetic</font> and <font color="red">Pharmacodynamic</font> Systems Analysis</i>, 
+edited by D. Z. D'<font color="red">Argenio</font>. New York: Plenum, 1995, p. 145-160.
+
+<br>
+<br>
+<b><big><a name="Model Assumptions" id="Model Assumptions">Model Assumptions</a></big></b>
+<br>
+The following model assumptions are stated using 
+<a href="glossary_frame1.htm#Population Notation" target="frame1"><i><span style='white-space: nowrap'>population&nbsp;notation</span></i></a>
+.
+The bar above <code><span style='white-space: nowrap'><i>alp</i></span></code> and <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code> denote the true, but unknown,
+values for the population parameters and the individual parameters
+for the <i>i</i>-th individual, respectively.
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___&nbsp;&nbsp;&nbsp;___<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>y</i>_<i>i</i>&nbsp;=&nbsp;<i>f</i>_<i>i</i>(&nbsp;<i>alp</i>&nbsp;,&nbsp;<i>b</i>_<i>i</i>&nbsp;)&nbsp;+&nbsp;<i>e</i>_<i>i</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___&nbsp;&nbsp;___<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>e</i>_<i>i</i>&nbsp;~&nbsp;<i>N</i>[0,&nbsp;<i>R</i>_<i>i</i>(&nbsp;<i>alp</i>,&nbsp;<i>b</i>_<i>i</i>)]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;___&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;___<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>b</i>_<i>i</i>&nbsp;~&nbsp;<i>N</i>[0,&nbsp;<i>D</i>(<i>alp</i>)]<br>
+</span></code><br>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+Upon a successful completion, the function returns normally and set
+the given output value place holders if it is able to obtain
+acceptable estimates for the population mean and covariance of the
+individuals parameters.
+
+If an error is detected or failure occurs during the evaluation, an
+SpkException object is thrown.  The state at which an exception is
+thrown is defined in <a href="glossary_frame1.htm#Exception Handling Policy" target="frame1"><i><span style='white-space: nowrap'>Exception&nbsp;Handling&nbsp;Policy</span></i></a>
+.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This function expects <i>model</i> to be a function of
+two parameters: <code><span style='white-space: nowrap'><i>b</i></span></code> and <code><span style='white-space: nowrap'><i>i</i></span></code>.
+Refer <u><font color="red"><span style='white-space: nowrap'>Model&nbsp;Functions&nbsp;Depend&nbsp;on&nbsp;i&nbsp;-&nbsp;b</span></font></u>
+
+
+for details.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>method</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This enumerated type variable specifies which Two-Stage method will be used.
+The permissible values for <i>objective</i> are defined in 
+the <a href="objective.htm" target="_top"><span style='white-space: nowrap'>Objective</span></a>
+ enumerated type definition.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecN</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecN</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>N</i></span></code>.  
+The <i>i</i>-th element of <code><span style='white-space: nowrap'><i>N</i></span></code>
+specifies the number of elements of <code><span style='white-space: nowrap'><i>y</i></span></code> that
+correspond to the <i>i</i>-th individual.
+Note that the length of <i>dvecN</i> specifies the number of 
+individuals in the population, <code><span style='white-space: nowrap'><i>M</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecY</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecY</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>y</i></span></code>, which specifies the data for all the individuals.
+The vector <code><span style='white-space: nowrap'><i>y</i></span></code> has
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>N</i>(1)&nbsp;+&nbsp;<i>N</i>(2)&nbsp;+&nbsp;...&nbsp;+&nbsp;<i>N</i>(<i>M</i>)<br>
+</span></code>elements where <code><span style='white-space: nowrap'><i>M</i></span></code> is the number of rows in <code><span style='white-space: nowrap'><i>N</i></span></code>.
+The data vector corresponding to the first individual is
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>y</i>_1&nbsp;=&nbsp;[&nbsp;<i>y</i>(1)&nbsp;,&nbsp;<i>y</i>(2)&nbsp;,&nbsp;...&nbsp;,&nbsp;<i>y</i>(<i>N</i>(1))&nbsp;]<br>
+</span></code>Elements <code><span style='white-space: nowrap'><i>y</i>(<i>N</i>(1)&nbsp;+&nbsp;1)</span></code> through <code><span style='white-space: nowrap'><i>y</i>(<i>N</i>(1)&nbsp;+&nbsp;<i>N</i>(2))</span></code> 
+correspond to the second individual and so on.
+(Note that <code><span style='white-space: nowrap'><i>y</i>_1</span></code> refers to the first subvector or <code><span style='white-space: nowrap'><i>y</i></span></code> while
+<code><span style='white-space: nowrap'><i>y</i>(1)</span></code> refers to the first element of the vector <code><span style='white-space: nowrap'><i>y</i></span></code>.)
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>popOptInfo</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This <a href="optimizer.htm" target="_top"><span style='white-space: nowrap'>Optimizer</span></a>
+ object contains the information 
+that controls the population level optimization process.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Most of the optimizer information is accessible directly via public
+get functions, e.g., the value epsilon is returned by the Optimizer 
+class function <code><font color="blue">getEpsilon()</font></code>.  
+The following subsections specify how this function uses 
+some of the elements of the Optimizer object that are accessed 
+directly using get functions.
+
+<br>
+<br>
+<b><a name="Arguments.popOptInfo.epsilon" id="Arguments.popOptInfo.epsilon">popOptInfo.epsilon</a></b>
+<br>
+This real number is used to specify the convergence criteria
+for the iterative and global Two-Stage methods.
+It must be greater than <code><span style='white-space: nowrap'>0.0</span></code>.
+
+<br>
+<br>
+<b><a name="Arguments.popOptInfo.nMaxIter" id="Arguments.popOptInfo.nMaxIter">popOptInfo.nMaxIter</a></b>
+<br>
+This integer must be greater than or equal to zero.
+It specifies the maximum number of iterations for the iterative and 
+global Two-Stage methods to attempt before giving up on convergence.
+If it is equal to zero, then the initial values for the population mean
+and covariance are accepted as the final values.
+
+<br>
+<br>
+<b><a name="Arguments.popOptInfo.traceLevel" id="Arguments.popOptInfo.traceLevel">popOptInfo.traceLevel</a></b>
+<br>
+This integer scalar specifies the amount of tracing for the iterative 
+and global Two-Stage methods.
+If <code><span style='white-space: nowrap'><i>level</i>&nbsp;<u>&gt;</u>&nbsp;1</span></code>, trace values are directed to standard output 
+(stdout).  
+
+<br>
+<br>
+<b><a name="Arguments.popOptInfo.nIterCompleted" id="Arguments.popOptInfo.nIterCompleted">popOptInfo.nIterCompleted</a></b>
+<br>
+This integer scalar holds the number of iteration that have been 
+completed for the iterative and global Two-Stage methods..
+
+<br>
+<br>
+<b><a name="Arguments.popOptInfo.isTooManyIter" id="Arguments.popOptInfo.isTooManyIter">popOptInfo.isTooManyIter</a></b>
+<br>
+This flag indicates whether the too-many-iteration failure has occurred.  
+
+<br>
+<br>
+<b><a name="Arguments.popOptInfo.throwExcepIfMaxIter" id="Arguments.popOptInfo.throwExcepIfMaxIter">popOptInfo.throw<font color="red">Excep</font>IfMaxIter</a></b>
+<br>
+This flag indicates if the optimizer should throw an exception when
+the maximum number of iterations is exhausted.
+If this parameter is true, then when
+the maximum number of iterations is exhausted, an exception will
+be thrown and the output values for this function will not be set.
+Otherwise, the calling program will
+need to check the parameter isTooManyIter to see if the 
+maximum number of iterations was exhausted.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indOptInfo</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This <a href="optimizer.htm" target="_top"><span style='white-space: nowrap'>Optimizer</span></a>
+ object contains the information 
+that controls the individual level optimization process.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Note that warm starts are not supported for the individual 
+level optimization.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Most of the optimizer information is accessible directly via public
+get functions, e.g., the value epsilon is returned by the Optimizer 
+class function <code><font color="blue">getEpsilon()</font></code>.  
+The following subsections specify how this function uses 
+some of the elements of the Optimizer object that are accessed 
+directly using get functions.
+
+<br>
+<br>
+<b><a name="Arguments.indOptInfo.epsilon" id="Arguments.indOptInfo.epsilon">indOptInfo.epsilon</a></b>
+<br>
+This real number is used to specify the convergence criteria
+for the optimizer.
+It must be greater than <code><span style='white-space: nowrap'>0.0</span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>For a particular value of <code><span style='white-space: nowrap'><i>alp</i></span></code> and for the <code><span style='white-space: nowrap'><i>i</i></span></code>-th 
+individual in the population, an individual parameter value 
+<code><span style='white-space: nowrap'><i>bOut</i>_<i>i</i></span></code> is accepted as an estimate for <code><span style='white-space: nowrap'><i>bHat</i>_<i>i</i></span></code> if 
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>abs</i>(&nbsp;<i>bOut</i>_<i>i</i>&nbsp;-&nbsp;<i>bHat</i>_<i>i</i>&nbsp;)&nbsp;<u>&lt;</u>&nbsp;<i>epsilon</i>&nbsp;(&nbsp;<i>bUp</i>&nbsp;-&nbsp;<i>bLow</i>&nbsp;)&nbsp;&nbsp;,<br>
+</span></code>where <code><span style='white-space: nowrap'><i>abs</i></span></code> is the element-by-element absolute value function
+and <code><span style='white-space: nowrap'><i>bHat</i>_<i>i</i></span></code> is a local minimizer of <code><span style='white-space: nowrap'><i>MapObj</i>(<i>b</i>)</span></code> 
+with respect to <code><span style='white-space: nowrap'><i>b</i></span></code>.
+Since <code><span style='white-space: nowrap'><i>bHat</i>_<i>i</i></span></code> is unknown, this function estimates the left hand
+side of this inequality in a way that is a good approximation when 
+the Hessian of the objective function is positive definite.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Note that if <i>nMaxIter</i> is set to zero, then the <i>i</i>-th 
+column of <code><span style='white-space: nowrap'><i>bIn</i></span></code> is accepted as the estimate for 
+<code><span style='white-space: nowrap'><i>bHat</i>_<i>i</i></span></code>.
+
+<br>
+<br>
+<b><a name="Arguments.indOptInfo.nMaxIter" id="Arguments.indOptInfo.nMaxIter">indOptInfo.nMaxIter</a></b>
+<br>
+This integer must be greater than or equal to zero.
+It specifies the maximum number of 
+iterations to attempt before giving up on convergence.
+If it is equal to zero, then the initial
+value for <code><span style='white-space: nowrap'><i>b</i></span></code> is accepted as the final value, and any requested output
+values are evaluated at that final value.
+
+<br>
+<br>
+<b><a name="Arguments.indOptInfo.traceLevel" id="Arguments.indOptInfo.traceLevel">indOptInfo.traceLevel</a></b>
+<br>
+This integer scalar specifies the amount of tracing.
+Larger values of <i>traceLevel</i> entail more tracing, 
+with <code><span style='white-space: nowrap'>4</span></code> being the highest level of tracing.
+If <code><span style='white-space: nowrap'><i>level</i>&nbsp;<u>&gt;</u>&nbsp;1</span></code>, trace values are directed to standard output 
+(stdout).  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Tracing is done using a scaled version of the
+objective function.  For this scaled version the elements of
+the parameter vector are constrained to the interval <code><span style='white-space: nowrap'>[0,&nbsp;1]</span></code>. 
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If <i>traceLevel</i> is equal to <code><span style='white-space: nowrap'>4</span></code>, then the tracing 
+will include the gradient of the objective and a finite difference 
+approximation for that gradient.
+These two gradients can be compared as a check on the consistency 
+of the objective function and its gradient.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>For more details on the tracing see the description of the level 
+parameter for the optimizer <u><font color="red"><span style='white-space: nowrap'>QuasiNewton01Box</span></font></u>
+
+.
+
+<br>
+<br>
+<b><a name="Arguments.indOptInfo.nIterCompleted" id="Arguments.indOptInfo.nIterCompleted">indOptInfo.nIterCompleted</a></b>
+<br>
+This integer scalar holds the number of iteration that have been 
+completed in the optimizer.
+
+<br>
+<br>
+<b><a name="Arguments.indOptInfo.isTooManyIter" id="Arguments.indOptInfo.isTooManyIter">indOptInfo.isTooManyIter</a></b>
+<br>
+This flag indicates whether the too-many-iteration failure has occurred.  
+
+<br>
+<br>
+<b><a name="Arguments.indOptInfo.saveStateAtEndOfOpt" id="Arguments.indOptInfo.saveStateAtEndOfOpt">indOptInfo.saveStateAtEndOfOpt</a></b>
+<br>
+This flag is not used for the individual level optimization.
+
+<br>
+<br>
+<b><a name="Arguments.indOptInfo.throwExcepIfMaxIter" id="Arguments.indOptInfo.throwExcepIfMaxIter">indOptInfo.throw<font color="red">Excep</font>IfMaxIter</a></b>
+<br>
+This flag is not used for the individual level optimization.
+
+<br>
+<br>
+<b><a name="Arguments.indOptInfo.isWarmStartPossible" id="Arguments.indOptInfo.isWarmStartPossible">indOptInfo.isWarmStartPossible</a></b>
+<br>
+This flag is not used for the individual level optimization.
+
+<br>
+<br>
+<b><a name="Arguments.indOptInfo.isWarmStart" id="Arguments.indOptInfo.isWarmStart">indOptInfo.isWarmStart</a></b>
+<br>
+This flag is not used for the individual level optimization.
+
+<br>
+<br>
+<b><a name="Arguments.indOptInfo.stateInfo" id="Arguments.indOptInfo.stateInfo">indOptInfo.stateInfo</a></b>
+<br>
+This <code><font color="blue">StateInfo</font></code> <font color="red">struct</font> is not used for the individual 
+level optimization.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecBLow</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecBLow</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>bLow</i></span></code>, which specifies the lower limit for the individual parameters 
+during the optimization procedure for all the individuals.
+The length of <i>dvecBLow</i> is equal to the length of 
+the individual parameter vector <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecBUp</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecBUp</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>bUp</i></span></code>, which specifies the upper limit for the individual parameters 
+during the optimization procedure for all the individuals.
+The length of <i>dvecBUp</i> is equal to the length of 
+the individual parameter vector <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dmatBIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dmatBIn</i> contains the matrix 
+<code><span style='white-space: nowrap'><i>bIn</i></span></code>.  
+The <i>i</i>-th column of <code><span style='white-space: nowrap'><i>bIn</i></span></code> specifies the initial value for 
+the individual parameters for the <i>i</i>-th individual.
+If <code><span style='white-space: nowrap'><i>ind</i>_<i>i</i></span></code> is any column of <code><span style='white-space: nowrap'><i>bIn</i></span></code>,
+it is assumed that <code><span style='white-space: nowrap'><i>bLow</i>&nbsp;<u>&lt;</u>&nbsp;<i>ind</i>_<i>i</i>&nbsp;<u>&lt;</u>&nbsp;<i>bUp</i></span></code>.
+The column dimension of <code><span style='white-space: nowrap'><i>bIn</i></span></code> is equal to the number of 
+individuals in the population, <code><span style='white-space: nowrap'><i>M</i></span></code>.
+Note that the number of rows in <i>dmatBIn</i> specifies the 
+length of the individual parameter vector <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdmatBOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>pdmatBOut</i> is not <code><font color="blue">NULL</font></code>, 
+then the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdmatBOut</i> must 
+be declared in the function that calls this function, 
+and it must have the same dimensions as <code><span style='white-space: nowrap'><i>bIn</i></span></code>.
+If <i>pdmatBOut</i> is not <code><font color="blue">NULL</font></code>, 
+and if this function completed the optimization successfully,  
+then the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdmatBOut</i> will 
+contain <code><span style='white-space: nowrap'><i>bOut</i></span></code>, which is the matrix of estimates for the true 
+minimizers of the individual objective functions.
+Otherwise, this function will not attempt to change the contents of 
+the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdmatBOut</i>.
+To be specific, the <i>i</i>-th column of <code><span style='white-space: nowrap'><i>bOut</i></span></code> contains a column
+vector that is an estimate for <code><span style='white-space: nowrap'><i>bHat</i>_<i>i</i></span></code>, the minimizer 
+of <code><span style='white-space: nowrap'><i>MapObj</i>(<i>b</i>)</span></code> with respect to <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code>. 
+The value <code><span style='white-space: nowrap'><i>epsilon</i>(1)</span></code> is used for accepting the minimizers with 
+respect to the individual parameters.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dvecBStep</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dvecBStep</i> contains the column vector 
+<code><span style='white-space: nowrap'><i>bStep</i></span></code>, which specifies the step size used for approximating
+the derivatives with respect to the individual parameters.
+The length of <i>dvecBStep</i> is equal to the length of 
+the individual parameter vector <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdvecBMeanOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>pdvecBMeanOut</i> is not <code><font color="blue">NULL</font></code>, 
+then the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdvecBMeanOut</i> must 
+be declared in the function that calls this function, 
+and it must have the same length as the individual parameter 
+vector <code><span style='white-space: nowrap'><i>b</i>_<i>i</i></span></code>.
+If <i>pdvecBMeanOut</i> is not <code><font color="blue">NULL</font></code>, 
+and if this function completed successfully,  
+then the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdvecBMeanOut</i> will 
+contain <code><span style='white-space: nowrap'><i>bMeanOut</i></span></code>, which is a vector containing the 
+population mean of the matrix of estimates for the true minimizers of
+the individual objective functions, <code><span style='white-space: nowrap'><i>bOut</i></span></code>.
+Otherwise, this function will not attempt to change the contents of 
+the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdvecBMeanOut</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdmatB<font color="red">Cov</font>Out</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>If <i>pdmatB<font color="red">Cov</font>Out</i> is not <code><font color="blue">NULL</font></code>, 
+then the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdmatB<font color="red">Cov</font>Out</i> must 
+be declared in the function that calls this function, 
+and it must have the same dimensions as <code><span style='white-space: nowrap'><i>bIn</i></span></code>.
+If <i>pdmatB<font color="red">Cov</font>Out</i> is not <code><font color="blue">NULL</font></code>, 
+and if this function completed successfully,  
+then the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdmatB<font color="red">Cov</font>Out</i> will 
+contain <code><span style='white-space: nowrap'><i>bCovOut</i></span></code>, which is a matrix containing the 
+population covariance of the matrix of estimates for the true minimizers of
+the individual objective functions, <code><span style='white-space: nowrap'><i>bOut</i></span></code>.
+Otherwise, this function will not attempt to change the contents of 
+the <code><font color="blue">DoubleMatrix</font></code> pointed to by <i>pdmatB<font color="red">Cov</font>Out</i>.
+
+
+<hr>Input File: ../../spk/twoStageMethod.cpp
+
+</body>
+</html>

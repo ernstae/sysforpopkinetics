@@ -1,0 +1,150 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>spkcmpd.pl -- the SPK Compiler Daemon</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#abstract">ABSTRACT</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<li><a href="#returns">RETURNS</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>spkcmpd.pl -- the SPK Compiler Daemon</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p>spkcmpd.pl database dbhost dbuser dbpasswd shost sport</p>
+<p>
+</p>
+<hr />
+<h1><a name="abstract">ABSTRACT</a></h1>
+<p>The SPK Compiler Daemon runs continuously on the ASPK server. It
+selects jobs from the compiler queue, forks the spkcompiler to
+process them, and inserts them into the run qeueue,  In cases where
+a job fails to compile, the daemon records the error report and
+the 'end' status in the database.</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>The program expects the following arguments:</p>
+<pre>
+    $database
+        The name of the SPK database
+    $dbhost
+        The host on which the SPK database resides
+    $dbuser
+        A database username which has read/write access to the 
+        job table
+    $dbpasswd
+        The password associated with the username
+    $mode
+        The test mode indicator being &quot;test&quot; for test mode
+    $shost
+        The host on which the job-queue server resides
+    $sport
+        The port number of the job-queue server uses</pre>
+<p>The first thing that spkcmp.pl does after starting up is to call
+Proc::Daemon::Init to make it into a daemon, by shedding its 
+inheirited environment and becoming a direct child of the system
+init process.</p>
+<p>It then opens the system log so that it has a place to record progress
+and error messages.</p>
+<p>It attempts to create a lock-file if one does not already exist. The
+method that is used assures that the process of query and creation
+is atomic.  If the lock-file already exists, the program writes an
+error message to the system log and terminates, because only one 
+copy of spkcmpd.pl can be allowed run at any given time.</p>
+<p>Next, it opens the database and connects to the job-queue server.</p>
+<p>The program designates itself to be a process group leader. This
+way it will be able to send signals to all of its descendents without
+having to know their PIDs.</p>
+<p>The ``stop'' subroutine is designated to catch the TERM signal,
+when it is received. As explained below, this will allow for
+an orderly shutdown of the daemon and its sub-processes.  It closes 
+the connection to the database and the connection to the job-queue 
+server.</p>
+<p>The last major step in the start-up sequence is to talk to the 
+job-queue server to put any compiling jobs back to compiler queue 
+that were interupted by the last termination of this daemon, and 
+to put any aborting jobs back to aborting compiler queue that were 
+interupted by the last termination of this daemon</p>
+<p>At this point, the program enters an endless loop from which it will
+escape only upon receipt of a signal. It queries the job-queue server
+to discover whether or not a job has been added to the compiler
+queue.  If so, a copy of spkcompiler is started as an independent
+sub-process, working in its own directory on input provided by the
+job.</p>
+<p>The program also queries the job-queue server to discover whether or not 
+a job has been added to the aborting compiler queue.  If so, a 'TERM' 
+signal is sent to the child process of the job to terminate the child 
+process.  To avoid the ``stop'' subroutine, which is for the termination 
+of the daemon, being called, the signal mask is temporarily set.</p>
+<p>The daemon then checks to see if any child processes have 
+terminated. If so, it moves them either to the run queue or to 
+``end'' status, depending on whether the compilation was successful
+or not.  The daemon sleeps a second, before continuing the
+loop.</p>
+<p>The normal way in which spkcmp.pl is terminated is by using the
+Unix ``kill'' command to send it the TERM signal.  When TERM is received,
+execution is passed to the 'stop' subroutine, which had previously
+been designated to catch this signal.</p>
+<p>To avoid a loop, 'stop' sets the signal mask to ignore any
+subsequent TERM signals. It then sends the TERM signal to every process
+in its process group, which consists of the daemon itself and all of its
+descendents. It waits for all sub-processes (which are 
+instances of the spkcompiler) to terminate.  It closes the database
+and the system log, then dies.</p>
+<p>If the signal number is SIGKILL, this indicates that the job is set to
+abort.</p>
+<p>NOTE: Life-Cycle of the Working Directory Name</p>
+<pre>
+  1. A working directory must be created before each SPK compile is 
+     forked so that the process will start up in its own unique space.
+     There it will write its output.  To insure that the
+     name of the working directory is unique, a suffix of the form
+     &quot;-job-jjjj&quot; is appended to the name, where &quot;jjjj&quot; is the unique
+     job_id that was assigned by the database management system when
+     the job was created. 
+  2. When the process is forked into a parent process and a child
+     process, the Linux or Unix operating system assigns a process
+     identifier (pid) number to the child.  Process identifiers are
+     recycled, but only after a long time or when the system is 
+     rebooted.  The parent finds the working directories of its
+     children by maintaining a table relating pid to job_id.
+  3. When a child process dies, the parent receives its pid as the 
+     value returned from the waitpid system call.  Using this, it
+     easily constructs the name of the working directory. After 
+     extracting results and placing them in the database, the 
+     working directory is normally removed, unless the constant 
+     $retain_working_directory has been initialized to be true, or
+     in case the run died due to an internal error.</pre>
+<p>
+</p>
+<hr />
+<h1><a name="returns">RETURNS</a></h1>
+<p>Nothing, because it has no parent (other than init) to which an exit
+code might be returned.  The program does, however, write event messages
+to the system log.</p>
+
+</body>
+
+</html>

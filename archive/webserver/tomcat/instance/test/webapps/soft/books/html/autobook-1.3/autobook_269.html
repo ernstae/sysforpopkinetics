@@ -1,0 +1,224 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Supporting Cross Compiler in Configure</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Supporting Cross Compiler in Configure">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Supporting Cross Compiler in Configure">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC269"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_268.html#SEC268" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Supporting Cross Compiler" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_270.html#SEC270" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Supporting Cross Compiler in Make" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_258.html#SEC258" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Cross Compilation" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_268.html#SEC268" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Supporting Cross Compiler" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_271.html#SEC271" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Installing GNU Autotools" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H4> 26.4.6.1 Supporting Building with a Cross Compiler in Configure Scripts </H4>
+<!--docid::SEC269::-->
+<P>
+
+In a <TT>`configure.in'</TT> file, after calling <SAMP>`AC_PROG_CC'</SAMP>, you can
+find out whether the program is being built by a cross compiler by
+examining the shell variable <SAMP>`cross_compiling'</SAMP>.  If the compiler is
+a cross compiler, which means that this is a Canadian Cross,
+<SAMP>`cross_compiling'</SAMP> will be <SAMP>`yes'</SAMP>.  In a normal configuration,
+<SAMP>`cross_compiling'</SAMP> will be <SAMP>`no'</SAMP>.
+</P><P>
+
+You ordinarily do not need to know the type of the build system in a
+<TT>`configure'</TT> script.  However, if you do need that information, you
+can get it by using the macro <SAMP>`AC_CANONICAL_SYSTEM'</SAMP>, the same macro
+which is used to determine the target system.  This macro will set the
+variables <SAMP>`build'</SAMP>, <SAMP>`build_alias'</SAMP>, <SAMP>`build_cpu'</SAMP>,
+<SAMP>`build_vendor'</SAMP>, and <SAMP>`build_os'</SAMP>, which correspond to the
+similar <SAMP>`target'</SAMP> and <SAMP>`host'</SAMP> variables, except that they
+describe the build system.  See section <A HREF="autobook_261.html#SEC261">26.3 Using the Target Type</A>.
+</P><P>
+
+When writing tests in <TT>`configure.in'</TT>, you must remember that you
+want to test the host environment, not the build environment.  Macros
+which use the compiler, such as like <SAMP>`AC_CHECK_FUNCS'</SAMP>, will test
+the host environment.  That is because the tests will be done by running
+the compiler, which is actually a build cross host compiler.  If the
+compiler can find the function, that means that the function is present
+in the host environment.
+</P><P>
+
+Tests like <SAMP>`test -f /dev/ptyp0'</SAMP>, on the other hand, will test the
+build environment.  Remember that the <TT>`configure'</TT> script is running
+on the build system, not the host system.  If your <TT>`configure'</TT>
+scripts examines files, those files will be on the build system.
+Whatever you determine based on those files may or may not be the case
+on the host system.
+</P><P>
+
+Most Autoconf macros will work correctly when building with a cross
+compiler.  The main exception is <SAMP>`AC_TRY_RUN'</SAMP>.  This macro tries to
+compile and run a test program.  This will fail when building with a
+cross compiler, because the program will be compiled for the host
+system, which means that it will not run on the build system.
+</P><P>
+
+The <SAMP>`AC_TRY_RUN'</SAMP> macro provides an optional argument to tell the
+<TT>`configure'</TT> script what to do when building with a cross compiler.
+If that argument is not present, you will get a warning when you run
+<SAMP>`autoconf'</SAMP>:
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>warning: AC_TRY_RUN called without default to allow cross compiling
+</FONT></pre></td></tr></table>This tells you that the resulting <TT>`configure'</TT> script will not work
+when building with a cross compiler.
+</P><P>
+
+In some cases while it may better to perform a test at configure time,
+it is also possible to perform the test at run time (see section <A HREF="autobook_226.html#SEC226">23.3.2 Testing system features at application runtime</A>).  In such a case you can use
+the cross compiling argument to <SAMP>`AC_TRY_RUN'</SAMP> to tell your program
+that the test could not be performed at configure time.
+</P><P>
+
+There are a few other autoconf macros which will not work correctly when
+building with a cross compiler: a partial list is
+<SAMP>`AC_FUNC_GETPGRP'</SAMP>, <SAMP>`AC_FUNC_SETPGRP'</SAMP>,
+<SAMP>`AC_FUNC_SETVBUF_REVERSED'</SAMP>, and <SAMP>`AC_SYS_RESTARTABLE_SYSCALLS'</SAMP>.
+The <SAMP>`AC_CHECK_SIZEOF'</SAMP> macro is generally not very useful when
+building with a cross compiler; it permits an optional argument
+indicating the default size, but there is no way to know what the
+correct default should be.
+</P><P>
+
+<A NAME="Supporting Cross Compiler in Make"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

@@ -1,0 +1,350 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Separators and Drive Letters</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Separators and Drive Letters">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Separators and Drive Letters">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC249"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_248.html#SEC248" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: 8.3 Filenames" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_250.html#SEC250" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Executable Filename Extensions" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_250.html#SEC250" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Executable Filename Extensions" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_247.html#SEC247" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: File System Limitations" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_250.html#SEC250" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Executable Filename Extensions" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H4> 25.3.2.2 Separators and Drive Letters </H4>
+<!--docid::SEC249::-->
+<P>
+
+As discussed earlier (see section <A HREF="autobook_132.html#SEC132">15.3.5.6 Windows Separators and Drive Letters</A>), the
+Windows file systems use different delimiters for separating directories
+and path elements than their Unix cousins.  There are three places
+where this has an effect:
+</P><P>
+
+<DL COMPACT>
+<DT>the shell command line
+<DD>Up until Cygwin b20.1, it was possible to refer to drive letter prefixed
+paths from the shell using the <SAMP>`//c/path/to/file'</SAMP> syntax to refer
+to the directory root at <SAMP>`C:\path\to\file'</SAMP>.  Unfortunately, the
+Windows kernel confused this with the its own network share notation,
+causing the shell to pause for a short while to look for a machine named
+<SAMP>`c'</SAMP> in its network neighbourhood.  Since release 1.0 of Cygwin, the
+<SAMP>`//c/path/to/file'</SAMP> notation now really does refer to a machine
+named <SAMP>`c'</SAMP> from Cygwin as well as from Windows.  To refer to drive
+letter rooted paths on the local machine from Cygwin there is a new
+hybrid <SAMP>`c:/path/to/file'</SAMP> notation.  This notation also works in
+Cygwin b20, and is probably the system you should use.
+<P>
+
+On the other hand, using the new hybrid notation in shell scripts means
+that they won't run on old Cygwin releases.  Shell code embedded In
+<TT>`configure.in'</TT> scripts, should test whether the hybrid notation
+works, and use an alternate macro to translate hybrid notation to the
+old style if necessary.
+</P><P>
+
+I must confess that from the command line I now use the longer
+<SAMP>`/cygdrive/c/path/to/file'</SAMP> notation, since <KBD>TAB</KBD> completion
+doesn't yet work for the newer hybrid notation.  It is important to use
+the new notation in shell scripts however, or they will fail on the latest
+releases of Cygwin.
+</P><P>
+
+<DT>shell scripts
+<DD>For a shell script to work correctly on non-Cygwin development
+environments, it needs to be aware of and handle Windows path and
+directory separator and drive letters.  The Libtool scripts use the
+following idiom:
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>case "$path" in
+# Accept absolute paths.
+[\\/]* | [A-Za-\]:[\\/]*)
+  # take care of absolute paths
+  insert some code here
+  ;;
+*)
+  # what is left must be a relative path
+  insert some code here
+  ;;
+esac
+</FONT></pre></td></tr></table></P><P>
+
+<DT>source code
+<DD><A NAME="IDX81"></A>
+When porting Unix software to Cygwin, this is much less of an issue
+because these differences are hidden beneath the emulation layer, and by
+the <CODE>mount</CODE> command respectively; although I have found that
+GCC, for example, returns a mixed mode <SAMP>`/'</SAMP> and <SAMP>`\'</SAMP> delimitted
+include path which upsets Automake's dependency tracking on occasion.
+<P>
+
+Cygwin provides convenience functions to convert back and forth between
+the different notations, which we call <EM>POSIX paths</EM> or path lists,
+and <EM>WIN32 paths</EM> or path lists:
+</P><P>
+
+<A NAME="IDX82"></A>
+<DL>
+<DT><U>Function:</U> int <B>posix_path_list_p</B> <I>(const char *<VAR>path</VAR>)</I>
+<DD>Return <SAMP>`0'</SAMP>, unless <VAR>path</VAR> is a <SAMP>`/'</SAMP> and <SAMP>`:'</SAMP> separated
+path list.  The determination is rather simplistic, in that a string
+which contains a <SAMP>`;'</SAMP> or begins with a single letter followed by a
+<SAMP>`:'</SAMP> causes the <SAMP>`0'</SAMP> return.
+</DL>
+</P><P>
+
+<A NAME="IDX83"></A>
+<DL>
+<DT><U>Function:</U> void <B>cygwin_win32_to_posix_path_list</B> <I>(const char *<VAR>win32</VAR>, char *<VAR>posix</VAR>)</I>
+<DD>Converts the <SAMP>`\'</SAMP> and <SAMP>`;'</SAMP> delimiters in <VAR>win32</VAR>, into the
+equivalent <SAMP>`/'</SAMP> and <SAMP>`:'</SAMP> delimiters while copying into the
+buffer at address <VAR>posix</VAR>.  This buffer must be preallocated before
+calling the function.
+</DL>
+</P><P>
+
+<A NAME="IDX84"></A>
+<DL>
+<DT><U>Function:</U> void <B>cygwin_conv_to_posix_path</B> <I>(const char *<VAR>path</VAR>, char *<VAR>posix_path</VAR>)</I>
+<DD>If <VAR>path</VAR> is a <SAMP>`\'</SAMP> delimitted path, the equivalent, <SAMP>`/'</SAMP>
+delimitted path is written to the buffer at address <VAR>posix_path</VAR>.
+This buffer must be preallocated before calling the function.
+</DL>
+</P><P>
+
+<A NAME="IDX85"></A>
+<DL>
+<DT><U>Function:</U> void <B>cygwin_conv_to_full_posix_path</B> <I>(const char *<VAR>path</VAR>, char *<VAR>posix_path</VAR>)</I>
+<DD>If <VAR>path</VAR> is a, possibly relative, <SAMP>`\'</SAMP> delimitted path, the
+equivalent, absolute, <SAMP>`/'</SAMP> delimitted path is written to the buffer
+at address <VAR>posix_path</VAR>.  This buffer must be preallocated before
+calling the function.
+</DL>
+</P><P>
+
+<A NAME="IDX86"></A>
+<DL>
+<DT><U>Function:</U> void <B>cygwin_posix_to_win32_path_list</B> <I>(const char *<VAR>posix</VAR>, char *<VAR>win32</VAR>)</I>
+<DD>Converts the <SAMP>`/'</SAMP> and <SAMP>`:'</SAMP> delimiters in <VAR>posix</VAR>, into the
+equivalent <SAMP>`\'</SAMP> and <SAMP>`;'</SAMP> delimiters while copying into the
+buffer at address <VAR>win32</VAR>.  This buffer must be preallocated before
+calling the function.
+</DL>
+</P><P>
+
+<A NAME="IDX87"></A>
+<DL>
+<DT><U>Function:</U> void <B>cygwin_conv_to_win32_path</B> <I>(const char *<VAR>path</VAR>, char *<VAR>win32_path</VAR>)</I>
+<DD>If <VAR>path</VAR> is a <SAMP>`/'</SAMP> delimitted path, the equivalent, <SAMP>`\'</SAMP>
+delimitted path is written to the buffer at address <VAR>win32_path</VAR>.
+This buffer must be preallocated before calling the function.
+</DL>
+</P><P>
+
+<A NAME="IDX88"></A>
+<DL>
+<DT><U>Function:</U> void <B>cygwin_conv_to_full_win32_path</B> <I>(const char *<VAR>path</VAR>, char *<VAR>win32_path</VAR>)</I>
+<DD>If <VAR>path</VAR> is a, possibly relative, <SAMP>`/'</SAMP> delimitted path, the
+equivalent, absolute, <SAMP>`\'</SAMP> delimitted path is written to the buffer
+at address <VAR>win32_path</VAR>.  This buffer must be preallocated before
+calling the function.
+</DL>
+</DL>
+<P>
+
+You can use these functions something like this:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>void
+display_canonical_path(const char *maybe_relative_or_win32)
+{  
+    char buffer[MAX_PATH];
+    cygwin_conv_to_full_posix_path(maybe_relative_or_win32,
+                                   buffer);
+    printf("canonical path for %s:  %s\n",
+           maybe_relative_or_win32, buffer);
+}
+</pre></td></tr></table></P><P>
+
+For your code to be fully portable however, you cannot rely on these Cygwin
+functions as they are not implemented on Unix, or even mingw or
+DJGPP.  Instead you should add the following to a shared header, and be
+careful to use it when processing and building paths and path lists:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if defined __CYGWIN32__ &#38;&#38; !defined __CYGWIN__
+   /* For backwards compatibility with Cygwin b19 and
+      earlier, we define __CYGWIN__ here, so that
+      we can rely on checking just for that macro. */
+#  define __CYGWIN__  __CYGWIN32__
+#endif
+
+#if defined _WIN32 &#38;&#38; !defined __CYGWIN__
+   /* Use Windows separators on all _WIN32 defining
+      environments, except Cygwin. */
+#  define DIR_SEPARATOR_CHAR		'\\'
+#  define DIR_SEPARATOR_STR		"\\"
+#  define PATH_SEPARATOR_CHAR		';'
+#  define PATH_SEPARATOR_STR		";"
+#endif
+#ifndef DIR_SEPARATOR_CHAR
+   /* Assume that not having this is an indicator that all
+      are missing. */
+#  define DIR_SEPARATOR_CHAR		'/'
+#  define DIR_SEPARATOR_STR		"/"
+#  define PATH_SEPARATOR_CHAR		':'
+#  define PATH_SEPARATOR_STR		":"
+#endif /* !DIR_SEPARATOR_CHAR */
+</pre></td></tr></table></P><P>
+
+With this in place we can use the macros defined above to write code
+which will compile and work just about anywhere:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>char path[MAXBUFLEN];
+snprintf(path, MAXBUFLEN, "%ctmp%c%s\n",
+         DIR_SEPARATOR_CHAR, DIR_SEPARATOR_CHAR, foo);
+file = fopen(path, "tw+");
+</FONT></pre></td></tr></table></P><P>
+
+<A NAME="Executable Filename Extensions"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

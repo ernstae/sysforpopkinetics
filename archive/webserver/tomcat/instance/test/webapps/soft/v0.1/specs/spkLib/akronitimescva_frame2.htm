@@ -1,0 +1,172 @@
+<html><head>
+<title>Kronker Product Of A With Identity Matrix Multiplied by C</title>
+<meta name="description" id="description" content="Kronker Product Of A With Identity Matrix Multiplied by C">
+<meta name="keywords" id="keywords" content=" Akronitimesc kronker product fast and memory efficient computation of matrix saving space time "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="akronitimescva.htm" target="_top">section</a>, <a href="akronitimescva_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Given <i>A</i> has <code><span style='white-space: nowrap'><i>nRowsA</i>&nbsp;<i>by</i>&nbsp;<i>nColsA</i></span></code> dimensions and 
+<i>I</i> is a <code><span style='white-space: nowrap'><i>nColsI</i></span></code> identity matrix,  
+the kronker product of <i>A</i> and <i>I</i> 
+is a <code><span style='white-space: nowrap'><i>nRowsA</i>&nbsp;*&nbsp;<i>nRowsI</i>&nbsp;<i>by</i>&nbsp;<i>nColsA</i>&nbsp;*&nbsp;<i>nColsI</i></span></code> matrix <i>S</i> 
+such that for each element <code><span style='white-space: nowrap'><i>s</i>(<i>i</i>,<i>j</i>)</span></code> in <i>S</i>, 
+<code><span style='white-space: nowrap'><i>s</i>(<i>i</i>,<i>j</i>)&nbsp;=&nbsp;<i>a</i>(<i>i</i>,<i>j</i>)*<i>B</i></span></code>, 
+where <code><span style='white-space: nowrap'><i>i</i></span></code> is the row index s.t. <code><span style='white-space: nowrap'><i>nRowsA</i>&nbsp;&gt;&nbsp;<i>i</i>&nbsp;&gt;=&nbsp;0</span></code> and 
+<code><span style='white-space: nowrap'><i>j</i></span></code> is the column index s.t. <code><span style='white-space: nowrap'><i>nColsA</i>&nbsp;&gt;&nbsp;<i>j</i>&nbsp;&gt;=&nbsp;0</span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Often the kronker product of two matrices is matrix multiplied by a third matrix.
+In this case, when the matrix <i>I</i> is large,
+you can save space and time by forming the final product using the statement
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;=&nbsp;AkronItimesC(&nbsp;A,&nbsp;nColsA,&nbsp;I,&nbsp;nColsI,&nbsp;C,&nbsp;nColsC&nbsp;)<br>
+</span>
+</font></code>
+instead of the statement
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;result&nbsp;=&nbsp;multiply(&nbsp;kron(&nbsp;A,&nbsp;nColsA,&nbsp;I,&nbsp;nColsI&nbsp;),&nbsp;C,&nbsp;nColsC&nbsp;)<br>
+</span>
+</font></code>
+which would both calculate the same result.
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+AkronBtimesC&nbsp;=&nbsp;cvec&nbsp;(&nbsp;[&nbsp;a11*I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a12*I&nbsp;&nbsp;...&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a21*I&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a22*I&nbsp;&nbsp;...&nbsp;]&nbsp;*&nbsp;C<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a11*I*c1&nbsp;+&nbsp;a12*I*c2&nbsp;&nbsp;...]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a21*I*c1&nbsp;+&nbsp;a22*I*c2&nbsp;...&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+</span>
+</font></code>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is an array containing the values of the <code><span style='white-space: nowrap'><i>nRowsA</i>&nbsp;<i>by</i>&nbsp;<i>nColsA</i></span></code> matrix, 
+<code><span style='white-space: nowrap'><i>A</i></span></code>, above in column-major order.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nColsA</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is the number of columns in the matrix <code><span style='white-space: nowrap'><i>A</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>I</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is an array containing the values of the <code><span style='white-space: nowrap'><i>nColsI</i></span></code> identity matrix, 
+<code><span style='white-space: nowrap'><i>I</i></span></code>, above in column-major order.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nColsI</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is the number of columns in the matrix <code><span style='white-space: nowrap'><i>I</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>C</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is an array containing the values of the <code><span style='white-space: nowrap'><i>nRowsC</i>&nbsp;<i>by</i>&nbsp;<i>nColsC</i></span></code> matrix, 
+<code><span style='white-space: nowrap'><i>C</i></span></code>, above in column-major order.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nColsC</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is the number of columns in the matrix <code><span style='white-space: nowrap'><i>C</i></span></code>.
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you write, link and run the following program,
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;SpkValarray.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;AkronItimesC.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;SPK_VA::valarray;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;std::cout;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;std::endl;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;D;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;A&nbsp;to&nbsp;a&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;A&nbsp;=&nbsp;|&nbsp;&nbsp;1&nbsp;&nbsp;4&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;2&nbsp;&nbsp;5&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;3&nbsp;&nbsp;6&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;a[]&nbsp;=&nbsp;{&nbsp;1,&nbsp;2,&nbsp;3,&nbsp;4,&nbsp;5,&nbsp;6&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;A(&nbsp;a,&nbsp;6&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;I&nbsp;be&nbsp;a&nbsp;identity&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;I&nbsp;=&nbsp;|&nbsp;&nbsp;1&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;1&nbsp;&nbsp;0&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;0&nbsp;&nbsp;0&nbsp;&nbsp;1&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;I(&nbsp;0.0,&nbsp;9&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;I[&nbsp;slice(&nbsp;0,&nbsp;3,&nbsp;3+1&nbsp;)&nbsp;]&nbsp;=&nbsp;1.0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Let&nbsp;C&nbsp;be&nbsp;a&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;C&nbsp;=&nbsp;|&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;4&nbsp;&nbsp;10&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;5&nbsp;&nbsp;11&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;6&nbsp;&nbsp;12&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;c[]&nbsp;=&nbsp;{&nbsp;1,&nbsp;2,&nbsp;3,&nbsp;4,&nbsp;5,&nbsp;6,&nbsp;7,&nbsp;8,&nbsp;9,&nbsp;10,&nbsp;11,&nbsp;12&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;C(&nbsp;c,&nbsp;12&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;This&nbsp;should&nbsp;yield&nbsp;in&nbsp;a&nbsp;(3&nbsp;*&nbsp;3)&nbsp;by&nbsp;2&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;D&nbsp;=&nbsp;|&nbsp;&nbsp;17&nbsp;&nbsp;22&nbsp;&nbsp;27&nbsp;&nbsp;47&nbsp;&nbsp;64&nbsp;&nbsp;81&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;22&nbsp;&nbsp;29&nbsp;&nbsp;36&nbsp;&nbsp;52&nbsp;&nbsp;71&nbsp;&nbsp;90&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;27&nbsp;&nbsp;36&nbsp;&nbsp;45&nbsp;&nbsp;57&nbsp;&nbsp;78&nbsp;&nbsp;99&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D&nbsp;=&nbsp;AkronItimesC(&nbsp;A,&nbsp;2,&nbsp;I,&nbsp;3,&nbsp;C,&nbsp;2&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;D&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;D&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;D&nbsp;=&nbsp;{&nbsp;17,&nbsp;22,&nbsp;27,&nbsp;22,&nbsp;29,&nbsp;36,&nbsp;27,&nbsp;36,&nbsp;45,&nbsp;47,&nbsp;52,&nbsp;57,&nbsp;64,&nbsp;71,&nbsp;78,&nbsp;81,&nbsp;90,&nbsp;99&nbsp;}<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/AkronItimesC.cpp
+
+</body>
+</html>

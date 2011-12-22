@@ -1,0 +1,72 @@
+<html><head>
+<title>Get an Array of Values from a Subelement of the Current Element (Char \Tag \Version)</title>
+<meta name="description" id="description" content="Get an Array of Values from a Subelement of the Current Element (Char \Tag \Version)">
+<meta name="keywords" id="keywords" content=" Get Array Subelement Current Element Optimizer array getarray "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="getarraychartag.htm" target="_top">section</a>, <a href="getarraychartag_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Gets the values from an array of &quot;value&quot; elements that 
+are contained in a subelement of the current element, i.e.,
+<code><font color="blue">
+
+    &lt;current_element&gt;
+        ...
+        &lt;subelement length=&quot;##&quot;&gt;
+            &lt;value&gt;########&lt;/value&gt;
+            &lt;value&gt;########&lt;/value&gt;
+            ...
+            &lt;value&gt;########&lt;/value&gt;
+        &lt;/subelement&gt;
+        ...
+    &lt;/current_element&gt;
+
+</font></code>
+where the sequences of number signs (#) represent the sequences of
+characters that constitute a single value.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>This function assumes that the current element has been set
+before this function is called.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>ValType</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The type of the array.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pSubelementTag</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This argument specifies the name of the subelement of the current
+element that contains the array of &quot;value&quot; elements.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nValue</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This argument specifies the number of &quot;value&quot; elements to get.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>arrayOut</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This argument will be set equal to an array of values 
+that correspond to the contents of the &quot;value&quot; elements
+after they have been converted to the type of <i>ValueType</i> 
+using the std::istream extraction operator (&gt;&gt;).
+
+
+<hr>Input File: ../../spk/Optimizer.cpp
+
+</body>
+</html>

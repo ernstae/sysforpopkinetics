@@ -1,0 +1,229 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Fallback Function Implementations</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Fallback Function Implementations">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Fallback Function Implementations">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC50"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_49.html#SEC49" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Function Definitions" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_51.html#SEC51" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: K&#38;R Compilers" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_51.html#SEC51" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: K&#38;R Compilers" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_45.html#SEC45" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: GNU Autotools in Practice" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_52.html#SEC52" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: A Simple Shell Builders Library" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 9.1.5 Fallback Function Implementations </H3>
+<!--docid::SEC50::-->
+<P>
+
+Due to the huge number of Unix varieties in common use today, many of
+the C library functions that you take for granted on your prefered
+development platform are very likely missing from some of the
+architectures you would like your code to compile on.  Fundamentally
+there are two ways to cope with this: 
+</P><P>
+
+<UL>
+<LI>
+Use only the few library calls that are available everywhere.  In
+reality this is not actually possible because there are two lowest
+common denominators with mutually exclusive APIs, one rooted in
+<FONT SIZE="-1">BSD</FONT> Unix (<SAMP>`bcopy'</SAMP>, <SAMP>`rindex'</SAMP>) and the other in
+SYSV Unix (<SAMP>`memcpy'</SAMP>, <SAMP>`strrchr'</SAMP>).  The only way to deal
+with this is to define one API in terms of the other using the
+preprocessor.  The newer POSIX standard deprecates many of the
+<FONT SIZE="-1">BSD</FONT> originated calls (with exceptions such as the
+<FONT SIZE="-1">BSD</FONT> socket API).  Even on non-POSIX platforms, there
+has been so much cross pollination that often both varieties of a given
+call may be provided,  however you would be wise to write your code
+using POSIX endorsed calls, and where they are missing, define them
+in terms of whatever the host platform provides.
+<P>
+
+This approach requires a lot of knowledge about various system libraries
+and standards documents, and can leave you with reams of preprocessor
+code to handle the differences between APIS.  You will also need
+to perform a lot of checking in <TT>`configure.in'</TT> to figure out which
+calls are available.  For example, to allow the rest of your code to use
+the <SAMP>`strcpy'</SAMP> call with impunity, you would need the following code
+in <TT>`configure.in'</TT>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>AC_CHECK_FUNCS(strcpy bcopy)
+</pre></td></tr></table></P><P>
+
+And the following preprocessor code in a header file that is seen by
+every source file:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if !HAVE_STRCPY
+#  if HAVE_BCOPY
+#    define strcpy(dest, src)   bcopy (src, dest, 1 + strlen (src))
+#  else /* !HAVE_BCOPY */
+     error no strcpy or bcopy
+#  endif /* HAVE_BCOPY */
+#endif /* HAVE_STRCPY */
+</pre></td></tr></table></P><P>
+
+<LI>
+Alternatively you could provide your own fallback implementations of
+function calls you know are missing on some platforms.  In practice you
+don't need to be as knowledgable about problematic functions when using
+this approach.  You can look in GNU libiberty<A NAME="DOCF9" HREF="autobook_fot.html#FOOT9">(9)</A> or Fran&ccedil;ois
+Pinard's libit project<A NAME="DOCF10" HREF="autobook_fot.html#FOOT10">(10)</A> to see for which
+functions other GNU developers have needed to implement fallback
+code.  The libit project is especially useful in this respect as it
+comprises canonical versions of fallback functions, and suitable
+Autoconf macros assembled from across the entire GNU project.  I
+won't give an example of setting up your package to use this approach,
+since that is how I have chosen to structure the project described in
+this chapter.
+</UL>
+<P>
+
+Rather than writing code to the lowest common denominator of system
+libraries, I am a strong advocate of the latter school of thought in the
+majority of cases.  As with all things it pays to take a pragmatic
+approach;  don't be afraid of the middle ground -- weigh the options on
+a case by case basis.
+</P><P>
+
+<A NAME="K&#38;R Compilers"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

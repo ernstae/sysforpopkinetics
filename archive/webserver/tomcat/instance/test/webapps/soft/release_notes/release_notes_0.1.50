@@ -1,0 +1,34 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.49
+----------------------------------
+USER VISIBLE CHANGES
+
+At the end of a run, whether successful or not, the runtime daemon
+copies the checkpoint file, checkpoint.xml, to the database.  This
+will be used by the MDA to show the user the state of the computation
+after the last iteration and to allow the user to create a
+continuation job that would begin where its predecessor left off.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY:	Alan Westhagen
+
+WHEN:	February 28, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.50
+----------------------------------
+USER VISIBLE CHANGES
+
+The runtime daemon will copy the checkpoint.xml file from the database
+to the working directory before running a job if the checkpoint field
+is not null.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: 	Alan Westhagen
+
+WHEN:	March 1, 2005

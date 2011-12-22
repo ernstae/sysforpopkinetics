@@ -1,0 +1,66 @@
+<html><head>
+<title>Important Notes</title>
+<meta name="description" id="description" content="Important Notes">
+<meta name="keywords" id="keywords" content=" "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="_contents.htm" target="_top">previous</a>
+&nbsp;&nbsp;<a href="spkmodel.htm" target="_top">next</a>
+&nbsp;&nbsp;<a href="_contents.htm" target="_top">contents</a>
+&nbsp;&nbsp;<a href="_reference.htm" target="_top">reference</a>
+&nbsp;&nbsp;<a href="_index.htm" target="_top">index</a>
+&nbsp;&nbsp;<a href="_search.htm" target="_top">search</a>
+&nbsp;&nbsp;<a href="_external.htm" target="_top">external</a>
+&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="notes.htm" target="_top">section</a>, <a href="notes_frame1.htm" target="_top">frame</a></div>
+<hr><center><b><big><big>Important Notes</big></big></b></center>
+<br>
+<b><big><a name="Active Constraints" id="Active Constraints">Active Constraints</a></big></b>
+<br>
+All the optimization routines return the derivative of the objective
+so that the calling program can determine which constraints are active.
+In the prototype, this information is currently not available when you
+are solving problems at the population level. 
+On the other hand, sometimes analytic solutions will not agree
+with the results of the prototype because the constraints are active
+for some of the random effects.
+
+<br>
+<br>
+<b><big><a name="Huge Matrices" id="Huge Matrices">Huge Matrices</a></big></b>
+<br>
+The matrices <code><font color="blue">R2inv</font></code> and its derivatives in the file <code><font color="blue">ExpectedHessian.oms</font></code>
+should never be formed. I just used them because I was lazy and in a hurry. You
+should do much better than this when you implement the calculations.
+
+<br>
+<br>
+<b><big><a name="Matrix Inversion" id="Matrix Inversion">Matrix Inversion</a></big></b>
+<br>
+Given an invertible matrix <code><span style='white-space: nowrap'><i>A</i></span></code>, there are numerical methods that
+solve equations of the form <code><span style='white-space: nowrap'><i>A</i>&nbsp;*&nbsp;<i>X</i>&nbsp;=&nbsp;<i>B</i></span></code> for the matrix <code><span style='white-space: nowrap'><i>X</i></span></code>
+where <code><span style='white-space: nowrap'><i>B</i></span></code> is a matrix with the same number of rows as <code><span style='white-space: nowrap'><i>A</i></span></code>.
+It is often faster and numerically better to do this than to compute
+the inverse of <code><span style='white-space: nowrap'><i>A</i></span></code> and then multiply it times <code><span style='white-space: nowrap'><i>B</i></span></code>.
+In addition, if <code><span style='white-space: nowrap'><i>A</i></span></code> has special structure like being positive definite,
+there is usually a routine specially made for solving the corresponding equations.
+
+<br>
+<br>
+<b><big><a name="References" id="References">References</a></big></b>
+<br>
+Table 6.1 and 6.4 of Mathematics for Operations Research by W.H. Marlow.
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+
+</i>
+</center>
+<hr>Input File: notes.omh
+
+</body>
+</html>

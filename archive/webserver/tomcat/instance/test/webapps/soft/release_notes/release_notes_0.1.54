@@ -1,0 +1,69 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.51
+----------------------------------
+USER VISIBLE CHANGES
+
+1. User's requests to continue an individual level fitting process
+from where it was left off in the previous run is now fully
+supported.
+
+2. A job that failed in the middle of computation is re-initiated
+from where it was left off in the previous incomplete run.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 161 (#1 above), 162 (#2 above)
+
+BY: Sachiko Honda
+
+WHEN: March 2, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.52
+----------------------------------
+USER VISIBLE CHANGES
+
+Added new formulations for the covariance matrix used for individual level 
+statistics that are the same as those available in NONMEM and that are 
+consistent with those used for population statistics.
+
+OTHER CHANGES
+
+Improved the interfaces to the individual and population level statistics
+functions.
+
+RELATED BUG REPORTS:  157
+
+BY:  Mitch Watrous
+
+WHEN:  March 15, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.53
+----------------------------------
+USER VISIBLE CHANGES
+
+Warmstart continuation of a job should now work.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 163
+
+
+BY:   Alan
+
+WHEN: March 17, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.54
+----------------------------------
+USER VISIBLE CHANGES
+
+Statistics based on the hessian of individual objective function 
+is added.
+
+OTHER CHANGES
+indStatistics() and popStatistics() changed their interfaces.
+
+RELATED BUG REPORTS: 166, 167
+
+BY: Sachiko Honda
+
+WHEN: March 18, 2005

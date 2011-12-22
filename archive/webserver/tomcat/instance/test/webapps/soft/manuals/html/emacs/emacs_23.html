@@ -1,0 +1,2862 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Text</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Text">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Text">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC233"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC232"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC234"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_22.html#SEC229"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> T. Commands for Human Languages </H1>
+<!--docid::SEC233::-->
+<P>
+
+  The term <EM>text</EM> has two widespread meanings in our area of the
+computer field.  One is data that is a sequence of characters.  Any file
+that you edit with Emacs is text, in this sense of the word.  The other
+meaning is more restrictive: a sequence of characters in a human language
+for humans to read (possibly after processing by a text formatter), as
+opposed to a program or commands for a program.
+</P><P>
+
+  Human languages have syntactic/stylistic conventions that can be
+supported or used to advantage by editor commands: conventions involving
+words, sentences, paragraphs, and capital letters.  This chapter
+describes Emacs commands for all of these things.  There are also
+commands for <EM>filling</EM>, which means rearranging the lines of a
+paragraph to be approximately equal in length.  The commands for moving
+over and killing words, sentences and paragraphs, while intended
+primarily for editing text, are also often useful for editing programs.
+</P><P>
+
+  Emacs has several major modes for editing human-language text.  If the
+file contains text pure and simple, use Text mode, which customizes
+Emacs in small ways for the syntactic conventions of text.  Outline mode
+provides special commands for operating on text with an outline
+structure.
+</P><P>
+
+  For text which contains embedded commands for text formatters, Emacs
+has other major modes, each for a particular text formatter.  Thus, for
+input to TeX, you would use TeX
+mode.
+For input to nroff, use Nroff mode.
+</P><P>
+
+  Instead of using a text formatter, you can edit formatted text in
+WYSIWYG style ("what you see is what you get"), with Enriched mode.
+Then the formatting appears on the screen in Emacs while you edit.
+</P><P>
+
+  The "automatic typing" features may be useful when writing text.
+See section `Autotyping' in <CITE>Features for Automatic Typing</CITE>.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC234">T.1 Words</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Moving over and killing words.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC235">T.2 Sentences</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Moving over and killing sentences.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC236">T.3 Paragraphs</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Moving over paragraphs.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC237">T.4 Pages</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Moving over pages.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC238">T.5 Filling Text</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Filling or justifying text.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC244">T.6 Case Conversion Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Changing the case of text.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC245">T.7 Text Mode</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">The major modes for editing text files.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC246">T.8 Outline Mode</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Editing outlines.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC252">T.9 TeX Mode</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Editing input to the formatter TeX.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC257">T.10 Nroff Mode</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Editing input to the formatter nroff.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC258">T.11 Editing Formatted Text</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Editing formatted text directly in WYSIWYG fashion.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Words"></A>
+<HR SIZE="6">
+<A NAME="SEC234"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC235"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> T.1 Words </H2>
+<!--docid::SEC234::-->
+<P>
+
+  Emacs has commands for moving over or operating on words.  By convention,
+the keys for them are all Meta characters.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-f</KBD>
+<DD>Move forward over a word (<CODE>forward-word</CODE>).
+<DT><KBD>M-b</KBD>
+<DD>Move backward over a word (<CODE>backward-word</CODE>).
+<DT><KBD>M-d</KBD>
+<DD>Kill up to the end of a word (<CODE>kill-word</CODE>).
+<DT><KBD>M-<KBD>DEL</KBD></KBD>
+<DD>Kill back to the beginning of a word (<CODE>backward-kill-word</CODE>).
+<DT><KBD>M-@</KBD>
+<DD>Mark the end of the next word (<CODE>mark-word</CODE>).
+<DT><KBD>M-t</KBD>
+<DD>Transpose two words or drag a word across other words
+(<CODE>transpose-words</CODE>).
+</DL>
+<P>
+
+  Notice how these keys form a series that parallels the character-based
+<KBD>C-f</KBD>, <KBD>C-b</KBD>, <KBD>C-d</KBD>, <KBD>DEL</KBD> and <KBD>C-t</KBD>.  <KBD>M-@</KBD> is
+cognate to <KBD>C-@</KBD>, which is an alias for <KBD>C-<KBD>SPC</KBD></KBD>.
+</P><P>
+
+<A NAME="IDX1098"></A>
+<A NAME="IDX1099"></A>
+<A NAME="IDX1100"></A>
+<A NAME="IDX1101"></A>
+  The commands <KBD>M-f</KBD> (<CODE>forward-word</CODE>) and <KBD>M-b</KBD>
+(<CODE>backward-word</CODE>) move forward and backward over words.  These
+Meta characters are thus analogous to the corresponding control
+characters, <KBD>C-f</KBD> and <KBD>C-b</KBD>, which move over single characters
+in the text.  The analogy extends to numeric arguments, which serve as
+repeat counts.  <KBD>M-f</KBD> with a negative argument moves backward, and
+<KBD>M-b</KBD> with a negative argument moves forward.  Forward motion
+stops right after the last letter of the word, while backward motion
+stops right before the first letter.</P><P>
+
+<A NAME="IDX1102"></A>
+<A NAME="IDX1103"></A>
+  <KBD>M-d</KBD> (<CODE>kill-word</CODE>) kills the word after point.  To be
+precise, it kills everything from point to the place <KBD>M-f</KBD> would
+move to.  Thus, if point is in the middle of a word, <KBD>M-d</KBD> kills
+just the part after point.  If some punctuation comes between point and the
+next word, it is killed along with the word.  (If you wish to kill only the
+next word but not the punctuation before it, simply do <KBD>M-f</KBD> to get
+the end, and kill the word backwards with <KBD>M-<KBD>DEL</KBD></KBD>.)
+<KBD>M-d</KBD> takes arguments just like <KBD>M-f</KBD>.
+</P><P>
+
+<A NAME="IDX1104"></A>
+<A NAME="IDX1105"></A>
+  <KBD>M-<KBD>DEL</KBD></KBD> (<CODE>backward-kill-word</CODE>) kills the word before
+point.  It kills everything from point back to where <KBD>M-b</KBD> would
+move to.  If point is after the space in <SAMP>`FOO, BAR'</SAMP>, then
+<SAMP>`FOO, '</SAMP> is killed.  (If you wish to kill just <SAMP>`FOO'</SAMP>, and
+not the comma and the space, use <KBD>M-b M-d</KBD> instead of
+<KBD>M-<KBD>DEL</KBD></KBD>.)
+</P><P>
+
+  <KBD>M-t</KBD> (<CODE>transpose-words</CODE>) exchanges the word before or
+containing point with the following word.  The delimiter characters between
+the words do not move.  For example, <SAMP>`FOO, BAR'</SAMP> transposes into
+<SAMP>`BAR, FOO'</SAMP> rather than <SAMP>`BAR FOO,'</SAMP>.  See section <A HREF="emacs_15.html#SEC107">L.2 Transposing Text</A>, for
+more on transposition and on arguments to transposition commands.
+</P><P>
+
+<A NAME="IDX1106"></A>
+<A NAME="IDX1107"></A>
+  To operate on the next <VAR>n</VAR> words with an operation which applies
+between point and mark, you can either set the mark at point and then move
+over the words, or you can use the command <KBD>M-@</KBD> (<CODE>mark-word</CODE>)
+which does not move point, but sets the mark where <KBD>M-f</KBD> would move
+to.  <KBD>M-@</KBD> accepts a numeric argument that says how many words to
+scan for the place to put the mark.  In Transient Mark mode, this command
+activates the mark.
+</P><P>
+
+  The word commands' understanding of syntax is completely controlled by
+the syntax table.  Any character can, for example, be declared to be a word
+delimiter.  See section <A HREF="emacs_33.html#SEC504">AD.6 The Syntax Table</A>.
+</P><P>
+
+<A NAME="Sentences"></A>
+<HR SIZE="6">
+<A NAME="SEC235"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC234"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC236"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC236"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> T.2 Sentences </H2>
+<!--docid::SEC235::-->
+<P>
+
+  The Emacs commands for manipulating sentences and paragraphs are mostly
+on Meta keys, so as to be like the word-handling commands.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-a</KBD>
+<DD>Move back to the beginning of the sentence (<CODE>backward-sentence</CODE>).
+<DT><KBD>M-e</KBD>
+<DD>Move forward to the end of the sentence (<CODE>forward-sentence</CODE>).
+<DT><KBD>M-k</KBD>
+<DD>Kill forward to the end of the sentence (<CODE>kill-sentence</CODE>).
+<DT><KBD>C-x <KBD>DEL</KBD></KBD>
+<DD>Kill back to the beginning of the sentence (<CODE>backward-kill-sentence</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX1108"></A>
+<A NAME="IDX1109"></A>
+<A NAME="IDX1110"></A>
+<A NAME="IDX1111"></A>
+  The commands <KBD>M-a</KBD> and <KBD>M-e</KBD> (<CODE>backward-sentence</CODE> and
+<CODE>forward-sentence</CODE>) move to the beginning and end of the current
+sentence, respectively.  They were chosen to resemble <KBD>C-a</KBD> and
+<KBD>C-e</KBD>, which move to the beginning and end of a line.  Unlike them,
+<KBD>M-a</KBD> and <KBD>M-e</KBD> if repeated or given numeric arguments move over
+successive sentences.
+</P><P>
+
+  Moving backward over a sentence places point just before the first
+character of the sentence; moving forward places point right after the
+punctuation that ends the sentence.  Neither one moves over the
+whitespace at the sentence boundary.
+</P><P>
+
+<A NAME="IDX1112"></A>
+<A NAME="IDX1113"></A>
+<A NAME="IDX1114"></A>
+<A NAME="IDX1115"></A>
+  Just as <KBD>C-a</KBD> and <KBD>C-e</KBD> have a kill command, <KBD>C-k</KBD>, to go
+with them, so <KBD>M-a</KBD> and <KBD>M-e</KBD> have a corresponding kill command
+<KBD>M-k</KBD> (<CODE>kill-sentence</CODE>) which kills from point to the end of
+the sentence.  With minus one as an argument it kills back to the
+beginning of the sentence.  Larger arguments serve as a repeat count.
+There is also a command, <KBD>C-x <KBD>DEL</KBD></KBD>
+(<CODE>backward-kill-sentence</CODE>), for killing back to the beginning of a
+sentence.  This command is useful when you change your mind in the
+middle of composing text.</P><P>
+
+  The sentence commands assume that you follow the American typist's
+convention of putting two spaces at the end of a sentence; they consider
+a sentence to end wherever there is a <SAMP>`.'</SAMP>, <SAMP>`?'</SAMP> or <SAMP>`!'</SAMP>
+followed by the end of a line or two spaces, with any number of
+<SAMP>`)'</SAMP>, <SAMP>`]'</SAMP>, <SAMP>`''</SAMP>, or <SAMP>`"'</SAMP> characters allowed in between.
+A sentence also begins or ends wherever a paragraph begins or ends.
+</P><P>
+
+<A NAME="IDX1116"></A>
+  The variable <CODE>sentence-end</CODE> controls recognition of the end of a
+sentence.  It is a regexp that matches the last few characters of a
+sentence, together with the whitespace following the sentence.  Its
+normal value is
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>"[.?!][]\"')]*\\($\\| $\\|\t\\|  \\)[ \t\n]*"
+</pre></td></tr></table></P><P>
+
+This example is explained in the section on regexps.  See section <A HREF="emacs_14.html#SEC97">K.5 Syntax of Regular Expressions</A>.
+</P><P>
+
+  If you want to use just one space between sentences, you should
+set <CODE>sentence-end</CODE> to this value:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>"[.?!][]\"')]*\\($\\|\t\\| \\)[ \t\n]*"
+</pre></td></tr></table></P><P>
+
+You should also set the variable <CODE>sentence-end-double-space</CODE> to
+<CODE>nil</CODE> so that the fill commands expect and leave just one space at
+the end of a sentence.  Note that this makes it impossible to
+distinguish between periods that end sentences and those that indicate
+abbreviations.
+</P><P>
+
+<A NAME="Paragraphs"></A>
+<HR SIZE="6">
+<A NAME="SEC236"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC235"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC237"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC237"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> T.3 Paragraphs </H2>
+<!--docid::SEC236::-->
+<P>
+
+  The Emacs commands for manipulating paragraphs are also Meta keys.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-{</KBD>
+<DD>Move back to previous paragraph beginning (<CODE>backward-paragraph</CODE>).
+<DT><KBD>M-}</KBD>
+<DD>Move forward to next paragraph end (<CODE>forward-paragraph</CODE>).
+<DT><KBD>M-h</KBD>
+<DD>Put point and mark around this or next paragraph (<CODE>mark-paragraph</CODE>).
+</DL>
+<P>
+
+  <KBD>M-{</KBD> moves to the beginning of the current or previous
+paragraph, while <KBD>M-}</KBD> moves to the end of the current or next
+paragraph.  Blank lines and text-formatter command lines separate
+paragraphs and are not considered part of any paragraph.  In Fundamental
+mode, but not in Text mode, an indented line also starts a new
+paragraph.  (If a paragraph is preceded by a blank line, these commands
+treat that blank line as the beginning of the paragraph.)
+</P><P>
+
+  In major modes for programs, paragraphs begin and end only at blank
+lines.  This makes the paragraph commands continue to be useful even
+though there are no paragraphs per se.
+</P><P>
+
+  When there is a fill prefix, then paragraphs are delimited by all lines
+which don't start with the fill prefix.  See section <A HREF="emacs_23.html#SEC238">T.5 Filling Text</A>.
+</P><P>
+
+<A NAME="IDX1117"></A>
+<A NAME="IDX1118"></A>
+  When you wish to operate on a paragraph, you can use the command
+<KBD>M-h</KBD> (<CODE>mark-paragraph</CODE>) to set the region around it.  Thus,
+for example, <KBD>M-h C-w</KBD> kills the paragraph around or after point.
+The <KBD>M-h</KBD> command puts point at the beginning and mark at the end of
+the paragraph point was in.  In Transient Mark mode, it activates the
+mark.  If point is between paragraphs (in a run of blank lines, or at a
+boundary), the paragraph following point is surrounded by point and
+mark.  If there are blank lines preceding the first line of the
+paragraph, one of these blank lines is included in the region.
+</P><P>
+
+<A NAME="IDX1119"></A>
+<A NAME="IDX1120"></A>
+  The precise definition of a paragraph boundary is controlled by the
+variables <CODE>paragraph-separate</CODE> and <CODE>paragraph-start</CODE>.  The
+value of <CODE>paragraph-start</CODE> is a regexp that should match any line
+that either starts or separates paragraphs.  The value of
+<CODE>paragraph-separate</CODE> is another regexp that should match only lines
+that separate paragraphs without being part of any paragraph (for
+example, blank lines).  Lines that start a new paragraph and are
+contained in it must match only <CODE>paragraph-start</CODE>, not
+<CODE>paragraph-separate</CODE>.  For example, in Fundamental mode,
+<CODE>paragraph-start</CODE> is <CODE>"[ \t\n\f]"</CODE>, and
+<CODE>paragraph-separate</CODE> is <CODE>"[ \t\f]*$"</CODE>.
+</P><P>
+
+  Normally it is desirable for page boundaries to separate paragraphs.
+The default values of these variables recognize the usual separator for
+pages.
+</P><P>
+
+<A NAME="Pages"></A>
+<HR SIZE="6">
+<A NAME="SEC237"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC236"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC238"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC238"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> T.4 Pages </H2>
+<!--docid::SEC237::-->
+<P>
+
+<A NAME="IDX1121"></A>
+<A NAME="IDX1122"></A>
+  Files are often thought of as divided into <EM>pages</EM> by the
+<EM>formfeed</EM> character (ASCII control-L, octal code 014).  When you
+print hardcopy for a file, this character forces a page break; thus,
+each page of the file goes on a separate page on paper.  Most Emacs
+commands treat the page-separator character just like any other
+character: you can insert it with <KBD>C-q C-l</KBD>, and delete it with
+<KBD>DEL</KBD>.  Thus, you are free to paginate your file or not.  However,
+since pages are often meaningful divisions of the file, Emacs provides
+commands to move over them and operate on them.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-x [</KBD>
+<DD>Move point to previous page boundary (<CODE>backward-page</CODE>).
+<DT><KBD>C-x ]</KBD>
+<DD>Move point to next page boundary (<CODE>forward-page</CODE>).
+<DT><KBD>C-x C-p</KBD>
+<DD>Put point and mark around this page (or another page) (<CODE>mark-page</CODE>).
+<DT><KBD>C-x l</KBD>
+<DD>Count the lines in this page (<CODE>count-lines-page</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX1123"></A>
+<A NAME="IDX1124"></A>
+<A NAME="IDX1125"></A>
+<A NAME="IDX1126"></A>
+  The <KBD>C-x [</KBD> (<CODE>backward-page</CODE>) command moves point to immediately
+after the previous page delimiter.  If point is already right after a page
+delimiter, it skips that one and stops at the previous one.  A numeric
+argument serves as a repeat count.  The <KBD>C-x ]</KBD> (<CODE>forward-page</CODE>)
+command moves forward past the next page delimiter.
+</P><P>
+
+<A NAME="IDX1127"></A>
+<A NAME="IDX1128"></A>
+  The <KBD>C-x C-p</KBD> command (<CODE>mark-page</CODE>) puts point at the
+beginning of the current page and the mark at the end.  The page
+delimiter at the end is included (the mark follows it).  The page
+delimiter at the front is excluded (point follows it).  In Transient
+Mark mode, this command activates the mark.
+</P><P>
+
+  <KBD>C-x C-p C-w</KBD> is a handy way to kill a page to move it
+elsewhere.  If you move to another page delimiter with <KBD>C-x [</KBD> and
+<KBD>C-x ]</KBD>, then yank the killed page, all the pages will be properly
+delimited once again.  The reason <KBD>C-x C-p</KBD> includes only the
+following page delimiter in the region is to ensure that.
+</P><P>
+
+  A numeric argument to <KBD>C-x C-p</KBD> is used to specify which page to go
+to, relative to the current one.  Zero means the current page.  One means
+the next page, and -1 means the previous one.
+</P><P>
+
+<A NAME="IDX1129"></A>
+<A NAME="IDX1130"></A>
+  The <KBD>C-x l</KBD> command (<CODE>count-lines-page</CODE>) is good for deciding
+where to break a page in two.  It displays in the echo area the total number
+of lines in the current page, and then divides it up into those preceding
+the current line and those following, as in
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>Page has 96 (72+25) lines
+</pre></td></tr></table></P><P>
+
+  Notice that the sum is off by one; this is correct if point is not at the
+beginning of a line.
+</P><P>
+
+<A NAME="IDX1131"></A>
+  The variable <CODE>page-delimiter</CODE> controls where pages begin.  Its
+value is a regexp that matches the beginning of a line that separates
+pages.  The normal value of this variable is <CODE>"^\f"</CODE>, which
+matches a formfeed character at the beginning of a line.
+</P><P>
+
+<A NAME="Filling"></A>
+<HR SIZE="6">
+<A NAME="SEC238"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC237"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC239"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC244"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC244"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> T.5 Filling Text </H2>
+<!--docid::SEC238::-->
+<P>
+
+  <EM>Filling</EM> text means breaking it up into lines that fit a
+specified width.  Emacs does filling in two ways.  In Auto Fill mode,
+inserting text with self-inserting characters also automatically fills
+it.  There are also explicit fill commands that you can use when editing
+text leaves it unfilled.  When you edit formatted text, you can specify
+a style of filling for each portion of the text (see section <A HREF="emacs_23.html#SEC258">T.11 Editing Formatted Text</A>).
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC239">T.5.1 Auto Fill Mode</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Auto Fill mode breaks long lines automatically.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC240">T.5.2 Refill Mode</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Keeping paragraphs filled.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC241">T.5.3 Explicit Fill Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Commands to refill paragraphs and center lines.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC242">T.5.4 The Fill Prefix</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Filling paragraphs that are indented
+                          or in a comment, etc.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC243">T.5.5 Adaptive Filling</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How Emacs can determine the fill prefix automatically.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Auto Fill"></A>
+<HR SIZE="6">
+<A NAME="SEC239"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC238"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC240"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC244"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC238"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC244"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.5.1 Auto Fill Mode </H3>
+<!--docid::SEC239::-->
+<P>
+
+  <EM>Auto Fill</EM> mode is a minor mode in which lines are broken
+automatically when they become too wide.  Breaking happens only when
+you type a <KBD>SPC</KBD> or <KBD>RET</KBD>.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-x auto-fill-mode</KBD>
+<DD>Enable or disable Auto Fill mode.
+<DT><KBD><KBD>SPC</KBD></KBD>
+<DD><DT><KBD><KBD>RET</KBD></KBD>
+<DD>In Auto Fill mode, break lines when appropriate.
+</DL>
+<P>
+
+<A NAME="IDX1132"></A>
+  <KBD>M-x auto-fill-mode</KBD> turns Auto Fill mode on if it was off, or off
+if it was on.  With a positive numeric argument it always turns Auto
+Fill mode on, and with a negative argument always turns it off.  You can
+see when Auto Fill mode is in effect by the presence of the word
+<SAMP>`Fill'</SAMP> in the mode line, inside the parentheses.  Auto Fill mode is
+a minor mode which is enabled or disabled for each buffer individually.
+See section <A HREF="emacs_33.html#SEC476">AD.1 Minor Modes</A>.
+</P><P>
+
+  In Auto Fill mode, lines are broken automatically at spaces when they
+get longer than the desired width.  Line breaking and rearrangement
+takes place only when you type <KBD>SPC</KBD> or <KBD>RET</KBD>.  If you wish to
+insert a space or newline without permitting line-breaking, type
+<KBD>C-q <KBD>SPC</KBD></KBD> or <KBD>C-q C-j</KBD> (recall that a newline is really a
+control-J).  Also, <KBD>C-o</KBD> inserts a newline without line breaking.
+</P><P>
+
+  Auto Fill mode works well with programming-language modes, because it
+indents new lines with <KBD>TAB</KBD>.  If a line ending in a comment gets
+too long, the text of the comment is split into two comment lines.
+Optionally, new comment delimiters are inserted at the end of the first
+line and the beginning of the second so that each line is a separate
+comment; the variable <CODE>comment-multi-line</CODE> controls the choice
+(see section <A HREF="emacs_24.html#SEC285">U.5 Manipulating Comments</A>).
+</P><P>
+
+  Adaptive filling (see section <A HREF="emacs_23.html#SEC243">T.5.5 Adaptive Filling</A>) works for Auto Filling as
+well as for explicit fill commands.  It takes a fill prefix
+automatically from the second or first line of a paragraph.
+</P><P>
+
+  Auto Fill mode does not refill entire paragraphs; it can break lines but
+cannot merge lines.  So editing in the middle of a paragraph can result in
+a paragraph that is not correctly filled.  The easiest way to make the
+paragraph properly filled again is usually with the explicit fill commands.
+See section <A HREF="emacs_23.html#SEC241">T.5.3 Explicit Fill Commands</A>.
+</P><P>
+
+  Many users like Auto Fill mode and want to use it in all text files.
+The section on init files says how to arrange this permanently for yourself.
+See section <A HREF="emacs_33.html#SEC505">AD.7 The Init File, <TT>`~/.emacs'</TT></A>.
+</P><P>
+
+<A NAME="Refill"></A>
+<HR SIZE="6">
+<A NAME="SEC240"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC239"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC241"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC241"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC238"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC244"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.5.2 Refill Mode </H3>
+<!--docid::SEC240::-->
+<P>
+
+  Refill minor mode provides support for keeping paragraphs filled as
+you type or modify them in other ways.  It provides an effect similar
+to typical word processor behavior.  This works by running a
+paragraph-filling command at suitable times.
+</P><P>
+
+  When you are typing text, only characters which normally trigger
+auto filling, like the space character, will trigger refilling.  This
+is to avoid making it too slow.  Apart from self-inserting characters,
+other commands which modify the text cause refilling.
+</P><P>
+
+  The current implementation is preliminary and probably not robust.
+We expect to improve on it.
+</P><P>
+
+  To toggle the use of Refill mode in the current buffer, type
+<KBD>M-x refill-mode</KBD>.
+</P><P>
+
+<A NAME="Fill Commands"></A>
+<HR SIZE="6">
+<A NAME="SEC241"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC240"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC242"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC242"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC238"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC244"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.5.3 Explicit Fill Commands </H3>
+<!--docid::SEC241::-->
+<P>
+
+<DL COMPACT>
+<DT><KBD>M-q</KBD>
+<DD>Fill current paragraph (<CODE>fill-paragraph</CODE>).
+<DT><KBD>C-x f</KBD>
+<DD>Set the fill column (<CODE>set-fill-column</CODE>).
+<DT><KBD>M-x fill-region</KBD>
+<DD>Fill each paragraph in the region (<CODE>fill-region</CODE>).
+<DT><KBD>M-x fill-region-as-paragraph</KBD>
+<DD>Fill the region, considering it as one paragraph.
+<DT><KBD>M-s</KBD>
+<DD>Center a line.
+</DL>
+<P>
+
+<A NAME="IDX1133"></A>
+<A NAME="IDX1134"></A>
+  To refill a paragraph, use the command <KBD>M-q</KBD>
+(<CODE>fill-paragraph</CODE>).  This operates on the paragraph that point is
+inside, or the one after point if point is between paragraphs.
+Refilling works by removing all the line-breaks, then inserting new ones
+where necessary.
+</P><P>
+
+<A NAME="IDX1135"></A>
+  To refill many paragraphs, use <KBD>M-x fill-region</KBD>, which
+divides the region into paragraphs and fills each of them.
+</P><P>
+
+<A NAME="IDX1136"></A>
+  <KBD>M-q</KBD> and <CODE>fill-region</CODE> use the same criteria as <KBD>M-h</KBD>
+for finding paragraph boundaries (see section <A HREF="emacs_23.html#SEC236">T.3 Paragraphs</A>).  For more
+control, you can use <KBD>M-x fill-region-as-paragraph</KBD>, which refills
+everything between point and mark.  This command deletes any blank lines
+within the region, so separate blocks of text end up combined into one
+block.</P><P>
+
+<A NAME="IDX1137"></A>
+  A numeric argument to <KBD>M-q</KBD> causes it to <EM>justify</EM> the text as
+well as filling it.  This means that extra spaces are inserted to make
+the right margin line up exactly at the fill column.  To remove the
+extra spaces, use <KBD>M-q</KBD> with no argument.  (Likewise for
+<CODE>fill-region</CODE>.)  Another way to control justification, and choose
+other styles of filling, is with the <CODE>justification</CODE> text property;
+see <A HREF="emacs_23.html#SEC265">T.11.7 Justification in Formatted Text</A>.
+</P><P>
+
+<A NAME="IDX1138"></A>
+<A NAME="IDX1139"></A>
+<A NAME="IDX1140"></A>
+  The command <KBD>M-s</KBD> (<CODE>center-line</CODE>) centers the current line
+within the current fill column.  With an argument <VAR>n</VAR>, it centers
+<VAR>n</VAR> lines individually and moves past them.
+</P><P>
+
+<A NAME="IDX1141"></A>
+<A NAME="IDX1142"></A>
+<A NAME="IDX1143"></A>
+  The maximum line width for filling is in the variable
+<CODE>fill-column</CODE>.  Altering the value of <CODE>fill-column</CODE> makes it
+local to the current buffer; until that time, the default value is in
+effect.  The default is initially 70.  See section <A HREF="emacs_33.html#SEC485">AD.2.4 Local Variables</A>.  The easiest way
+to set <CODE>fill-column</CODE> is to use the command <KBD>C-x f</KBD>
+(<CODE>set-fill-column</CODE>).  With a numeric argument, it uses that as the
+new fill column.  With just <KBD>C-u</KBD> as argument, it sets
+<CODE>fill-column</CODE> to the current horizontal position of point.
+</P><P>
+
+  Emacs commands normally consider a period followed by two spaces or by
+a newline as the end of a sentence; a period followed by just one space
+indicates an abbreviation and not the end of a sentence.  To preserve
+the distinction between these two ways of using a period, the fill
+commands do not break a line after a period followed by just one space.
+</P><P>
+
+<A NAME="IDX1144"></A>
+  If the variable <CODE>sentence-end-double-space</CODE> is <CODE>nil</CODE>, the
+fill commands expect and leave just one space at the end of a sentence.
+Ordinarily this variable is <CODE>t</CODE>, so the fill commands insist on
+two spaces for the end of a sentence, as explained above.  See section <A HREF="emacs_23.html#SEC235">T.2 Sentences</A>.
+</P><P>
+
+<A NAME="IDX1145"></A>
+  If the variable <CODE>colon-double-space</CODE> is non-<CODE>nil</CODE>, the
+fill commands put two spaces after a colon.
+</P><P>
+
+<A NAME="IDX1146"></A>
+  Some languages do not use period to indicate end of sentence.  For
+example, a sentence in Thai text ends with double space but without a
+period.  Set the variable <CODE>sentence-end-without-period</CODE> to
+<CODE>t</CODE> to tell the sentence commands that a period is not necessary.
+</P><P>
+
+<A NAME="Fill Prefix"></A>
+<HR SIZE="6">
+<A NAME="SEC242"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC241"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC243"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC243"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC238"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC244"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.5.4 The Fill Prefix </H3>
+<!--docid::SEC242::-->
+<P>
+
+<A NAME="IDX1147"></A>
+  To fill a paragraph in which each line starts with a special marker
+(which might be a few spaces, giving an indented paragraph), you can use
+the <EM>fill prefix</EM> feature.  The fill prefix is a string that Emacs
+expects every line to start with, and which is not included in filling.
+You can specify a fill prefix explicitly; Emacs can also deduce the
+fill prefix automatically (see section <A HREF="emacs_23.html#SEC243">T.5.5 Adaptive Filling</A>).
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-x .</KBD>
+<DD>Set the fill prefix (<CODE>set-fill-prefix</CODE>).
+<DT><KBD>M-q</KBD>
+<DD>Fill a paragraph using current fill prefix (<CODE>fill-paragraph</CODE>).
+<DT><KBD>M-x fill-individual-paragraphs</KBD>
+<DD>Fill the region, considering each change of indentation as starting a
+new paragraph.
+<DT><KBD>M-x fill-nonuniform-paragraphs</KBD>
+<DD>Fill the region, considering only paragraph-separator lines as starting
+a new paragraph.
+</DL>
+<P>
+
+<A NAME="IDX1148"></A>
+<A NAME="IDX1149"></A>
+  To specify a fill prefix, move to a line that starts with the desired
+prefix, put point at the end of the prefix, and give the command
+<KBD>C-x .</KBD> (<CODE>set-fill-prefix</CODE>).  That's a period after the
+<KBD>C-x</KBD>.  To turn off the fill prefix, specify an empty prefix: type
+<KBD>C-x .</KBD> with point at the beginning of a line.</P><P>
+
+  When a fill prefix is in effect, the fill commands remove the fill
+prefix from each line before filling and insert it on each line after
+filling.  Auto Fill mode also inserts the fill prefix automatically when
+it makes a new line.  The <KBD>C-o</KBD> command inserts the fill prefix on
+new lines it creates, when you use it at the beginning of a line
+(see section <A HREF="emacs_7.html#SEC26">D.7 Blank Lines</A>).  Conversely, the command <KBD>M-^</KBD> deletes the
+prefix (if it occurs) after the newline that it deletes
+(see section <A HREF="emacs_22.html#SEC229">S. Indentation</A>).
+</P><P>
+
+  For example, if <CODE>fill-column</CODE> is 40 and you set the fill prefix
+to <SAMP>`;; '</SAMP>, then <KBD>M-q</KBD> in the following text
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>;; This is an
+;; example of a paragraph
+;; inside a Lisp-style comment.
+</pre></td></tr></table></P><P>
+
+produces this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>;; This is an example of a paragraph
+;; inside a Lisp-style comment.
+</pre></td></tr></table></P><P>
+
+  Lines that do not start with the fill prefix are considered to start
+paragraphs, both in <KBD>M-q</KBD> and the paragraph commands; this gives
+good results for paragraphs with hanging indentation (every line
+indented except the first one).  Lines which are blank or indented once
+the prefix is removed also separate or start paragraphs; this is what
+you want if you are writing multi-paragraph comments with a comment
+delimiter on each line.
+</P><P>
+
+<A NAME="IDX1150"></A>
+  You can use <KBD>M-x fill-individual-paragraphs</KBD> to set the fill
+prefix for each paragraph automatically.  This command divides the
+region into paragraphs, treating every change in the amount of
+indentation as the start of a new paragraph, and fills each of these
+paragraphs.  Thus, all the lines in one "paragraph" have the same
+amount of indentation.  That indentation serves as the fill prefix for
+that paragraph.
+</P><P>
+
+<A NAME="IDX1151"></A>
+  <KBD>M-x fill-nonuniform-paragraphs</KBD> is a similar command that divides
+the region into paragraphs in a different way.  It considers only
+paragraph-separating lines (as defined by <CODE>paragraph-separate</CODE>) as
+starting a new paragraph.  Since this means that the lines of one
+paragraph may have different amounts of indentation, the fill prefix
+used is the smallest amount of indentation of any of the lines of the
+paragraph.  This gives good results with styles that indent a paragraph's
+first line more or less that the rest of the paragraph.
+</P><P>
+
+<A NAME="IDX1152"></A>
+  The fill prefix is stored in the variable <CODE>fill-prefix</CODE>.  Its value
+is a string, or <CODE>nil</CODE> when there is no fill prefix.  This is a
+per-buffer variable; altering the variable affects only the current buffer,
+but there is a default value which you can change as well.  See section <A HREF="emacs_33.html#SEC485">AD.2.4 Local Variables</A>.
+</P><P>
+
+  The <CODE>indentation</CODE> text property provides another way to control
+the amount of indentation paragraphs receive.  See section <A HREF="emacs_23.html#SEC264">T.11.6 Indentation in Formatted Text</A>.
+</P><P>
+
+<A NAME="Adaptive Fill"></A>
+<HR SIZE="6">
+<A NAME="SEC243"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC242"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC244"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC244"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC238"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC244"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.5.5 Adaptive Filling </H3>
+<!--docid::SEC243::-->
+<P>
+
+<A NAME="IDX1153"></A>
+  The fill commands can deduce the proper fill prefix for a paragraph
+automatically in certain cases: either whitespace or certain punctuation
+characters at the beginning of a line are propagated to all lines of the
+paragraph.
+</P><P>
+
+  If the paragraph has two or more lines, the fill prefix is taken from
+the paragraph's second line, but only if it appears on the first line as
+well.
+</P><P>
+
+  If a paragraph has just one line, fill commands <EM>may</EM> take a
+prefix from that line.  The decision is complicated because there are
+three reasonable things to do in such a case:
+</P><P>
+
+<UL>
+<LI>
+Use the first line's prefix on all the lines of the paragraph.
+<P>
+
+<LI>
+Indent subsequent lines with whitespace, so that they line up under the
+text that follows the prefix on the first line, but don't actually copy
+the prefix from the first line.
+<P>
+
+<LI>
+Don't do anything special with the second and following lines.
+</UL>
+<P>
+
+  All three of these styles of formatting are commonly used.  So the
+fill commands try to determine what you would like, based on the prefix
+that appears and on the major mode.  Here is how.
+</P><P>
+
+<A NAME="IDX1154"></A>
+  If the prefix found on the first line matches
+<CODE>adaptive-fill-first-line-regexp</CODE>, or if it appears to be a
+comment-starting sequence (this depends on the major mode), then the
+prefix found is used for filling the paragraph, provided it would not
+act as a paragraph starter on subsequent lines.
+</P><P>
+
+  Otherwise, the prefix found is converted to an equivalent number of
+spaces, and those spaces are used as the fill prefix for the rest of the
+lines, provided they would not act as a paragraph starter on subsequent
+lines.
+</P><P>
+
+  In Text mode, and other modes where only blank lines and page
+delimiters separate paragraphs, the prefix chosen by adaptive filling
+never acts as a paragraph starter, so it can always be used for filling.
+</P><P>
+
+<A NAME="IDX1155"></A>
+<A NAME="IDX1156"></A>
+  The variable <CODE>adaptive-fill-regexp</CODE> determines what kinds of line
+beginnings can serve as a fill prefix: any characters at the start of
+the line that match this regular expression are used.  If you set the
+variable <CODE>adaptive-fill-mode</CODE> to <CODE>nil</CODE>, the fill prefix is
+never chosen automatically.
+</P><P>
+
+<A NAME="IDX1157"></A>
+  You can specify more complex ways of choosing a fill prefix
+automatically by setting the variable <CODE>adaptive-fill-function</CODE> to a
+function.  This function is called with point after the left margin of a
+line, and it should return the appropriate fill prefix based on that
+line.  If it returns <CODE>nil</CODE>, that means it sees no fill prefix in
+that line.
+</P><P>
+
+<A NAME="Case"></A>
+<HR SIZE="6">
+<A NAME="SEC244"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC243"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC245"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC245"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> T.6 Case Conversion Commands </H2>
+<!--docid::SEC244::-->
+<P>
+
+  Emacs has commands for converting either a single word or any arbitrary
+range of text to upper case or to lower case.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-l</KBD>
+<DD>Convert following word to lower case (<CODE>downcase-word</CODE>).
+<DT><KBD>M-u</KBD>
+<DD>Convert following word to upper case (<CODE>upcase-word</CODE>).
+<DT><KBD>M-c</KBD>
+<DD>Capitalize the following word (<CODE>capitalize-word</CODE>).
+<DT><KBD>C-x C-l</KBD>
+<DD>Convert region to lower case (<CODE>downcase-region</CODE>).
+<DT><KBD>C-x C-u</KBD>
+<DD>Convert region to upper case (<CODE>upcase-region</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX1158"></A>
+<A NAME="IDX1159"></A>
+<A NAME="IDX1160"></A>
+<A NAME="IDX1161"></A>
+<A NAME="IDX1162"></A>
+<A NAME="IDX1163"></A>
+<A NAME="IDX1164"></A>
+<A NAME="IDX1165"></A>
+<A NAME="IDX1166"></A>
+  The word conversion commands are the most useful.  <KBD>M-l</KBD>
+(<CODE>downcase-word</CODE>) converts the word after point to lower case, moving
+past it.  Thus, repeating <KBD>M-l</KBD> converts successive words.
+<KBD>M-u</KBD> (<CODE>upcase-word</CODE>) converts to all capitals instead, while
+<KBD>M-c</KBD> (<CODE>capitalize-word</CODE>) puts the first letter of the word
+into upper case and the rest into lower case.  All these commands convert
+several words at once if given an argument.  They are especially convenient
+for converting a large amount of text from all upper case to mixed case,
+because you can move through the text using <KBD>M-l</KBD>, <KBD>M-u</KBD> or
+<KBD>M-c</KBD> on each word as appropriate, occasionally using <KBD>M-f</KBD> instead
+to skip a word.
+</P><P>
+
+  When given a negative argument, the word case conversion commands apply
+to the appropriate number of words before point, but do not move point.
+This is convenient when you have just typed a word in the wrong case: you
+can give the case conversion command and continue typing.
+</P><P>
+
+  If a word case conversion command is given in the middle of a word, it
+applies only to the part of the word which follows point.  This is just
+like what <KBD>M-d</KBD> (<CODE>kill-word</CODE>) does.  With a negative argument,
+case conversion applies only to the part of the word before point.
+</P><P>
+
+<A NAME="IDX1167"></A>
+<A NAME="IDX1168"></A>
+<A NAME="IDX1169"></A>
+<A NAME="IDX1170"></A>
+  The other case conversion commands are <KBD>C-x C-u</KBD>
+(<CODE>upcase-region</CODE>) and <KBD>C-x C-l</KBD> (<CODE>downcase-region</CODE>), which
+convert everything between point and mark to the specified case.  Point and
+mark do not move.
+</P><P>
+
+  The region case conversion commands <CODE>upcase-region</CODE> and
+<CODE>downcase-region</CODE> are normally disabled.  This means that they ask
+for confirmation if you try to use them.  When you confirm, you may
+enable the command, which means it will not ask for confirmation again.
+See section <A HREF="emacs_33.html#SEC502">AD.4.11 Disabling Commands</A>.
+</P><P>
+
+<A NAME="Text Mode"></A>
+<HR SIZE="6">
+<A NAME="SEC245"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC244"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC246"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC246"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> T.7 Text Mode </H2>
+<!--docid::SEC245::-->
+<P>
+
+  When you edit files of text in a human language, it's more convenient
+to use Text mode rather than Fundamental mode.  To enter Text mode, type
+<KBD>M-x text-mode</KBD>.
+</P><P>
+
+  In Text mode, only blank lines and page delimiters separate
+paragraphs.  As a result, paragraphs can be indented, and adaptive
+filling determines what indentation to use when filling a paragraph.
+See section <A HREF="emacs_23.html#SEC243">T.5.5 Adaptive Filling</A>.
+</P><P>
+
+<A NAME="IDX1171"></A>
+  Text mode defines <KBD>TAB</KBD> to run <CODE>indent-relative</CODE>
+(see section <A HREF="emacs_22.html#SEC229">S. Indentation</A>), so that you can conveniently indent a line like
+the previous line.  When the previous line is not indented,
+<CODE>indent-relative</CODE> runs <CODE>tab-to-tab-stop</CODE>, which uses Emacs tab
+stops that you can set (see section <A HREF="emacs_22.html#SEC231">S.2 Tab Stops</A>).
+</P><P>
+
+  Text mode turns off the features concerned with comments except when
+you explicitly invoke them.  It changes the syntax table so that periods
+are not considered part of a word, while apostrophes, backspaces and
+underlines are considered part of words.
+</P><P>
+
+<A NAME="IDX1172"></A>
+<A NAME="IDX1173"></A>
+<A NAME="IDX1174"></A>
+<A NAME="IDX1175"></A>
+  If you indent the first lines of paragraphs, then you should use
+Paragraph-Indent Text mode rather than Text mode.  In this mode, you do
+not need to have blank lines between paragraphs, because the first-line
+indentation is sufficient to start a paragraph; however paragraphs in
+which every line is indented are not supported.  Use <KBD>M-x
+paragraph-indent-text-mode</KBD> to enter this mode.  Use <KBD>M-x
+paragraph-indent-minor-mode</KBD> to enter an equivalent minor mode, for
+instance during mail composition.
+</P><P>
+
+<A NAME="IDX1176"></A>
+  Text mode, and all the modes based on it, define <KBD>M-<KBD>TAB</KBD></KBD> as
+the command <CODE>ispell-complete-word</CODE>, which performs completion of
+the partial word in the buffer before point, using the spelling
+dictionary as the space of possible words.  See section <A HREF="emacs_15.html#SEC109">L.4 Checking and Correcting Spelling</A>.
+</P><P>
+
+<A NAME="IDX1177"></A>
+  Entering Text mode runs the hook <CODE>text-mode-hook</CODE>.  Other major
+modes related to Text mode also run this hook, followed by hooks of
+their own; this includes Paragraph-Indent Text mode, Nroff mode, TeX
+mode, Outline mode, and Mail mode.  Hook functions on
+<CODE>text-mode-hook</CODE> can look at the value of <CODE>major-mode</CODE> to see
+which of these modes is actually being entered.  See section <A HREF="emacs_33.html#SEC484">AD.2.3 Hooks</A>.
+</P><P>
+
+  Emacs provides two other modes for editing text that is to be passed
+through a text formatter to produce fancy formatted printed output.
+See section <A HREF="emacs_23.html#SEC257">T.10 Nroff Mode</A>, for editing input to the formatter nroff.
+See section <A HREF="emacs_23.html#SEC252">T.9 TeX Mode</A>, for editing input to the formatter TeX.
+</P><P>
+
+  Another mode is used for editing outlines.  It allows you to view the
+text at various levels of detail.  You can view either the outline
+headings alone or both headings and text; you can also hide some of the
+headings at lower levels from view to make the high level structure more
+visible.  See section <A HREF="emacs_23.html#SEC246">T.8 Outline Mode</A>.
+</P><P>
+
+<A NAME="Outline Mode"></A>
+<HR SIZE="6">
+<A NAME="SEC246"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC245"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC247"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> T.8 Outline Mode </H2>
+<!--docid::SEC246::-->
+<P>
+
+<A NAME="IDX1178"></A>
+<A NAME="IDX1179"></A>
+<A NAME="IDX1180"></A>
+  Outline mode is a major mode much like Text mode but intended for
+editing outlines.  It allows you to make parts of the text temporarily
+invisible so that you can see the outline structure.  Type <KBD>M-x
+outline-mode</KBD> to switch to Outline mode as the major mode of the current
+buffer.
+</P><P>
+
+  When Outline mode makes a line invisible, the line does not appear on
+the screen.  The screen appears exactly as if the invisible line were
+deleted, except that an ellipsis (three periods in a row) appears at the
+end of the previous visible line (only one ellipsis no matter how many
+invisible lines follow).
+</P><P>
+
+  Editing commands that operate on lines, such as <KBD>C-n</KBD> and
+<KBD>C-p</KBD>, treat the text of the invisible line as part of the previous
+visible line.  Killing an entire visible line, including its terminating
+newline, really kills all the following invisible lines along with it.
+</P><P>
+
+  Outline minor mode provides the same commands as the major mode,
+Outline mode, but you can use it in conjunction with other major modes.
+Type <KBD>M-x outline-minor-mode</KBD> to enable the Outline minor mode in
+the current buffer.  You can also specify this in the text of a file,
+with a file local variable of the form <SAMP>`mode: outline-minor'</SAMP>
+(see section <A HREF="emacs_33.html#SEC486">AD.2.5 Local Variables in Files</A>).
+</P><P>
+
+<A NAME="IDX1181"></A>
+  The major mode, Outline mode, provides special key bindings on the
+<KBD>C-c</KBD> prefix.  Outline minor mode provides similar bindings with
+<KBD>C-c @</KBD> as the prefix; this is to reduce the conflicts with the
+major mode's special commands.  (The variable
+<CODE>outline-minor-mode-prefix</CODE> controls the prefix used.)
+</P><P>
+
+<A NAME="IDX1182"></A>
+  Entering Outline mode runs the hook <CODE>text-mode-hook</CODE> followed by
+the hook <CODE>outline-mode-hook</CODE> (see section <A HREF="emacs_33.html#SEC484">AD.2.3 Hooks</A>).
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC247">T.8.1 Format of Outlines</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">What the text of an outline looks like.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC248">T.8.2 Outline Motion Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Special commands for moving through
+                                     outlines.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC249">T.8.3 Outline Visibility Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Commands to control what is visible.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC250">T.8.4 Viewing One Outline in Multiple Views</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Outlines and multiple views.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC251">T.8.5 Folding Editing</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Folding editing.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Outline Format"></A>
+<HR SIZE="6">
+<A NAME="SEC247"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC246"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC248"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC246"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.8.1 Format of Outlines </H3>
+<!--docid::SEC247::-->
+<P>
+
+<A NAME="IDX1183"></A>
+<A NAME="IDX1184"></A>
+  Outline mode assumes that the lines in the buffer are of two types:
+<EM>heading lines</EM> and <EM>body lines</EM>.  A heading line represents a
+topic in the outline.  Heading lines start with one or more stars; the
+number of stars determines the depth of the heading in the outline
+structure.  Thus, a heading line with one star is a major topic; all the
+heading lines with two stars between it and the next one-star heading
+are its subtopics; and so on.  Any line that is not a heading line is a
+body line.  Body lines belong with the preceding heading line.  Here is
+an example:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>* Food
+This is the body,
+which says something about the topic of food.
+
+** Delicious Food
+This is the body of the second-level header.
+
+** Distasteful Food
+This could have
+a body too, with
+several lines.
+
+*** Dormitory Food
+
+* Shelter
+Another first-level topic with its header line.
+</pre></td></tr></table></P><P>
+
+  A heading line together with all following body lines is called
+collectively an <EM>entry</EM>.  A heading line together with all following
+deeper heading lines and their body lines is called a <EM>subtree</EM>.
+</P><P>
+
+<A NAME="IDX1185"></A>
+  You can customize the criterion for distinguishing heading lines
+by setting the variable <CODE>outline-regexp</CODE>.  Any line whose
+beginning has a match for this regexp is considered a heading line.
+Matches that start within a line (not at the left margin) do not count.
+The length of the matching text determines the level of the heading;
+longer matches make a more deeply nested level.  Thus, for example,
+if a text formatter has commands <SAMP>`@chapter'</SAMP>, <SAMP>`@section'</SAMP>
+and <SAMP>`@subsection'</SAMP> to divide the document into chapters and
+sections, you could make those lines count as heading lines by
+setting <CODE>outline-regexp</CODE> to <SAMP>`"@chap\\|@\\(sub\\)*section"'</SAMP>.
+Note the trick: the two words <SAMP>`chapter'</SAMP> and <SAMP>`section'</SAMP> are equally
+long, but by defining the regexp to match only <SAMP>`chap'</SAMP> we ensure
+that the length of the text matched on a chapter heading is shorter,
+so that Outline mode will know that sections are contained in chapters.
+This works as long as no other command starts with <SAMP>`@chap'</SAMP>.
+</P><P>
+
+<A NAME="IDX1186"></A>
+  You can change the rule for calculating the level of a heading line
+by setting the variable <CODE>outline-level</CODE>.  The value of
+<CODE>outline-level</CODE> should be a function that takes no arguments and
+returns the level of the current heading.  Some major modes such as C,
+Nroff, and Emacs Lisp mode set this variable and <CODE>outline-regexp</CODE>
+in order to work with Outline minor mode.
+</P><P>
+
+<A NAME="Outline Motion"></A>
+<HR SIZE="6">
+<A NAME="SEC248"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC247"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC249"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC249"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC246"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.8.2 Outline Motion Commands </H3>
+<!--docid::SEC248::-->
+<P>
+
+  Outline mode provides special motion commands that move backward and
+forward to heading lines.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-c C-n</KBD>
+<DD>Move point to the next visible heading line
+(<CODE>outline-next-visible-heading</CODE>).
+<DT><KBD>C-c C-p</KBD>
+<DD>Move point to the previous visible heading line
+(<CODE>outline-previous-visible-heading</CODE>).
+<DT><KBD>C-c C-f</KBD>
+<DD>Move point to the next visible heading line at the same level
+as the one point is on (<CODE>outline-forward-same-level</CODE>).
+<DT><KBD>C-c C-b</KBD>
+<DD>Move point to the previous visible heading line at the same level
+(<CODE>outline-backward-same-level</CODE>).
+<DT><KBD>C-c C-u</KBD>
+<DD>Move point up to a lower-level (more inclusive) visible heading line
+(<CODE>outline-up-heading</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX1187"></A>
+<A NAME="IDX1188"></A>
+<A NAME="IDX1189"></A>
+<A NAME="IDX1190"></A>
+  <KBD>C-c C-n</KBD> (<CODE>outline-next-visible-heading</CODE>) moves down to the next
+heading line.  <KBD>C-c C-p</KBD> (<CODE>outline-previous-visible-heading</CODE>) moves
+similarly backward.  Both accept numeric arguments as repeat counts.  The
+names emphasize that invisible headings are skipped, but this is not really
+a special feature.  All editing commands that look for lines ignore the
+invisible lines automatically.</P><P>
+
+<A NAME="IDX1191"></A>
+<A NAME="IDX1192"></A>
+<A NAME="IDX1193"></A>
+<A NAME="IDX1194"></A>
+<A NAME="IDX1195"></A>
+<A NAME="IDX1196"></A>
+  More powerful motion commands understand the level structure of headings.
+<KBD>C-c C-f</KBD> (<CODE>outline-forward-same-level</CODE>) and
+<KBD>C-c C-b</KBD> (<CODE>outline-backward-same-level</CODE>) move from one
+heading line to another visible heading at the same depth in
+the outline.  <KBD>C-c C-u</KBD> (<CODE>outline-up-heading</CODE>) moves
+backward to another heading that is less deeply nested.
+</P><P>
+
+<A NAME="Outline Visibility"></A>
+<HR SIZE="6">
+<A NAME="SEC249"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC248"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC250"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC250"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC246"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.8.3 Outline Visibility Commands </H3>
+<!--docid::SEC249::-->
+<P>
+
+  The other special commands of outline mode are used to make lines visible
+or invisible.  Their names all start with <CODE>hide</CODE> or <CODE>show</CODE>.
+Most of them fall into pairs of opposites.  They are not undoable; instead,
+you can undo right past them.  Making lines visible or invisible is simply
+not recorded by the undo mechanism.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-c C-t</KBD>
+<DD>Make all body lines in the buffer invisible (<CODE>hide-body</CODE>).
+<DT><KBD>C-c C-a</KBD>
+<DD>Make all lines in the buffer visible (<CODE>show-all</CODE>).
+<DT><KBD>C-c C-d</KBD>
+<DD>Make everything under this heading invisible, not including this
+heading itself (<CODE>hide-subtree</CODE>).
+<DT><KBD>C-c C-s</KBD>
+<DD>Make everything under this heading visible, including body,
+subheadings, and their bodies (<CODE>show-subtree</CODE>).
+<DT><KBD>C-c C-l</KBD>
+<DD>Make the body of this heading line, and of all its subheadings,
+invisible (<CODE>hide-leaves</CODE>).
+<DT><KBD>C-c C-k</KBD>
+<DD>Make all subheadings of this heading line, at all levels, visible
+(<CODE>show-branches</CODE>). 
+<DT><KBD>C-c C-i</KBD>
+<DD>Make immediate subheadings (one level down) of this heading line
+visible (<CODE>show-children</CODE>).
+<DT><KBD>C-c C-c</KBD>
+<DD>Make this heading line's body invisible (<CODE>hide-entry</CODE>).
+<DT><KBD>C-c C-e</KBD>
+<DD>Make this heading line's body visible (<CODE>show-entry</CODE>).
+<DT><KBD>C-c C-q</KBD>
+<DD>Hide everything except the top <VAR>n</VAR> levels of heading lines
+(<CODE>hide-sublevels</CODE>).
+<DT><KBD>C-c C-o</KBD>
+<DD>Hide everything except for the heading or body that point is in, plus
+the headings leading up from there to the top level of the outline
+(<CODE>hide-other</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX1197"></A>
+<A NAME="IDX1198"></A>
+<A NAME="IDX1199"></A>
+<A NAME="IDX1200"></A>
+  Two commands that are exact opposites are <KBD>C-c C-c</KBD>
+(<CODE>hide-entry</CODE>) and <KBD>C-c C-e</KBD> (<CODE>show-entry</CODE>).  They are
+used with point on a heading line, and apply only to the body lines of
+that heading.  Subheadings and their bodies are not affected.
+</P><P>
+
+<A NAME="IDX1201"></A>
+<A NAME="IDX1202"></A>
+<A NAME="IDX1203"></A>
+<A NAME="IDX1204"></A>
+<A NAME="IDX1205"></A>
+  Two more powerful opposites are <KBD>C-c C-d</KBD> (<CODE>hide-subtree</CODE>) and
+<KBD>C-c C-s</KBD> (<CODE>show-subtree</CODE>).  Both expect to be used when point is
+on a heading line, and both apply to all the lines of that heading's
+<EM>subtree</EM>: its body, all its subheadings, both direct and indirect, and
+all of their bodies.  In other words, the subtree contains everything
+following this heading line, up to and not including the next heading of
+the same or higher rank.</P><P>
+
+<A NAME="IDX1206"></A>
+<A NAME="IDX1207"></A>
+<A NAME="IDX1208"></A>
+<A NAME="IDX1209"></A>
+  Intermediate between a visible subtree and an invisible one is having
+all the subheadings visible but none of the body.  There are two
+commands for doing this, depending on whether you want to hide the
+bodies or make the subheadings visible.  They are <KBD>C-c C-l</KBD>
+(<CODE>hide-leaves</CODE>) and <KBD>C-c C-k</KBD> (<CODE>show-branches</CODE>).
+</P><P>
+
+<A NAME="IDX1210"></A>
+<A NAME="IDX1211"></A>
+  A little weaker than <CODE>show-branches</CODE> is <KBD>C-c C-i</KBD>
+(<CODE>show-children</CODE>).  It makes just the direct subheadings
+visible--those one level down.  Deeper subheadings remain invisible, if
+they were invisible.</P><P>
+
+<A NAME="IDX1212"></A>
+<A NAME="IDX1213"></A>
+<A NAME="IDX1214"></A>
+<A NAME="IDX1215"></A>
+  Two commands have a blanket effect on the whole file.  <KBD>C-c C-t</KBD>
+(<CODE>hide-body</CODE>) makes all body lines invisible, so that you see just
+the outline structure.  <KBD>C-c C-a</KBD> (<CODE>show-all</CODE>) makes all lines
+visible.  These commands can be thought of as a pair of opposites even
+though <KBD>C-c C-a</KBD> applies to more than just body lines.
+</P><P>
+
+<A NAME="IDX1216"></A>
+<A NAME="IDX1217"></A>
+  The command <KBD>C-c C-q</KBD> (<CODE>hide-sublevels</CODE>) hides all but the
+top level headings.  With a numeric argument <VAR>n</VAR>, it hides everything
+except the top <VAR>n</VAR> levels of heading lines.
+</P><P>
+
+<A NAME="IDX1218"></A>
+<A NAME="IDX1219"></A>
+  The command <KBD>C-c C-o</KBD> (<CODE>hide-other</CODE>) hides everything except
+the heading or body text that point is in, plus its parents (the headers
+leading up from there to top level in the outline).
+</P><P>
+
+  You can turn off the use of ellipses at the ends of visible lines by
+setting <CODE>selective-display-ellipses</CODE> to <CODE>nil</CODE>.  Then there is
+no visible indication of the presence of invisible lines.
+</P><P>
+
+  When incremental search finds text that is hidden by Outline mode,
+it makes that part of the buffer visible.  If you exit the search
+at that position, the text remains visible.
+</P><P>
+
+<A NAME="Outline Views"></A>
+<HR SIZE="6">
+<A NAME="SEC250"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC249"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC251"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC251"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC246"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.8.4 Viewing One Outline in Multiple Views </H3>
+<!--docid::SEC250::-->
+<P>
+
+<A NAME="IDX1220"></A>
+<A NAME="IDX1221"></A>
+<A NAME="IDX1222"></A>
+<A NAME="IDX1223"></A>
+  You can display two views of a single outline at the same time, in
+different windows.  To do this, you must create an indirect buffer using
+<KBD>M-x make-indirect-buffer</KBD>.  The first argument of this command is
+the existing outline buffer name, and its second argument is the name to
+use for the new indirect buffer.  See section <A HREF="emacs_17.html#SEC178">N.6 Indirect Buffers</A>.
+</P><P>
+
+  Once the indirect buffer exists, you can display it in a window in the
+normal fashion, with <KBD>C-x 4 b</KBD> or other Emacs commands.  The Outline
+mode commands to show and hide parts of the text operate on each buffer
+independently; as a result, each buffer can have its own view.  If you
+want more than two views on the same outline, create additional indirect
+buffers.
+</P><P>
+
+<A NAME="Foldout"></A>
+<HR SIZE="6">
+<A NAME="SEC251"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC250"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC246"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.8.5 Folding Editing </H3>
+<!--docid::SEC251::-->
+<P>
+
+<A NAME="IDX1224"></A>
+  The Foldout package extends Outline mode and Outline minor mode with
+"folding" commands.  The idea of folding is that you zoom in on a
+nested portion of the outline, while hiding its relatives at higher
+levels.
+</P><P>
+
+  Consider an Outline mode buffer all the text and subheadings under
+level-1 headings hidden.  To look at what is hidden under one of these
+headings, you could use <KBD>C-c C-e</KBD> (<KBD>M-x show-entry</KBD>) to expose
+the body, or <KBD>C-c C-i</KBD> to expose the child (level-2) headings.
+</P><P>
+
+<A NAME="IDX1225"></A>
+<A NAME="IDX1226"></A>
+  With Foldout, you use <KBD>C-c C-z</KBD> (<KBD>M-x foldout-zoom-subtree</KBD>).
+This exposes the body and child subheadings, and narrows the buffer so
+that only the level-1 heading, the body and the level-2 headings are
+visible.  Now to look under one of the level-2 headings, position the
+cursor on it and use <KBD>C-c C-z</KBD> again.  This exposes the level-2 body
+and its level-3 child subheadings and narrows the buffer again.  Zooming
+in on successive subheadings can be done as much as you like.  A string
+in the mode line shows how deep you've gone.
+</P><P>
+
+  When zooming in on a heading, to see only the child subheadings specify
+a numeric argument: <KBD>C-u C-c C-z</KBD>.  The number of levels of children
+can be specified too (compare <KBD>M-x show-children</KBD>), e.g. <KBD>M-2
+C-c C-z</KBD> exposes two levels of child subheadings.  Alternatively, the
+body can be specified with a negative argument: <KBD>M-- C-c C-z</KBD>.  The
+whole subtree can be expanded, similarly to <KBD>C-c C-s</KBD> (<KBD>M-x
+show-subtree</KBD>), by specifying a zero argument: <KBD>M-0 C-c C-z</KBD>.
+</P><P>
+
+  While you're zoomed in, you can still use Outline mode's exposure and
+hiding functions without disturbing Foldout.  Also, since the buffer is
+narrowed, "global" editing actions will only affect text under the
+zoomed-in heading.  This is useful for restricting changes to a
+particular chapter or section of your document.
+</P><P>
+
+<A NAME="IDX1227"></A>
+<A NAME="IDX1228"></A>
+  To unzoom (exit) a fold, use <KBD>C-c C-x</KBD> (<KBD>M-x foldout-exit-fold</KBD>).
+This hides all the text and subheadings under the top-level heading and
+returns you to the previous view of the buffer.  Specifying a numeric
+argument exits that many levels of folds.  Specifying a zero argument exits all
+folds.
+</P><P>
+
+  To cancel the narrowing of a fold without hiding the text and
+subheadings, specify a negative argument.  For example, <KBD>M--2 C-c
+C-x</KBD> exits two folds and leaves the text and subheadings exposed.
+</P><P>
+
+  Foldout mode also provides mouse commands for entering and exiting
+folds, and for showing and hiding text:
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-C-Mouse-1</KBD> zooms in on the heading clicked on
+<DD><UL>
+<LI>
+single click: expose body.
+<LI>
+double click: expose subheadings.
+<LI>
+triple click: expose body and subheadings.
+<LI>
+quad click: expose entire subtree.
+</UL>
+<DT><KBD>M-C-Mouse-2</KBD> exposes text under the heading clicked on
+<DD><UL>
+<LI>
+single click: expose body.
+<LI>
+double click: expose subheadings.
+<LI>
+triple click: expose body and subheadings.
+<LI>
+quad click: expose entire subtree.
+</UL>
+<DT><KBD>M-C-Mouse-3</KBD> hides text under the heading clicked on or exits fold
+<DD><UL>
+<LI>
+single click: hide subtree.
+<LI>
+double click: exit fold and hide text.
+<LI>
+triple click: exit fold without hiding text.
+<LI>
+quad click: exit all folds and hide text.
+</UL>
+</DL>
+<P>
+
+<A NAME="IDX1229"></A>
+  You can specify different modifier keys (instead of
+<KBD>Control-Meta-</KBD>) by setting <CODE>foldout-mouse-modifiers</CODE>; but if
+you have already loaded the <TT>`foldout.el'</TT> library, you must reload
+it in order for this to take effect.
+</P><P>
+
+  To use the Foldout package, you can type <KBD>M-x load-library
+<KBD>RET</KBD> foldout <KBD>RET</KBD></KBD>; or you can arrange for to do that
+automatically by putting this in your <TT>`.emacs'</TT> file:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(eval-after-load "outline" '(require 'foldout))
+</pre></td></tr></table></P><P>
+
+<A NAME="TeX Mode"></A>
+<HR SIZE="6">
+<A NAME="SEC252"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC251"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC253"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC246"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC257"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> T.9 TeX Mode </H2>
+<!--docid::SEC252::-->
+<P>
+
+  TeX is a powerful text formatter written by Donald Knuth; it is also
+free, like GNU Emacs.  LaTeX is a simplified input format for TeX,
+implemented by TeX macros; it comes with TeX.  SliTeX is a special
+form of LaTeX.<A NAME="DOCF8" HREF="emacs_fot.html#FOOT8">(8)</A>
+</P><P>
+
+  Emacs has a special TeX mode for editing TeX input files.
+It provides facilities for checking the balance of delimiters and for
+invoking TeX on all or part of the file.
+</P><P>
+
+<A NAME="IDX1230"></A>
+  TeX mode has three variants, Plain TeX mode, LaTeX mode, and
+SliTeX mode (these three distinct major modes differ only slightly).
+They are designed for editing the three different formats.  The command
+<KBD>M-x tex-mode</KBD> looks at the contents of the buffer to determine
+whether the contents appear to be either LaTeX input or SliTeX
+input; if so, it selects the appropriate mode.  If the file contents do
+not appear to be LaTeX or SliTeX, it selects Plain TeX mode.
+If the contents are insufficient to determine this, the variable
+<CODE>tex-default-mode</CODE> controls which mode is used.
+</P><P>
+
+  When <KBD>M-x tex-mode</KBD> does not guess right, you can use the commands
+<KBD>M-x plain-tex-mode</KBD>, <KBD>M-x latex-mode</KBD>, and <KBD>M-x
+slitex-mode</KBD> to select explicitly the particular variants of TeX
+mode.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC253">T.9.1 TeX Editing Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Special commands for editing in TeX mode.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC254">T.9.2 LaTeX Editing Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Additional commands for LaTeX input files.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC255">T.9.3 TeX Printing Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Commands for printing part of a file with TeX.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC256">T.9.4 TeX Mode Miscellany</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Customization of TeX mode, and related features.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="TeX Editing"></A>
+<HR SIZE="6">
+<A NAME="SEC253"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC254"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC246"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC257"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.9.1 TeX Editing Commands </H3>
+<!--docid::SEC253::-->
+<P>
+
+  Here are the special commands provided in TeX mode for editing the
+text of the file.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>"</KBD>
+<DD>Insert, according to context, either <SAMP>`"'</SAMP> or <SAMP>`"'</SAMP> or
+<SAMP>`"'</SAMP> (<CODE>tex-insert-quote</CODE>).
+<DT><KBD>C-j</KBD>
+<DD>Insert a paragraph break (two newlines) and check the previous
+paragraph for unbalanced braces or dollar signs
+(<CODE>tex-terminate-paragraph</CODE>).
+<DT><KBD>M-x tex-validate-region</KBD>
+<DD>Check each paragraph in the region for unbalanced braces or dollar signs.
+<DT><KBD>C-c {</KBD>
+<DD>Insert <SAMP>`{}'</SAMP> and position point between them (<CODE>tex-insert-braces</CODE>).
+<DT><KBD>C-c }</KBD>
+<DD>Move forward past the next unmatched close brace (<CODE>up-list</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX1231"></A>
+<A NAME="IDX1232"></A>
+  In TeX, the character <SAMP>`"'</SAMP> is not normally used; we use
+<SAMP>`"'</SAMP> to start a quotation and <SAMP>`"'</SAMP> to end one.  To make
+editing easier under this formatting convention, TeX mode overrides
+the normal meaning of the key <KBD>"</KBD> with a command that inserts a pair
+of single-quotes or backquotes (<CODE>tex-insert-quote</CODE>).  To be
+precise, this command inserts <SAMP>`"'</SAMP> after whitespace or an open
+brace, <SAMP>`"'</SAMP> after a backslash, and <SAMP>`"'</SAMP> after any other
+character.
+</P><P>
+
+  If you need the character <SAMP>`"'</SAMP> itself in unusual contexts, use
+<KBD>C-q</KBD> to insert it.  Also, <KBD>"</KBD> with a numeric argument always
+inserts that number of <SAMP>`"'</SAMP> characters.  You can turn off the
+feature of <KBD>"</KBD> expansion by eliminating that binding in the local
+map (see section <A HREF="emacs_33.html#SEC491">AD.4 Customizing Key Bindings</A>).
+</P><P>
+
+  In TeX mode, <SAMP>`$'</SAMP> has a special syntax code which attempts to
+understand the way TeX math mode delimiters match.  When you insert a
+<SAMP>`$'</SAMP> that is meant to exit math mode, the position of the matching
+<SAMP>`$'</SAMP> that entered math mode is displayed for a second.  This is the
+same feature that displays the open brace that matches a close brace that
+is inserted.  However, there is no way to tell whether a <SAMP>`$'</SAMP> enters
+math mode or leaves it; so when you insert a <SAMP>`$'</SAMP> that enters math
+mode, the previous <SAMP>`$'</SAMP> position is shown as if it were a match, even
+though they are actually unrelated.
+</P><P>
+
+<A NAME="IDX1233"></A>
+<A NAME="IDX1234"></A>
+<A NAME="IDX1235"></A>
+<A NAME="IDX1236"></A>
+  TeX uses braces as delimiters that must match.  Some users prefer
+to keep braces balanced at all times, rather than inserting them
+singly.  Use <KBD>C-c {</KBD> (<CODE>tex-insert-braces</CODE>) to insert a pair of
+braces.  It leaves point between the two braces so you can insert the
+text that belongs inside.  Afterward, use the command <KBD>C-c }</KBD>
+(<CODE>up-list</CODE>) to move forward past the close brace.
+</P><P>
+
+<A NAME="IDX1237"></A>
+<A NAME="IDX1238"></A>
+<A NAME="IDX1239"></A>
+  There are two commands for checking the matching of braces.  <KBD>C-j</KBD>
+(<CODE>tex-terminate-paragraph</CODE>) checks the paragraph before point, and
+inserts two newlines to start a new paragraph.  It outputs a message in
+the echo area if any mismatch is found.  <KBD>M-x tex-validate-region</KBD>
+checks a region, paragraph by paragraph.  The errors are listed in the
+<SAMP>`*Occur*'</SAMP> buffer, and you can use <KBD>C-c C-c</KBD> or <KBD>Mouse-2</KBD> in
+that buffer to go to a particular mismatch.
+</P><P>
+
+  Note that Emacs commands count square brackets and parentheses in
+TeX mode, not just braces.  This is not strictly correct for the
+purpose of checking TeX syntax.  However, parentheses and square
+brackets are likely to be used in text as matching delimiters and it is
+useful for the various motion commands and automatic match display to
+work with them.
+</P><P>
+
+<A NAME="LaTeX Editing"></A>
+<HR SIZE="6">
+<A NAME="SEC254"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC253"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC255"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC255"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC257"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.9.2 LaTeX Editing Commands </H3>
+<!--docid::SEC254::-->
+<P>
+
+  LaTeX mode, and its variant, SliTeX mode, provide a few extra
+features not applicable to plain TeX.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-c C-o</KBD>
+<DD>Insert <SAMP>`\begin'</SAMP> and <SAMP>`\end'</SAMP> for LaTeX block and position
+point on a line between them (<CODE>tex-latex-block</CODE>).
+<DT><KBD>C-c C-e</KBD>
+<DD>Close the innermost LaTeX block not yet closed
+(<CODE>tex-close-latex-block</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX1240"></A>
+<A NAME="IDX1241"></A>
+<A NAME="IDX1242"></A>
+  In LaTeX input, <SAMP>`\begin'</SAMP> and <SAMP>`\end'</SAMP> commands are used to
+group blocks of text.  To insert a <SAMP>`\begin'</SAMP> and a matching
+<SAMP>`\end'</SAMP> (on a new line following the <SAMP>`\begin'</SAMP>), use <KBD>C-c
+C-o</KBD> (<CODE>tex-latex-block</CODE>).  A blank line is inserted between the
+two, and point is left there.  You can use completion when you enter the
+block type; to specify additional block type names beyond the standard
+list, set the variable <CODE>latex-block-names</CODE>.  For example, here's
+how to add <SAMP>`theorem'</SAMP>, <SAMP>`corollary'</SAMP>, and <SAMP>`proof'</SAMP>:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(setq latex-block-names '("theorem" "corollary" "proof"))
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX1243"></A>
+<A NAME="IDX1244"></A>
+  In LaTeX input, <SAMP>`\begin'</SAMP> and <SAMP>`\end'</SAMP> commands must
+balance.  You can use <KBD>C-c C-e</KBD> (<CODE>tex-close-latex-block</CODE>) to
+insert automatically a matching <SAMP>`\end'</SAMP> to match the last unmatched
+<SAMP>`\begin'</SAMP>.  It indents the <SAMP>`\end'</SAMP> to match the corresponding
+<SAMP>`\begin'</SAMP>.  It inserts a newline after <SAMP>`\end'</SAMP> if point is at
+the beginning of a line.
+</P><P>
+
+<A NAME="TeX Print"></A>
+<HR SIZE="6">
+<A NAME="SEC255"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC254"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC256"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC256"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC257"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.9.3 TeX Printing Commands </H3>
+<!--docid::SEC255::-->
+<P>
+
+  You can invoke TeX as an inferior of Emacs on either the entire
+contents of the buffer or just a region at a time.  Running TeX in
+this way on just one chapter is a good way to see what your changes
+look like without taking the time to format the entire file.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>C-c C-r</KBD>
+<DD>Invoke TeX on the current region, together with the buffer's header
+(<CODE>tex-region</CODE>).
+<DT><KBD>C-c C-b</KBD>
+<DD>Invoke TeX on the entire current buffer (<CODE>tex-buffer</CODE>).
+<DT><KBD>C-c <KBD>TAB</KBD></KBD>
+<DD>Invoke BibTeX on the current file (<CODE>tex-bibtex-file</CODE>).
+<DT><KBD>C-c C-f</KBD>
+<DD>Invoke TeX on the current file (<CODE>tex-file</CODE>).
+<DT><KBD>C-c C-l</KBD>
+<DD>Recenter the window showing output from the inferior TeX so that
+the last line can be seen (<CODE>tex-recenter-output-buffer</CODE>).
+<DT><KBD>C-c C-k</KBD>
+<DD>Kill the TeX subprocess (<CODE>tex-kill-job</CODE>).
+<DT><KBD>C-c C-p</KBD>
+<DD>Print the output from the last <KBD>C-c C-r</KBD>, <KBD>C-c C-b</KBD>, or <KBD>C-c
+C-f</KBD> command (<CODE>tex-print</CODE>).
+<DT><KBD>C-c C-v</KBD>
+<DD>Preview the output from the last <KBD>C-c C-r</KBD>, <KBD>C-c C-b</KBD>, or <KBD>C-c
+C-f</KBD> command (<CODE>tex-view</CODE>).
+<DT><KBD>C-c C-q</KBD>
+<DD>Show the printer queue (<CODE>tex-show-print-queue</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX1245"></A>
+<A NAME="IDX1246"></A>
+<A NAME="IDX1247"></A>
+<A NAME="IDX1248"></A>
+<A NAME="IDX1249"></A>
+<A NAME="IDX1250"></A>
+<A NAME="IDX1251"></A>
+<A NAME="IDX1252"></A>
+  You can pass the current buffer through an inferior TeX by means of
+<KBD>C-c C-b</KBD> (<CODE>tex-buffer</CODE>).  The formatted output appears in a
+temporary file; to print it, type <KBD>C-c C-p</KBD> (<CODE>tex-print</CODE>).
+Afterward, you can use <KBD>C-c C-q</KBD> (<CODE>tex-show-print-queue</CODE>) to
+view the progress of your output towards being printed.  If your terminal
+has the ability to display TeX output files, you can preview the
+output on the terminal with <KBD>C-c C-v</KBD> (<CODE>tex-view</CODE>).
+</P><P>
+
+<A NAME="IDX1253"></A>
+<A NAME="IDX1254"></A>
+  You can specify the directory to use for running TeX by setting the
+variable <CODE>tex-directory</CODE>.  <CODE>"."</CODE> is the default value.  If
+your environment variable <CODE>TEXINPUTS</CODE> contains relative directory
+names, or if your files contains <SAMP>`\input'</SAMP> commands with relative
+file names, then <CODE>tex-directory</CODE> <EM>must</EM> be <CODE>"."</CODE> or you
+will get the wrong results.  Otherwise, it is safe to specify some other
+directory, such as <CODE>"/tmp"</CODE>.
+</P><P>
+
+<A NAME="IDX1255"></A>
+<A NAME="IDX1256"></A>
+<A NAME="IDX1257"></A>
+<A NAME="IDX1258"></A>
+<A NAME="IDX1259"></A>
+<A NAME="IDX1260"></A>
+  If you want to specify which shell commands are used in the inferior TeX,
+you can do so by setting the values of the variables <CODE>tex-run-command</CODE>,
+<CODE>latex-run-command</CODE>, <CODE>slitex-run-command</CODE>,
+<CODE>tex-dvi-print-command</CODE>, <CODE>tex-dvi-view-command</CODE>, and
+<CODE>tex-show-queue-command</CODE>.  You <EM>must</EM> set the value of
+<CODE>tex-dvi-view-command</CODE> for your particular terminal; this variable
+has no default value.  The other variables have default values that may
+(or may not) be appropriate for your system.
+</P><P>
+
+  Normally, the file name given to these commands comes at the end of
+the command string; for example, <SAMP>`latex <VAR>filename</VAR>'</SAMP>.  In some
+cases, however, the file name needs to be embedded in the command; an
+example is when you need to provide the file name as an argument to one
+command whose output is piped to another.  You can specify where to put
+the file name with <SAMP>`*'</SAMP> in the command string.  For example,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(setq tex-dvi-print-command "dvips -f * | lpr")
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX1261"></A>
+<A NAME="IDX1262"></A>
+<A NAME="IDX1263"></A>
+<A NAME="IDX1264"></A>
+  The terminal output from TeX, including any error messages, appears
+in a buffer called <SAMP>`*tex-shell*'</SAMP>.  If TeX gets an error, you can
+switch to this buffer and feed it input (this works as in Shell mode;
+see section <A HREF="emacs_32.html#SEC444">AC.15.2 Interactive Inferior Shell</A>).  Without switching to this buffer you can
+scroll it so that its last line is visible by typing <KBD>C-c
+C-l</KBD>.
+</P><P>
+
+  Type <KBD>C-c C-k</KBD> (<CODE>tex-kill-job</CODE>) to kill the TeX process if
+you see that its output is no longer useful.  Using <KBD>C-c C-b</KBD> or
+<KBD>C-c C-r</KBD> also kills any TeX process still running.</P><P>
+
+<A NAME="IDX1265"></A>
+<A NAME="IDX1266"></A>
+  You can also pass an arbitrary region through an inferior TeX by typing
+<KBD>C-c C-r</KBD> (<CODE>tex-region</CODE>).  This is tricky, however, because most files
+of TeX input contain commands at the beginning to set parameters and
+define macros, without which no later part of the file will format
+correctly.  To solve this problem, <KBD>C-c C-r</KBD> allows you to designate a
+part of the file as containing essential commands; it is included before
+the specified region as part of the input to TeX.  The designated part
+of the file is called the <EM>header</EM>.
+</P><P>
+
+<A NAME="IDX1267"></A>
+  To indicate the bounds of the header in Plain TeX mode, you insert two
+special strings in the file.  Insert <SAMP>`%**start of header'</SAMP> before the
+header, and <SAMP>`%**end of header'</SAMP> after it.  Each string must appear
+entirely on one line, but there may be other text on the line before or
+after.  The lines containing the two strings are included in the header.
+If <SAMP>`%**start of header'</SAMP> does not appear within the first 100 lines of
+the buffer, <KBD>C-c C-r</KBD> assumes that there is no header.
+</P><P>
+
+  In LaTeX mode, the header begins with <SAMP>`\documentclass'</SAMP> or
+<SAMP>`\documentstyle'</SAMP> and ends with <SAMP>`\begin{document}'</SAMP>.  These
+are commands that LaTeX requires you to use in any case, so nothing
+special needs to be done to identify the header.
+</P><P>
+
+<A NAME="IDX1268"></A>
+<A NAME="IDX1269"></A>
+  The commands (<CODE>tex-buffer</CODE>) and (<CODE>tex-region</CODE>) do all of their
+work in a temporary directory, and do not have available any of the auxiliary
+files needed by TeX for cross-references; these commands are generally
+not suitable for running the final copy in which all of the cross-references
+need to be correct.
+</P><P>
+
+  When you want the auxiliary files for cross references, use <KBD>C-c
+C-f</KBD> (<CODE>tex-file</CODE>) which runs TeX on the current buffer's file,
+in that file's directory.  Before running TeX, it offers to save any
+modified buffers.  Generally, you need to use (<CODE>tex-file</CODE>) twice to
+get the cross-references right.
+</P><P>
+
+<A NAME="IDX1270"></A>
+  The value of the variable <CODE>tex-start-options-string</CODE> specifies
+options for the TeX run.  The default value causes TeX to run in
+nonstop mode.  To run TeX interactively, set the variable to <CODE>""</CODE>.
+</P><P>
+
+<A NAME="IDX1271"></A>
+  Large TeX documents are often split into several files--one main
+file, plus subfiles.  Running TeX on a subfile typically does not
+work; you have to run it on the main file.  In order to make
+<CODE>tex-file</CODE> useful when you are editing a subfile, you can set the
+variable <CODE>tex-main-file</CODE> to the name of the main file.  Then
+<CODE>tex-file</CODE> runs TeX on that file.
+</P><P>
+
+  The most convenient way to use <CODE>tex-main-file</CODE> is to specify it
+in a local variable list in each of the subfiles.  See section <A HREF="emacs_33.html#SEC486">AD.2.5 Local Variables in Files</A>.
+</P><P>
+
+<A NAME="IDX1272"></A>
+<A NAME="IDX1273"></A>
+<A NAME="IDX1274"></A>
+  For LaTeX files, you can use BibTeX to process the auxiliary
+file for the current buffer's file.  BibTeX looks up bibliographic
+citations in a data base and prepares the cited references for the
+bibliography section.  The command <KBD>C-c TAB</KBD>
+(<CODE>tex-bibtex-file</CODE>) runs the shell command
+(<CODE>tex-bibtex-command</CODE>) to produce a <SAMP>`.bbl'</SAMP> file for the
+current buffer's file.  Generally, you need to do <KBD>C-c C-f</KBD>
+(<CODE>tex-file</CODE>) once to generate the <SAMP>`.aux'</SAMP> file, then do
+<KBD>C-c TAB</KBD> (<CODE>tex-bibtex-file</CODE>), and then repeat <KBD>C-c C-f</KBD>
+(<CODE>tex-file</CODE>) twice more to get the cross-references correct.
+</P><P>
+
+<A NAME="TeX Misc"></A>
+<HR SIZE="6">
+<A NAME="SEC256"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC255"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC257"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC246"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC252"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC257"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.9.4 TeX Mode Miscellany </H3>
+<!--docid::SEC256::-->
+<P>
+
+<A NAME="IDX1275"></A>
+<A NAME="IDX1276"></A>
+<A NAME="IDX1277"></A>
+<A NAME="IDX1278"></A>
+<A NAME="IDX1279"></A>
+  Entering any variant of TeX mode runs the hooks
+<CODE>text-mode-hook</CODE> and <CODE>tex-mode-hook</CODE>.  Then it runs either
+<CODE>plain-tex-mode-hook</CODE>, <CODE>latex-mode-hook</CODE>, or
+<CODE>slitex-mode-hook</CODE>, whichever is appropriate.  Starting the
+TeX shell runs the hook <CODE>tex-shell-hook</CODE>.  See section <A HREF="emacs_33.html#SEC484">AD.2.3 Hooks</A>.
+</P><P>
+
+<A NAME="IDX1280"></A>
+<A NAME="IDX1281"></A>
+<A NAME="IDX1282"></A>
+<A NAME="IDX1283"></A>
+<A NAME="IDX1284"></A>
+TeX encoding
+  The commands <KBD>M-x iso-iso2tex</KBD>, <KBD>M-x iso-tex2iso</KBD>, <KBD>M-x
+iso-iso2gtex</KBD> and <KBD>M-x iso-gtex2iso</KBD> can be used to convert
+between Latin-1 encoded files and TeX-encoded equivalents.
+</P><P>
+
+<A NAME="IDX1285"></A>
+<A NAME="IDX1286"></A>
+<A NAME="IDX1287"></A>
+  For managing all kinds of references for LaTeX, you can use
+RefTeX.  @xref{Top, , RefTeX, reftex}.
+</P><P>
+
+<A NAME="Nroff Mode"></A>
+<HR SIZE="6">
+<A NAME="SEC257"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC256"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC258"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC235"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> T.10 Nroff Mode </H2>
+<!--docid::SEC257::-->
+<P>
+
+<A NAME="IDX1288"></A>
+<A NAME="IDX1289"></A>
+  Nroff mode is a mode like Text mode but modified to handle nroff commands
+present in the text.  Invoke <KBD>M-x nroff-mode</KBD> to enter this mode.  It
+differs from Text mode in only a few ways.  All nroff command lines are
+considered paragraph separators, so that filling will never garble the
+nroff commands.  Pages are separated by <SAMP>`.bp'</SAMP> commands.  Comments
+start with backslash-doublequote.  Also, three special commands are
+provided that are not in Text mode:
+</P><P>
+
+<A NAME="IDX1290"></A>
+<A NAME="IDX1291"></A>
+<A NAME="IDX1292"></A>
+<A NAME="IDX1293"></A>
+<A NAME="IDX1294"></A>
+<A NAME="IDX1295"></A>
+<DL COMPACT>
+<DT><KBD>M-n</KBD>
+<DD>Move to the beginning of the next line that isn't an nroff command
+(<CODE>forward-text-line</CODE>).  An argument is a repeat count.
+<DT><KBD>M-p</KBD>
+<DD>Like <KBD>M-n</KBD> but move up (<CODE>backward-text-line</CODE>).
+<DT><KBD>M-?</KBD>
+<DD>Displays in the echo area the number of text lines (lines that are not
+nroff commands) in the region (<CODE>count-text-lines</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX1296"></A>
+  The other feature of Nroff mode is that you can turn on Electric Nroff
+mode.  This is a minor mode that you can turn on or off with <KBD>M-x
+electric-nroff-mode</KBD> (see section <A HREF="emacs_33.html#SEC476">AD.1 Minor Modes</A>).  When the mode is on, each
+time you use <KBD>RET</KBD> to end a line that contains an nroff command that
+opens a kind of grouping, the matching nroff command to close that
+grouping is automatically inserted on the following line.  For example,
+if you are at the beginning of a line and type <KBD>. ( b <KBD>RET</KBD></KBD>,
+this inserts the matching command <SAMP>`.)b'</SAMP> on a new line following
+point.
+</P><P>
+
+  If you use Outline minor mode with Nroff mode (see section <A HREF="emacs_23.html#SEC246">T.8 Outline Mode</A>),
+heading lines are lines of the form <SAMP>`.H'</SAMP> followed by a number (the
+header level).
+</P><P>
+
+<A NAME="IDX1297"></A>
+  Entering Nroff mode runs the hook <CODE>text-mode-hook</CODE>, followed by
+the hook <CODE>nroff-mode-hook</CODE> (see section <A HREF="emacs_33.html#SEC484">AD.2.3 Hooks</A>).
+</P><P>
+
+<A NAME="Formatted Text"></A>
+<HR SIZE="6">
+<A NAME="SEC258"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC257"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC259"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC235"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC233"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> T.11 Editing Formatted Text </H2>
+<!--docid::SEC258::-->
+<P>
+
+<A NAME="IDX1298"></A>
+<A NAME="IDX1299"></A>
+<A NAME="IDX1300"></A>
+<A NAME="IDX1301"></A>
+<A NAME="IDX1302"></A>
+  <EM>Enriched mode</EM> is a minor mode for editing files that contain
+formatted text in WYSIWYG fashion, as in a word processor.  Currently,
+formatted text in Enriched mode can specify fonts, colors, underlining,
+margins, and types of filling and justification.  In the future, we plan
+to implement other formatting features as well.
+</P><P>
+
+  Enriched mode is a minor mode (see section <A HREF="emacs_33.html#SEC476">AD.1 Minor Modes</A>).  It is
+typically used in conjunction with Text mode (see section <A HREF="emacs_23.html#SEC245">T.7 Text Mode</A>), but
+you can also use it with other major modes such as Outline mode and
+Paragraph-Indent Text mode.
+</P><P>
+
+<A NAME="IDX1303"></A>
+  Potentially, Emacs can store formatted text files in various file
+formats.  Currently, only one format is implemented: <EM>text/enriched</EM>
+format, which is defined by the MIME protocol.  See section `Format Conversion' in <CITE>the Emacs Lisp Reference Manual</CITE>,
+for details of how Emacs recognizes and converts file formats.
+</P><P>
+
+  The Emacs distribution contains a formatted text file that can serve as
+an example.  Its name is <TT>`etc/enriched.doc'</TT>.  It contains samples
+illustrating all the features described in this section.  It also
+contains a list of ideas for future enhancements.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC259">T.11.1 Requesting to Edit Formatted Text</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Entering and exiting Enriched mode.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC260">T.11.2 Hard and Soft Newlines</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">There are two different kinds of newlines.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC261">T.11.3 Editing Format Information</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to edit text properties.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC262">T.11.4 Faces in Formatted Text</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Bold, italic, underline, etc.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC263">T.11.5 Colors in Formatted Text</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Changing the color of text.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC264">T.11.6 Indentation in Formatted Text</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Changing the left and right margins.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC265">T.11.7 Justification in Formatted Text</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Centering, setting text flush with the 
+                                  left or right margin, etc.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC266">T.11.8 Setting Other Text Properties</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">The "special" text properties submenu.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_23.html#SEC267">T.11.9 Forcing Enriched Mode</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to force use of Enriched mode.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Requesting Formatted Text"></A>
+<HR SIZE="6">
+<A NAME="SEC259"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC258"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC260"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC235"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC258"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.11.1 Requesting to Edit Formatted Text </H3>
+<!--docid::SEC259::-->
+<P>
+
+  Whenever you visit a file that Emacs saved in the text/enriched format,
+Emacs automatically converts the formatting information in the file into
+Emacs's own internal format (text properties), and turns on Enriched
+mode.
+</P><P>
+
+<A NAME="IDX1304"></A>
+  To create a new file of formatted text, first visit the nonexistent
+file, then type <KBD>M-x enriched-mode</KBD> before you start inserting text.
+This command turns on Enriched mode.  Do this before you begin inserting
+text, to ensure that the text you insert is handled properly.
+</P><P>
+
+  More generally, the command <CODE>enriched-mode</CODE> turns Enriched mode
+on if it was off, and off if it was on.  With a prefix argument, this
+command turns Enriched mode on if the argument is positive, and turns
+the mode off otherwise.
+</P><P>
+
+  When you save a buffer while Enriched mode is enabled in it, Emacs
+automatically converts the text to text/enriched format while writing it
+into the file.  When you visit the file again, Emacs will automatically
+recognize the format, reconvert the text, and turn on Enriched mode
+again.
+</P><P>
+
+<A NAME="IDX1305"></A>
+  Normally, after visiting a file in text/enriched format, Emacs refills
+each paragraph to fit the specified right margin.  You can turn off this
+refilling, to save time, by setting the variable
+<CODE>enriched-fill-after-visiting</CODE> to <CODE>nil</CODE> or to <CODE>ask</CODE>.
+</P><P>
+
+  However, when visiting a file that was saved from Enriched mode, there
+is no need for refilling, because Emacs saves the right margin settings
+along with the text.
+</P><P>
+
+<A NAME="IDX1306"></A>
+  You can add annotations for saving additional text properties, which
+Emacs normally does not save, by adding to <CODE>enriched-translations</CODE>.
+Note that the text/enriched standard requires any non-standard
+annotations to have names starting with <SAMP>`x-'</SAMP>, as in
+<SAMP>`x-read-only'</SAMP>.  This ensures that they will not conflict with
+standard annotations that may be added later.
+</P><P>
+
+<A NAME="Hard and Soft Newlines"></A>
+<HR SIZE="6">
+<A NAME="SEC260"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC259"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC261"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC261"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC258"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.11.2 Hard and Soft Newlines </H3>
+<!--docid::SEC260::-->
+<P>
+
+  In formatted text, Emacs distinguishes between two different kinds of
+newlines, <EM>hard</EM> newlines and <EM>soft</EM> newlines.
+</P><P>
+
+  Hard newlines are used to separate paragraphs, or items in a list, or
+anywhere that there should always be a line break regardless of the
+margins.  The <KBD>RET</KBD> command (<CODE>newline</CODE>) and <KBD>C-o</KBD>
+(<CODE>open-line</CODE>) insert hard newlines.
+</P><P>
+
+  Soft newlines are used to make text fit between the margins.  All the
+fill commands, including Auto Fill, insert soft newlines--and they
+delete only soft newlines.
+</P><P>
+
+  Although hard and soft newlines look the same, it is important to bear
+the difference in mind.  Do not use <KBD>RET</KBD> to break lines in the
+middle of filled paragraphs, or else you will get hard newlines that are
+barriers to further filling.  Instead, let Auto Fill mode break lines,
+so that if the text or the margins change, Emacs can refill the lines
+properly.  See section <A HREF="emacs_23.html#SEC239">T.5.1 Auto Fill Mode</A>.
+</P><P>
+
+  On the other hand, in tables and lists, where the lines should always
+remain as you type them, you can use <KBD>RET</KBD> to end lines.  For these
+lines, you may also want to set the justification style to
+<CODE>unfilled</CODE>.  See section <A HREF="emacs_23.html#SEC265">T.11.7 Justification in Formatted Text</A>.
+</P><P>
+
+<A NAME="Editing Format Info"></A>
+<HR SIZE="6">
+<A NAME="SEC261"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC260"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC262"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC262"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC258"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.11.3 Editing Format Information </H3>
+<!--docid::SEC261::-->
+<P>
+
+  There are two ways to alter the formatting information for a formatted
+text file: with keyboard commands, and with the mouse.
+</P><P>
+
+  The easiest way to add properties to your document is with the Text
+Properties menu.  You can get to this menu in two ways: from the Edit
+menu in the menu bar (use <KBD><KBD>F10</KBD> e t</KBD> if you have no mouse),
+or with <KBD>C-Mouse-2</KBD> (hold the <KBD>CTRL</KBD> key and press the middle
+mouse button).  There are also keyboard commands described in the
+following section.
+</P><P>
+
+  Most of the items in the Text Properties menu lead to other submenus.
+These are described in the sections that follow.  Some items run
+commands directly:
+</P><P>
+
+<DL COMPACT>
+<A NAME="IDX1307"></A>
+<DT><CODE>Remove Face Properties</CODE>
+<DD>Delete from the region all the text properties that the Text Properties
+menu works with (<CODE>facemenu-remove-face-props</CODE>).
+<P>
+
+<A NAME="IDX1308"></A>
+<DT><CODE>Remove All</CODE>
+<DD>Delete <EM>all</EM> text properties from the region
+(<CODE>facemenu-remove-all</CODE>).
+<P>
+
+<A NAME="IDX1309"></A>
+<DT><CODE>List Properties</CODE>
+<DD>List all the text properties of the character following point
+(<CODE>list-text-properties-at</CODE>).
+<P>
+
+<DT><CODE>Display Faces</CODE>
+<DD>Display a list of all the defined faces (<CODE>list-faces-display</CODE>).
+<P>
+
+<DT><CODE>Display Colors</CODE>
+<DD>Display a list of all the defined colors (<CODE>list-colors-display</CODE>).
+</DL>
+            
+<A NAME="Format Faces"></A>
+<HR SIZE="6">
+<A NAME="SEC262"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC261"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC263"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC263"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC258"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.11.4 Faces in Formatted Text </H3>
+<!--docid::SEC262::-->
+<P>
+
+  The Faces submenu lists various Emacs faces including <CODE>bold</CODE>,
+<CODE>italic</CODE>, and <CODE>underline</CODE>.  Selecting one of these adds the
+chosen face to the region.  See section <A HREF="emacs_13.html#SEC78">J.1 Using Multiple Typefaces</A>.  You can also specify a face
+with these keyboard commands:
+</P><P>
+
+<DL COMPACT>
+<A NAME="IDX1310"></A>
+<A NAME="IDX1311"></A>
+<DT><KBD>M-g d</KBD>
+<DD>Set the region, or the next inserted character, to the <CODE>default</CODE> face
+(<CODE>facemenu-set-default</CODE>).
+<A NAME="IDX1312"></A>
+<A NAME="IDX1313"></A>
+<DT><KBD>M-g b</KBD>
+<DD>Set the region, or the next inserted character, to the <CODE>bold</CODE> face
+(<CODE>facemenu-set-bold</CODE>).
+<A NAME="IDX1314"></A>
+<A NAME="IDX1315"></A>
+<DT><KBD>M-g i</KBD>
+<DD>Set the region, or the next inserted character, to the <CODE>italic</CODE> face
+(<CODE>facemenu-set-italic</CODE>).
+<A NAME="IDX1316"></A>
+<A NAME="IDX1317"></A>
+<DT><KBD>M-g l</KBD>
+<DD>Set the region, or the next inserted character, to the <CODE>bold-italic</CODE> face
+(<CODE>facemenu-set-bold-italic</CODE>).
+<A NAME="IDX1318"></A>
+<A NAME="IDX1319"></A>
+<DT><KBD>M-g u</KBD>
+<DD>Set the region, or the next inserted character, to the <CODE>underline</CODE> face
+(<CODE>facemenu-set-underline</CODE>).
+<A NAME="IDX1320"></A>
+<A NAME="IDX1321"></A>
+<DT><KBD>M-g o <VAR>face</VAR> <KBD>RET</KBD></KBD>
+<DD>Set the region, or the next inserted character, to the face <VAR>face</VAR>
+(<CODE>facemenu-set-face</CODE>).
+</DL>
+<P>
+
+  If you use these commands with a prefix argument--or, in Transient Mark
+mode, if the region is not active--then these commands specify a face
+to use for your next self-inserting input.  See section <A HREF="emacs_11.html#SEC54">H.2 Transient Mark Mode</A>.  This
+applies to both the keyboard commands and the menu commands.
+</P><P>
+
+  Enriched mode defines two additional faces: <CODE>excerpt</CODE> and
+<CODE>fixed</CODE>.  These correspond to codes used in the text/enriched file
+format.
+</P><P>
+
+  The <CODE>excerpt</CODE> face is intended for quotations.  This face is the
+same as <CODE>italic</CODE> unless you customize it (see section <A HREF="emacs_33.html#SEC482">AD.2.2.3 Customizing Faces</A>).
+</P><P>
+
+  The <CODE>fixed</CODE> face means, "Use a fixed-width font for this part
+of the text."  This makes a visible difference only if you have
+specified a variable-width font in the default face; however, even if
+the default font is fixed-width, applying the <CODE>fixed</CODE> face to a
+part of the text will cause that part of the text to appear in a
+fixed-width font, if the file is ever displayed with a variable-width
+default font.  This applies to Emacs and to other systems that display
+text/enriched format.  So if you specifically want a certain part of
+the text to use a fixed-width font, you should specify the
+<CODE>fixed</CODE> face for that part.
+</P><P>
+
+  The <CODE>fixed</CODE> face is normally set up to use a different font
+from the default, even if the default face is also fixed-width.
+Different systems have different fonts installed, so you may need to
+customize this.  See section <A HREF="emacs_33.html#SEC482">AD.2.2.3 Customizing Faces</A>.
+</P><P>
+
+  If your terminal cannot display different faces, you will not be
+able to see them, but you can still edit documents containing faces,
+and even add faces and colors to documents.  The faces you specify
+will be visible when the file is viewed on a terminal that can display
+them.
+</P><P>
+
+<A NAME="Format Colors"></A>
+<HR SIZE="6">
+<A NAME="SEC263"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC262"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC264"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC264"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC258"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.11.5 Colors in Formatted Text </H3>
+<!--docid::SEC263::-->
+<P>
+
+  You can specify foreground and background colors for portions of the
+text.  There is a menu for specifying the foreground color and a menu
+for specifying the background color.  Each color menu lists all the
+colors that you have used in Enriched mode in the current Emacs session.
+</P><P>
+
+  If you specify a color with a prefix argument--or, in Transient Mark
+mode, if the region is not active--then it applies to your next
+self-inserting input.  See section <A HREF="emacs_11.html#SEC54">H.2 Transient Mark Mode</A>.  Otherwise, the command
+applies to the region.
+</P><P>
+
+  Each color menu contains one additional item: <SAMP>`Other'</SAMP>.  You can use
+this item to specify a color that is not listed in the menu; it reads
+the color name with the minibuffer.  To display list of available colors
+and their names, use the <SAMP>`Display Colors'</SAMP> menu item in the Text
+Properties menu (see section <A HREF="emacs_23.html#SEC261">T.11.3 Editing Format Information</A>).
+</P><P>
+
+  Any color that you specify in this way, or that is mentioned in a
+formatted text file that you read in, is added to both color menus for
+the duration of the Emacs session.
+</P><P>
+
+<A NAME="IDX1322"></A>
+<A NAME="IDX1323"></A>
+  There are no key bindings for specifying colors, but you can do so
+with the extended commands <KBD>M-x facemenu-set-foreground</KBD> and
+<KBD>M-x facemenu-set-background</KBD>.  Both of these commands read the name
+of the color with the minibuffer.
+</P><P>
+
+<A NAME="Format Indentation"></A>
+<HR SIZE="6">
+<A NAME="SEC264"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC263"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC265"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC265"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC258"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.11.6 Indentation in Formatted Text </H3>
+<!--docid::SEC264::-->
+<P>
+
+  When editing formatted text, you can specify different amounts of
+indentation for the right or left margin of an entire paragraph or a
+part of a paragraph.  The margins you specify automatically affect the
+Emacs fill commands (see section <A HREF="emacs_23.html#SEC238">T.5 Filling Text</A>) and line-breaking commands.
+</P><P>
+
+  The Indentation submenu provides a convenient interface for specifying
+these properties.  The submenu contains four items:
+</P><P>
+
+<DL COMPACT>
+<A NAME="IDX1324"></A>
+<A NAME="IDX1325"></A>
+<DT><CODE>Indent More</CODE>
+<DD>Indent the region by 4 columns (<CODE>increase-left-margin</CODE>).  In
+Enriched mode, this command is also available on <KBD>C-x <KBD>TAB</KBD></KBD>; if
+you supply a numeric argument, that says how many columns to add to the
+margin (a negative argument reduces the number of columns).
+<P>
+
+<DT><CODE>Indent Less</CODE>
+<DD>Remove 4 columns of indentation from the region.
+<P>
+
+<DT><CODE>Indent Right More</CODE>
+<DD>Make the text narrower by indenting 4 columns at the right margin.
+<P>
+
+<DT><CODE>Indent Right Less</CODE>
+<DD>Remove 4 columns of indentation from the right margin.
+</DL>
+<P>
+
+  You can use these commands repeatedly to increase or decrease the
+indentation.
+</P><P>
+
+  The most common way to use these commands is to change the indentation
+of an entire paragraph.  However, that is not the only use.  You can
+change the margins at any point; the new values take effect at the end
+of the line (for right margins) or the beginning of the next line (for
+left margins).
+</P><P>
+
+  This makes it possible to format paragraphs with <EM>hanging indents</EM>,
+which means that the first line is indented less than subsequent lines.
+To set up a hanging indent, increase the indentation of the region
+starting after the first word of the paragraph and running until the end
+of the paragraph.
+</P><P>
+
+  Indenting the first line of a paragraph is easier.  Set the margin for
+the whole paragraph where you want it to be for the body of the
+paragraph, then indent the first line by inserting extra spaces or tabs.
+</P><P>
+
+  Sometimes, as a result of editing, the filling of a paragraph becomes
+messed up--parts of the paragraph may extend past the left or right
+margins.  When this happens, use <KBD>M-q</KBD> (<CODE>fill-paragraph</CODE>) to
+refill the paragraph.
+</P><P>
+
+<A NAME="IDX1326"></A>
+  The variable <CODE>standard-indent</CODE> specifies how many columns these
+commands should add to or subtract from the indentation.  The default
+value is 4.  The overall default right margin for Enriched mode is
+controlled by the variable <CODE>fill-column</CODE>, as usual.
+</P><P>
+
+  The fill prefix, if any, works in addition to the specified paragraph
+indentation: <KBD>C-x .</KBD> does not include the specified indentation's
+whitespace in the new value for the fill prefix, and the fill commands
+look for the fill prefix after the indentation on each line.  See section <A HREF="emacs_23.html#SEC242">T.5.4 The Fill Prefix</A>.
+</P><P>
+
+<A NAME="Format Justification"></A>
+<HR SIZE="6">
+<A NAME="SEC265"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC264"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC266"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC266"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC258"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.11.7 Justification in Formatted Text </H3>
+<!--docid::SEC265::-->
+            
+  When editing formatted text, you can specify various styles of
+justification for a paragraph.  The style you specify automatically
+affects the Emacs fill commands.
+<P>
+
+  The Justification submenu provides a convenient interface for specifying
+the style.  The submenu contains five items:
+</P><P>
+
+<DL COMPACT>
+<DT><CODE>Flush Left</CODE>
+<DD>This is the most common style of justification (at least for English).
+Lines are aligned at the left margin but left uneven at the right.
+<P>
+
+<DT><CODE>Flush Right</CODE>
+<DD>This aligns each line with the right margin.  Spaces and tabs are added
+on the left, if necessary, to make lines line up on the right.
+<P>
+
+<DT><CODE>Full</CODE>
+<DD>This justifies the text, aligning both edges of each line.  Justified
+text looks very nice in a printed book, where the spaces can all be
+adjusted equally, but it does not look as nice with a fixed-width font
+on the screen.  Perhaps a future version of Emacs will be able to adjust
+the width of spaces in a line to achieve elegant justification.
+<P>
+
+<DT><CODE>Center</CODE>
+<DD>This centers every line between the current margins.
+<P>
+
+<DT><CODE>None</CODE>
+<DD>This turns off filling entirely.  Each line will remain as you wrote it;
+the fill and auto-fill functions will have no effect on text which has
+this setting.  You can, however, still indent the left margin.  In
+unfilled regions, all newlines are treated as hard newlines (see section <A HREF="emacs_23.html#SEC260">T.11.2 Hard and Soft Newlines</A>) .
+</DL>
+<P>
+
+  In Enriched mode, you can also specify justification from the keyboard
+using the <KBD>M-j</KBD> prefix character:
+</P><P>
+
+<DL COMPACT>
+<A NAME="IDX1327"></A>
+<A NAME="IDX1328"></A>
+<DT><KBD>M-j l</KBD>
+<DD>Make the region left-filled (<CODE>set-justification-left</CODE>).
+<A NAME="IDX1329"></A>
+<A NAME="IDX1330"></A>
+<DT><KBD>M-j r</KBD>
+<DD>Make the region right-filled (<CODE>set-justification-right</CODE>).
+<A NAME="IDX1331"></A>
+<A NAME="IDX1332"></A>
+<DT><KBD>M-j f</KBD>
+<DD>Make the region fully-justified (<CODE>set-justification-full</CODE>).
+<A NAME="IDX1333"></A>
+<A NAME="IDX1334"></A>
+<A NAME="IDX1335"></A>
+<DT><KBD>M-j c</KBD>
+<DD><DT><KBD>M-S</KBD>
+<DD>Make the region centered (<CODE>set-justification-center</CODE>).
+<A NAME="IDX1336"></A>
+<A NAME="IDX1337"></A>
+<DT><KBD>M-j u</KBD>
+<DD>Make the region unfilled (<CODE>set-justification-none</CODE>).
+</DL>
+<P>
+
+  Justification styles apply to entire paragraphs.  All the
+justification-changing commands operate on the paragraph containing
+point, or, if the region is active, on all paragraphs which overlap the
+region.
+</P><P>
+
+<A NAME="IDX1338"></A>
+  The default justification style is specified by the variable
+<CODE>default-justification</CODE>.  Its value should be one of the symbols
+<CODE>left</CODE>, <CODE>right</CODE>, <CODE>full</CODE>, <CODE>center</CODE>, or <CODE>none</CODE>.
+         
+<A NAME="Format Properties"></A>
+<HR SIZE="6">
+<A NAME="SEC266"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC265"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC267"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC267"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC258"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.11.8 Setting Other Text Properties </H3>
+<!--docid::SEC266::-->
+<P>
+
+  The Other Properties menu lets you add or remove three other useful text
+properties: <CODE>read-only</CODE>, <CODE>invisible</CODE> and <CODE>intangible</CODE>.
+The <CODE>intangible</CODE> property disallows moving point within the text,
+the <CODE>invisible</CODE> text property hides text from display, and the
+<CODE>read-only</CODE> property disallows alteration of the text.
+</P><P>
+
+  Each of these special properties has a menu item to add it to the
+region.  The last menu item, <SAMP>`Remove Special'</SAMP>, removes all of these
+special properties from the text in the region.
+</P><P>
+
+  Currently, the <CODE>invisible</CODE> and <CODE>intangible</CODE> properties are
+<EM>not</EM> saved in the text/enriched format.  The <CODE>read-only</CODE>
+property is saved, but it is not a standard part of the text/enriched
+format, so other editors may not respect it.
+</P><P>
+
+<A NAME="Forcing Enriched Mode"></A>
+<HR SIZE="6">
+<A NAME="SEC267"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC266"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC235"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC258"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> T.11.9 Forcing Enriched Mode </H3>
+<!--docid::SEC267::-->
+<P>
+
+  Normally, Emacs knows when you are editing formatted text because it
+recognizes the special annotations used in the file that you visited.
+However, there are situations in which you must take special actions
+to convert file contents or turn on Enriched mode:
+</P><P>
+
+<UL>
+<LI>
+When you visit a file that was created with some other editor, Emacs may
+not recognize the file as being in the text/enriched format.  In this
+case, when you visit the file you will see the formatting commands
+rather than the formatted text.  Type <KBD>M-x format-decode-buffer</KBD> to
+translate it.
+<P>
+
+<LI>
+When you <EM>insert</EM> a file into a buffer, rather than visiting it.
+Emacs does the necessary conversions on the text which you insert, but
+it does not enable Enriched mode.  If you wish to do that, type <KBD>M-x
+enriched-mode</KBD>.
+</UL>
+<P>
+
+  The command <CODE>format-decode-buffer</CODE> translates text in various
+formats into Emacs's internal format.  It asks you to specify the format
+to translate from; however, normally you can type just <KBD>RET</KBD>, which
+tells Emacs to guess the format.
+</P><P>
+
+<A NAME="IDX1339"></A>
+  If you wish to look at text/enriched file in its raw form, as a
+sequence of characters rather than as formatted text, use the <KBD>M-x
+find-file-literally</KBD> command.  This visits a file, like
+<CODE>find-file</CODE>, but does not do format conversion.  It also inhibits
+character code conversion (see section <A HREF="emacs_20.html#SEC220">Q.7 Coding Systems</A>) and automatic
+uncompression (see section <A HREF="emacs_16.html#SEC166">M.11 Accessing Compressed Files</A>).  To disable format conversion
+but allow character code conversion and/or automatic uncompression if
+appropriate, use <CODE>format-find-file</CODE> with suitable arguments.
+</P><P>
+
+<A NAME="Programs"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_23.html#SEC235"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_24.html#SEC268"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

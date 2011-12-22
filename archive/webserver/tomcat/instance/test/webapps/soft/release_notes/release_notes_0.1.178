@@ -1,0 +1,18 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.178
+----------------------------------
+USER VISIBLE CHANGES
+
+Changed most of the residuals that are calculated for population
+estimation jobs and fixed the Two-Stage result file.
+
+OTHER CHANGES
+
+None
+
+RELATED BUG REPORTS:  509, 563, 587.
+
+BY:  Mitch Watrous
+
+WHEN:  August 20, 2006.
+

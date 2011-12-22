@@ -1,0 +1,18 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.249
+----------------------------------
+USER VISIBLE CHANGES
+
+Turned on block diagonal covariance matrices for likelihood jobs.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:
+
+None.
+
+BY:  Mitch Watrous
+
+WHEN:  September 24, 2008

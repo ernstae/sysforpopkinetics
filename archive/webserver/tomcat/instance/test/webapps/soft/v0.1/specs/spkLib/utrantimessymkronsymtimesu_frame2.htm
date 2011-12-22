@@ -1,0 +1,167 @@
+<html><head>
+<title>U^T (V kron V) U</title>
+<meta name="description" id="description" content="U^T (V kron V) U">
+<meta name="keywords" id="keywords" content=" Utrantimessymkronsymtimesu expected hessian "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="utrantimessymkronsymtimesu.htm" target="_top">section</a>, <a href="utrantimessymkronsymtimesu_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Computes U^T (V kron V) U, 
+where <code><span style='white-space: nowrap'><i>V</i></span></code> denotes a <b>symmetric</b> m by m matrix and <code><span style='white-space: nowrap'><i>U</i></span></code> denotes
+a <code><span style='white-space: nowrap'><i>m</i>^2&nbsp;<i>by</i>&nbsp;<i>k</i></span></code> matrix such that each of the columns <code><span style='white-space: nowrap'><i>ui</i></span></code> of <code><span style='white-space: nowrap'><i>U</i></span></code>,
+for <code><span style='white-space: nowrap'><i>i</i>=1...<i>k</i></span></code>, is the <a href="rvec.htm" target="_top"><span style='white-space: nowrap'>rvec</span></a>
+ of a <b>symmetric</b> matrix which
+we denote Ui. Then,
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;T<br>
+&nbsp;&nbsp;Cij&nbsp;=&nbsp;(rvec(Ui&nbsp;V))&nbsp;rvec(Uj&nbsp;V)<br>
+<br>
+</span>
+</font></code>
+Upon the successful completion
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>V</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a m by m symmetric matrix.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>U</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a m^2 by k matrix, where each column represents a rvec of a m by m symmetric.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>k</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>indicates the size of <i>U[]</i> array.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>C</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a k by k symmetric matrix that will hold the resulting matrix upon the successful completion
+of calculation.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'>[]<br>
+</span></font></code>is an array of matrices that will contain matrices <code><span style='white-space: nowrap'><i>Uj</i>*<i>V</i></span></code>, for <code><span style='white-space: nowrap'><i>j</i>=1...<i>k</i></span></code>, formed during the calculation.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;UTranTimesSymKronSymTimesU.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;transpose.h&quot;<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;matrix&nbsp;dimensions<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;m&nbsp;=&nbsp;3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;k&nbsp;=&nbsp;2;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Create&nbsp;V&nbsp;such&nbsp;that&nbsp;V&nbsp;is&nbsp;a&nbsp;m&nbsp;by&nbsp;m&nbsp;symmetric&nbsp;matrix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;V&nbsp;=&nbsp;[&nbsp;1&nbsp;2&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;1&nbsp;2&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;2&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;V(m,m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double*&nbsp;v&nbsp;=&nbsp;V.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[0]&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[1]&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[2]&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[3]&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[4]&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[5]&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[6]&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[7]&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;v[8]&nbsp;=&nbsp;1;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Create&nbsp;an&nbsp;array&nbsp;U&nbsp;such&nbsp;that&nbsp;each&nbsp;element&nbsp;of&nbsp;the&nbsp;array&nbsp;represents&nbsp;a&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;m&nbsp;by&nbsp;m&nbsp;symmetric&nbsp;matrix.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;U[0]&nbsp;=&nbsp;[&nbsp;1&nbsp;0&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;1&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;0&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;U[1]&nbsp;=&nbsp;[&nbsp;0&nbsp;1&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;0&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;1&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;U(m*m,k);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;U0&nbsp;=&nbsp;identity(m);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;U1(m,m);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;U1.fill(0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;U1[1]&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;U1[3]&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;U1[5]&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;U1[7]&nbsp;=&nbsp;1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;replaceJth(U,&nbsp;0,&nbsp;rvec(U0));<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;replaceJth(U,&nbsp;1,&nbsp;rvec(U1));<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Create&nbsp;C&nbsp;for&nbsp;holding&nbsp;the&nbsp;answer<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;C(k,k);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Create&nbsp;A&nbsp;array<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::vector&lt;DoubleMatrix&gt;&nbsp;A;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A.resize(k);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix*&nbsp;a&nbsp;=&nbsp;A.begin();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UTranTimesSymKronSymTimesU(transpose(U),&nbsp;V,&nbsp;U,&nbsp;k,&nbsp;C,&nbsp;a);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(&nbsp;int&nbsp;i=0;&nbsp;i&lt;k;&nbsp;i++&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;U(&quot;&nbsp;&lt;&lt;&nbsp;i+1&nbsp;&lt;&lt;&nbsp;&quot;)V&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;A[i]&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;U^T&nbsp;(V&nbsp;kron&nbsp;V)&nbsp;U&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;C&nbsp;&lt;&lt;&nbsp;endl;<br>
+}<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;U(1)V&nbsp;=&nbsp;3&nbsp;by&nbsp;3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1.0000000000000000e+000&nbsp;2.0000000000000000e+000&nbsp;0.0000000000000000e+000&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2.0000000000000000e+000&nbsp;1.0000000000000000e+000&nbsp;2.0000000000000000e+000&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0.0000000000000000e+000&nbsp;2.0000000000000000e+000&nbsp;1.0000000000000000e+000&nbsp;]<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;U(2)V&nbsp;=&nbsp;3&nbsp;by&nbsp;3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2.0000000000000000e+000&nbsp;1.0000000000000000e+000&nbsp;2.0000000000000000e+000&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1.0000000000000000e+000&nbsp;4.0000000000000000e+000&nbsp;1.0000000000000000e+000&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2.0000000000000000e+000&nbsp;1.0000000000000000e+000&nbsp;2.0000000000000000e+000&nbsp;]<br>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;U^T&nbsp;(V&nbsp;kron&nbsp;V)&nbsp;U&nbsp;=&nbsp;2&nbsp;by&nbsp;2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1.9000000000000000e+001&nbsp;1.6000000000000000e+001&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1.6000000000000000e+001&nbsp;3.6000000000000000e+001&nbsp;]<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/UTranTimesSymKronSymTimesU.cpp
+
+</body>
+</html>

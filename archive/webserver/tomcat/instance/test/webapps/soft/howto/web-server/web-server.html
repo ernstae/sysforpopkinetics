@@ -1,0 +1,1354 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Web Server HOWTO</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Web Server HOWTO</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	Because Spk provides its services via the World Wide Web, an important
+	component of the overall system is the web server.  This document
+	describes the installation and configuration of web server software
+	to support Spk.
+      </P
+><P
+>&#13;	To complete the configuration for secure https connections, you will
+	need two authentication certificates.  If you do not have these
+	certificates, it might be a good idea to obtain them before proceeding
+	with the web server configuration.  See the
+	<A
+HREF="http://whitechuck.rfpk.washington.edu/soft/howto/rhel3/authentication/authentication.html"
+TARGET="_top"
+>&#13;	  Authentication and Encryption HOWTO
+	</A
+> for details.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>February 26, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN14"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN23"
+>Installing Tomcat</A
+></DT
+><DT
+><A
+HREF="#AEN35"
+>Defining Environment Variables</A
+></DT
+><DT
+><A
+HREF="#AEN44"
+>Creating Two Run-Time Instances</A
+></DT
+><DT
+><A
+HREF="#AEN57"
+>Configuring User Groups and Permissions</A
+></DT
+><DT
+><A
+HREF="#AEN72"
+>Configuring the Instances</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN76"
+>Changing the Shutdown Port for the Production Instance</A
+></DT
+><DT
+><A
+HREF="#AEN83"
+>Changing the HTTP Port and the Redirect Port for the Production Instance</A
+></DT
+><DT
+><A
+HREF="#AEN92"
+>Setting Up  HTTPS for the Test Instance</A
+></DT
+><DT
+><A
+HREF="#AEN100"
+>Setting Up HTTPS for the Production Instance</A
+></DT
+><DT
+><A
+HREF="#AEN110"
+>Disabling the Apache Connection for both Test and Production</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN120"
+>Setting the Production Instance of Tomcat to Run Automatically</A
+></DT
+><DT
+><A
+HREF="#AEN132"
+>Setting the Test Instance of Tomcat to Run Automatically</A
+></DT
+><DT
+><A
+HREF="#AEN141"
+>Installing Authentication Certificates</A
+></DT
+><DT
+><A
+HREF="#AEN147"
+>Verifying the Configuration</A
+></DT
+><DT
+><A
+HREF="#AEN182"
+>Stopping and Starting</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN14"
+></A
+>Introduction</H2
+><P
+>&#13;      The client component of Spk, called the Model Design Agent (MDA), is
+      written in the Java language.  It communicates with the rest of the
+      system via the Internet, using the <I
+CLASS="emphasis"
+>http</I
+>
+      and <I
+CLASS="emphasis"
+>https</I
+> protocols.  On the
+      server side of this communication is a web server, which is software
+      that supports World Wide Web functionality and runs continuously in a server machine.
+      The fact that the MDA is a Java application makes it very desirable
+      that the components that communicate with the MDA from the server side
+      be also written in Java. Server-side Java components such as those
+      in Spk are known as <I
+CLASS="emphasis"
+>Java servlets</I
+>.  
+    </P
+><P
+>&#13;      In order to run servlets within a web server, software known as
+      a <I
+CLASS="emphasis"
+>servlet container</I
+> is required.  Tomcat, a
+      free product of the Catalina project, which in turn is part of the
+      Jakarta project sponsored by Apache, the leading developer of web
+      server software, serves this purpose for Spk.  Tomcat can be added
+      to an Apache web server, in which case it provides only the 
+      servlet container function, or it can be installed as a complete
+      stand-alone web server and servlet container.  For the purposes of Spk,
+      the latter is the simplest solution.
+    </P
+><P
+>&#13;      The rest of this document describes the installation and configuration
+      of tomcat as the web-server and servlet container for Spk.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN23"
+></A
+>Installing Tomcat</H2
+><P
+>&#13;      In a terminal window, as an ordinary user, download the tomcat tarball from whitechuck,
+      then <B
+CLASS="command"
+>su</B
+> to become <I
+CLASS="emphasis"
+>root</I
+>:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;scp 'whitechuck:/opt/download/jakarta-tomcat*.tar.gz' .
+su
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      If you do not already have a directory called <TT
+CLASS="filename"
+>/usr/local/tomcat</TT
+>,
+      create one:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;mkdir /usr/local/tomcat
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      Move the tarball to <TT
+CLASS="filename"
+>/usr/local/tomcat</TT
+>, and expand it:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;mv jakarta-tomcat*.tar.gz /usr/local/tomcat
+cd /usr/local/tomcat
+tar xvzf *
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN35"
+></A
+>Defining Environment Variables</H2
+><P
+>&#13;      It is convenient to define an environment variable, CATALINA_HOME,
+      which contains the path to the directory in which tomcat is installed.
+      Edit your <TT
+CLASS="filename"
+>~/.bash_profile</TT
+> file, adding lines to
+      define CATALINA_HOME and to export it.
+    </P
+><P
+>&#13;      For example, suppose that the tarball expanded to
+      <TT
+CLASS="filename"
+>jakarta-tomcat-5.0.18</TT
+>. Then you would add these lines
+      to <TT
+CLASS="filename"
+>~/.bash_profile</TT
+>:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;CATALINA_HOME=/usr/local/tomcat/jakarta-tomcat-5.0.18
+export CATALINA_HOME
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      After saving your modified <TT
+CLASS="filename"
+>~/.bash_profile</TT
+>,
+      restart your desktop by logging out and then logging back in again.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN44"
+></A
+>Creating Two Run-Time Instances</H2
+><P
+>&#13;      In this section, we will set things up so that two independent 
+      instances of tomcat can run simultaneously.  Onc instance will
+      be for test and the other for production.
+    </P
+><P
+>&#13;      When changes are made to the web site
+      or to the MDA, the process used to migrate these changes to production is
+      as follows:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    Copy the changes from the workstation(s) of software developers,
+	    content authors and content editors to the test to the file hierarchy
+	    associated with the test instance.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Test and proof read the changes.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Copy the changes to the file hierarchy associated with the production 
+	    instance.
+	  </P
+></LI
+></OL
+>
+    </P
+><P
+>&#13;      The following steps will create the file hierarchies for the two instances:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su
+cd $CATALINA_HOME/..
+mkdir instance
+cd instance
+mkdir test
+mkdir prod
+cp -r $CATALINA_HOME/conf test
+cp -r $CATALINA_HOME/conf prod
+cd test
+mkdir logs temp webapps work
+cd ../prod
+mkdir logs temp webapps work
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN57"
+></A
+>Configuring User Groups and Permissions</H2
+><P
+>&#13;      It is most convenient for tomcat to be started automatically by the
+      <I
+CLASS="emphasis"
+>init</I
+> process when the system boots.  Because
+      the init process is owned by root, tomcat also runs as root,
+      through inheiritance.  When we tried to run tomcat under an ordinary
+      user name, we could not get it to stop and restart reliably. Running
+      tomcat as apache is run, using an ordinary user name for security reasons,
+      may not be worth the trouble.  Unlike apache, which is written in C,
+      tomcat is written in Java.  Java applications are not vulnerable to 
+      buffer overflows, which are the vulnerability underlying  most security
+      breaches in conventional web servers.
+    </P
+><P
+>&#13;      Although root is the tomcat process owner,
+      it is preferable for its files to belong to a user
+      or users other than root.  That way, users can be given the authority
+      to modify these files without having to know the root password.
+    </P
+><P
+>&#13;      First we create a user and a group. The user <I
+CLASS="emphasis"
+>tomcat</I
+>
+      will be the owner of the files, while the group <I
+CLASS="emphasis"
+>webadmin</I
+>
+      will have group access to them.
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su
+/usr/sbin/useradd -r tomcat
+/usr/sbin/groupadd -r webadmin
+/usr/bin/gpasswd -a tomcat webadmin
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      At this point, you should also add <I
+CLASS="emphasis"
+>your user name</I
+>
+      to the webadmin group:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/usr/bin/gpasswd -a <I
+CLASS="emphasis"
+>your-user-name</I
+> webadmin
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      Now set permissions on the file hierarchies for the instances:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd $CATALINA_HOME/../instance
+chown -R tomcat.webadmin *
+find . -type d -exec chmod 2775 {} \;
+find . -type f -exec chmod g+rw {} \;
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN72"
+></A
+>Configuring the Instances</H2
+><P
+>&#13;      We need to make changes to <TT
+CLASS="filename"
+>server.xml</TT
+>, which is the principal
+      configuration file for tomcat.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN76"
+></A
+>Changing the Shutdown Port for the Production Instance</H3
+><P
+>&#13;	In the default configuration, tomcat receives shutdown requests on
+	port 8005.  We will leave 8005 as the shutdown value for the test
+	server, but change that of the production server to 8006, to avoid
+	a clash.
+      </P
+><P
+>&#13;	Before editing, <TT
+CLASS="filename"
+>$CATALINA_HOME/../instance/prod/conf/server.xml</TT
+>
+	will look like this:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;&#60;Server port="8005" shutdown="SHUTDOWN" debug="0"&#62;
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	Change the port, so that after editing the element will look like this:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;&#60;Server port="8006" shutdown="SHUTDOWN" debug="0"&#62;
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN83"
+></A
+>Changing the HTTP Port and the Redirect Port for the Production Instance</H3
+><P
+>&#13;	For the production server, only, we will change the port for receiving
+	http requests from 8080 to 80, and the port to which
+	https requests are redirected, from 8443 to 443.
+      </P
+><P
+>&#13;	Before editing, <TT
+CLASS="filename"
+>$CATALINA_HOME/../instance/prod/conf/server.xml</TT
+>
+	will look like this:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;&#60;!-- Define a non-SSL Coyote HTTP/1.1 Connector on port 8080 --&#62;
+&#60;Connector port="8080"
+	  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+	  enableLookups="false" redirectPort="8443" acceptCount="100"
+	  debug="0" connectionTimeout="20000" 
+	  disableUploadTimeout="true" /&#62;
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	After editing it should look like this:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;  &#60;!-- Define a non-SSL Coyote HTTP/1.1 Connector on port 80 --&#62;
+  &#60;Connector port="80"
+	  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+	  enableLookups="false" redirectPort="443" acceptCount="100"
+	  debug="0" connectionTimeout="20000" 
+	  disableUploadTimeout="true" /&#62;
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	Note that both the <I
+CLASS="emphasis"
+>port</I
+> and the 
+	<I
+CLASS="emphasis"
+>redirectPort</I
+> attributes must be changed.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN92"
+></A
+>Setting Up  HTTPS for the Test Instance</H3
+><P
+>&#13;	In the default configuration, the https port is disabled, because the
+	xml element that defines it has been commented out.  We will restore
+	the https port by removing the xml comment brackets.  We will also 
+	tell tomcat where to find our authentication certificates and 
+	what password it needs to decrypt them.
+      </P
+><P
+>&#13;	Before editing, <TT
+CLASS="filename"
+>$CATALINA_HOME/../instance/test/conf/server.xml</TT
+>
+	will look like this:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;&#60;!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 --&#62;
+&#60;!--
+&#60;Connector port="8443"
+	  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+	  enableLookups="false" disableUploadTimeout="true"
+	  acceptCount="100" debug="0" scheme="https" secure="true"
+	  clientAuth="false" sslProtocol="TLS" /&#62;
+--&#62;
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	AFter editing out the comment brackets, it will look like this:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;&#60;!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 --&#62;
+&#60;Connector port="8443"
+	  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+	  enableLookups="false" disableUploadTimeout="true"
+	  acceptCount="100" debug="0" scheme="https" secure="true"
+	  keystoreFile="/root/.keystore" keystorePass="Make@!This&#38;*Good"
+	  clientAuth="false" sslProtocol="TLS" /&#62;
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	Note that the password must be the one that you used when creating your
+	key pair (see the 
+	<A
+HREF="http://whitechuck.rfpk.washington.edu/soft/howto/rhel3/authentication/authentication.html"
+TARGET="_top"
+>&#13;	  Authentication and Encryption Howto
+	</A
+>).
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN100"
+></A
+>Setting Up HTTPS for the Production Instance</H3
+><P
+>&#13;	For the production server, only, we will change the port for processing
+	https requests from 8443 to 443, and add the attributes for
+	authentication:
+      </P
+><P
+>&#13;	Before editing, <TT
+CLASS="filename"
+>$CATALINA_HOME/../instance/prod/conf/server.xml</TT
+>
+	will look like this:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;&#60;!-- Define a SSL Coyote HTTP/1.1 Connector on port 8443 --&#62;
+&#60;!--
+&#60;Connector port="8443"
+	  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+	  enableLookups="false" disableUploadTimeout="true"
+	  acceptCount="100" debug="0" scheme="https" secure="true"
+	  clientAuth="false" sslProtocol="TLS" /&#62;
+--&#62;
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	After editing, this is how it looks:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;&#60;!-- Define a SSL Coyote HTTP/1.1 Connector on port 443 --&#62;
+&#60;Connector port="443"
+	  maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+	  enableLookups="false" disableUploadTimeout="true"
+	  acceptCount="100" debug="0" scheme="https" secure="true"
+	  keystoreFile="/root/.keystore" keystorePass="Make@!This&#38;*Good"
+	  clientAuth="false" sslProtocol="TLS" /&#62;
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	Note that the <I
+CLASS="emphasis"
+>port</I
+> attribute has been changed and that
+	the comment brackets around the element have been removed.  Note also
+	the addition of the <I
+CLASS="emphasis"
+>keystoreFile</I
+> and the
+	<I
+CLASS="emphasis"
+>keystorePass</I
+> attributes.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN110"
+></A
+>Disabling the Apache Connection for both Test and Production</H3
+><P
+>&#13;	For both the production and the test servers, we will comment out the
+	element in <TT
+CLASS="filename"
+>server.xml</TT
+> which defines a connector
+	between tomcat and apache, because we are using tomcat as a complete
+	stand-alone server that does not depend on apache.
+      </P
+><P
+>&#13;	Edit both <TT
+CLASS="filename"
+>$CATALINA_HOME/../instance/test/conf/server.xml</TT
+>
+	and <TT
+CLASS="filename"
+>$CATALINA_HOME/../instance/prod/conf/server.xml</TT
+>.
+      </P
+><P
+>&#13;	Before editing, both files will look like this:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;&#60;!-- Define a Coyote/JK2 AJP 1.3 Connector on port 8009 --&#62;
+&#60;Connector port="8009"
+	  enableLookups="false" redirectPort="8443" debug="0"
+	  protocol="AJP/1.3" /&#62;
+	</PRE
+></TD
+></TR
+></TABLE
+>
+	afterward, both files should look like this:
+	<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;&#60;!-- Define a Coyote/JK2 AJP 1.3 Connector on port 8009 --&#62;
+&#60;!--
+&#60;Connector port="8009"
+	  enableLookups="false" redirectPort="8443" debug="0"
+	  protocol="AJP/1.3" /&#62;
+--&#62;
+	</PRE
+></TD
+></TR
+></TABLE
+>
+      </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN120"
+></A
+>Setting the Production Instance of Tomcat to Run Automatically</H2
+><P
+>&#13;      Tomcat should be run automatically from the <B
+CLASS="command"
+>init</B
+> process
+      whenever the system boots, and be capable of being stopped or restarted manually from
+      the command line by the <I
+CLASS="emphasis"
+>root</I
+> user, just like other
+      system services.
+    </P
+><P
+>&#13;      We need to create a script called <B
+CLASS="command"
+>tomcat</B
+> and place it in the
+      standard location for scripts that start and stop services.
+    </P
+><P
+>&#13;      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su
+cd /etc/rc.d/init.d
+emacs tomcat &#38;
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      Cut and past the following lines into the editing window and save.
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;#!/bin/bash
+#
+# Init file for production tomcat
+#
+# chkconfig: 2345 63 37
+# description: tomcat server for ports 80 and 443
+#
+CATALINA_HOME=/usr/local/tomcat/jakarta-tomcat-5.0.18
+CATALINA_BASE=$CATALINA_HOME/../instance/prod
+export CATALINA_HOME CATALINA_BASE
+
+exec $CATALINA_HOME/bin/catalina.sh $*
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      Still as <I
+CLASS="emphasis"
+>root</I
+> and in the same directory, install your new 
+      shell script:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;chmod +x tomcat
+/sbin/chkconfig --add tomcat
+     </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN132"
+></A
+>Setting the Test Instance of Tomcat to Run Automatically</H2
+><P
+>&#13;      We also need to create a script called <B
+CLASS="command"
+>tomtest</B
+> and place it in the
+      standard location for scripts that start and stop services.
+    </P
+><P
+>&#13;      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su
+cd /etc/rc.d/init.d
+emacs tomtest &#38;
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      Cut and past the following lines into the editing window and save.
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;#!/bin/bash
+#
+# Init file for production tomcat
+#
+# chkconfig: 2345 63 37
+# description: tomcat server for ports 8080 and 8443
+#
+CATALINA_HOME=/usr/local/tomcat/jakarta-tomcat-5.0.18
+CATALINA_BASE=$CATALINA_HOME/../instance/test
+export CATALINA_HOME CATALINA_BASE
+
+exec $CATALINA_HOME/bin/catalina.sh $*
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      Still as <I
+CLASS="emphasis"
+>root</I
+> and in the same directory, install your new 
+      shell script:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;chmod +x tomtest
+/sbin/chkconfig --add tomtest
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN141"
+></A
+>Installing Authentication Certificates</H2
+><P
+>&#13;      If you have not obtained the certificates that tomcat will need for
+      https connections, get them by following the instructions in the
+      <A
+HREF="http://whitechuck.rfpk.washington.edu/soft/howto/rhel3/authentication/authentication.html"
+TARGET="_top"
+>&#13;	Authentication and Encryption Howto
+      </A
+>.
+      If you obtained the certificates on a workstation rather than on the
+      web server, transfer a copy of the <TT
+CLASS="filename"
+>cert</TT
+> directory
+      from the ~root directory on the workstation to the ~root directory
+      on the server.  To install the the certificates, do the following:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su
+cd cert
+$JAVA_HOME/bin/keytool -import -alias root -keystore keystore -trustcacerts -file uw_root_cert.pem
+$JAVA_HOME/bin/keytool -import -alias tomcat -keystore keystore -trustcacerts -file spk_cert.pem
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN147"
+></A
+>Verifying the Configuration</H2
+><P
+>&#13;      Tomcat provides a number of test and demonstrations which we will now 
+      copy in to the test and production instances.
+    </P
+><P
+>&#13;      As an <I
+CLASS="emphasis"
+>ordinary</I
+> user, member of the <I
+CLASS="emphasis"
+>webadmin</I
+>
+      group:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd $CATALINA_HOME/../instance
+cp -r $CATALINA_HOME/webapps/* test/webapps
+cp -r $CATALINA_HOME/webapps/* prod/webapps
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      Now you should be ready to start tomcat manually, and see if it is working.
+    </P
+><P
+>&#13;      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su
+/etc/rc.d/init.d/tomcat  start
+/etc/rc.d/init.d/tomtest start
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      should get both instances of tomcat running. You can check that 
+      that they are running by using the <B
+CLASS="command"
+>ps</B
+> command:
+    </P
+><P
+>&#13;      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ps -ef | grep tomcat
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      should list two tomcat processes in the system run queue.
+    </P
+><P
+>&#13;      There are four different ports which, when requested via your browser,
+      should return the tomcat welcome page.  The ports are 80 and 443, for the
+      production server; 8080 and 8443 for the test server.
+      URLs are provided for the two following cases:
+      <P
+></P
+><OL
+TYPE="i"
+><LI
+><P
+>&#13;	    Your workstation is on the LAN, behind the firewall:
+	  </P
+><P
+>&#13;	    <A
+HREF="http://192.168.2.2/"
+TARGET="_top"
+>&#13;	      http://192.168.2.2/
+	    </A
+>
+	  </P
+><P
+>&#13;	    <A
+HREF="https://192.168.2.2/"
+TARGET="_top"
+>&#13;	      https://192.168.2.2/
+	    </A
+>
+	  </P
+><P
+>&#13;	    <A
+HREF="http://192.168.2.2:8080/"
+TARGET="_top"
+>&#13;	      http://192.168.2.2:8080/
+	    </A
+>
+	  </P
+><P
+>&#13;	    <A
+HREF="https://192.168.2.2:8443/"
+TARGET="_top"
+>&#13;	      https://192.168.2.2:8443/
+	    </A
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Your workstation is on the public internet, outside the firewall:
+	  </P
+><P
+>&#13;	    <A
+HREF="http://spk.rfpk.washington.edu/"
+TARGET="_top"
+>&#13;	      http://spk.rfpk.washington.edu/
+	    </A
+>
+	  </P
+><P
+>&#13;	    <A
+HREF="https://spk.rfpk.washington.edu/"
+TARGET="_top"
+>&#13;	      https://spk.rfpk.washington.edu/
+	    </A
+>
+	  </P
+><P
+>&#13;	    <A
+HREF="http://spk.rfpk.washington.edu:8080/"
+TARGET="_top"
+>&#13;	      http://spk.rfpk.washington.edu:8080/
+	    </A
+>
+	  </P
+><P
+>&#13;	    <A
+HREF="https://spk.rfpk.washington.edu:8443/"
+TARGET="_top"
+>&#13;	      https://spk.rfpk.washington.edu:8443/
+	    </A
+>
+	  </P
+></LI
+></OL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN182"
+></A
+>Stopping and Starting</H2
+><P
+>&#13;      Tomcat is a daemon. It will run until the <I
+CLASS="emphasis"
+>root</I
+>
+      user tells it to stop, or until the computer is rebooted.
+    </P
+><P
+>&#13;      To tell the production tomcat to stop (as root):
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/etc/rc.d/init.d/tomcat stop
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      Similarly, to tell the test tomcat to stop:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/etc/rc.d/init.d/tomtest stop
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+><P
+>&#13;      <I
+CLASS="emphasis"
+>Important!</I
+>  After issuing one or the other
+      of the above commands, do not try to start that tomcat again, until
+      you are certain that it has terminated.  Use the command
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ps -ef | grep tomcat
+      </PRE
+></TD
+></TR
+></TABLE
+>
+      to verify this.
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

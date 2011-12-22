@@ -1,0 +1,363 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: dlpreopen Loading</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: dlpreopen Loading">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: dlpreopen Loading">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC173"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_172.html#SEC172" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Portable Library Design" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_174.html#SEC174" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: User Module Loaders" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_174.html#SEC174" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: User Module Loaders" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_164.html#SEC164" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Using GNU libltdl" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_178.html#SEC178" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Advanced GNU Automake Usage" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 18.4 dlpreopen Loading </H2>
+<!--docid::SEC173::-->
+<P>
+
+On machines which do not have any facility for shared libraries or
+dynamic modules, libltdl allows an application to
+<CODE>lt_dlopen</CODE> modules, provided that the modules are known at link
+time.  This works by linking the code for the modules into the
+application in advance, and then looking up the addresses of the already
+loaded symbols when <CODE>lt_dlsym</CODE> is called.  We call this mechanism
+<EM>dlpreopening</EM> -- so named because the modules must be loaded at
+link time, not because the API to use modules loaded in this way is
+any different.
+</P><P>
+
+This feature is extremely useful for debugging, allowing you to make a
+fully statically linked application from the executable and module
+objects, without changing any source code to work around the module
+loading calls.  As far as the code outside the libltdl API
+can tell, these modules really are being loaded dynamically.  Driving a
+symbolic debugger across module boundaries is however much easier when
+blocks of code aren't moving in and out of memory during execution.
+</P><P>
+
+You may have wondered about the purpose of the following line in the
+dynamic module code in <A HREF="autobook_170.html#SEC170">Dependent Libraries</A>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#define run ltdl_module_LTX_run
+</pre></td></tr></table></P><P>
+
+The reason for redefining the entry point symbol in this way is to
+prevent a symbol clash when two or more modules that provide
+identically named entry point functions are preloaded into an
+executable.  It would be otherwise impossible to preload both
+<TT>`simple-module.c'</TT> and <TT>`ltdl-module.c'</TT>, for example, since
+each defines the symbol <SAMP>`run'</SAMP>.  To allow us to write dynamic
+modules that are potentially preloaded, <CODE>lt_dlsym</CODE> will first try
+to lookup the address of a named symbol with a prefix consisting of the
+canonicalized name of the module being searched, followed by the
+characters <SAMP>`_LTX_'</SAMP>.  The module name part of this prefix is
+canonicalized by replacing all non-alphanumeric characters with an
+underscore.  If that fails, <CODE>lt_dlsym</CODE> resorts to the unadorned
+symbol name, which is how <SAMP>`run'</SAMP> was found in
+<TT>`simple-module.la'</TT> by <TT>`ltdl-loader'</TT> earlier.
+</P><P>
+
+Supporting this feature in your module loading code is a simple matter
+of initialising the address lookup table, and <TT>`ltdl.h'</TT> defines a
+convenient macro to do exactly that:
+</P><P>
+
+<A NAME="IDX36"></A>
+<DL>
+<DT><U>Macro:</U> <B>LTDL_SET_PRELOADED_SYMBOLS</B> <I>()</I>
+<DD>Add this macro to the code of your module loading code, before the first
+call to a libltdl function, to ensure that the dlopen address
+lookup table is populated.
+</DL>
+</P><P>
+
+Now change the contents of <TT>`ltdl-loader.c'</TT>, and add a call to this
+macro, so that it looks like this:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>  /* Initialise preloaded symbol lookup table. */
+  LTDL_SET_PRELOADED_SYMBOLS();
+
+  /* Initialise libltdl. */
+  errors = lt_dlinit ();
+</pre></td></tr></table></P><P>
+
+Libtool will now be able to fall back to using preloaded static modules
+if you tell it to, or if the host platform doesn't support native dynamic
+loading.
+</P><P>
+
+<BLOCKQUOTE>
+If you use <SAMP>`LTDL_SET_PRELOADED_SYMBOLS'</SAMP> in your module loader, you
+<STRONG>must</STRONG> also specify something to preload to avoid compilation
+failure due to undefined <SAMP>`lt_preloaded_symbols'</SAMP>.  You can name
+modules on the Libtool link command line using one of <SAMP>`-dlopen'</SAMP>
+or <SAMP>`-dlpreopen'</SAMP>.  This includes support for accessing the symbols
+of the main executable opened with <SAMP>`lt_dlopen(NULL)'</SAMP>---you can ask
+Libtool to fall back to preopening the main modules like this:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ libtool gcc -g -o ltdl-loader -dlopen self -rpath /tmp/lib \
+ltdl-loader.c -lltdl
+rm -f .libs/ltdl-loader.nm .libs/ltdl-loader.nmS \
+.libs/ltdl-loader.nmT
+creating .libs/ltdl-loaderS.c
+(cd .libs &#38;&#38; gcc -c -fno-builtin -fno-rtti -fno-exceptions
+"ltdl-loaderS.c")
+rm -f .libs/ltdl-loaderS.c .libs/ltdl-loader.nm .libs/ltdl-loader.nmS
+.libs/ltdl-loader.nmT
+gcc -o ltdl-loader .libs/ltdl-loaderS.o ltdl-loader.c
+-Wl,--export-dynamic  /usr/lib/libltdl.so -ldl -Wl,--rpath -Wl,/tmp/lib
+rm -f .libs/ltdl-loaderS.o
+</pre></td></tr></table></P><P>
+
+It doesn't make sense to add preloaded module support to a project, when
+you have no modules to preopen, so the compilation failure in that case
+is actually a feature of sorts.
+</BLOCKQUOTE>
+<P>
+
+The <SAMP>`LTDL_SET_PRELOADED_SYMBOLS'</SAMP> macro does not interfere with the
+normal operation of the code when modules are dynamically loaded,
+provided you use the <SAMP>`-dlopen'</SAMP> option on the link line.  The
+advantage of referencing the macro by default is that you can recompile
+the application with or without preloaded module, and all without
+editing the sources.
+</P><P>
+
+If you have no modules to link in by default, you can force Libtool to
+populate the preload symbol table by using the <SAMP>`-dlopen force'</SAMP>
+option.  This is the option used to preload the symbols of the main
+executable so that you can subsequently call <SAMP>`lt_dlopen(NULL)'</SAMP>.
+</P><P>
+
+Multiple modules can be preloaded, although at the time of writing only
+Libtool compiled modules can be used.  If there is a demand, Libtool will
+be extended to include native library preloading in a future revision.
+</P><P>
+
+To illustrate, I have recompiled the <TT>`simple-module.c'</TT> module with
+<CODE>libtool</CODE>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ libtool --mode=compile gcc -c simple-module.c
+rm -f .libs/simple-module.lo
+gcc -c simple-module.c  -fPIC -DPIC -o .libs/simple-module.lo
+gcc -c simple-module.c -o simple-module.o &#62;/dev/null 2&#62;&#38;1
+mv -f .libs/simple-module.lo simple-module.lo
+$ libtool --mode=link gcc -g -o simple-module.la -rpath `pwd`
+-no-undefined -module -avoid-version simple-module.lo
+rm -fr .libs/simple-module.la .libs/simple-module.*
+.libs/simple-module.*
+gcc -shared  simple-module.lo  -lc  -Wl,-soname \
+-Wl,simple-module.so -o .libs/simple-module.so
+ar cru .libs/simple-module.a  simple-module.o
+creating simple-module.la
+(cd .libs &#38;&#38; rm -f simple-module.la &#38;&#38; ln -s ../simple-module.la \
+simple-module.la)
+</pre></td></tr></table></P><P>
+
+The names of the modules that may be subsequently <CODE>lt_dlopen</CODE>ed are
+added to the application link line.  I am using the <SAMP>`-static'</SAMP>
+option to force a static only link, which must use dlpreopened modules
+by definition.  I am only specifying this because my host has native
+dynamic loading, and Libtool will use that unless I force a static only
+link, like this:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ libtool --mode=link gcc -static -g -o ltdl-loader ltdl-loader.c \
+-lltdl -dlopen ltdl-module.la -dlopen simple-module.la
+rm -f .libs/ltdl-loader.nm .libs/ltdl-loader.nmS \
+.libs/ltdl-loader.nmT
+creating .libs/ltdl-loaderS.c
+extracting global C symbols from ./.libs/ltdl-module.a
+extracting global C symbols from ./.libs/simple-module.a
+(cd .libs &#38;&#38; gcc -c -fno-builtin -fno-rtti -fno-exceptions \
+"ltdl-loaderS.c")
+rm -f .libs/ltdl-loaderS.c .libs/ltdl-loader.nm \
+.libs/ltdl-loader.nmS .libs/ltdl-loader.nmT
+gcc -g -o ltdl-loader ltdl-loader.c .libs/ltdl-loaderS.o \
+./.libs/ltdl-module.a -lm ./.libs/simple-module.a \
+/usr/lib/libltdl.a -ldl
+rm -f .libs/ltdl-loaderS.o
+$ ./ltdl-loader ltdl-module 345
+Square root of 345 is 18.574176
+        =&#62; 0
+$ ./ltdl-loader simple-module World
+Hello, World!
+        =&#62; 0
+</pre></td></tr></table></P><P>
+
+Note that the current release of Libtool requires that the
+pseudo-library be present for any libltdl loaded module, even
+preloaded ones.  Once again, if there is sufficient demand, this may be
+fixed in a future release. Until then, if the pseudo-library was deleted
+or cannot be found, this will happen: 
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ rm -f simple-module.la
+$ ./ltdl-loader simple-module World
+./ltdl-loader: file not found.
+</pre></td></tr></table></P><P>
+
+A side effect of using the <SAMP>`LTDL_SET_PRELOADED_SYMBOLS'</SAMP> macro is
+that if you subsequently link the application without Libtool, you will
+get an undefined symbol for the Libtool supplied
+<SAMP>`lt_preloaded_symbols'</SAMP>.  If you need to link in this fashion, you
+will need to provide a stub that supplies the missing definition.
+Conversely, you must be careful not to link the stub file when you
+<EM>do</EM> link with Libtool, because it will clash with the Libtool
+generated table it is supposed to replace: 
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#include &#60;ltdl.h&#62;
+const lt_dlsymlist lt_preloaded_symbols[] = { { 0, 0 } };
+</pre></td></tr></table></P><P>
+
+Of course, if you use this stub, and link the application without the
+benefits of Libtool, you will not be able to use any preloaded modules
+-- even if you statically link them, since there is no preloaded symbol
+lookup table in this case.
+</P><P>
+
+<A NAME="User Module Loaders"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

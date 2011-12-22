@@ -1,0 +1,25 @@
+<html><body><pre>
+&lt;html>
+&lt;!--
+  Copyright (c) 1999 The Apache Software Foundation.  All rights 
+  reserved.
+-->
+
+&lt;body bgcolor="white">
+
+&lt;font color="red">
+
+&lt;%@ page buffer="5kb" autoFlush="false" %>
+
+&lt;p>In place evaluation of another JSP which gives you the current time:
+
+&lt;%@ include file="foo.jsp" %>
+
+&lt;p> &lt;jsp:include page="/include/foo.html" flush="true"/> by including the output of another JSP:
+
+&lt;jsp:include page="foo.jsp" flush="true"/>
+
+:-) 
+
+&lt;/html>
+</pre></body></html>

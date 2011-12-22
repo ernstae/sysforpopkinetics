@@ -1,0 +1,272 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>User Output Options</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>User Output Options</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;The output that comes back to the MDA from the computational server is XML. This specification describes what the MDA will do in terms of transforming this data into input for other analysis tools as well as doing a simple presentation of data on the user's screen.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>January 6, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: jd</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN12"
+>Transforming data for using other processing tool</A
+></DT
+><DT
+><A
+HREF="#AEN15"
+>Presenting error message</A
+></DT
+><DT
+><A
+HREF="#AEN18"
+>Presenting objective</A
+></DT
+><DT
+><A
+HREF="#AEN21"
+>Presenting parameter estimates</A
+></DT
+><DT
+><A
+HREF="#AEN24"
+>Presenting statistics of parameter estimates</A
+></DT
+><DT
+><A
+HREF="#AEN27"
+>Presenting tables as specified by the user</A
+></DT
+><DT
+><A
+HREF="#AEN30"
+>Presenting scatterplots as specified by the user</A
+></DT
+><DT
+><A
+HREF="#AEN33"
+>Saving files as specified by the user</A
+></DT
+><DT
+><A
+HREF="#AEN36"
+>Summary report</A
+></DT
+><DT
+><A
+HREF="#AEN39"
+>Data format</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN12"
+></A
+>Transforming data for using other processing tool</H2
+><P
+>&#13;The data contained in the presentation_data element of XML Representation of SPK Results and Other Reports are transformed into table/matrix format with field headers.  The field header is the label of the data in the column.  The columns are separated by spaces.  After MDA has received and procesed the data, it permits the user to save the transformed data as a text file.  This data file may be used as input to other processing tools such as excel in Windows and gnuplot in Linux.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN15"
+></A
+>Presenting error message</H2
+><P
+>&#13;MDA presents the error message, if any, returned from the computational server in a pop-up window on the user's screen.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN18"
+></A
+>Presenting objective</H2
+><P
+>&#13;MDA presents the mimimum value of the objectve function returned from the computational server in a pop-up window on the user's screen.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN21"
+></A
+>Presenting parameter estimates</H2
+><P
+>&#13;MDA presents the final parameter estimates of the optimization returned from the SPK server in pop-up windows on the user's screen.  The paramters are in NONMEM's definition as THETA, OMEGA and SIGMA(population analysis only).  THETA is presented as a vector.  OMEGA and SIGMA are presented as matrices.  The order and the label of the data values in the vector or the matrices are the same as those in the comparable NONMEM report file.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN24"
+></A
+>Presenting statistics of parameter estimates</H2
+><P
+>&#13;MDA presents the statistics of the parameter estimates returned from the computational server in pop-up windows on the user's screen.  The statistics includes standard error vector, covariance matrix, correlation matrix  and inverse matrix of convariance matrix.  The order and the label of the data values in the vector or the matrices are the same as those in the comparable NONMEM report file.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN27"
+></A
+>Presenting tables as specified by the user</H2
+><P
+>&#13;MDA sorts data and then presents the tables, specified in the input file by the user, in pop-up windows on the user's screen.  The order of the columns and the sorting order of the rows are the same as those in the comparable NONMEN report file.  To allow the user to select which table to present, MDA presents a dialog box on the user's screen with a list of available table descriptions.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN30"
+></A
+>Presenting scatterplots as specified by the user</H2
+><P
+>&#13;MDA splits data and then presents the scatterplots, specified in the input  file by the user, in pop-up windows on the user'screen.  A small window showing x-y data values is displayed for each data point when the mouse pointing to that data point.  To allow the user to select which scatterplot to present, MDA presents a dialog box on the user's screen with a list of available scatterplot descriptions.  The scatterplots can also be printed out in either portrait or landscape orientation by pressing the right mouse buton. 
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN33"
+></A
+>Saving files as specified by the user</H2
+><P
+>&#13;MDA saves the tables into text files, specified in the input file by the user, on the user's computer.  Before the file is saved, MDA presents a file-save dialog box to allow the user to change the file name, if desired, and to reconfirm the save file request.  These data files may be used as input files for other processing tools.  The data contained in these files are sorted data rather than the orginal computational server output data contained in the data file described in the first section.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN36"
+></A
+>Summary report</H2
+><P
+>&#13;MDA presents a summary report in MDA's editor window.  The user may save it and/or print it out using MDA's file menu.  The summary report includes the job discription, time of submission, time of completion, and SPK computing time, the model name, version and description, the data file name, version and description, the error message, the minimum value of objective function and a table listing the final parameter estimate, the statistics including standard error, coefficent of variation and 95% confidence interval, as well as the interindividual variability derived from the value of the diagonal elements of the OMEGA matrix and the residual variability derived from the value of the diagonal elements of the SIGMA matrix.   
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN39"
+></A
+>Data format</H2
+><P
+>&#13;All presented data values except minimum value of objective function are expressed in scientific format with 3 significant digits, for instance: 1.23E+01, -1.23E+01, 1.23E-01, -1.23E-01.  The minimum value of objective function is presented in the format in which it is returned from the computational server.  All data values in saved text files are expressed in scientific format with 5 significant digits, for instance: 1.2345E+01, -1.2345E+01, 1.2345E-01, -1.2345E-01.    
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

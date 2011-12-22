@@ -1,0 +1,44 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.174
+----------------------------------
+USER VISIBLE CHANGES
+None.
+
+OTHER CHANGES
+* spkpred re-deployed on cspk cluster
+* Makefile.SPK for each job has been 
+modified for debugging and production/optimizer modes
+
+RELATED BUG REPORTS:
+585
+
+BY: Andrew Ernst
+
+WHEN: 08/03/2006
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.175
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Fixed spkcompiler generated makefile error
+
+RELATED BUG REPORTS:
+
+BY: Andrew Ernst
+
+WHEN: 08/03/2006
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.177
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Added jobqueue server and the two daemons query the database every hour to keep their connection to
+the database alive.
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: August 9, 2006

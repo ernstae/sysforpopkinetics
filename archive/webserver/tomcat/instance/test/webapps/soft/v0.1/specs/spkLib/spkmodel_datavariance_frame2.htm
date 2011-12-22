@@ -1,0 +1,81 @@
+<html><head>
+<title>Model for the Variance of Individual's Data</title>
+<meta name="description" id="description" content="Model for the Variance of Individual's Data">
+<meta name="keywords" id="keywords" content=" Spkmodel dodatavariance( Spk_va::valarrayscalarampersand ) datavariance( User-provided Model variance of data "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="spkmodel_datavariance.htm" target="_top">section</a>, <a href="spkmodel_datavariance_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Required for both population and individual analysis.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><code><font color="blue">SpkModel&lt;Scalar&gt;::doDataVariance()</font></code> calculates the variance of a particular individual's
+data for a currently selected individual (see <a href="spkmodel_selectindividual.htm" target="_top"><span style='white-space: nowrap'>selectIndividual</span></a>
+) at
+a currently set individual parameter (see <a href="spkmodel_setindpar.htm" target="_top"><span style='white-space: nowrap'>setIndPar</span></a>
+) 
+and population parameter
+(see <a href="spkmodel_setpoppar.htm" target="_top"><span style='white-space: nowrap'>setPopPar</span></a>
+).  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The evaluation result of <code><font color="blue">doDataVariance()</font></code>
+shall be placed in <i>ret</i> and the function returns nothing.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><code><font color="blue"><span style='white-space: nowrap'>doDataVariance()</span></font></code> shall be only called via its corresponding
+public interface, <code><font color="blue"><span style='white-space: nowrap'>dataVariance()</span></font></code>.  The public interface
+shall be called only by the SPK library components unless when it is being unit-tested,
+or SPK cannot guarantee any of the computational results.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The public interface, <code><font color="blue">dataVariance()</font></code> catches any exception thrown by the private interface,
+<code><font color="blue">doDataVariance()</font></code>, implemented by the user.
+If the exception is an instance of <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+, 
+an additional <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+ object will be appended to the list of errors
+maintained within the object.  The new SpkError object will have error code set
+to <code><font color="blue">SpkError::SPK_MODEL_DATA_VARIANCE_ERR</font></code>.
+
+<br>
+<br>
+<b><big><a name="Reference" id="Reference">Reference</a></big></b>
+<br>
+B. M. Bell, <i>Approximating The Marginal Likelihood Estimate 
+For Models With Random Parameters</i>, Applied Mathematics and Computation, 
+Accepted 1999. 
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+ret<br>
+</span></font></code>shall, upon a successful completion of evaluation,
+contain a resulting vector of size <code><span style='white-space: nowrap'><i>nYi</i>&nbsp;*&nbsp;<i>nYi</i></span></code>, where <code><span style='white-space: nowrap'><i>nYi</i></span></code> is the
+number of currently selected individual's data.  The vector contains a column-ordered
+matrix of dimensions, <code><span style='white-space: nowrap'><i>nYi</i>&nbsp;<i>by</i>&nbsp;<i>nYi</i></span></code>, that is
+symmetric and positive definite.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+See <a href="spkmodel_frame1.htm#Example" target="frame1"><i><span style='white-space: nowrap'>Example</span></i></a>
+
+
+
+<hr>Input File: ../../spk/SpkModel.cpp
+
+</body>
+</html>

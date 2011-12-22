@@ -33,7 +33,7 @@ author: Jiaji Du
 
 <!-- COMPILE BUILDING -->
   <target name="compile" depends="init" description="Compile job queue server">
-    <javac srcdir="src" destdir="classes" compiler="javac1.4" deprecation="${build.compiler.deprecation}" debug="${build.compiler.debug}">
+    <javac srcdir="uw" destdir="classes" compiler="javac1.4" deprecation="${build.compiler.deprecation}" debug="${build.compiler.debug}">
       <classpath>
         <pathelement location="classes" />
       </classpath>
@@ -57,7 +57,7 @@ author: Jiaji Du
     <delete dir="javadoc-tmp"/>
     <mkdir dir="javadoc-tmp"/>
     <copy todir="javadoc-tmp">
-      <fileset dir="src" includes="**/*.java" excludes="**/CVS/"/>
+      <fileset dir="uw" includes="**/*.java" excludes="**/CVS/"/>
     </copy>
     <delete dir="javadoc"/>
     <mkdir dir="javadoc"/>
@@ -74,7 +74,7 @@ author: Jiaji Du
              packagelistLoc="${local-package-list}" />
     </javadoc>
     <copy todir="classes">
-      <fileset dir="src" includes="**/*.gif,**/*.properties"/>
+      <fileset dir="uw" includes="**/*.gif,**/*.properties"/>
     </copy>
     <delete dir="javadoc-tmp"/>
   </target>

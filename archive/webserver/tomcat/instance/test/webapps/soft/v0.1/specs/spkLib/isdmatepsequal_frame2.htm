@@ -1,0 +1,111 @@
+<html><head>
+<title>Element-wise comparison of two matrices</title>
+<meta name="description" id="description" content="Element-wise comparison of two matrices">
+<meta name="keywords" id="keywords" content=" isdmatepsequal matrix comparison "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="isdmatepsequal.htm" target="_top">section</a>, <a href="isdmatepsequal_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Returns true if the double precision numbers a(i,j) in A and b(i,j) in B
+are epsilon equivalent,otherwise returns false. Specifically, isDmatEpsEqual returns true if 
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;<i>for</i>&nbsp;<i>all</i>&nbsp;<i>elements</i>,&nbsp;<i>isDblEpsEqual</i>(<i>a</i>(<i>i</i>,<i>j</i>),&nbsp;<i>b</i>(<i>i</i>,<i>j</i>),&nbsp;<i>s</i>(<i>i</i>,<i>j</i>)&nbsp;<i>is</i>&nbsp;<i>true</i>.<br>
+</span></code><br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a m by n matrix.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>B</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a m by n matrix.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>S</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a m by n matrix that contains scaling values.  See also <a href="isdblepsequal.htm" target="_top"><span style='white-space: nowrap'>isDblEpsEqual()</span></a>
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you link and run the following program,
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;#include&nbsp;&lt;iostream.h&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&lt;cfloat&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;isDmatEpsEqual.h&quot;<br>
+<br>
+&nbsp;&nbsp;int&nbsp;main()<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;A(3,2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;B(3,2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;S1(3,2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;S2(3,2);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*a&nbsp;=&nbsp;A.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*b&nbsp;=&nbsp;B.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*s1&nbsp;=&nbsp;S1.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*s2&nbsp;=&nbsp;S2.data();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;A&nbsp;to&nbsp;a&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0.0&nbsp;&nbsp;3.0&nbsp;]&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1.0&nbsp;&nbsp;4.0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2.0&nbsp;&nbsp;5.0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;B&nbsp;to&nbsp;a&nbsp;matrix&nbsp;that&nbsp;contains:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;B(i,j)&nbsp;=&nbsp;A(i,j)+DBL_EPSILON<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(&nbsp;int&nbsp;i=0;&nbsp;i&lt;6;&nbsp;i++&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[i]&nbsp;=&nbsp;i;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b[i]&nbsp;=&nbsp;i+DBL_EPSILON;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;S1&nbsp;to&nbsp;a&nbsp;matrix&nbsp;that&nbsp;specifies&nbsp;the&nbsp;scale&nbsp;of&nbsp;values&nbsp;equal&nbsp;to&nbsp;A.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;S1.fill(1.0);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;S2&nbsp;to&nbsp;a&nbsp;matrix&nbsp;that&nbsp;specifies&nbsp;the&nbsp;scale&nbsp;smaller&nbsp;than&nbsp;the&nbsp;scale&nbsp;of&nbsp;values&nbsp;in&nbsp;A.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;S2.fill(0.01);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Compare&nbsp;A&nbsp;to&nbsp;B<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;isDmatEpsEqual(A,B,S1)&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;A&nbsp;==&nbsp;B&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;A&nbsp;!=&nbsp;B&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Compare&nbsp;A&nbsp;to&nbsp;C<br>
+&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;isDmatEpsEqual(A,B,S2)&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;A&nbsp;==&nbsp;B&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;A&nbsp;!=&nbsp;B&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+&nbsp;}<br>
+</span>
+</font></code>
+The program will display the following;
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;A&nbsp;==&nbsp;B<br>
+&nbsp;&nbsp;A&nbsp;!=&nbsp;C<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/isDmatEpsEqual.cpp
+
+</body>
+</html>

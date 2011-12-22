@@ -1,0 +1,43 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.235
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Fixed the run-time daemon, spkrund.pl, no-response problem.
+
+RELATED BUG REPORTS:
+
+BY: Jiaji Du
+
+WHEN: April 29, 2008
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.236
+----------------------------------
+USER VISIBLE CHANGES
+
+Block same as previous and reset events were added.
+
+OTHER CHANGES
+
+Miscellaneous bug fixes.
+
+RELATED BUG REPORTS:  925, 934
+
+BY:  Mitch Watrous
+
+WHEN:  April 29, 2008
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.237
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Fixed error message in SPK compiler.  Added exit code 19 in run-time daemon.
+
+RELATED BUG REPORTS: 933
+
+BY: Jiaji Du
+
+WHEN: April 30, 2008
+

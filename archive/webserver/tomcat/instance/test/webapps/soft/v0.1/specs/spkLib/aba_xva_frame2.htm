@@ -1,0 +1,172 @@
+<html><head>
+<title>Derivative of A' * B * A (valarray version)</title>
+<meta name="description" id="description" content="Derivative of A' * B * A (valarray version)">
+<meta name="keywords" id="keywords" content=" Aba_xva Aba_x derivative of A' * B A (valarray version) "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="aba_xva.htm" target="_top">section</a>, <a href="aba_xva_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Returns a vector containing the elements of the derivative of 
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>A</i>(<i>x</i>)'&nbsp;*&nbsp;<i>B</i>(<i>x</i>)&nbsp;*&nbsp;<i>A</i>(<i>x</i>)<br>
+</span></code>in the column-major order, 
+where * denotes matrix multiplication and the prime ' denotes transpose. 
+The values of A(x) and B(x) for the particular value of x are specified by A and B respectively. 
+The derivatives of A(x) and B(x) for the particular value of x are specified by A_x and B_x respectively.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The resulting matrix has n*n by p dimensions.
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a vector containing a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> matrix in the column-major order.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>B</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a vector containing a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>m</i></span></code> matrix in the column-major order.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>A_x</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a vector containing a <code><span style='white-space: nowrap'><i>m</i>*<i>n</i>&nbsp;<i>by</i>&nbsp;<i>p</i></span></code> matrix, in the column-major order,
+that represents a value of a derivative of A(x) with respect x.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>B_x</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a vector containing a <code><span style='white-space: nowrap'><i>m</i>*<i>m</i>&nbsp;<i>by</i>&nbsp;<i>p</i></span></code> matrix, in the column-major order,
+that represents a value of a derivative of B(x) with respect x.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>C</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a vector containing a <code><span style='white-space: nowrap'><i>n</i>*<i>n</i>&nbsp;<i>by</i>&nbsp;<i>p</i></span></code> matrix, in the column-major order,
+that will hold the resulting matrix value.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;SpkValarray.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;ABA_x.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;nX&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;nRowsA&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;nColsA&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;nRowsB&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;int&nbsp;nColsB&nbsp;=&nbsp;2;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;x(nX);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[1]&nbsp;=&nbsp;2.0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;A&nbsp;to:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[1]&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;x[0]&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;A(&nbsp;nRowsA&nbsp;*&nbsp;nColsA&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[0]&nbsp;=&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[1]&nbsp;=&nbsp;x[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[2]&nbsp;=&nbsp;x[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A[3]&nbsp;=&nbsp;1.0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;B&nbsp;to:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;x[1]&nbsp;&nbsp;x[1]*x[1]&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;B(&nbsp;nRowsB&nbsp;*&nbsp;nColsB&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B[0]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B[1]&nbsp;=&nbsp;x[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B[2]&nbsp;=&nbsp;x[0];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B[3]&nbsp;=&nbsp;x[1]&nbsp;*&nbsp;x[1];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Therefore&nbsp;A_x&nbsp;is:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;1&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;0&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;A_x(&nbsp;(nRowsA&nbsp;*&nbsp;nColsA)&nbsp;*&nbsp;nX&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A_x&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A_x[2]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A_x[5]&nbsp;=&nbsp;1.0;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Therefore&nbsp;B_x&nbsp;is:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0&nbsp;&nbsp;2*x[1]&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;B_x(&nbsp;(nRowsB&nbsp;*&nbsp;nColsB)&nbsp;*&nbsp;nX&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B_x&nbsp;=&nbsp;0.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B_x[1]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B_x[6]&nbsp;=&nbsp;1.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B_x[7]&nbsp;=&nbsp;2.0&nbsp;*&nbsp;x[1];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;C=ABA_x&nbsp;should&nbsp;be:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;x[1]^2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2&nbsp;*&nbsp;x[0]^2&nbsp;*&nbsp;x[1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;*&nbsp;x[1]^2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;x[1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;x[1]&nbsp;+&nbsp;x[1]^2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x[0]^2&nbsp;+&nbsp;2&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;x[1]&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;[&nbsp;x[1]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6&nbsp;*&nbsp;x[1]&nbsp;+&nbsp;x[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;expectedC(&nbsp;nRowsA&nbsp;*&nbsp;nRowsB&nbsp;*&nbsp;nX&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expectedC[0]&nbsp;=&nbsp;2.0&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;x[1]&nbsp;*&nbsp;x[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expectedC[1]&nbsp;=&nbsp;2.0&nbsp;*&nbsp;x[1]&nbsp;*&nbsp;x[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expectedC[2]&nbsp;=&nbsp;2.0&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;x[1]&nbsp;+&nbsp;x[1]&nbsp;*&nbsp;x[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expectedC[3]&nbsp;=&nbsp;x[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expectedC[4]&nbsp;=&nbsp;2.0&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;x[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expectedC[5]&nbsp;=&nbsp;4.0&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;x[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expectedC[6]&nbsp;=&nbsp;x[0]&nbsp;*&nbsp;x[0]&nbsp;+&nbsp;2.0&nbsp;*&nbsp;x[0]&nbsp;*&nbsp;x[1];<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;expectedC[7]&nbsp;=&nbsp;6.0&nbsp;*&nbsp;x[1]&nbsp;+&nbsp;x[0];<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;C&nbsp;=&nbsp;ABA_x(A,&nbsp;nColsA,&nbsp;B,&nbsp;nColsB,&nbsp;A_x,&nbsp;B_x,&nbsp;nX);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;C=&quot;&nbsp;&lt;&lt;&nbsp;DoubleMatrix(C,nX)&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;C=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;8&nbsp;&nbsp;4&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;8&nbsp;&nbsp;8&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;8&nbsp;&nbsp;5&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;&nbsp;13&nbsp;]<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/ABA_x.cpp
+
+</body>
+</html>

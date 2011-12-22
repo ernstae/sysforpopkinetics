@@ -1,0 +1,97 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>dump_spktest.pl -- take a symbolic dump of the test database</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#abstract">ABSTRACT</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
+
+		<li><a href="#output_file_contents">OUTPUT FILE CONTENTS</a></li>
+		<li><a href="#output_file_names">OUTPUT FILE NAMES</a></li>
+		<li><a href="#arguments">ARGUMENTS</a></li>
+		<li><a href="#dependencies">DEPENDENCIES</a></li>
+	</ul>
+
+	<li><a href="#see_also">SEE ALSO</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<pre>
+
+    dump_spktest.pl -- take a symbolic dump of the test database</pre>
+<p>
+</p>
+<hr />
+<h1><a name="abstract">ABSTRACT</a></h1>
+<pre>
+    This program takes a symbolic dump of the test database, so that
+    it can be easily recreated for additional testing.  The output
+    can be used as input to load_spktest.pl</pre>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<pre>
+    dump_spktest.pl</pre>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<pre>
+    This program is designed to be run from the database server. It is not necessary
+    for the user to have root privileges. It produces its output in the current directory.</pre>
+<p>
+</p>
+<h2><a name="output_file_contents">OUTPUT FILE CONTENTS</a></h2>
+<pre>
+    The output of this program consists of three files of sql statements:
+    - schema:   'create table' statements
+    - basedata: 'insert' statements for inserting all data into the non-transactional
+                table; namely, class, end, method, and state
+    - userdata: 'insert' statements for inserting all data into the rest of the tables</pre>
+<p>
+</p>
+<h2><a name="output_file_names">OUTPUT FILE NAMES</a></h2>
+<pre>
+    schema.sql
+    basedata.sql
+    userdata.sql</pre>
+<p>
+</p>
+<h2><a name="arguments">ARGUMENTS</a></h2>
+<pre>
+    No optional arguments are supported.</pre>
+<p>
+</p>
+<h2><a name="dependencies">DEPENDENCIES</a></h2>
+<pre>
+    This program calls dump_spkdb.pl, which in turn depends on a MySQL utility,
+    mysqldump, to do the hard work.</pre>
+<p>
+</p>
+<hr />
+<h1><a name="see_also">SEE ALSO</a></h1>
+<pre>
+    The documentation for load_spktest.pl</pre>
+
+</body>
+
+</html>

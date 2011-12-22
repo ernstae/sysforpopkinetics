@@ -1,0 +1,229 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: 14.3 Install hooks</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: 14.3 Install hooks">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: 14.3 Install hooks">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC108"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_107.html#SEC107" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: 14.2 Fine-grained control of install" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_109.html#SEC109" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: 14.4 Uninstall" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_109.html#SEC109" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: 14.4 Uninstall" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_105.html#SEC105" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Installing and Uninstalling" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_110.html#SEC110" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Writing Portable C" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 14.3 Install hooks </H2>
+<!--docid::SEC108::-->
+<P>
+
+As with <CODE>dist</CODE>, the install process allows for generic targets
+which can be used when the existing install functionality is not enough.
+There are two types of targets which can be used: local rules and hooks.
+</P><P>
+
+A local rule is named either <CODE>install-exec-local</CODE> or
+<CODE>install-data-local</CODE>, and is run during the course of the normal
+install procedure.  This rule can be used to install things in ways that
+Automake usually does not support.
+</P><P>
+
+For instance, in <CODE>libgcj</CODE> we generate a number of header files, one
+per Java class.  We want to install them in <SAMP>`pkgincludedir'</SAMP>, but we
+want to preserve the hierarchical structure of the headers (e.g., we
+want <TT>`java/lang/String.h'</TT> to be installed as
+<TT>`$(pkgincludedir)/java/lang/String.h'</TT>, not
+<TT>`$(pkgincludedir)/String.h'</TT>), and Automake does not currently
+support this.  So we resort to a local rule, which is a bit more
+complicated than you might expect:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>install-data-local:
+        @for f in $(nat_headers) $(extra_headers); do \
+## Compute the install directory at runtime.
+          d="echo $$f | sed -e s,/[^/]*$$,,'"; \
+## Make the install directory.
+          $(mkinstalldirs) $(DESTDIR)$(includedir)/$$d; \
+## Find the header file -- in our case it might be in srcdir or
+## it might be in the build directory.  "p" is the variable that
+## names the actual file we will install.
+          if test -f $(srcdir)/$$f; then p=$(srcdir)/$$f; else p=$$f; fi; \
+## Actually install the file.
+          $(INSTALL_DATA) $$p $(DESTDIR)$(includedir)/$$f; \
+        done
+</pre></td></tr></table></P><P>
+
+A hook is guaranteed to run after the install of objects in this
+directory has completed.  This can be used to modify files after they
+have been installed.  There are two install hooks, named
+<CODE>install-data-hook</CODE> and <CODE>install-exec-hook</CODE>.
+</P><P>
+
+For instance, suppose you have written a program which must be
+<CODE>setuid</CODE> root.  You can accomplish this by changing the permissions
+after the program has been installed:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>bin_PROGRAMS = su
+su_SOURCES = su.c
+
+install-exec-hook:
+        chown root $(bindir)/su
+        chmod u+s $(bindir)/su
+</pre></td></tr></table></P><P>
+
+Unlike an install hook, and install rule is not guaranteed to be after
+all other install rules are run.  This lets it be run in parallel with
+other install rules when a parallel <CODE>make</CODE> is used.  Ordinarily
+this is not very important, and in practice you almost always see local
+hooks and not local rules.
+</P><P>
+
+The biggest caveat to using a local rule or an install hook is to make
+sure that it will work when the source and build directories are not the
+same--many people forget to do this.  This means being sure to look in
+<SAMP>`$(srcdir)'</SAMP> when the file is a source file.
+</P><P>
+
+It is also very important to make sure that you do not use a local rule
+when install order is important -- in this case, your <TT>`Makefile'</TT>
+will succeed on some machines and fail on others.
+</P><P>
+
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

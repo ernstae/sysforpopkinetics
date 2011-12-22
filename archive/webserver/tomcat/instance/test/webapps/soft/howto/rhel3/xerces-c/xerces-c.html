@@ -1,0 +1,505 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Installing xerces-c Library</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Installing xerces-c Library</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;      </P
+><P
+>&#13;	The information in this document is targeted primarily towards
+	the RFPK Software Team and associates and is specific to the
+	computer systems and network installed in the RFPK Laboratory
+	of the Department of Bioengineering of the University of Washington.  RFPK is the Resource for
+	Population Kinetics.  Its work is supported, in part, by grant
+	P41 EB-001975 of the National Institutes of Health (NIH) of
+	the U.S.  Department of Health and Human Services.
+      </P
+><P
+>&#13;	<A
+HREF="#AEN70"
+>Copyright</A
+> (c) 2005, by the University of Washington.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>September 27, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN15"
+>Preparation (for update)</A
+></DT
+><DT
+><A
+HREF="#AEN27"
+>Download a new version</A
+></DT
+><DT
+><A
+HREF="#AEN70"
+>Copyright Notice</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN15"
+></A
+>Preparation (for update)</H2
+><P
+>&#13;    If this is a virgin installation, skip this section.  Follow the following instructions if you are going to update the library.
+    </P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;         Locate the old installation (libraries and headers).
+           <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;locate xerces-c
+           </PRE
+></TD
+></TR
+></TABLE
+>
+         It will list xerces-c libraries (i.e. libxerces-XXX) and xerces header files if there is any, as well as source code files if you had built xerces-c in the past.  On my machine I found:
+           <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/usr/local/lib/libxerces-c.so
+/usr/local/lib/libxerces-c.so.26
+/usr/local/lib/libxerces-c.so.26.0
+/usr/local/lib/libxerces-depdom.so
+/usr/local/lib/libxerces-depdom.so.26
+/usr/local/lib/libxerces-depdom.so.26.0
+/usr/local/include/xercesc/
+           </PRE
+></TD
+></TR
+></TABLE
+>
+and previous built remenants:
+           <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;/usr/src/redhat/BUILD/xerces-c-src_2_6_0/....
+           </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+><LI
+><P
+>&#13;         If you had the previous built rementants, you may be able to run "make uninstall".  
+         Go /usr/local/readhat/BUILD/xerces-c-src_2_6_0/src/xercesc and run 
+         "make uninstall" as root.  
+         If not, delete (or rename/backup, whichever you prefer) 
+         the old libraries and headers.
+         </P
+><P
+>&#13;         Deletion of the previous built remenants is optional.
+         I personally prefer keeping the build remenants as long as HD
+         space is not the issue but you can eleminate them if you like.  
+         </P
+></LI
+></OL
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN27"
+></A
+>Download a new version</H2
+><P
+>We want a source distribution so that we can install 
+    the same verson of 
+    libraries for both 32-bit and 64-bit machines for sure.
+    </P
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;        Obtain Xerces-C version 2.7.0.
+<TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /tmp
+scp whitechuck:/opt/download/xerces-c-src_2_7_0.tar.gz .
+</PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+><LI
+><P
+>&#13;        Make a directory, <TT
+CLASS="filename"
+>/usr/src/redhat/BUILD/</TT
+> as root.
+        The following command will make parent directories as needed and
+        make no fuss even if the directory already exists.
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su
+mkdir -p /usr/src/redhat/BUILD
+          </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+><LI
+><P
+>&#13;        Move the downloaded tar archive to the directly and extract it there as root:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;mv xerces-c-src_2_7_0.tar.gz /usr/src/redhat/BUILD/
+cd /usr/src/redhat/BUILD
+tar xvzf xerces-c-src_2_7_0.tar.gz
+exit
+          </PRE
+></TD
+></TR
+></TABLE
+>
+        It will create a subdirectory <TT
+CLASS="filename"
+>xerces-c-2_7_0</TT
+>. 
+        </P
+></LI
+><LI
+><P
+>&#13;        Open ~/.bash_profile with your favorite editor as an ordinary user.  Insert the following
+        entries.
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;          </PRE
+></TD
+></TR
+></TABLE
+>
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;export LD_LIBRARY_PATH=/usr/local/lib
+
+# This variable is needed only for xerces-c build and installation.
+export XERCESCROOT=/usr/src/redhat/BUILD/xerces-c-src_2_7_0
+          </PRE
+></TD
+></TR
+></TABLE
+>
+        <TT
+CLASS="varname"
+>XERCESCROOT</TT
+> is only needed during the build and installation process.
+        </P
+></LI
+><LI
+><P
+>&#13;        Load the new ~/.bash_profile.
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd
+source .bash_profile
+          </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+><LI
+><P
+>&#13;        Run the following as root to build and install the xerces-c package.
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su
+cd $XERCESCROOT/src/xercesc
+autoconf
+./runConfigure -plinux -P/usr/local
+make
+make install
+          </PRE
+></TD
+></TR
+></TABLE
+>
+        This should have installed 6 libraries in /usr/local/lib.  In my case:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ls /usr/local/lib | grep xerces
+
+libxerces-c.so
+libxerces-c.so.27
+libxerces-c.so.27.0
+libxerces-depdom.so
+libxerces-depdom.so.27
+libxerces-depdom.so.27.0
+          </PRE
+></TD
+></TR
+></TABLE
+>     
+        In /usr/local/include, I found:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ls -al /usr/local/include/xercesc
+
+lrwxrwxrwx    1 root  root  56 Dec  7  2004 /usr/local/include/xercesc -&#62; /usr/src/redhat/BUILD/xerces-c-src_2_6_0/include/xercesc
+          </PRE
+></TD
+></TR
+></TABLE
+>   
+
+        !!!  The soft link is point to the old distribution's include directory!  
+        <TT
+CLASS="filename"
+>/usr/local/include/xerces</TT
+> must be point the new one!  I'll manually link it.
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /usr/local/include
+rm xercesc
+ln -s $XERCESCROOT/include/xercec xercesc
+          </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+><LI
+><P
+>&#13;        Finally, you must fresh-build (and install if necessarilly) SPK components in the following order:
+          <P
+></P
+><OL
+TYPE="a"
+><LI
+><P
+>spkopt Library</P
+></LI
+><LI
+><P
+>spk Library</P
+></LI
+><LI
+><P
+>spkpred Library</P
+></LI
+><LI
+><P
+>spkcompiler</P
+></LI
+></OL
+>
+        </P
+></LI
+><LI
+><P
+>&#13;        </P
+></LI
+></OL
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN70"
+></A
+>Copyright Notice</H2
+><P
+>&#13;      Copyright (c) 2005,  by the University of Washington.
+      This material may be distributed only subject to the terms and conditions 
+      set forth in the Open Publication License, V1.0 or later
+      (the latest version is presently available
+      <A
+HREF="http://www.opencontent.org/openpub/"
+TARGET="_top"
+>here</A
+>.
+    </P
+><P
+>&#13;    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

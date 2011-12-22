@@ -1,0 +1,61 @@
+<html><head>
+<title>Redefining the Cache Dependent Functions</title>
+<meta name="description" id="description" content="Redefining the Cache Dependent Functions">
+<meta name="keywords" id="keywords" content=" updatecache Redefining Cache "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="fullcovariance.htm" target="_top">previous</a>
+&nbsp;&nbsp;<a href="fullcovariance_default_constructor.htm" target="_top">next</a>
+&nbsp;&nbsp;<a href="_contents.htm" target="_top">contents</a>
+&nbsp;&nbsp;<a href="_reference.htm" target="_top">reference</a>
+&nbsp;&nbsp;<a href="_index.htm" target="_top">index</a>
+&nbsp;&nbsp;<a href="_search.htm" target="_top">search</a>
+&nbsp;&nbsp;<a href="_external.htm" target="_top">external</a>
+&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="fullcovariance_redefiningmathfunctions.htm" target="_top">section</a>, <a href="fullcovariance_redefiningmathfunctions_frame1.htm" target="_top">frame</a></div>
+<hr><center><b><big><big>Redefining the Cache Dependent Functions</big></big></b></center>
+The mathematical functions involving the logdet, weighted sum of squares, 
+and their derivatives may be redefined in subclasses of this class
+in order to take advantage of more efficient algorithms or methods known 
+to the implementer of the subclasses.
+It is important to note that these functions depend on the cached values 
+that this class maintains.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If any of these functions is redefined, then its new implementation 
+must contain a call to the function <code><font color="blue">FullCovariance::updateCache()</font></code>, 
+and the call must occur before the redefined function makes use of the 
+cached values of the Cholesky factor for the covariance matrix 
+<code><font color="blue">choleskyCached</font></code> or the cached value of the log determinant 
+value <code><font color="blue">logdetCached</font></code>.  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>For example, if the function being redefined is 
+<code><font color="blue">weightedSumOfSquares()</font></code>, and if the subclass is called 
+<code><font color="blue">UserFullCovariance</font></code>, then the redefined version of 
+<code><font color="blue">weightedSumOfSquares()</font></code> must look something like this:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;double&nbsp;UserFullCovariance::weightedSumOfSquares()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FullCovariance::updateCache();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Calculate&nbsp;the&nbsp;weighted&nbsp;sum&nbsp;of&nbsp;squares&nbsp;using&nbsp;the&nbsp;cached&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Cholesky&nbsp;factor&nbsp;and&nbsp;a&nbsp;more&nbsp;efficient&nbsp;algorithm.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;efficientWeightedSumOfSquares;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;...<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;efficientWeightedSumOfSquares;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/FullCovariance.cpp
+
+</body>
+</html>

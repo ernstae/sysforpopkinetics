@@ -1,0 +1,126 @@
+<html><head>
+<title>Kronker Product Of A With B Matrix Multiplied by C (return result through reference)</title>
+<meta name="description" id="description" content="Kronker Product Of A With B Matrix Multiplied by C (return result through reference)">
+<meta name="keywords" id="keywords" content=" Akronbtimesc (return result through reference) kronker product fast and memory efficient computation of matrix saving space time "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="akronbtimescref.htm" target="_top">section</a>, <a href="akronbtimescref_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Computes (<i>A</i> kron <i>B</i>) * <i>C</i> and returns the result through
+the last argument <i>D</i>.  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Given <i>A</i> has <code><span style='white-space: nowrap'><i>m</i></span></code> by <code><span style='white-space: nowrap'><i>n</i></span></code> dimensions and 
+<i>B</i> has  <code><span style='white-space: nowrap'><i>x</i></span></code> by <code><span style='white-space: nowrap'><i>y</i></span></code> dimensions,  
+the kronker product of <i>A</i> and <i>B</i> 
+is a <code><span style='white-space: nowrap'><i>m</i>*<i>x</i></span></code> by <code><span style='white-space: nowrap'><i>n</i>*<i>y</i></span></code> matrix <i>S</i> 
+such that for each element <code><span style='white-space: nowrap'><i>s</i>(<i>i</i>,<i>j</i>)</span></code> in <i>S</i>, 
+<code><span style='white-space: nowrap'><i>s</i>(<i>i</i>,<i>j</i>)&nbsp;=&nbsp;<i>a</i>(<i>i</i>,<i>j</i>)*<i>B</i></span></code>, 
+where <code><span style='white-space: nowrap'><i>i</i></span></code> is the row index s.t. <code><span style='white-space: nowrap'><i>m</i>&nbsp;&gt;&nbsp;<i>i</i>&nbsp;&gt;=&nbsp;0</span></code> and 
+<code><span style='white-space: nowrap'><i>j</i></span></code> is the column index s.t. <code><span style='white-space: nowrap'><i>n</i>&nbsp;&gt;&nbsp;<i>j</i>&nbsp;&gt;=&nbsp;0</span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Often the kronker product of two matrices is matrix multiplied by a third matrix.
+In this case, when the matrix <i>B</i> is large,
+you can save space and time by forming the final product using the statement
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;dmatResult&nbsp;=&nbsp;AkronBtimesC(A,&nbsp;B,&nbsp;C)<br>
+</span>
+</font></code>
+instead of the statement
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;dmatResult&nbsp;=&nbsp;kron(A,&nbsp;B)&nbsp;*&nbsp;C<br>
+</span>
+</font></code>
+which would both calculate the same result.
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+AkronBtimesC&nbsp;=&nbsp;[&nbsp;a11*B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a12*B&nbsp;&nbsp;...&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a21*B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a22*B&nbsp;&nbsp;...&nbsp;]&nbsp;*&nbsp;C<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a11*B*c1&nbsp;+&nbsp;a12*B*c2&nbsp;&nbsp;...]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;a21*B*c1&nbsp;+&nbsp;a22*B*c2&nbsp;...&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;...&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]<br>
+</span>
+</font></code>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you write, link and run the following program,
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;AkronBtimesC.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;main(){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;A(&nbsp;3,&nbsp;2&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;B(&nbsp;2,&nbsp;3&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;C(&nbsp;2*3,&nbsp;2&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;D;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*pA&nbsp;=&nbsp;A.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*pB&nbsp;=&nbsp;B.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*pC&nbsp;=&nbsp;C.data();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;A&nbsp;to&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;1&nbsp;4&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;2&nbsp;5&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;3&nbsp;6&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(&nbsp;i=0;&nbsp;i&lt;3*2;&nbsp;i++&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pA[i]&nbsp;=&nbsp;i+1;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;B&nbsp;to&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;1&nbsp;3&nbsp;5&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;2&nbsp;4&nbsp;6&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(&nbsp;i=0;&nbsp;i&lt;2*3;&nbsp;i++&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pB[i]&nbsp;=&nbsp;i+1;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;C&nbsp;to&nbsp;matrix:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;1&nbsp;&nbsp;7&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;2&nbsp;&nbsp;8&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;3&nbsp;&nbsp;9&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;4&nbsp;10&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;5&nbsp;11&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;[&nbsp;6&nbsp;12&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(&nbsp;i=0;&nbsp;i&lt;2*3*2;&nbsp;i++&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pC[i]&nbsp;=&nbsp;i+1;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;AkronBtimesC(&nbsp;A,&nbsp;B,&nbsp;C,&nbsp;D&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D.print();&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+a matrix
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;[&nbsp;218&nbsp;&nbsp;488&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;284&nbsp;&nbsp;644&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;289&nbsp;&nbsp;667&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;376&nbsp;&nbsp;880&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;360&nbsp;&nbsp;846&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;468&nbsp;1116&nbsp;]<br>
+</span>
+</font></code>
+will be displayed.
+
+
+<hr>Input File: ../../spk/AkronBtimesC.cpp
+
+</body>
+</html>

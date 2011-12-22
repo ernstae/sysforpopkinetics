@@ -1,0 +1,73 @@
+<html><head>
+<title>Write a Subelement of the Current Element that Contains an Array of Values (Char Tag Version)</title>
+<meta name="description" id="description" content="Write a Subelement of the Current Element that Contains an Array of Values (Char Tag Version)">
+<meta name="keywords" id="keywords" content=" Write Subelement Current Element of Optimizer array values writearray "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="writearray.htm" target="_top">section</a>, <a href="writearray_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Writes to the restart file a subelement of the current element
+that contains an array of &quot;value&quot; elements, i.e.,
+<code><font color="blue">
+
+    &lt;current_element&gt;
+        ...
+        &lt;subelement length=&quot;##&quot;&gt;
+            &lt;value&gt;########&lt;/value&gt;
+            &lt;value&gt;########&lt;/value&gt;
+            ...
+            &lt;value&gt;########&lt;/value&gt;
+        &lt;/subelement&gt;
+        ...
+    &lt;/current_element&gt;
+
+</font></code>
+where the sequences of number signs (#) represent the sequences of
+characters that constitute a single value.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>This function assumes that the current element start tag has 
+been written to the restart file before this function is called
+and that its end tag will be written after.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>ValType</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The type of the array.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pSubelementTag</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This argument specifies the name of the subelement of the current
+element that contains the array of &quot;value&quot; elements.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nValue</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This argument specifies the number of &quot;value&quot; elements to write.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>arrayIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This argument specifies the array of values that will be written as
+the contents of the &quot;value&quot; elements using the std::ostream insertion
+operator (&lt;&lt;), which converts it from type <i>ValueType</i> to a
+sequence of characters.
+
+
+<hr>Input File: ../../spk/Optimizer.cpp
+
+</body>
+</html>

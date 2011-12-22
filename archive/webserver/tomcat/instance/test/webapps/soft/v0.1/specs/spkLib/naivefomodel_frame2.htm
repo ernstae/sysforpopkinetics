@@ -1,0 +1,192 @@
+<html><head>
+<title>First Order Approximation Model (Straight Translation)</title>
+<meta name="description" id="description" content="First Order Approximation Model (Straight Translation)">
+<meta name="keywords" id="keywords" content=" Fo objective first order (straight translation of the algorithm) Naivefomodel "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="naivefomodel.htm" target="_top">section</a>, <a href="naivefomodel_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This class assumes the following approximation is true:
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>fi</i>(<i>alp</i>,&nbsp;<i>bi</i>)&nbsp;=&nbsp;<i>fi</i>(<i>alp</i>,&nbsp;0)&nbsp;+&nbsp;<i>fi</i>_<i>b</i>(<i>alp</i>,&nbsp;0)&nbsp;*&nbsp;<i>bi</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>Ri</i>(<i>alp</i>,&nbsp;<i>bi</i>)&nbsp;=&nbsp;<i>Ri</i>(<i>alp</i>,&nbsp;0)<br>
+</span></code>The right hand sides of the above equations are first order
+approximations of the corresponding left hand side equations.
+For this case, the problem of optimizing in <code><span style='white-space: nowrap'><i>b</i></span></code>  
+is a linear least squares problem.  
+See the section 8 &quot;The modified first-order objective&quot; in
+&quot;Approximating the marginal likelihood estimate for 
+models with random parameters&quot; by Bradley M. Bell
+for details.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>This class's implementation is a straight translation of the above
+first order approximations, which is not necessarily the
+most efficient implementation of FO.  For better
+performance, see <a href="eqindmodel.htm" target="_top"><span style='white-space: nowrap'>EqIndModel</span></a>
+.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><code><font color="blue">NaiveFoModel</font></code> class is a subclass of <a href="spkmodel.htm" target="_top"><span style='white-space: nowrap'>SpkModel</span></a>
+
+and keeps a pointer to the original SpkModel object internally to
+evaluate the approximations.
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;--------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SpkModel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;--------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;fi(alp,b),&nbsp;fi(alp,b)_alp,&nbsp;fi(alp,b)_bi&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;Ri(alp,b),&nbsp;Ri(alp,b)_alp,&nbsp;Ri(alp,b)_bi&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;D(alp),&nbsp;&nbsp;&nbsp;&nbsp;D(alp)_alp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;setPopPar(alp),&nbsp;setIndPar(bi)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;selectIndividual(i)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;--------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/|\<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;----------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;NaiveFoModel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;----------------------------------------------<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;fi(alp,bi),&nbsp;fi(alp,bi)_alp,&nbsp;fi(alp,bi)_bi&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;Ri(alp,bi),&nbsp;Ri(alp,bi)_alp,&nbsp;Ri(alp,bi)_bi&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;D(alp),&nbsp;&nbsp;&nbsp;&nbsp;D(alp)_alp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;setPopPar(alp),&nbsp;setIndPar(bi)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;selectIndividual(i)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;|--------------------------&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|<br>
+&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;*&nbsp;-&gt;&nbsp;SpkModel&nbsp;object&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;----------------------------------------------<br>
+</span>
+</font></code>
+(NOTE: <code><span style='white-space: nowrap'>~</span></code> on top of a function indicates approximation)
+
+<br>
+<br>
+<b><big><a name="Constructors" id="Constructors">Constructors</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+NaiveFoModel(&nbsp;SpkModel&lt;double&gt;*&nbsp;</span></font></code><i><span style='white-space: nowrap'>pmodel</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>bStep</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>This constructor takes a pointer to an
+SpkModel, <i>pmodel</i>, that is to be a function of
+all three parameters: <code><span style='white-space: nowrap'><i>alp</i></span></code>, <code><span style='white-space: nowrap'><i>b</i></span></code> and <code><span style='white-space: nowrap'><i>i</i></span></code>.
+Refer <a href="glossary_frame1.htm#Model Functions Depend on i - alp - b" target="frame1"><i><span style='white-space: nowrap'>Model&nbsp;Functions&nbsp;Depend&nbsp;on&nbsp;i&nbsp;-&nbsp;alp&nbsp;-&nbsp;b</span></i></a>
+
+for details.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The second argument <i>bStep</i> is a vector of step sizes, 
+where each element corresponds to the individual parameter <code><span style='white-space: nowrap'><i>b</i></span></code> in the preserving order.
+The step size vector will be used to obtain the central approximation for the second derivative of
+<code><span style='white-space: nowrap'><i>f</i></span></code> with respect to <code><span style='white-space: nowrap'><i>b</i></span></code> to compute the approximation for the
+derivative of <code><span style='white-space: nowrap'><i>f</i>(<i>alp</i>,<i>b</i>)</span></code>.
+
+<br>
+<br>
+<b><big><a name="Implemented Virtual Members" id="Implemented Virtual Members">Implemented Virtual Members</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+void&nbsp;doSelectIndividual(&nbsp;int&nbsp;</span></font></code><i><span style='white-space: nowrap'>who</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)<br>
+</span></font></code>selects an individual in the population pointed by <code><span style='white-space: nowrap'><i>who</i></span></code>,
+where <code><span style='white-space: nowrap'>0&nbsp;&lt;=&nbsp;<i>who</i>&nbsp;&lt;&nbsp;<i>n</i></span></code> and <code><span style='white-space: nowrap'><i>n</i></span></code> is the number of individuals
+in the population, in the model object pointed by <code><font color="blue">&amp;pmodel</font></code>.
+It calls <i>pmodel</i><code><font color="blue">.selectIndividual()</font></code>
+which, in turn, calls the user implemented
+<i>pmodel</i><code><font color="blue">.doSelectIndividual()</font></code>, with <i>who</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+void&nbsp;doSetPopPar(&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>popPar</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)<br>
+</span></font></code>sets the current population parameter.
+It also calls <i>pmodel</i><code><font color="blue">.setPopPar()</font></code>
+which, in tern, calls <i>pmodel</i><code><font color="blue">.doSetPopPar()</font></code>
+with <i>popPar</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+void&nbsp;doSetIndPar(&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>indPar</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)<br>
+</span></font></code>sets the current individual parameter in the FO model
+with <i>indPar</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+void&nbsp;doDataMean(&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;foFiOut&nbsp;)&nbsp;const<br>
+</span></font></code>evaluates the first order approximation for <code><span style='white-space: nowrap'><i>fi</i>(<i>alp</i>,<i>b</i>)</span></code>, 
+which is:
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>foFiOut</i>&nbsp;=&nbsp;<i>fi</i>(&nbsp;<i>alp</i>,&nbsp;0&nbsp;)&nbsp;+&nbsp;<i>fi</i>_<i>b</i>(&nbsp;<i>alp</i>,&nbsp;0&nbsp;)&nbsp;*&nbsp;<i>bi</i><br>
+</span></code>at the currently set <i>popPar</i> (<code><span style='white-space: nowrap'><i>alp</i></span></code>) and 
+<i>indPar</i> (<code><span style='white-space: nowrap'><i>b</i></span></code>).  Note that the second term on the
+right hand side equation is an approximation for the first derivative.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+bool&nbsp;doDataMean_popPar(&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;foFi_bOut&nbsp;)&nbsp;const<br>
+</span></font></code>evaluates the first derivative of the first order approximation for
+<code><span style='white-space: nowrap'><i>fi</i>(<i>alp</i>,<i>b</i>)</span></code> with respect to the population parameter
+at the currently set <i>popPar</i> (<code><span style='white-space: nowrap'><i>alp</i></span></code>) and 
+<i>indPar</i> (<code><span style='white-space: nowrap'><i>b</i></span></code>).
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+bool&nbsp;doDataMean_indPar(&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;foFi_alpOut&nbsp;)&nbsp;const<br>
+</span></font></code>evaluates the first derivative of the first order approximation for
+<code><span style='white-space: nowrap'><i>fi</i>(<i>alp</i>,<i>b</i>)</span></code> with respect to the individual parameter
+at the currently set <i>popPar</i> (<code><span style='white-space: nowrap'><i>alp</i></span></code>) and 
+<i>indPar</i> (<code><span style='white-space: nowrap'><i>b</i></span></code>).
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+void&nbsp;doDataVariance(&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;foRiOut&nbsp;)&nbsp;const<br>
+</span></font></code>evaluates the first order approximation for <code><span style='white-space: nowrap'><i>Ri</i>(<i>alp</i>,<i>b</i>)</span></code>,
+which is:
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;<i>foRiOut</i>&nbsp;=&nbsp;<i>Ri</i>(<i>alp</i>,&nbsp;0)<br>
+</span></code>at the currently set <i>popPar</i> (<code><span style='white-space: nowrap'><i>alp</i></span></code>).
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+bool&nbsp;doDataVariance_popPar(&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;foRi_alpOut&nbsp;)&nbsp;const<br>
+</span></font></code>evaluates the first derivative of the first order approximation for
+<code><span style='white-space: nowrap'><i>Ri</i>(<i>alp</i>,<i>b</i>)</span></code> with respect to the population parameter
+at the currently set <i>popPar</i> (<code><span style='white-space: nowrap'><i>alp</i></span></code>).
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+bool&nbsp;doDataVariance_indPar(&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;foRi_bOut&nbsp;)&nbsp;const<br>
+</span></font></code>evaluates the first derivative of the first order approximation for
+<code><span style='white-space: nowrap'><i>Ri</i>(<i>alp</i>,<i>b</i>)</span></code> with respect to the individual parameter
+at the currently set <i>indPar</i> (<code><span style='white-space: nowrap'><i>b</i></span></code>).
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+void&nbsp;doIndParVariance(&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;foDOut&nbsp;)&nbsp;const<br>
+</span></font></code>evaluates the variance among individual parameters, <code><span style='white-space: nowrap'><i>D</i>(<i>alp</i>)</span></code>.
+at the currently set <i>popPar</i> (<code><span style='white-space: nowrap'><i>alp</i></span></code>).
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+bool&nbsp;doIndParVariance_popPar(&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;foD_alpOut&nbsp;)&nbsp;const<br>
+</span></font></code>evaluates the first derivative of <code><span style='white-space: nowrap'><i>D</i>(<i>alp</i>)</span></code> with respect
+to <i>popPar%</i> (<code><span style='white-space: nowrap'><i>alp</i></span></code>)
+at the currently set <i>popPar</i> (<code><span style='white-space: nowrap'><i>alp</i></span></code>).
+
+
+<hr>Input File: ../../spk/NaiveFoModel.cpp
+
+</body>
+</html>

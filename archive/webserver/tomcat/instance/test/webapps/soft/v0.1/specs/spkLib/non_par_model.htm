@@ -1,0 +1,378 @@
+<html><head>
+<title>Non-parametric Population Analysis Spk Model Requirements</title>
+<meta name="description" id="description" content="Non-parametric Population Analysis Spk Model Requirements">
+<meta name="keywords" id="keywords" content=" Spkmodel non-parametric requirements setpoppar selectindividual setindpar datamean datavariance ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_non_par_model_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>population</option>
+<option>spk_non_par</option>
+<option>non_par_model</option>
+</select>
+</td>
+<td><a href="spk_non_par.htm" target="_top">Prev</a>
+</td><td><a href="statistical.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down3(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down2(this)'>
+<option>population-&gt;</option>
+<option>estimateB</option>
+<option>expectedHessian</option>
+<option>ExpectedHessianFuncOb</option>
+<option>ExpectedHessianValarrayFuncOb</option>
+<option>firstOrderOpt</option>
+<option>fitPopulation</option>
+<option>EqIndModel</option>
+<option>lambda</option>
+<option>lambda_alp</option>
+<option>lambda_b</option>
+<option>lambdaFuncOb</option>
+<option>lambdaDiff</option>
+<option>lambda2diff</option>
+<option>lTilde</option>
+<option>NaiveFoModel</option>
+<option>namespace_population_analysis</option>
+<option>Objective</option>
+<option>ppkaOpt</option>
+<option>popResiduals</option>
+<option>popStatistics</option>
+<option>popStatistics_DerivExist</option>
+<option>popStatistics_DerivExist_AllElemActive</option>
+<option>twoStageMethod</option>
+<option>spk_non_par</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>spk_non_par-&gt;</option>
+<option>non_par_model</option>
+</select>
+</td>
+<td>non_par_model</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Syntax</option>
+<option>Purpose</option>
+<option>Notation</option>
+<option>---..Scalar</option>
+<option>---..m</option>
+<option>---..n</option>
+<option>---..M</option>
+<option>---..i</option>
+<option>---..alpha</option>
+<option>---..b</option>
+<option>---..N[i]</option>
+<option>---..y^i</option>
+<option>---..D(alpha)</option>
+<option>---..R(i,alpha,b)</option>
+<option>---..f(i,alpha,b)</option>
+<option>Setting Model State</option>
+<option>---..setPopPar</option>
+<option>---..selectIndividual</option>
+<option>---..setIndPar</option>
+<option>dataMean</option>
+<option>dataVariance</option>
+</select>
+</td>
+</tr></table><br>
+<code>
+<span style='white-space: nowrap'>&nbsp;\newcommand{\B}[1]{{\bf&nbsp;#1}}</span></code>
+
+<code>
+<span style='white-space: nowrap'>&nbsp;\newcommand{\R}{{\bf&nbsp;R}}</span></code>
+
+<code>
+<span style='white-space: nowrap'>&nbsp;\newcommand{\T}{{\rm&nbsp;T}}</span></code>
+
+
+
+
+<center><b><big><big>Non-parametric Population Analysis Spk Model Requirements</big></big></b></center>
+<br>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<br>
+<code><font color="blue"><span style='white-space: nowrap'>SpkModel&lt;</span></font></code><i><span style='white-space: nowrap'>Scalar</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&nbsp;</span></font></code><i><span style='white-space: nowrap'>model</span></i>.
+
+<br>
+<br>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+<br>
+This section documents the minimal requirements for an
+Spk <i>model</i> to function with the routine
+Spk non-parameter population analysis routine <a href="spk_non_par.htm" target="_top"><span style='white-space: nowrap'>spk_non_par</span></a>
+.
+
+<br>
+<br>
+<b><big><a name="Notation" id="Notation">Notation</a></big></b>
+
+
+<br>
+<br>
+<b><a name="Notation.Scalar" id="Notation.Scalar">Scalar</a></b>
+<br>
+The type <i>Scalar</i> can be any type that supports
+all the operations supported by <code><font color="blue">double</font></code> and
+the <code><font color="blue">CppAD::AD</font></code> template type.
+
+<br>
+<br>
+<b><a name="Notation.m" id="Notation.m">m</a></b>
+<br>
+number of fixed effects.
+
+<br>
+<br>
+<b><a name="Notation.n" id="Notation.n">n</a></b>
+<br>
+number of random effects per individual.
+(Each individual has it's own realization of the random
+effects vector.)
+
+<br>
+<br>
+<b><a name="Notation.M" id="Notation.M">M</a></b>
+<br>
+number of individuals in the population study.
+
+<br>
+<br>
+<b><a name="Notation.i" id="Notation.i">i</a></b>
+<br>
+the index corresponding to the current individual,
+<code>
+<span style='white-space: nowrap'>&nbsp;0&nbsp;\leq&nbsp;i&nbsp;&lt;&nbsp;M</span></code>
+
+
+<br>
+<br>
+<b><a name="Notation.alpha" id="Notation.alpha">alpha</a></b>
+<br>
+value of fixed effects, <code>
+<span style='white-space: nowrap'>&nbsp;\alpha&nbsp;\in&nbsp;\R^m</span></code>
+.
+ 
+<br>
+<br>
+<b><a name="Notation.b" id="Notation.b">b</a></b>
+<br>
+value of random effects for one individual, <code>
+<span style='white-space: nowrap'>&nbsp;b&nbsp;\in&nbsp;\R^n</span></code>
+     
+
+<br>
+<br>
+<b><a name="Notation.N[i]" id="Notation.N[i]">N[i]</a></b>
+<br>
+number of measurements for <i>i</i>-th individual.
+
+<br>
+<br>
+<b><a name="Notation.y^i" id="Notation.y^i">y^i</a></b>
+<br>
+measurement vector for <i>i</i>-th individual, <code>
+<span style='white-space: nowrap'>&nbsp;y^i&nbsp;\in&nbsp;\R^{N[i]}</span></code>
+.
+
+<br>
+<br>
+<b><a name="Notation.D(alpha)" id="Notation.D(alpha)">D(alpha)</a></b>
+<br>
+covariance of random effects as a function of
+the fixed effects,
+<code>
+<span style='white-space: nowrap'>&nbsp;D&nbsp;:&nbsp;\R^m&nbsp;\rightarrow&nbsp;\R^{n&nbsp;\times&nbsp;n}</span></code>
+.
+(These matrices are always symmetric positive definite matrix.)
+
+<br>
+<br>
+<b><a name="Notation.R(i,alpha,b)" id="Notation.R(i,alpha,b)">R(i,alpha,b)</a></b>
+<br>
+covariance of measurement noise as a function of
+the individual index,
+the fixed effects, and the random effects.
+<code>
+<span style='white-space: nowrap'>&nbsp;R&nbsp;:&nbsp;\B{Z}_+&nbsp;\times&nbsp;\R^n&nbsp;\times&nbsp;\R^m&nbsp;\rightarrow&nbsp;\R^{N[i]&nbsp;\times&nbsp;N[i]}</span></code>
+.
+(These matrices are always symmetric positive definite matrix.)
+
+<br>
+<br>
+<b><a name="Notation.f(i,alpha,b)" id="Notation.f(i,alpha,b)">f(i,alpha,b)</a></b>
+<br>
+mean of measurement as a function of
+the individual index,
+the fixed effects, and the random effects.
+given random effects, 
+<code>
+<span style='white-space: nowrap'>&nbsp;f&nbsp;:&nbsp;\B{Z}_+&nbsp;\times&nbsp;\R^n&nbsp;\times&nbsp;\R^m&nbsp;\rightarrow&nbsp;\R^{N[i]}</span></code>
+.
+
+
+<br>
+<br>
+<b><big><a name="Setting Model State" id="Setting Model State">Setting Model State</a></big></b>
+
+
+<br>
+<br>
+<b><a name="Setting Model State.setPopPar" id="Setting Model State.setPopPar">setPopPar</a></b>
+
+
+<br>
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'>.setPopPar&nbsp;&nbsp;(</span></font></code><i><span style='white-space: nowrap'>alpha</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>sets the value of the fixed effect vector 
+<a href="non_par_model.htm#Notation.alpha" target="_top"><span style='white-space: nowrap'>alpha</span></a>
+
+for subsequent usage of <i>model</i>.
+The argument <i>alpha</i> must have prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;valarray&lt;</span></font></code><i><span style='white-space: nowrap'>Scalar</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>alpha</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>and size equal to 
+<a href="non_par_model.htm#Notation.m" target="_top"><span style='white-space: nowrap'>m</span></a>
+.
+Calling <code><font color="blue">setPopPar</font></code> 
+erases any previous setting by the <code><font color="blue">selectIndividual</font></code> 
+and 
+<a href="non_par_model.htm#Setting Model State.setIndPar" target="_top"><span style='white-space: nowrap'>setIndPar</span></a>
+.
+
+<br>
+<br>
+<b><a name="Setting Model State.selectIndividual" id="Setting Model State.selectIndividual">selectIndividual</a></b>
+
+
+<br>
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'>.selectIndividual&nbsp;&nbsp;(</span></font></code><i><span style='white-space: nowrap'>individual</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>sets the index for the individual that corresponds to subsequent 
+usage of <i>model</i>; i.e.,
+<a href="non_par_model.htm#Notation.i" target="_top"><span style='white-space: nowrap'>i</span></a>
+.
+The argument <i>individual</i> must be an <code><font color="blue">int</font></code> that is greater
+than or equal zero and less than 
+<a href="non_par_model.htm#Notation.M" target="_top"><span style='white-space: nowrap'>M</span></a>
+.
+Calling <code><font color="blue">selectIndividual</font></code> 
+erases any previous setting by the 
+<a href="non_par_model.htm#Setting Model State.setIndPar" target="_top"><span style='white-space: nowrap'>setIndPar</span></a>
+.
+
+<br>
+<br>
+<b><a name="Setting Model State.setIndPar" id="Setting Model State.setIndPar">setIndPar</a></b>
+
+
+<br>
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'>.setIndPar&nbsp;&nbsp;(</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code>sets the value of the random effects 
+<a href="non_par_model.htm#Notation.b" target="_top"><span style='white-space: nowrap'>b</span></a>
+
+(corresponding to the current individual as specified by 
+<a href="non_par_model.htm#Setting Model State.selectIndividual" target="_top"><span style='white-space: nowrap'>selectIndividual</span></a>
+)
+during subsequent usage of <i>model</i>.
+The argument <i>b</i> must have prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;valarray&lt;</span></font></code><i><span style='white-space: nowrap'>Scalar</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>and size equal to 
+<a href="non_par_model.htm#Notation.n" target="_top"><span style='white-space: nowrap'>n</span></a>
+.
+
+<br>
+<br>
+<b><big><a name="dataMean" id="dataMean">dataMean</a></big></b>
+
+
+<br>
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'>.dataMean&nbsp;&nbsp;(</span></font></code><i><span style='white-space: nowrap'>f_out</span></i><code><font color="blue"><span style='white-space: nowrap'>)&nbsp;<br>
+</span></font></code>sets <i>f_out</i> equal to 
+<a href="non_par_model.htm#Notation.f(i,alpha,b)" target="_top"><span style='white-space: nowrap'>f(i,alpha,b)</span></a>
+.
+The argument <i>f_out</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;</span></font></code><i><span style='white-space: nowrap'>Scalar</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>f_out</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>and its input and out size equal is <code>
+<span style='white-space: nowrap'>&nbsp;N[i]</span></code>
+.
+The input values of its elements do not matter
+and the output value is the mean of
+<a href="non_par_model.htm#Notation.y^i" target="_top"><span style='white-space: nowrap'>y^i</span></a>
+
+given the current fixed and random effects. 
+
+
+<br>
+<br>
+<b><big><a name="dataVariance" id="dataVariance">dataVariance</a></big></b>
+
+
+<br>
+The syntax
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>model</span></i><code><font color="blue"><span style='white-space: nowrap'>.dataVariance&nbsp;&nbsp;(</span></font></code><i><span style='white-space: nowrap'>R_out</span></i><code><font color="blue"><span style='white-space: nowrap'>)&nbsp;<br>
+</span></font></code>sets <i>R_out</i> equal to 
+<a href="non_par_model.htm#Notation.R(i,alpha,b)" target="_top"><span style='white-space: nowrap'>R(i,alpha,b)</span></a>
+.
+The argument <i>R_out</i> has prototype
+<code><font color="blue"><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;valarray&lt;</span></font></code><i><span style='white-space: nowrap'>Scalar</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>R_out</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>and its input and out size equal is <code>
+<span style='white-space: nowrap'>&nbsp;N[i]&nbsp;\times&nbsp;N[i]</span></code>
+.
+The input values of its elements do not matter
+and the output value is the variance of
+<a href="non_par_model.htm#Notation.y^i" target="_top"><span style='white-space: nowrap'>y^i</span></a>
+
+given the current fixed and random effects.
+
+
+<hr>Input File: non_par_model.omh
+
+</body>
+</html>

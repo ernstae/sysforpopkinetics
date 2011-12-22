@@ -1,0 +1,100 @@
+<html><head>
+<title>Transposing Row-based Blocks</title>
+<meta name="description" id="description" content="Transposing Row-based Blocks">
+<meta name="keywords" id="keywords" content=" transposerowblocks transpose of row-based blocks "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="transposerowblocks.htm" target="_top">section</a>, <a href="transposerowblocks_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Returns a copy of the <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> matrix <i>A</i> where 
+successive subblocks
+consisting of <i>nr</i> rows are transposed
+where <i>nr</i> divides the number of rows in <i>A</i>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>Let <code><span style='white-space: nowrap'><i>B</i>_<i>k</i></span></code> be the subblock
+consisting of rows numbers
+<code><span style='white-space: nowrap'>(<i>k</i>-1)*<i>nr</i>+1</span></code> through <code><span style='white-space: nowrap'><i>k</i>*<i>nr</i></span></code> of <i>A</i>; i.e.,
+<code><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>B</i>_<i>k</i>&nbsp;=&nbsp;<i>A</i>.<i>row</i>((<i>k</i>-1)*<i>nr</i>&nbsp;+&nbsp;1&nbsp;,&nbsp;<i>nr</i>)<br>
+</span></code>The return value is the matrix
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>T</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<i>B</i>_1&nbsp;,&nbsp;<i>B</i>_2&nbsp;,&nbsp;...&nbsp;,&nbsp;<i>B</i>_<i>nb</i>&nbsp;]<br>
+</span></code>where <code><span style='white-space: nowrap'><i>nb</i></span></code> is the number of rows in <i>A%</i> 
+divided by <i>nr%</i>.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a m by n matrix.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nr</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>specifies the number of rows by which row-based transpose is performed.
+<i>nr</i> must be greater than or equal to zero and less than or
+equal to <code><span style='white-space: nowrap'><i>m</i></span></code> and <code><span style='white-space: nowrap'><i>m</i>&nbsp;=&nbsp;<i>nr</i>&nbsp;*&nbsp;<i>x</i></span></code> for some integer value <i>x</i>.
+If any of these requirements is violated, it terminates the system.
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;transposeRowBlocks.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Given&nbsp;a&nbsp;4&nbsp;by&nbsp;3&nbsp;matrix,&nbsp;A:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A&nbsp;=&nbsp;[&nbsp;1&nbsp;,&nbsp;2&nbsp;,&nbsp;3&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;4&nbsp;,&nbsp;5&nbsp;,&nbsp;6&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;7&nbsp;,&nbsp;8&nbsp;,&nbsp;9&nbsp;],&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;10,&nbsp;11,&nbsp;12]&nbsp;...<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;#of&nbsp;rows&nbsp;to&nbsp;2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;nr&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Call&nbsp;the&nbsp;function&nbsp;and&nbsp;puts&nbsp;the&nbsp;result&nbsp;to&nbsp;B<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;B&nbsp;=&nbsp;transposeRowBlocks(A,&nbsp;nr);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::cout&nbsp;&lt;&lt;&nbsp;&quot;B=&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.print();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+displays the following matrix:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B=<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;4&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;&nbsp;5&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;3&nbsp;&nbsp;6&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;7&nbsp;&nbsp;10&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;8&nbsp;&nbsp;11&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;9&nbsp;&nbsp;12&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/transposeRowBlocks.cpp
+
+</body>
+</html>

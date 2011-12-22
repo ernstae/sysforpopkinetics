@@ -1,0 +1,78 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.55
+----------------------------------
+USER VISIBLE CHANGES
+
+The parameter estimates that hit against bounds are also
+excluded from statistics calculations as well as ones that are
+fixed during optimization.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 165
+ 
+BY: Sachiko Honda
+
+WHEN: March 18, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.56
+----------------------------------
+USER VISIBLE CHANGES
+
+Changed the starting index for array elements in error messages to be 1 and
+made various improvements to the error messages in multiple functions.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  107, 170, 171
+
+BY:  Mitch Watrous
+
+WHEN:  March 30, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.57
+----------------------------------
+USER VISIBLE CHANGES
+
+Removed extra lines from a warning message issued when one of the 
+population parameters is at its lower or upper bound.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  None.
+
+BY:  Mitch Watrous
+
+WHEN:  March 30, 2005
+
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.58
+----------------------------------
+USER VISIBLE CHANGES
+The default formation used to compute the individual level statitics
+is set to "h" which is based upon the hessian of objective function.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 175
+
+BY: Sachiko Honda
+
+WHEN: April 6, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.59
+----------------------------------
+USER VISIBLE CHANGES
+The final ETA values are reported properly.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 154, 176
+
+BY: Sachiko Honda
+
+WHEN: April 19, 2005

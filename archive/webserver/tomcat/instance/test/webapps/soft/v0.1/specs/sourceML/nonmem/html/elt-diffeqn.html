@@ -1,0 +1,30 @@
+<html><body><p><a href=dtd-overview.html>Overview</a> <a href=dtd-tree.html>Tree</a> <a href=dtd-index.html>Index</a> <a href=dtd-notations.html>Notations</a> <a href=dtd-entities.html>Entities</a> </p><h1>Element &lt;diffeqn&gt;</h1><p>System of differential equations, equivalent to $DES record in NONMEM. Required with ADVAN6, 8, 9. </p><p>
+
+<p>
+A differential equation must be specified for each compartment.  The DE for the first compartment is denoted as DADT(1), second as DADT(2), ... and n'th as DADT(n), where n is the number of compartments.
+</p>
+<p>
+On the right hand side of assignment statements, the following variables can be used.  Pay attention to items with <font color='red'>Attention!</font>.  These specificatons are different from NONMEM:
+</p>
+<ul>
+   <li>A(1), A(2), ..., A(n):
+   Current compartment amounts (may be random variables)</li>
+
+   <li>P(1), P(2), ..., P(n):
+   Explicit basic PK parameters (may be random variables)</li>
+  
+   <li>PK-defined items that appear as left-hand quantities in <a href=elt-pk.html>pk</a>: Implicit basic PK parameters (may be random variables)</li>
+
+   <li>T: Time; may be random variable.  T takes values continuously over an integration interval.</li>
+
+   <li>DES-defined items that appeared earlier as left-hand quantities in <a href=elt-diffeqn.html>diffeqn</a></li>
+
+   <li>Data item labels specified in <a href=elt-label.html>label</a> (<font color='red'>Attention!</font> This is different from NONMEM)</li>
+ 
+</ul>
+Variables that were predefined in NONMEM but have no special meaning in SPK are:
+<ul>
+   <li>COMACT, NETEXT, ETEXT, COM(n), COMACT, COMSAV, MIXNUM, MIXEST</li>
+</ul>
+NOTE: This element contains a set of equations written in the NONMEM abbriviated code, which is a subset of FORTRAN 77.  Cases are ignored; that is, "tIMe" and "TiMe" are treated as the same.  
+</p><h2>Attributes</h2><p><em>None</em></p><h2>Content</h2><p>(#PCDATA)</p><h2>Parents</h2><p><a href=elt-model.html>model</a> </p></body></html>

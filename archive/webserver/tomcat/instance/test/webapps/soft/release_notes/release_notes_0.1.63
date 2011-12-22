@@ -1,0 +1,56 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.60
+----------------------------------
+USER VISIBLE CHANGES
+The number of sbuproblems is now implemented
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 20
+
+BY: Sachiko Honda, Jiaji Du
+
+WHEN: May 9, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.61
+----------------------------------
+USER VISIBLE CHANGES
+The job-report (i.e. result.xml) no longer contains XML comments that had caused syntax errors.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: May 9, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.62
+----------------------------------
+USER VISIBLE CHANGES
+None
+
+OTHER CHANGES
+Fixed the load library directories for the compiler and run daemons
+and converted the SPK Pred library specifications to doxygen format.
+
+RELATED BUG REPORTS: None
+
+BY: Mitch Watrous
+
+WHEN: May 18, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.63
+----------------------------------
+USER VISIBLE CHANGES
+The XML file for a likelihood which is generated based upon 
+its parent's optimization request/result now eliminates 
+extra information that had confused MDA.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 177
+
+BY: Sachiko Honda
+
+WHEN: June 3, 2005

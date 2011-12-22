@@ -1,0 +1,319 @@
+<html><head>
+<title>&lt;valarray&gt; Central difference approximation for the Jacobian of f(x)</title>
+<meta name="description" id="description" content="&lt;valarray&gt; Central difference approximation for the Jacobian of f(x)">
+<meta name="keywords" id="keywords" content=" central difference approximation Jacobian ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_centdiffva_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>general</option>
+<option>centdiffVA</option>
+</select>
+</td>
+<td><a href="centdiff.htm" target="_top">Prev</a>
+</td><td><a href="cholesky.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>general-&gt;</option>
+<option>ABA_x</option>
+<option>ABA_xVA</option>
+<option>addition</option>
+<option>AkronBtimesC</option>
+<option>AkronBtimesCRef</option>
+<option>AkronBtimesCVA</option>
+<option>AkronItimesC</option>
+<option>AkronItimesCVA</option>
+<option>allTrue</option>
+<option>allZero</option>
+<option>backDiv</option>
+<option>BlockAlloc</option>
+<option>blockDiagonalDerivative</option>
+<option>centdiff</option>
+<option>centdiffVA</option>
+<option>cholesky</option>
+<option>countTrues</option>
+<option>CovarianceClasses</option>
+<option>elsq</option>
+<option>elsqVA</option>
+<option>elsqFuncOb</option>
+<option>elsq_x</option>
+<option>elsq_xVA</option>
+<option>elsq_xDiag</option>
+<option>elsq_xBlockDiag</option>
+<option>DBL_EPS_EQUAL_MULT</option>
+<option>det</option>
+<option>detVA</option>
+<option>divByScalar</option>
+<option>DMclass</option>
+<option>elementwiseAnd</option>
+<option>elementwiseOr</option>
+<option>File</option>
+<option>FpErrorChecker</option>
+<option>ModelFunction</option>
+<option>ModelDerivative</option>
+<option>getCol</option>
+<option>getMulCols</option>
+<option>getMulRows</option>
+<option>getRow</option>
+<option>getSubblock</option>
+<option>identityNum</option>
+<option>identityVA</option>
+<option>IkronBtimesC</option>
+<option>IkronBtimesCVA</option>
+<option>inverse</option>
+<option>inverseVA</option>
+<option>inxToMax</option>
+<option>isDblEpsEqual</option>
+<option>isDmatEpsEqual</option>
+<option>isGreaterThanOrEqualTo</option>
+<option>isLessThanOrEqualTo</option>
+<option>isSymmetric</option>
+<option>matabs</option>
+<option>matmaxScalar</option>
+<option>matmaxMatrices</option>
+<option>matminScalar</option>
+<option>matminMatrices</option>
+<option>mulByScalar</option>
+<option>multiply</option>
+<option>norm</option>
+<option>Optimizer</option>
+<option>pi</option>
+<option>placeRows</option>
+<option>printInMatrix</option>
+<option>quasinewtonanybox</option>
+<option>replaceIth</option>
+<option>replaceJth</option>
+<option>replaceSubblockDoubleMatrix</option>
+<option>replaceSubblockValarray</option>
+<option>rvec</option>
+<option>rvecVA</option>
+<option>rvecInverse</option>
+<option>SpkError</option>
+<option>SpkException</option>
+<option>SpkValarray</option>
+<option>subtraction</option>
+<option>symmetrize</option>
+<option>symmetrizeVA</option>
+<option>System</option>
+<option>transpose</option>
+<option>transposeRef</option>
+<option>transposeVA</option>
+<option>transposeDerivative</option>
+<option>transposeDerivativeVA</option>
+<option>transposeRowBlocks</option>
+<option>transposeRowBlocksVA</option>
+<option>UTranTimesSymKronSymTimesU</option>
+<option>UTranTimesSymKronSymTimesU_x</option>
+<option>WarningsManager_constructor</option>
+<option>WarningsManager_addWarning</option>
+<option>WarningsManager_addWarningList</option>
+<option>WarningsManager_clearAllWarnings</option>
+<option>WarningsManager_anyWarnings</option>
+<option>WarningsManager_getWarningList</option>
+<option>WarningsManager_getAllWarnings</option>
+</select>
+</td>
+<td>centdiffVA</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Arguments</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>&lt;valarray&gt; Central difference approximation for the Jacobian of f(x)</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype:</b>   </td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>template&nbsp;&lt;class&nbsp;</span></font></code><i><span style='white-space: nowrap'>UnaFun</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;class&nbsp;</span></font></code><i><span style='white-space: nowrap'>DataType</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;<br>
+const&nbsp;SPK_VA::valarray&lt;</span></font></code><i><span style='white-space: nowrap'>DataType</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&nbsp;centdiff(&nbsp;<br>
+&nbsp;&nbsp;const&nbsp;</span></font></code><i><span style='white-space: nowrap'>UnaFun</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>f</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;int&nbsp;</span></font></code><i><span style='white-space: nowrap'>fvalCols</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;<br>
+&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;</span></font></code><i><span style='white-space: nowrap'>DataType</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;<br>
+&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;</span></font></code><i><span style='white-space: nowrap'>DataType</span></i><code><font color="blue"><span style='white-space: nowrap'>&gt;&nbsp;&amp;</span></font></code><i><span style='white-space: nowrap'>h</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br>
+</span></font></code></td></tr><tr><td align='left'  valign='top'>
+</td><td align='left'  valign='top'>
+</td></tr>
+</table>
+See also: <a href="centdiff.htm" target="_top"><span style='white-space: nowrap'>DoubleMatrix&nbsp;version&nbsp;of&nbsp;generic&nbsp;centdiff</span></a>
+.
+
+<br>
+<br>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Returns the central difference approximation for the Jacobian of a matrix valued
+function <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code>, where <code><span style='white-space: nowrap'><i>x</i></span></code> is a vector.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The vector <code><span style='white-space: nowrap'><i>x</i></span></code> specifies the points at which to approximate 
+the Jacobian.  <code><span style='white-space: nowrap'><i>h</i></span></code> specifies the step size for approximating 
+the partials of <code><span style='white-space: nowrap'><i>f</i></span></code>.  The i-th element of <code><span style='white-space: nowrap'><i>h</i></span></code> is used as a step size for the i-th element of
+<code><span style='white-space: nowrap'><i>x</i></span></code>. 
+
+If <code><span style='white-space: nowrap'><i>h</i>(<i>j</i>)</span></code> is 0.0, partial with respect to <code><span style='white-space: nowrap'><i>x</i>(<i>j</i>)</span></code> are not approximated and 0.0 is 
+returned in the corresponding column of the Jacobian.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If the evaluation of <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code> results in a  
+<code><span style='white-space: nowrap'><i>m</i></span></code> times <code><span style='white-space: nowrap'><i>n</i></span></code> vector, and <code><span style='white-space: nowrap'><i>x</i></span></code> and <code><span style='white-space: nowrap'><i>h</i></span></code> are vectors of length
+<code><span style='white-space: nowrap'><i>l</i></span></code>, then the return value of <code><font color="blue">centdiff</font></code>
+is a <code><span style='white-space: nowrap'><i>m</i>&nbsp;*&nbsp;<i>n</i></span></code> times <code><span style='white-space: nowrap'><i>l</i></span></code> vector containing 
+a sequence of <a href="rvec.htm" target="_top"><span style='white-space: nowrap'>rvec-ed</span></a>
+ derivatives 
+of f(x) with respect to
+the k-th element of <code><span style='white-space: nowrap'><i>x</i></span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The functions 
+<code><font color="blue">centdiff</font></code> and <code><font color="blue">fordiff</font></code> can be used to 
+approximate derivatives for an optimization or zero-finding algorithm. 
+The <code><font color="blue">centdiff</font></code> function is more accurate, 
+but it requires more function evaluations.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><code><span style='white-space: nowrap'><i>h</i></span></code> should be chosen carefully.  <code><span style='white-space: nowrap'>(<i>EPSILON</i>*<i>x</i>/2.0)^(1/3)</span></code> 
+gives an optimal <code><span style='white-space: nowrap'><i>h</i></span></code> where the difference between the roundoff and 
+trancation errors reaches minimal.  Every element of <i>h%</i> must be
+greater than 0.0; otherwise, the program terminates.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>UnaFct</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>specifies the function class in which a <b>unary</b> function (i.e. f(x)), to be evaluated is defined 
+as an overloaded operator() that takes a single parameter.  The function is executed
+exactly in the form of a call f(x), if the <i>Fct</i> object is <code><span style='white-space: nowrap'><i>f</i></span></code> and the
+parameter is <code><span style='white-space: nowrap'><i>x</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>DataType</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>specifies the data type of the elements of vectors, <i>x</i> and <i>h</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>f</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a reference to a unary function object of type <i>UnaFct</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>nCols</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is the number of columns 
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>l</i></span></code> dimensional parameter vector of type <i>DoubleMatrix</i> or <i>SPK_VA::valarray</i>
+ specifying the function evaluation points.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>h</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>l</i></span></code> dimensional step value vector of type <i>DoubleMatrix</i> or <i>SPK_VA::valarray</i>.
+All values must be positive, or the system will terminate.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;functional&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;centdiff.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;SpkValarray.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;Function&nbsp;:&nbsp;public&nbsp;std::unary_function&lt;&nbsp;SPK_VA::valarray&lt;double&gt;,&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;c1,&nbsp;c2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public:&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Function(const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;cc1,&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;cc2)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;c1(cc1),&nbsp;c2(cc2)&nbsp;{}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~Function(){}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Function(const&nbsp;Function&amp;&nbsp;right)&nbsp;:&nbsp;c1(right.c1),&nbsp;c2(right.c2)&nbsp;{}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Defines&nbsp;f(x)&nbsp;=&nbsp;x&nbsp;*&nbsp;c1&nbsp;+&nbsp;c2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;operator()(const&nbsp;SPK_VA::valarray&lt;double&gt;&amp;&nbsp;x)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;returns&nbsp;a&nbsp;n&nbsp;times&nbsp;n&nbsp;dimension&nbsp;vector.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;(x&nbsp;*&nbsp;c1)&nbsp;+&nbsp;c2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;n=3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;c1(0.5,&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;c2(3.0,&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;x(1.0,&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SPK_VA::valarray&lt;double&gt;&nbsp;h(0.1,&nbsp;n);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Function&nbsp;f(c1,&nbsp;c2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;f_x(x)&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;DoubleMatrix(&nbsp;centdiff&lt;Function,&nbsp;double&gt;(f,&nbsp;n,&nbsp;x,&nbsp;h),&nbsp;n&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;f_x(x)&nbsp;=&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;by&nbsp;3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0.0000000000000000e+000&nbsp;0.0000000000000000e+000&nbsp;0.0000000000000000e+000&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0.0000000000000000e+000&nbsp;4.9999999999999822e-001&nbsp;0.0000000000000000e+000&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0.0000000000000000e+000&nbsp;0.0000000000000000e+000&nbsp;5.0000000000000044e-001&nbsp;]<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/centdiff.h
+
+</body>
+</html>

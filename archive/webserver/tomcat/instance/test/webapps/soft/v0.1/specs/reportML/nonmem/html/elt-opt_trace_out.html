@@ -1,0 +1,19 @@
+<html><body><p><a href=dtd-overview.html>Overview</a> <a href=dtd-tree.html>Tree</a> <a href=dtd-index.html>Index</a> <a href=dtd-notations.html>Notations</a> <a href=dtd-entities.html>Entities</a> </p><h1>Element &lt;opt_trace_out&gt;</h1><p>The optimizer's tracing information </p><p>
+produced to the standard output during the parameter estimation. 
+ This element may be empty if no parameter estimation were attempted 
+or the optimizer did not produce any information for some reason.
+
+One or more lines of comma seperated values is produced per iteration.
+The number of values per line may vary depending on the level of 
+trace requested by the user. 
+
+The following is an example of such output.  The leading k=1 or k=2 
+implies the first or the second iteration, respectively:
+
+<pre>
+k   = 1, r   = 0.073787, f   = 422.826, |s| = 2.45434e-06, |p| = 1.04589, |H| = 1.10108e+09, det(H) = 4.47192e+37, Bfgs = 197,
+k   = 1, dq  = 2.04964e-06, df  = 2.04967e-06, eta = 0, Herr = 0.0489146
+k   = 2, r   = 0.0147574, f   = 422.826, |s| = 2.49693e-06, |p| = 1.04589, |H| = 1.11676e+09, det(H) = 4.48602e+37, Bfgs = 199,
+k   = 2, dq  = 1.5254e-06, df  = 1.5254e-06, eta = 0, Herr = 0.00219536
+</pre>
+</p><h2>Attributes</h2><p><em>None</em></p><h2>Content</h2><p>(#PCDATA)</p><h2>Parents</h2><p><a href=elt-spkreport.html>spkreport</a> </p></body></html>

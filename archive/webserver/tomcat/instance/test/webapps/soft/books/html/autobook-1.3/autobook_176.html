@@ -1,0 +1,292 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: libltdl Loader Management</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: libltdl Loader Management">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: libltdl Loader Management">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC176"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_175.html#SEC175" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: libltdl Loader Mechanism" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_177.html#SEC177" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: libltdl Loader Errors" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_177.html#SEC177" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: libltdl Loader Errors" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_174.html#SEC174" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: User Module Loaders" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_178.html#SEC178" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Advanced GNU Automake Usage" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 18.5.2 Loader Management </H3>
+<!--docid::SEC176::-->
+<P>
+
+The API supplies all of the functions you need to implement your
+own module loading mechanisms to solve problems just like this:
+</P><P>
+
+<A NAME="IDX38"></A>
+<DL>
+<DT><U>Function:</U> lt_dlloader_t * <B>lt_dlloader_find</B> <I>(const char *<VAR>loader_name</VAR>)</I>
+<DD>Each of the module loaders implemented by libltdl is stored
+according to a unique name, which can be used to lookup the associated
+handle.  These handles operate in much the same way as
+<CODE>lt_dlhandle</CODE>s:  They are used for passing references to modules in
+and out of the API, except that they represent a kind of
+<EM>module loading method</EM>, as opposed to a loaded module instance.
+</P><P>
+
+This function finds the <SAMP>`lt_dlloader_t'</SAMP> handle associated with the
+unique name passed as the only argument, or else returns <SAMP>`NULL'</SAMP> if
+there is no such module loader registered.
+</DL>
+</P><P>
+
+<A NAME="IDX39"></A>
+<DL>
+<DT><U>Function:</U> int <B>lt_dlloader_add</B> <I>(lt_dlloader_t *<VAR>place</VAR>, lt_user_dlloader *<VAR>dlloader</VAR>, const char *<VAR>loader_name</VAR>)</I>
+<DD>This function is used to register your own module loading mechanisms
+with libltdl.  If <VAR>place</VAR> is given it must be a handle for an
+already registered module loader, which the new loader <VAR>dlloader</VAR>
+will be placed in front of for the purposes of which order to try
+loaders in.  If <VAR>place</VAR> is <SAMP>`NULL'</SAMP>, on the other hand, the new
+<VAR>dlloader</VAR> will be added to the end of the list of loaders to try
+when loading a module instance. In either case <VAR>loader_name</VAR> must be
+a unique name for use with <CODE>lt_dlloader_find</CODE>.
+</P><P>
+
+The <VAR>dlloader</VAR> argument must be a C structure of the following
+format, populated with suitable function pointers which determine the
+functionality of your module loader:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>struct lt_user_dlloader {
+  const char         *sym_prefix;
+  lt_module_open_t   *module_open;
+  lt_module_close_t  *module_close;
+  lt_find_sym_t      *find_sym;
+  lt_dlloader_exit_t *dlloader_exit;
+  lt_dlloader_data_t dlloader_data;
+};
+</pre></td></tr></table></DL>
+</P><P>
+
+<A NAME="IDX40"></A>
+<DL>
+<DT><U>Function:</U> int <B>lt_dlloader_remove</B> <I>(const char *<VAR>loader_name</VAR>)</I>
+<DD>When there are no more loaded modules that were opened by the given
+module loader, the loader itself can be removed using this function. 
+</DL>
+</P><P>
+
+When you come to set the fields in the <CODE>lt_user_dlloader</CODE>
+structure, they must each be of the correct type, as described below:
+</P><P>
+
+<A NAME="IDX41"></A>
+<DL>
+<DT><U>Type:</U> const char * <B>sym_prefix</B>
+<DD>If a particular module loader relies on a prefix to each symbol being
+looked up (for example, the Windows module loader necessarily adds a
+<SAMP>`_'</SAMP> prefix to each symbol name pased to <CODE>lt_dlsym</CODE>), it should
+be recorded in the <SAMP>`sym_prefix'</SAMP> field.
+</DL>
+</P><P>
+
+<A NAME="IDX42"></A>
+<DL>
+<DT><U>Type:</U> lt_module_t <B>lt_module_open_t</B> <I>(lt_dlloader_data_t <VAR>loader_data</VAR>, const char *<VAR>module_name</VAR>)</I>
+<DD>When <CODE>lt_dlopen</CODE> has reached your registered module loader when
+attempting to load a dynamic module, this is the type of the
+<CODE>module_open</CODE> function that will be called.  The name of the module
+that libltdl is attempting to load, along with the module loader
+instance data associated with the loader being used currently, are
+passed as arguments to such a function call.
+</P><P>
+
+The <CODE>lt_module_t</CODE> returned by functions of this type can be
+anything at all that can be recognised as unique to a successfully
+loaded module instance when passed back into the <CODE>module_close</CODE> or
+<CODE>find_sym</CODE> functions in the <CODE>lt_user_dlloader</CODE> module loader
+structure.
+</DL>
+</P><P>
+
+<A NAME="IDX43"></A>
+<DL>
+<DT><U>Type:</U> int <B>lt_module_close_t</B> <I>(lt_dlloader_data_t <VAR>loader_data</VAR>, lt_module_t <VAR>module</VAR>)</I>
+<DD>In a similar vein, a function of this type will be called by
+<CODE>lt_dlclose</CODE>, where <VAR>module</VAR> is the returned value from the
+<SAMP>`module_open'</SAMP> function which loaded this dynamic module instance.
+</DL>
+</P><P>
+
+<A NAME="IDX44"></A>
+<DL>
+<DT><U>Type:</U> lt_ptr_t <B>lt_find_sym_t</B> <I>(lt_dlloader_data_t <VAR>loader_data</VAR>, lt_module_t <VAR>module</VAR>,  const char *<VAR>symbol_name</VAR>)</I>
+<DD>In a similar vein once more, a function of this type will be called by
+<CODE>lt_dlsym</CODE>, and must return the address of <VAR>symbol_name</VAR> in
+<VAR>module</VAR>.
+</DL>
+</P><P>
+
+<A NAME="IDX45"></A>
+<DL>
+<DT><U>Type:</U> int <B>lt_dlloader_exit_t</B> <I>(lt_dlloader_data_t <VAR>loader_data</VAR>)</I>
+<DD>When a user module loader is <CODE>lt_dlloader_remove</CODE>d, a function of
+this type will be called.  That function is responsible for releasing
+any resouces that were allocated during the initialisation of the
+loader, so that they are not `leaked' when the <CODE>lt_user_dlloader</CODE>
+structure is recycled.
+</P><P>
+
+Note that there is no initialisation function type:  the initialisation
+of a user module loader should be performed before the loader is
+registered with <CODE>lt_dlloader_add</CODE>.
+</DL>
+</P><P>
+
+<A NAME="IDX46"></A>
+<DL>
+<DT><U>Type:</U> lt_dlloader_data_t <B>dlloader_data</B>
+<DD>The <VAR>dlloader_data</VAR> is a spare field which can be used to store or
+pass any data specific to a particular module loader.  That data will
+always be passed as the value of the first argument to each of the
+implementation functions above.
+</DL>
+</P><P>
+
+<A NAME="libltdl Loader Errors"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

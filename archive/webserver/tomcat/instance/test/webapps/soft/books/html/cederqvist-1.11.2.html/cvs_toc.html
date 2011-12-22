@@ -1,0 +1,502 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html40/loose.dtd">
+<HTML>
+<!-- Created on April, 18 2002 by texi2html 1.66 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<HEAD>
+<TITLE>CVS--Concurrent Versions System v1.11.2: Table of Contents</TITLE>
+
+<META NAME="description" CONTENT="CVS--Concurrent Versions System v1.11.2: Table of Contents">
+<META NAME="keywords" CONTENT="CVS--Concurrent Versions System v1.11.2: Table of Contents">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.66">
+
+</HEAD>
+
+<BODY LANG="en" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC_Contents"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1>Table of Contents</H1>
+<BLOCKQUOTE>
+<A NAME="TOC1" HREF="cvs_1.html#SEC1">1. Overview</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC2" HREF="cvs_1.html#SEC2">1.1 What is CVS?</A>
+<BR>
+<A NAME="TOC3" HREF="cvs_1.html#SEC3">1.2 What is CVS not?</A>
+<BR>
+<A NAME="TOC4" HREF="cvs_1.html#SEC4">1.3 A sample session</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC5" HREF="cvs_1.html#SEC5">1.3.1 Getting the source</A>
+<BR>
+<A NAME="TOC6" HREF="cvs_1.html#SEC6">1.3.2 Committing your changes</A>
+<BR>
+<A NAME="TOC7" HREF="cvs_1.html#SEC7">1.3.3 Cleaning up</A>
+<BR>
+<A NAME="TOC8" HREF="cvs_1.html#SEC8">1.3.4 Viewing differences</A>
+<BR>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+<A NAME="TOC9" HREF="cvs_2.html#SEC9">2. The Repository</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC10" HREF="cvs_2.html#SEC10">2.1 Telling CVS where your repository is</A>
+<BR>
+<A NAME="TOC11" HREF="cvs_2.html#SEC11">2.2 How data is stored in the repository</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC12" HREF="cvs_2.html#SEC12">2.2.1 Where files are stored within the repository</A>
+<BR>
+<A NAME="TOC13" HREF="cvs_2.html#SEC13">2.2.2 File permissions</A>
+<BR>
+<A NAME="TOC14" HREF="cvs_2.html#SEC14">2.2.3 File Permission issues specific to Windows</A>
+<BR>
+<A NAME="TOC15" HREF="cvs_2.html#SEC15">2.2.4 The attic</A>
+<BR>
+<A NAME="TOC16" HREF="cvs_2.html#SEC16">2.2.5 The CVS directory in the repository</A>
+<BR>
+<A NAME="TOC17" HREF="cvs_2.html#SEC17">2.2.6 CVS locks in the repository</A>
+<BR>
+<A NAME="TOC18" HREF="cvs_2.html#SEC18">2.2.7 How files are stored in the CVSROOT directory</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC19" HREF="cvs_2.html#SEC19">2.3 How data is stored in the working directory</A>
+<BR>
+<A NAME="TOC20" HREF="cvs_2.html#SEC20">2.4 The administrative files</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC21" HREF="cvs_2.html#SEC21">2.4.1 Editing administrative files</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC22" HREF="cvs_2.html#SEC22">2.5 Multiple repositories</A>
+<BR>
+<A NAME="TOC23" HREF="cvs_2.html#SEC23">2.6 Creating a repository</A>
+<BR>
+<A NAME="TOC24" HREF="cvs_2.html#SEC24">2.7 Backing up a repository</A>
+<BR>
+<A NAME="TOC25" HREF="cvs_2.html#SEC25">2.8 Moving a repository</A>
+<BR>
+<A NAME="TOC26" HREF="cvs_2.html#SEC26">2.9 Remote repositories</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC27" HREF="cvs_2.html#SEC27">2.9.1 Server requirements</A>
+<BR>
+<A NAME="TOC28" HREF="cvs_2.html#SEC28">2.9.2 Connecting with rsh</A>
+<BR>
+<A NAME="TOC29" HREF="cvs_2.html#SEC29">2.9.3 Direct connection with password authentication</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC30" HREF="cvs_2.html#SEC30">2.9.3.1 Setting up the server for password authentication</A>
+<BR>
+<A NAME="TOC31" HREF="cvs_2.html#SEC31">2.9.3.2 Using the client with password authentication</A>
+<BR>
+<A NAME="TOC32" HREF="cvs_2.html#SEC32">2.9.3.3 Security considerations with password authentication</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC33" HREF="cvs_2.html#SEC33">2.9.4 Direct connection with GSSAPI</A>
+<BR>
+<A NAME="TOC34" HREF="cvs_2.html#SEC34">2.9.5 Direct connection with kerberos</A>
+<BR>
+<A NAME="TOC35" HREF="cvs_2.html#SEC35">2.9.6 Connecting with fork</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC36" HREF="cvs_2.html#SEC36">2.10 Read-only repository access</A>
+<BR>
+<A NAME="TOC37" HREF="cvs_2.html#SEC37">2.11 Temporary directories for the server</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC38" HREF="cvs_3.html#SEC38">3. Starting a project with CVS</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC39" HREF="cvs_3.html#SEC39">3.1 Setting up the files</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC40" HREF="cvs_3.html#SEC40">3.1.1 Creating a directory tree from a number of files</A>
+<BR>
+<A NAME="TOC41" HREF="cvs_3.html#SEC41">3.1.2 Creating Files From Other Version Control Systems</A>
+<BR>
+<A NAME="TOC42" HREF="cvs_3.html#SEC42">3.1.3 Creating a directory tree from scratch</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC43" HREF="cvs_3.html#SEC43">3.2 Defining the module</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC44" HREF="cvs_4.html#SEC44">4. Revisions</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC45" HREF="cvs_4.html#SEC45">4.1 Revision numbers</A>
+<BR>
+<A NAME="TOC46" HREF="cvs_4.html#SEC46">4.2 Versions, revisions and releases</A>
+<BR>
+<A NAME="TOC47" HREF="cvs_4.html#SEC47">4.3 Assigning revisions</A>
+<BR>
+<A NAME="TOC48" HREF="cvs_4.html#SEC48">4.4 Tags--Symbolic revisions</A>
+<BR>
+<A NAME="TOC49" HREF="cvs_4.html#SEC49">4.5 Specifying what to tag from the working directory</A>
+<BR>
+<A NAME="TOC50" HREF="cvs_4.html#SEC50">4.6 Specifying what to tag by date or revision</A>
+<BR>
+<A NAME="TOC51" HREF="cvs_4.html#SEC51">4.7 Deleting, moving, and renaming tags</A>
+<BR>
+<A NAME="TOC52" HREF="cvs_4.html#SEC52">4.8 Tagging and adding and removing files</A>
+<BR>
+<A NAME="TOC53" HREF="cvs_4.html#SEC53">4.9 Sticky tags</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC54" HREF="cvs_5.html#SEC54">5. Branching and merging</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC55" HREF="cvs_5.html#SEC55">5.1 What branches are good for</A>
+<BR>
+<A NAME="TOC56" HREF="cvs_5.html#SEC56">5.2 Creating a branch</A>
+<BR>
+<A NAME="TOC57" HREF="cvs_5.html#SEC57">5.3 Accessing branches</A>
+<BR>
+<A NAME="TOC58" HREF="cvs_5.html#SEC58">5.4 Branches and revisions</A>
+<BR>
+<A NAME="TOC59" HREF="cvs_5.html#SEC59">5.5 Magic branch numbers</A>
+<BR>
+<A NAME="TOC60" HREF="cvs_5.html#SEC60">5.6 Merging an entire branch</A>
+<BR>
+<A NAME="TOC61" HREF="cvs_5.html#SEC61">5.7 Merging from a branch several times</A>
+<BR>
+<A NAME="TOC62" HREF="cvs_5.html#SEC62">5.8 Merging differences between any two revisions</A>
+<BR>
+<A NAME="TOC63" HREF="cvs_5.html#SEC63">5.9 Merging can add or remove files</A>
+<BR>
+<A NAME="TOC64" HREF="cvs_5.html#SEC64">5.10 Merging and keywords</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC65" HREF="cvs_6.html#SEC65">6. Recursive behavior</A>
+<BR>
+<A NAME="TOC66" HREF="cvs_7.html#SEC66">7. Adding, removing, and renaming files and directories</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC67" HREF="cvs_7.html#SEC67">7.1 Adding files to a directory</A>
+<BR>
+<A NAME="TOC68" HREF="cvs_7.html#SEC68">7.2 Removing files</A>
+<BR>
+<A NAME="TOC69" HREF="cvs_7.html#SEC69">7.3 Removing directories</A>
+<BR>
+<A NAME="TOC70" HREF="cvs_7.html#SEC70">7.4 Moving and renaming files</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC71" HREF="cvs_7.html#SEC71">7.4.1 The Normal way to Rename</A>
+<BR>
+<A NAME="TOC72" HREF="cvs_7.html#SEC72">7.4.2 Moving the history file</A>
+<BR>
+<A NAME="TOC73" HREF="cvs_7.html#SEC73">7.4.3 Copying the history file</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC74" HREF="cvs_7.html#SEC74">7.5 Moving and renaming directories</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC75" HREF="cvs_8.html#SEC75">8. History browsing</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC76" HREF="cvs_8.html#SEC76">8.1 Log messages</A>
+<BR>
+<A NAME="TOC77" HREF="cvs_8.html#SEC77">8.2 The history database</A>
+<BR>
+<A NAME="TOC78" HREF="cvs_8.html#SEC78">8.3 User-defined logging</A>
+<BR>
+<A NAME="TOC79" HREF="cvs_8.html#SEC79">8.4 Annotate command</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC80" HREF="cvs_9.html#SEC80">9. Handling binary files</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC81" HREF="cvs_9.html#SEC81">9.1 The issues with binary files</A>
+<BR>
+<A NAME="TOC82" HREF="cvs_9.html#SEC82">9.2 How to store binary files</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC83" HREF="cvs_10.html#SEC83">10. Multiple developers</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC84" HREF="cvs_10.html#SEC84">10.1 File status</A>
+<BR>
+<A NAME="TOC85" HREF="cvs_10.html#SEC85">10.2 Bringing a file up to date</A>
+<BR>
+<A NAME="TOC86" HREF="cvs_10.html#SEC86">10.3 Conflicts example</A>
+<BR>
+<A NAME="TOC87" HREF="cvs_10.html#SEC87">10.4 Informing others about commits</A>
+<BR>
+<A NAME="TOC88" HREF="cvs_10.html#SEC88">10.5 Several developers simultaneously attempting to run CVS</A>
+<BR>
+<A NAME="TOC89" HREF="cvs_10.html#SEC89">10.6 Mechanisms to track who is editing files</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC90" HREF="cvs_10.html#SEC90">10.6.1 Telling CVS to watch certain files</A>
+<BR>
+<A NAME="TOC91" HREF="cvs_10.html#SEC91">10.6.2 Telling CVS to notify you</A>
+<BR>
+<A NAME="TOC92" HREF="cvs_10.html#SEC92">10.6.3 How to edit a file which is being watched</A>
+<BR>
+<A NAME="TOC93" HREF="cvs_10.html#SEC93">10.6.4 Information about who is watching and editing</A>
+<BR>
+<A NAME="TOC94" HREF="cvs_10.html#SEC94">10.6.5 Using watches with old versions of CVS</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC95" HREF="cvs_10.html#SEC95">10.7 Choosing between reserved or unreserved checkouts</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC96" HREF="cvs_11.html#SEC96">11. Revision management</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC97" HREF="cvs_11.html#SEC97">11.1 When to commit?</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC98" HREF="cvs_12.html#SEC98">12. Keyword substitution</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC99" HREF="cvs_12.html#SEC99">12.1 Keyword List</A>
+<BR>
+<A NAME="TOC100" HREF="cvs_12.html#SEC100">12.2 Using keywords</A>
+<BR>
+<A NAME="TOC101" HREF="cvs_12.html#SEC101">12.3 Avoiding substitution</A>
+<BR>
+<A NAME="TOC102" HREF="cvs_12.html#SEC102">12.4 Substitution modes</A>
+<BR>
+<A NAME="TOC103" HREF="cvs_12.html#SEC103">12.5 Problems with the $@asis{}Log$ keyword.</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC104" HREF="cvs_13.html#SEC104">13. Tracking third-party sources</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC105" HREF="cvs_13.html#SEC105">13.1 Importing for the first time</A>
+<BR>
+<A NAME="TOC106" HREF="cvs_13.html#SEC106">13.2 Updating with the import command</A>
+<BR>
+<A NAME="TOC107" HREF="cvs_13.html#SEC107">13.3 Reverting to the latest vendor release</A>
+<BR>
+<A NAME="TOC108" HREF="cvs_13.html#SEC108">13.4 How to handle binary files with cvs import</A>
+<BR>
+<A NAME="TOC109" HREF="cvs_13.html#SEC109">13.5 How to handle keyword substitution with cvs import</A>
+<BR>
+<A NAME="TOC110" HREF="cvs_13.html#SEC110">13.6 Multiple vendor branches</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC111" HREF="cvs_14.html#SEC111">14. How your build system interacts with CVS</A>
+<BR>
+<A NAME="TOC112" HREF="cvs_15.html#SEC112">15. Special Files</A>
+<BR>
+<A NAME="TOC113" HREF="cvs_16.html#SEC113">A. Guide to CVS commands</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC114" HREF="cvs_16.html#SEC114">A.1 Overall structure of CVS commands</A>
+<BR>
+<A NAME="TOC115" HREF="cvs_16.html#SEC115">A.2 CVS's exit status</A>
+<BR>
+<A NAME="TOC116" HREF="cvs_16.html#SEC116">A.3 Default options and the ~/.cvsrc file</A>
+<BR>
+<A NAME="TOC117" HREF="cvs_16.html#SEC117">A.4 Global options</A>
+<BR>
+<A NAME="TOC118" HREF="cvs_16.html#SEC118">A.5 Common command options</A>
+<BR>
+<A NAME="TOC119" HREF="cvs_16.html#SEC119">A.6 admin--Administration</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC120" HREF="cvs_16.html#SEC120">A.6.1 admin options</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC121" HREF="cvs_16.html#SEC121">A.7 checkout--Check out sources for editing</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC122" HREF="cvs_16.html#SEC122">A.7.1 checkout options</A>
+<BR>
+<A NAME="TOC123" HREF="cvs_16.html#SEC123">A.7.2 checkout examples</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC124" HREF="cvs_16.html#SEC124">A.8 commit--Check files into the repository</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC125" HREF="cvs_16.html#SEC125">A.8.1 commit options</A>
+<BR>
+<A NAME="TOC126" HREF="cvs_16.html#SEC126">A.8.2 commit examples</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC127" HREF="cvs_16.html#SEC127">A.8.2.1 Committing to a branch</A>
+<BR>
+<A NAME="TOC128" HREF="cvs_16.html#SEC128">A.8.2.2 Creating the branch after editing</A>
+<BR>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+<A NAME="TOC129" HREF="cvs_16.html#SEC129">A.9 diff--Show differences between revisions</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC130" HREF="cvs_16.html#SEC130">A.9.1 diff options</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC131" HREF="cvs_16.html#SEC131">A.9.1.1 Line group formats</A>
+<BR>
+<A NAME="TOC132" HREF="cvs_16.html#SEC132">A.9.1.2 Line formats</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC133" HREF="cvs_16.html#SEC133">A.9.2 diff examples</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC134" HREF="cvs_16.html#SEC134">A.10 export--Export sources from CVS, similar to checkout</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC135" HREF="cvs_16.html#SEC135">A.10.1 export options</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC136" HREF="cvs_16.html#SEC136">A.11 history--Show status of files and users</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC137" HREF="cvs_16.html#SEC137">A.11.1 history options</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC138" HREF="cvs_16.html#SEC138">A.12 import--Import sources into CVS, using vendor branches</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC139" HREF="cvs_16.html#SEC139">A.12.1 import options</A>
+<BR>
+<A NAME="TOC140" HREF="cvs_16.html#SEC140">A.12.2 import output</A>
+<BR>
+<A NAME="TOC141" HREF="cvs_16.html#SEC141">A.12.3 import examples</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC142" HREF="cvs_16.html#SEC142">A.13 log--Print out log information for files</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC143" HREF="cvs_16.html#SEC143">A.13.1 log options</A>
+<BR>
+<A NAME="TOC144" HREF="cvs_16.html#SEC144">A.13.2 log examples</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC145" HREF="cvs_16.html#SEC145">A.14 rdiff---'patch' format diffs between releases</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC146" HREF="cvs_16.html#SEC146">A.14.1 rdiff options</A>
+<BR>
+<A NAME="TOC147" HREF="cvs_16.html#SEC147">A.14.2 rdiff examples</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC148" HREF="cvs_16.html#SEC148">A.15 release--Indicate that a Module is no longer in use</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC149" HREF="cvs_16.html#SEC149">A.15.1 release options</A>
+<BR>
+<A NAME="TOC150" HREF="cvs_16.html#SEC150">A.15.2 release output</A>
+<BR>
+<A NAME="TOC151" HREF="cvs_16.html#SEC151">A.15.3 release examples</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC152" HREF="cvs_16.html#SEC152">A.16 update--Bring work tree in sync with repository</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC153" HREF="cvs_16.html#SEC153">A.16.1 update options</A>
+<BR>
+<A NAME="TOC154" HREF="cvs_16.html#SEC154">A.16.2 update output</A>
+<BR>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+<A NAME="TOC155" HREF="cvs_17.html#SEC155">B. Quick reference to CVS commands</A>
+<BR>
+<A NAME="TOC156" HREF="cvs_18.html#SEC156">C. Reference manual for Administrative files</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC157" HREF="cvs_18.html#SEC157">C.1 The modules file</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC158" HREF="cvs_18.html#SEC158">C.1.1 Alias modules</A>
+<BR>
+<A NAME="TOC159" HREF="cvs_18.html#SEC159">C.1.2 Regular modules</A>
+<BR>
+<A NAME="TOC160" HREF="cvs_18.html#SEC160">C.1.3 Ampersand modules</A>
+<BR>
+<A NAME="TOC161" HREF="cvs_18.html#SEC161">C.1.4 Excluding directories</A>
+<BR>
+<A NAME="TOC162" HREF="cvs_18.html#SEC162">C.1.5 Module options</A>
+<BR>
+<A NAME="TOC163" HREF="cvs_18.html#SEC163">C.1.6 How the modules file &quot;program options&quot; programs are run</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC164" HREF="cvs_18.html#SEC164">C.2 The cvswrappers file</A>
+<BR>
+<A NAME="TOC165" HREF="cvs_18.html#SEC165">C.3 The commit support files</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC166" HREF="cvs_18.html#SEC166">C.3.1 The common syntax</A>
+<BR>
+<A NAME="TOC167" HREF="cvs_18.html#SEC167">C.3.2 Commitinfo</A>
+<BR>
+<A NAME="TOC168" HREF="cvs_18.html#SEC168">C.3.3 Verifying log messages</A>
+<BR>
+<A NAME="TOC169" HREF="cvs_18.html#SEC169">C.3.4 Editinfo</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC170" HREF="cvs_18.html#SEC170">C.3.4.1 Editinfo example</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC171" HREF="cvs_18.html#SEC171">C.3.5 Loginfo</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC172" HREF="cvs_18.html#SEC172">C.3.5.1 Loginfo example</A>
+<BR>
+<A NAME="TOC173" HREF="cvs_18.html#SEC173">C.3.5.2 Keeping a checked out copy</A>
+<BR>
+</BLOCKQUOTE>
+</BLOCKQUOTE>
+<A NAME="TOC174" HREF="cvs_18.html#SEC174">C.4 Rcsinfo</A>
+<BR>
+<A NAME="TOC175" HREF="cvs_18.html#SEC175">C.5 Ignoring files via cvsignore</A>
+<BR>
+<A NAME="TOC176" HREF="cvs_18.html#SEC176">C.6 The checkoutlist file</A>
+<BR>
+<A NAME="TOC177" HREF="cvs_18.html#SEC177">C.7 The history file</A>
+<BR>
+<A NAME="TOC178" HREF="cvs_18.html#SEC178">C.8 Expansions in administrative files</A>
+<BR>
+<A NAME="TOC179" HREF="cvs_18.html#SEC179">C.9 The CVSROOT/config configuration file</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC180" HREF="cvs_19.html#SEC180">D. All environment variables which affect CVS</A>
+<BR>
+<A NAME="TOC181" HREF="cvs_20.html#SEC181">E. Compatibility between CVS Versions</A>
+<BR>
+<A NAME="TOC182" HREF="cvs_21.html#SEC182">F. Troubleshooting</A>
+<BR>
+<BLOCKQUOTE>
+<A NAME="TOC183" HREF="cvs_21.html#SEC183">F.1 Partial list of error messages</A>
+<BR>
+<A NAME="TOC184" HREF="cvs_21.html#SEC184">F.2 Trouble making a connection to a CVS server</A>
+<BR>
+<A NAME="TOC185" HREF="cvs_21.html#SEC185">F.3 Other common problems</A>
+<BR>
+</BLOCKQUOTE>
+<A NAME="TOC186" HREF="cvs_22.html#SEC186">G. Credits</A>
+<BR>
+<A NAME="TOC187" HREF="cvs_23.html#SEC187">H. Dealing with bugs in CVS or this manual</A>
+<BR>
+<A NAME="TOC188" HREF="cvs_24.html#SEC188">Index</A>
+<BR>
+</BLOCKQUOTE>
+<HR SIZE=1>
+<BR>
+<FONT SIZE="-1">
+This document was generated
+by <I>Derek Robert Price</I> on <I>April, 18 2002</I>
+using <A HREF="http://texi2html.cvshome.org"><I>texi2html</I></A>
+</FONT>
+
+</BODY>
+</HTML>

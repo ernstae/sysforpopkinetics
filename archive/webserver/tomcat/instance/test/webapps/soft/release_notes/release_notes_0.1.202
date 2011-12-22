@@ -1,0 +1,34 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.201
+----------------------------------
+USER VISIBLE CHANGES
+
+Minor bug fixes to optimizer, the nonparametric method library, and
+the SPK library.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  None.
+
+BY:  Mitch Watrous
+
+WHEN:  February 12, 2007
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.202
+----------------------------------
+USER VISIBLE CHANGES
+
+Added nonparametric method to SPK.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  None
+
+BY:  Mitch Watrous
+
+WHEN:  February 28, 2007
+

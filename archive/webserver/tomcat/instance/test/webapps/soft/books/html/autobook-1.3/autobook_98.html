@@ -1,0 +1,388 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Adding a Test Suite</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Adding a Test Suite">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Adding a Test Suite">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC98"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_97.html#SEC97" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Including Texinfo Documentation" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_99.html#SEC99" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Rolling Distribution Tarballs" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_93.html#SEC93" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: A Large GNU Autotools Project" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_93.html#SEC93" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: A Large GNU Autotools Project" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_99.html#SEC99" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Rolling Distribution Tarballs" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 12.5 Adding a Test Suite </H2>
+<!--docid::SEC98::-->
+<P>
+
+Automake has very flexible support for automated test-suites within a
+project distribution, which are discussed more fully in the Automake
+manual.  I have added a simple shell script based testing facility to
+Sic using this support -- this kind of testing mechanism is perfectly
+adequate for command line projects.  The tests themselves simply feed
+prescribed input to the uninstalled <CODE>sic</CODE> interpreter and
+compare the actual output with what is expected.
+</P><P>
+
+Here is one of the test scripts:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>## -*- sh -*-
+## incomplete.test -- Test incomplete command handling
+
+# Common definitions
+if test -z "$srcdir"; then
+    srcdir=echo "$0" | sed s,[^/]*$,,'
+    test "$srcdir" = "$0" &#38;&#38; srcdir=.
+    test -z "$srcdir" &#38;&#38; srcdir=.
+    test "${VERBOSE+set}" != set &#38;&#38; VERBOSE=1
+fi
+. $srcdir/defs
+
+# this is the test script
+cat &#60;&#60;\EOF &#62; in.sic
+echo "1
+2
+3"
+EOF
+
+# this is the output we should expect to see
+cat &#60;&#60;\EOF &#62;ok
+1
+2
+3
+EOF
+
+cat &#60;&#60;\EOF &#62;errok
+EOF
+
+# Run the test saving stderr to a file, and showing stdout
+# if VERBOSE == 1
+$RUNSIC in.sic  2&#62; err | tee -i out &#62;&#38;2
+
+# Test against expected output
+if ${CMP} -s out ok; then
+    :
+else
+    echo "ok:" &#62;&#38;2
+    cat ok &#62;&#38;2
+    exit 1
+fi
+
+# Munge error output to remove leading directories, `lt-' or
+# trailing `.exe'
+sed -e "s,^[^:]*[lt-]*sic[.ex]*:,sic:," err &#62;sederr &#38;&#38; mv sederr err
+
+# Show stderr if doesnt match expected output if VERBOSE == 1
+if "$CMP" -s err errok; then
+    :
+else
+    echo "err:" &#62;&#38;2
+    cat err &#62;&#38;2
+    echo "errok:" &#62;&#38;2
+    cat errok &#62;&#38;2
+    exit 1
+fi
+
+</pre></td></tr></table></P><P>
+
+The tricky part of this script is the first part which discovers the
+location of (and loads)  <TT>`$srcdir/defs'</TT>.  It is a little convoluted
+because it needs to work if the user has compiled the project in a
+separate build tree -- in which case the <TT>`defs'</TT> file is in a
+separate source tree and not in the actual directory in which the test
+is executed.
+</P><P>
+
+The <TT>`defs'</TT> file allows me to factor out the common definitions from
+each of the test files so that it can be maintained once in a single
+file that is read by all of the tests:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#! /bin/sh
+
+# Make sure srcdir is an absolute path.  Supply the variable
+# if it does not exist.  We want to be able to run the tests
+# stand-alone!!
+#
+srcdir=${srcdir-.}
+if test ! -d $srcdir ; then
+    echo "defs: installation error" 1&#62;&#38;2
+    exit 1
+fi
+
+#  IF the source directory is a Unix or a DOS root directory, ...
+#
+case "$srcdir" in
+    /* | [A-Za-z]:\\*) ;;
+    *) srcdir=`\cd $srcdir &#38;&#38; pwd` ;;
+esac
+
+case "$top_builddir" in
+    /* | [A-Za-z]:\\*) ;;
+    *) top_builddir=`\cd ${top_builddir-..} &#38;&#38; pwd` ;;
+esac
+
+progname=`echo "$0" | sed 's,^.*/,,'`
+testname=`echo "$progname" | sed 's,-.*$,,'`
+testsubdir=${testsubdir-testSubDir}
+
+SIC_MODULE_PATH=$top_builddir/modules
+export SIC_MODULE_PATH
+
+# User can set VERBOSE to prevent output redirection
+case x$VERBOSE in
+    xNO | xno | x0 | x)
+        exec &#62; /dev/null 2&#62;&#38;1
+        ;;
+esac
+
+rm -rf $testsubdir &#62; /dev/null 2&#62;&#38;1
+mkdir $testsubdir
+cd $testsubdir \
+   || { echo "Cannot make or change into $testsubdir"; exit 1; }
+
+echo "=== Running test $progname"
+
+CMP="${CMP-cmp}"
+RUNSIC="${top_builddir}/src/sic"
+
+</pre></td></tr></table></P><P>
+
+Having written a few more test scripts, and made sure that they are
+working by running them from the command line, all that remains is to
+write a suitable <TT>`Makefile.am'</TT> so that <CODE>automake</CODE> can run
+the test suite automatically.
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>## Makefile.am -- Process this file with automake to produce Makefile.in
+
+EXTRA_DIST              = defs $(TESTS)
+MAINTAINERCLEANFILES    = Makefile.in
+
+testsubdir              = testSubDir
+
+TESTS_ENVIRONMENT       = top_builddir=$(top_builddir)
+
+TESTS                   =                       \
+                        empty-eval.test         \
+                        empty-eval-2.test       \
+                        empty-eval-3.test       \
+                        incomplete.test         \
+                        multicmd.test
+
+distclean-local:
+        -rm -rf $(testsubdir)
+
+</pre></td></tr></table></P><P>
+
+I have used the <SAMP>`testsubdir'</SAMP> macro to run the tests in their own
+subdirectory so that the directory containing the actual test scripts is
+not polluted with lots of fallout files generated by running the tests.
+For completeness I have used a <EM>hook target</EM><A NAME="DOCF26" HREF="autobook_fot.html#FOOT26">(26)</A> to remove this subdirectory when the user types:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ make distclean
+...
+rm -rf testSubDir
+...
+</pre></td></tr></table></P><P>
+
+Adding more tests is accomplished by creating a new test script and
+adding it to the list in <CODE>noinst_SCRIPTS</CODE>.  Remembering to add the
+new <TT>`tests'</TT> subdirectory to <TT>`configure.in'</TT> and the top-level
+<TT>`Makefile.am'</TT>, and reconfiguring the project to propogate the
+changes into the various generated files, I can run the whole test suite
+from the top directory with:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ make check
+</pre></td></tr></table></P><P>
+
+It is often useful run tests in isolation, either when developing new
+tests, or to examine more closely why a test has failed unexpectedly.
+Having set this test suite up as I did, individual tests can be executed
+with:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ VERBOSE=1 make check TESTS=incomplete.test
+make  check-TESTS
+make[1]: Entering directory
+/tmp/sic/tests
+=== Running test incomplete.test
+1
+2
+3
+PASS: incomplete.test
+==================
+All 1 tests passed
+==================
+make[1]: Leaving directory /tmp/sic/tests
+$ ls testSubDir/
+err   errok   in.sic   ok   out
+</pre></td></tr></table></P><P>
+
+The <TT>`testSubDir'</TT> subdirectory now contains the expected and actual
+output from that particular test for both <TT>`stdout'</TT> and
+<TT>`stderr'</TT>, and the input file which generated the actual output.
+Had the test failed, I would be able to look at these files to decide
+whether there is a bug in the program or simply a bug in the test
+script.  Being able to examine individual tests like this is invaluable,
+especially when the test suite becomes very large -- because you will,
+naturally, add tests every time you add features to a project or find
+and fix a bug.
+</P><P>
+
+Another alternative to the pure shell based test mechanism I have
+presented here is the Autotest facility by Fran@,cois Pinard, as used
+in Autoconf after release 2.13.
+</P><P>
+
+Later in <A HREF="autobook_182.html#SEC182">20. A Complex GNU Autotools Project</A>, the Sic project will be
+revisited to take advantage of some of the more advanced features of
+GNU Autotools.  But first these advanced features will be discussed in the
+next several chapters -- starting, in the next chapter, with a
+discussion of how GNU Autotools can help you to make a tarred distribution
+of your own projects.
+</P><P>
+
+<A NAME="Rolling Distribution Tarballs"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

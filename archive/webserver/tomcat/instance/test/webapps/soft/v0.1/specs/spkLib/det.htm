@@ -1,0 +1,278 @@
+<html><head>
+<title>Determinant of a Positive Definite Symmetric Matrix</title>
+<meta name="description" id="description" content="Determinant of a Positive Definite Symmetric Matrix">
+<meta name="keywords" id="keywords" content=" det Determinant matrix ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_det_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>general</option>
+<option>det</option>
+</select>
+</td>
+<td><a href="dbl_eps_equal_mult.htm" target="_top">Prev</a>
+</td><td><a href="detva.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>general-&gt;</option>
+<option>ABA_x</option>
+<option>ABA_xVA</option>
+<option>addition</option>
+<option>AkronBtimesC</option>
+<option>AkronBtimesCRef</option>
+<option>AkronBtimesCVA</option>
+<option>AkronItimesC</option>
+<option>AkronItimesCVA</option>
+<option>allTrue</option>
+<option>allZero</option>
+<option>backDiv</option>
+<option>BlockAlloc</option>
+<option>blockDiagonalDerivative</option>
+<option>centdiff</option>
+<option>centdiffVA</option>
+<option>cholesky</option>
+<option>countTrues</option>
+<option>CovarianceClasses</option>
+<option>elsq</option>
+<option>elsqVA</option>
+<option>elsqFuncOb</option>
+<option>elsq_x</option>
+<option>elsq_xVA</option>
+<option>elsq_xDiag</option>
+<option>elsq_xBlockDiag</option>
+<option>DBL_EPS_EQUAL_MULT</option>
+<option>det</option>
+<option>detVA</option>
+<option>divByScalar</option>
+<option>DMclass</option>
+<option>elementwiseAnd</option>
+<option>elementwiseOr</option>
+<option>File</option>
+<option>FpErrorChecker</option>
+<option>ModelFunction</option>
+<option>ModelDerivative</option>
+<option>getCol</option>
+<option>getMulCols</option>
+<option>getMulRows</option>
+<option>getRow</option>
+<option>getSubblock</option>
+<option>identityNum</option>
+<option>identityVA</option>
+<option>IkronBtimesC</option>
+<option>IkronBtimesCVA</option>
+<option>inverse</option>
+<option>inverseVA</option>
+<option>inxToMax</option>
+<option>isDblEpsEqual</option>
+<option>isDmatEpsEqual</option>
+<option>isGreaterThanOrEqualTo</option>
+<option>isLessThanOrEqualTo</option>
+<option>isSymmetric</option>
+<option>matabs</option>
+<option>matmaxScalar</option>
+<option>matmaxMatrices</option>
+<option>matminScalar</option>
+<option>matminMatrices</option>
+<option>mulByScalar</option>
+<option>multiply</option>
+<option>norm</option>
+<option>Optimizer</option>
+<option>pi</option>
+<option>placeRows</option>
+<option>printInMatrix</option>
+<option>quasinewtonanybox</option>
+<option>replaceIth</option>
+<option>replaceJth</option>
+<option>replaceSubblockDoubleMatrix</option>
+<option>replaceSubblockValarray</option>
+<option>rvec</option>
+<option>rvecVA</option>
+<option>rvecInverse</option>
+<option>SpkError</option>
+<option>SpkException</option>
+<option>SpkValarray</option>
+<option>subtraction</option>
+<option>symmetrize</option>
+<option>symmetrizeVA</option>
+<option>System</option>
+<option>transpose</option>
+<option>transposeRef</option>
+<option>transposeVA</option>
+<option>transposeDerivative</option>
+<option>transposeDerivativeVA</option>
+<option>transposeRowBlocks</option>
+<option>transposeRowBlocksVA</option>
+<option>UTranTimesSymKronSymTimesU</option>
+<option>UTranTimesSymKronSymTimesU_x</option>
+<option>WarningsManager_constructor</option>
+<option>WarningsManager_addWarning</option>
+<option>WarningsManager_addWarningList</option>
+<option>WarningsManager_clearAllWarnings</option>
+<option>WarningsManager_anyWarnings</option>
+<option>WarningsManager_getWarningList</option>
+<option>WarningsManager_getAllWarnings</option>
+</select>
+</td>
+<td>det</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Arguments</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+<center><b><big><big>Determinant of a Positive Definite Symmetric Matrix</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Prototype</b>   </td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>void&nbsp;det(&nbsp;const&nbsp;DoubleMatrix&amp;&nbsp;</span></font></code><i><span style='white-space: nowrap'>dmatA</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;double*&nbsp;</span></font></code><i><span style='white-space: nowrap'>pdB</span></i><code><font color="blue"><span style='white-space: nowrap'>,&nbsp;long&nbsp;int*&nbsp;</span></font></code><i><span style='white-space: nowrap'>plC</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;)</span></font></code>   </td></tr><tr><td align='left'  valign='top'>
+ 
+</td></tr>
+</table>
+See also: <a href="inverse.htm" target="_top"><span style='white-space: nowrap'>inverse()</span></a>
+
+
+<br>
+<br>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Evaluates the determinant of the positive definite symmetric matrix <code><span style='white-space: nowrap'><i>A</i></span></code>.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>To be specific, this function computes the determinant of 
+positive definite symmetric <code><span style='white-space: nowrap'><i>A</i></span></code> as
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>c</i><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<i>det</i>(&nbsp;<i>A</i>&nbsp;)&nbsp;=&nbsp;<i>b</i>&nbsp;*&nbsp;2&nbsp;&nbsp;,<br>
+<br>
+</span></code>where <code><span style='white-space: nowrap'><i>b</i></span></code> is a real number and <code><span style='white-space: nowrap'><i>c</i></span></code> is an integer.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>dmatA</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">DoubleMatrix</font></code> <i>dmatA</i> contains the 
+positive definite symmetric matrix <code><span style='white-space: nowrap'><i>A</i></span></code>.  
+If the matrix does not have these properties, 
+it throws an <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pdB</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>On output, the <code><font color="blue">double</font></code> value pointed to by <i>pdB</i> will 
+be equal to <code><span style='white-space: nowrap'><i>b</i></span></code>.
+Note that the <code><font color="blue">double</font></code> value pointed to by <i>pdB</i> must 
+be declared in the function that calls this function.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>plC</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>On output, the <code><font color="blue">long int</font></code> value pointed to by <i>plC</i> will 
+be equal to <code><span style='white-space: nowrap'><i>c</i></span></code>.
+Note that the <code><font color="blue">long int</font></code> value pointed to by <i>plC</i> must 
+be declared in the function that calls this function.
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile and link the C++ program,
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#include&nbsp;&quot;det.h&quot;<br>
+#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+#include&nbsp;&lt;iostream&gt;<br>
+#include&nbsp;&lt;cstdlib&gt;<br>
+#include&nbsp;&lt;iomanip&gt;<br>
+#include&nbsp;&lt;cmath&gt;<br>
+<br>
+int&nbsp;main()<br>
+{<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;int&nbsp;nARow&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;int&nbsp;nACol=&nbsp;nARow;<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;dmatA(&nbsp;nARow,&nbsp;nACol&nbsp;);<br>
+&nbsp;&nbsp;double*&nbsp;pdAData&nbsp;=&nbsp;dmatA.data();<br>
+&nbsp;&nbsp;pdAData[0&nbsp;+&nbsp;0&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;1000000.0;<br>
+&nbsp;&nbsp;pdAData[0&nbsp;+&nbsp;1&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1.0;<br>
+&nbsp;&nbsp;pdAData[1&nbsp;+&nbsp;0&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1.0;<br>
+&nbsp;&nbsp;pdAData[1&nbsp;+&nbsp;1&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.0;<br>
+<br>
+&nbsp;&nbsp;double&nbsp;b;<br>
+&nbsp;&nbsp;long&nbsp;int&nbsp;c;<br>
+&nbsp;&nbsp;det(&nbsp;dmatA&nbsp;,&nbsp;&amp;b,&nbsp;&amp;c&nbsp;);<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;setiosflags(ios::scientific)&nbsp;&lt;&lt;&nbsp;setprecision(15);<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;A&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;dmatA.print();<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;det(&nbsp;A&nbsp;)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;b&nbsp;*&nbsp;pow(&nbsp;2.0,&nbsp;c&nbsp;)&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;return&nbsp;EXIT_SUCCESS;<br>
+}<br>
+<br>
+</span>
+</font></code>
+then it should output the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+A&nbsp;=<br>
+[1.000000000000000e+006,&nbsp;-1.000000000000000e-003]<br>
+[-1.000000000000000e+000,&nbsp;2.000000000000000e+000]<br>
+<br>
+det(&nbsp;A&nbsp;)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;1.999999000000000e+006<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/det.cpp
+
+</body>
+</html>

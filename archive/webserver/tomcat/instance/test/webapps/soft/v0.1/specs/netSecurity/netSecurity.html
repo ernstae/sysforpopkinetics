@@ -1,0 +1,618 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Network Security Specification</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Network Security Specification</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>March 1, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN12"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN17"
+>High Level Requirements</A
+></DT
+><DT
+><A
+HREF="#AEN30"
+>Process Level Requirements</A
+></DT
+><DT
+><A
+HREF="#AEN57"
+>Spk Network Security Requirements</A
+></DT
+><DT
+><A
+HREF="#AEN60"
+>Spk Development and Demonstration Network</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN12"
+></A
+>Introduction</H2
+><P
+>&#13;      This document is a specification for the design and
+      configuration of the 
+      <I
+CLASS="emphasis"
+>System for Population Kinetics (Spk)</I
+>
+      to provide a high degree
+      of security against intrusion and attack via the Internet.
+      As a practical matter, no system is absolutely safe. The
+      goal of Spk, however, is to be at least as safe as 
+      major electronic commerce and web services sites.  This
+      is a reasonable expectation, because Spk and web commerce
+      use the same technology.
+    </P
+><P
+>&#13;      Spk consists of a number of different processes running
+      concurrently.  Each type of process has its own security
+      requirements.  This document begins with an analysis
+      of these needs.  It then goes on to show how these 
+      requirements can be met with a straight-forward and 
+      inexpensive configuration of software and hardware.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN17"
+></A
+>High Level Requirements</H2
+><P
+>&#13;      These requirements address the security concerns of the
+      user and of the service provider. 
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Service Provider Authentication</I
+>
+	    Whenever a user accesses an Spk service, she needs to
+	    know that the service is authentic.  She does not 
+	    want to entrust her model designs or her data to a
+	    site which might be an imposter.  
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>User Authentication</I
+>
+	    An Spk service provider needs assurance that the 
+	    user accessing the service has been authorized to
+	    do so.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Security of Models, Data, Jobs and Results</I
+>
+	    A user needs to know that his information is secure
+	    from tampering, misappropriation and loss.
+	    It must be transmitted to and from Spk securely
+	    and its security must be assured while it is stored
+	    within the system.
+	  </P
+></LI
+></OL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN30"
+></A
+>Process Level Requirements</H2
+><P
+>&#13;      A functioning Spk consists of many independent processes
+      running concurrently. Some processes or groups of processes
+      of the same type require their own computer. Others can
+      share a computer with different processes.  In the following
+      discussion, when we talk of <I
+CLASS="emphasis"
+>servers</I
+>,
+      we do not necessarily mean that these are all hosted on
+      separate machines.  A minimal Spk requires only
+      two separate computers, in addition to client workstations
+      and a gateway/firewall.
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Client Workstations:</I
+>
+	    Laptops, desktops, MDAs on which users run the
+	    Model Design Agent (MDA) subsystem.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Gateway/Firewall:</I
+>
+	    a computer which provides a gateway to the 
+	    public Internet while greatly restricting this
+	    access for security reasons.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Computational Server:</I
+>
+	    the numerical computation engine that is
+	    the heart of the system.  It normally consists of
+	    a processor cluster.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Web Server:</I
+> 
+	    the web interface for users, which is also the interface
+	    between the MDA and the rest of the system.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Database Server:</I
+>
+	    provides the database by which all interprocess
+	    communication is performed and which contains
+	    a complete history of the service provided by this
+	    Spk.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Application Server:</I
+>
+	    compiles model descriptions and job specifications
+	    from the MDA into the form required by the computational
+	    server.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Administrative Server:</I
+>
+	    database backup; external access for system administrators
+	    and software developers.
+	  </P
+></LI
+></OL
+>
+    </P
+><P
+>&#13;    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN57"
+></A
+>Spk Network Security Requirements</H2
+><P
+>&#13;    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN60"
+></A
+>Spk Development and Demonstration Network</H2
+><P
+>&#13;      The Spk network is attached to the public Internet via a
+      dedicated computer that acts as a firewall and gateway.
+      All network traffic into and out of the Spk network 
+      passes through the firewall.
+    </P
+><DIV
+CLASS="figure"
+><A
+NAME="AEN63"
+></A
+><P
+><IMG
+SRC="network.png"></P
+><P
+><B
+>Figure 1. Spk Network</B
+></P
+></DIV
+><P
+>&#13;      The Spk network consists of two subnetworks:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>LAN (Local Area Network)</P
+></LI
+><LI
+><P
+>DMZ (Demilitarized Zone)</P
+></LI
+></OL
+>
+    </P
+><P
+>&#13;      Of the two, the LAN is the more secure.  Hosts on the LAN
+      are not reachable from the Internet, because access is 
+      blocked by the firewall.  In addition, all of these hosts
+      have so-called <I
+CLASS="emphasis"
+>private</I
+> IP addresses,
+      which are ignored by the routing and switching equipment
+      of the Internet. These private IP addresses render the
+      LAN invisible to the public Internet.
+    </P
+><P
+>&#13;      Just like the LAN, the hosts in the DMZ are assigned private
+      IP addresses.  Although these hosts are invisible to the
+      Internet, a few of the services that they provide are not.
+      Located in the DMZ are a web server and an ssh server.
+      By virtue of an internet feature known as 
+      <I
+CLASS="emphasis"
+>port forwarding</I
+>, the firewall sends any
+      requests for web service (http or https) to the web server,
+      and any request for ssh connection to the ssh server. 
+    </P
+><P
+>&#13;      The invisiblity of the individual hosts of the LAN and the DMZ
+      shields them from external attack. All hosts connected to
+      networks are capable of providing many services which are vulnerable,
+      due to faulty software or to misconfiguration.
+      In the Spk network, only two services are exposed to the
+      public Internet, greatly reducing the chances of error.  
+      The two services offered correspond exactly to the set of 
+      services essential to the demonstration and ongoing development of Spk.
+    </P
+><P
+>&#13;      The table, below, lists the hosts on the two subnetworks.
+      <DIV
+CLASS="table"
+><A
+NAME="AEN78"
+></A
+><P
+><B
+>Table 1. Hosts Located in Each Subnetwork</B
+></P
+><TABLE
+BORDER="1"
+WIDTH="100%"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+WIDTH="10%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Subnetwork</TH
+><TH
+WIDTH="20%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Host</TH
+><TH
+WIDTH="70%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+WIDTH="10%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>DMZ</TD
+><TD
+WIDTH="20%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Public Web Server</TD
+><TD
+WIDTH="70%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&#13;		Provides a web site, accessible
+		from the public Internet, for users of the demonstration
+		Spk system.
+	      </TD
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&nbsp;</TD
+><TD
+WIDTH="20%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Ssh Server</TD
+><TD
+WIDTH="70%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&#13;		Although they cannot log into hosts on the LAN from
+		the Internet, developers can log into this server in 
+		the DMZ and then can use it as the base for logging into
+		hosts on the LAN.
+	      </TD
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>LAN</TD
+><TD
+WIDTH="20%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Database Server</TD
+><TD
+WIDTH="70%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Spk Database resides here.</TD
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&nbsp;</TD
+><TD
+WIDTH="20%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Application Server</TD
+><TD
+WIDTH="70%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Aspk Compiler resides here.</TD
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&nbsp;</TD
+><TD
+WIDTH="20%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Computation Server</TD
+><TD
+WIDTH="70%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Cspk (eventually a cluster) resides here.
+	      </TD
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&nbsp;</TD
+><TD
+WIDTH="20%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Private Web Server</TD
+><TD
+WIDTH="70%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Used for development.</TD
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&nbsp;</TD
+><TD
+WIDTH="20%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Developer Workstations</TD
+><TD
+WIDTH="70%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Spk is developed on these hosts.</TD
+></TR
+><TR
+><TD
+WIDTH="10%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&nbsp;</TD
+><TD
+WIDTH="20%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>General Server</TD
+><TD
+WIDTH="70%"
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>&#13;		Provides several functions:
+		<P
+></P
+><UL
+><LI
+><P
+>&#13;		      Backup for all hosts on the network.
+		    </P
+></LI
+><LI
+><P
+>&#13;		      Shared file storage for development.
+		    </P
+></LI
+><LI
+><P
+>&#13;		      RFPK Projects Database and applications.
+		    </P
+></LI
+></UL
+>
+	      </TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

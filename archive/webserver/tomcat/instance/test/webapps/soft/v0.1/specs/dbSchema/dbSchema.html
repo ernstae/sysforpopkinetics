@@ -1,0 +1,2391 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>Database Schema</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+>Database Schema</A
+></H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;	The schema for the Spk database (spkdb) is presented in SQL.
+	In addition, the context for the database design is 
+	presented, as well as a short description of each table
+	and each field.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>November 19, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.01</TD
+><TD
+ALIGN="LEFT"
+>November 21, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Clarified description of xml_source.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.02</TD
+><TD
+ALIGN="LEFT"
+>December 26, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added discussion of transaction processing.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.03</TD
+><TD
+ALIGN="LEFT"
+>February 3, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Various modifications to schema.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.04</TD
+><TD
+ALIGN="LEFT"
+>November 19, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: jd</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>More additions to schema.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.05</TD
+><TD
+ALIGN="LEFT"
+>May 9, 2006</TD
+><TD
+ALIGN="LEFT"
+>Revised by: jd</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>More additions to schema.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.06</TD
+><TD
+ALIGN="LEFT"
+>June 30, 2008</TD
+><TD
+ALIGN="LEFT"
+>Revised by: jd</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>More additions to schema.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN42"
+>Introduction</A
+></DT
+><DT
+><A
+HREF="#AEN52"
+>Architectural Context</A
+></DT
+><DT
+><A
+HREF="#AEN106"
+>Transaction Processing Considerations</A
+></DT
+><DT
+><A
+HREF="#AEN132"
+>SQL Schema</A
+></DT
+><DT
+><A
+HREF="#AEN136"
+>Static Data</A
+></DT
+><DT
+><A
+HREF="#tables_and_fields"
+>Tables and Fields</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN142"
+>class</A
+></DT
+><DT
+><A
+HREF="#AEN173"
+>dataset</A
+></DT
+><DT
+><A
+HREF="#AEN218"
+>end</A
+></DT
+><DT
+><A
+HREF="#AEN245"
+>history</A
+></DT
+><DT
+><A
+HREF="#AEN288"
+>folder</A
+></DT
+><DT
+><A
+HREF="#AEN322"
+>job</A
+></DT
+><DT
+><A
+HREF="#AEN433"
+>method</A
+></DT
+><DT
+><A
+HREF="#AEN464"
+>model</A
+></DT
+><DT
+><A
+HREF="#AEN509"
+>state</A
+></DT
+><DT
+><A
+HREF="#AEN536"
+>user</A
+></DT
+><DT
+><A
+HREF="#AEN618"
+>team</A
+></DT
+></DL
+></DD
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN42"
+>Introduction</A
+></H2
+><P
+>&#13;      This specification describes the logical design of the
+      Spk database.  It complements two other specifications:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    <A
+HREF="../erModel/erModel.html"
+TARGET="_top"
+>&#13;	      Database Entity-Relationship Model
+	    </A
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <A
+HREF="../jobHistory/jobHistory.html"
+TARGET="_top"
+>&#13;	      Job History Model
+	    </A
+>
+	  </P
+></LI
+></UL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN52"
+>Architectural Context</A
+></H2
+><P
+>&#13;      The Spk system architecture is comprised of three major 
+      independent processes, each of which may have multiple
+      instances running simultaneously.  The major processes
+      are the following:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+> 
+	    <I
+CLASS="emphasis"
+>MDA Surrogate.</I
+>
+	    The Model Design Agent is a client application which
+	    runs on the user's workstation.  There will typically
+	    be many MDAs in operation at any given time.  Each
+	    MDA communicates with the rest of Spk via a secure
+	    Internet connection to a web server.  The portion of
+	    the web server which supports the MDA is called 
+	    the MDA Surrogate.  For performance reasons, the
+	    architecture permits multiple MDA Surrogates to 
+	    be running simultaneously on one or more server
+	    machines.  
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Aspk Compiler</I
+>.  The Application
+	    Server for Population Kinetics is a specialized compiler
+	    which translates model specifications received from 
+	    MDAs into C++ source code to be compiled and linked
+	    into object code and then run by the Cspk. To 
+	    optimize performance, there can be multiple Aspk
+	    Compilers running simultaneously on one or more
+	    server machines.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Cspk</I
+>.  The Computational Server
+	    for Population Kinetics receives source code for a
+	    model along with scientific
+	    data from the Aspk, utilizes a C++ compiler and linker
+	    to build a representation of the model in object code,
+	    and then executes it.  There can be multiple
+	    Cspk server machines and processor clusters.
+	  </P
+></LI
+></OL
+>
+    </P
+><P
+>&#13;      These three tasks run continuously and, hence, are
+      the type of processes known as <I
+CLASS="emphasis"
+>daemons</I
+>.
+      A daemon is implemented and installed in such a way that
+      it starts automatically when the host computer on 
+      which it runs is booted up, and it stops gracefully when
+      the machine is shut down.
+    </P
+><P
+>&#13;      The Spk database is <I
+CLASS="emphasis"
+>the sole means of communication</I
+>
+      between these daemons. It plays, 
+      therefore, a central role in the Spk architecture.  The principal
+      interprocess communications are the following:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>MDA Surrogate to Aspk Compiler</I
+>.
+	    The MDA submits a user job, via the Surrogate,
+	    by creating a new row
+	    in the <I
+CLASS="emphasis"
+>job</I
+> table, storing
+	    the model in the <I
+CLASS="emphasis"
+>xml_source</I
+> field,
+	    the data in the <I
+CLASS="emphasis"
+>xml_data</I
+> field,
+	    the user's identification number in the
+	    <I
+CLASS="emphasis"
+>user_id</I
+> field, and
+	    setting the <I
+CLASS="emphasis"
+>state_code</I
+> field to
+	    "Queued to Compile".
+	    The Aspk Compiler 
+	    selects the job from the queue when it has become the highest
+	    priority job with "Queued to Compile" status,
+	    retrieving the model and data and setting 
+	    <I
+CLASS="emphasis"
+>state_code</I
+> to "Compiling".
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Aspk Compiler to MDA</I
+>. If, for any 
+	    reason, the compilation process fails, the Aspk Compiler
+	    stores an error report in the
+	    <I
+CLASS="emphasis"
+>report</I
+> field of the 
+	    job, sets <I
+CLASS="emphasis"
+>state_code </I
+> to "End"
+	    and <I
+CLASS="emphasis"
+>end_code</I
+>
+	    to "Compilation Error".  When querying the database,
+	    an MDA Surrogate notices that one of its jobs has reached the
+	    "End" state and retrieves the report from the database.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Aspk Compiler to Cspk</I
+>.  If the model
+	    compiles successfully, the Aspk Compiler stores
+	    an archive of C++ source code and data into the 
+	    <I
+CLASS="emphasis"
+>cpp_source</I
+> field of the job
+	    and sets <I
+CLASS="emphasis"
+>state_code</I
+> to "Queued to Run".
+	    A Cspk selects the job when it is the job of highest
+	    priority in the "Queued to Run" state, retrieving 
+	    the source code and data and setting 
+	    <I
+CLASS="emphasis"
+>state_code</I
+> to "Running".
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Cspk to MDA Surrogate</I
+>.  
+	    When the model runs to completion, the Cspk stores
+	    the final report in the <I
+CLASS="emphasis"
+>report</I
+>
+	    field of the job, sets <I
+CLASS="emphasis"
+>state_code</I
+>
+	    to "End" and <I
+CLASS="emphasis"
+>end_code</I
+> to
+	    "Successful Run".  When an MDA Surrogate notices that one of
+	    its jobs had reached the "End" state, 
+	    it retrieves the final report.
+	  </P
+></LI
+></UL
+>
+     </P
+><P
+>&#13;      Several very important points must be emphasized:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    All the high-level interprocess communication described
+	    above is <I
+CLASS="emphasis"
+>asynchronous</I
+>. The loose
+	    coupling between the daemons is very attractive from
+	    an operational standpoint because additional instances
+	    of the daemons can be easily added or subtracted at
+	    any time.  There is a slight penalty to be paid in 
+	    terms of communications latency, but this is negligible
+	    given the low activity level in the queues.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Multiple processes may be updating the 
+	    <I
+CLASS="emphasis"
+>job</I
+> table simultaneously. 
+	    These updates must be <I
+CLASS="emphasis"
+>atomic</I
+>
+	    transactions.
+	  </P
+></LI
+></UL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN106"
+>Transaction Processing Considerations</A
+></H2
+><P
+>&#13;      In general, multiple independent processes will be modifying
+      the database simultaneously. In designing the database, it is
+      imperative to anticipate situations in which two processes,
+      attempting to do the same thing at the same time, could damage
+      database logical integrity.
+    </P
+><P
+>&#13;      As an example, consider the selection of the highest priority
+      job from the compiler queue.  There may be several copies
+      of the Aspk Compiler running concurrently, and two of these
+      might attempt to a job from the queue simultaneously.
+      The selection of a job entails the following:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    Select from the <I
+CLASS="emphasis"
+>job</I
+>
+	    table the job of highest priority
+	    which has state_code = 'q2c'.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Change the state_code field from 'q2c' to 'cmp', to 
+	    logically remove the job from the compiler queue.
+	  </P
+></LI
+></OL
+>
+    </P
+><P
+>&#13;      Both steps must occur as a single transaction, even though
+      time might elapse in between.  If this constraint is not 
+      enforced the following is one example of what might happen:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    Compiler-1 selects the highest priority job.  
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Before Compiler-1 can change the state_code in the job,
+	    compiler-2 selects the same job.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Both Compiler-1 and Compiler-2 compile the job and 
+	    queue it to be run.  This is a waste of resources.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Since the job has been queued twice, it runs twice.  
+	    This is a huge waste of resources and is very likely
+	    to confuse the user.
+	  </P
+></LI
+></OL
+>
+    </P
+><P
+>&#13;      In Version 4 of MySQL, transaction support is provided for
+      tables of type 'InnoDB'.  To avoid the problem described above,
+      the <I
+CLASS="emphasis"
+>job</I
+> table must be created with with
+      'InnoDB' type, and within programs, the steps required for
+      removing a job from a queue occur between SQL <B
+CLASS="command"
+>begin</B
+>
+      and <B
+CLASS="command"
+>end</B
+> statements.
+    </P
+><P
+>&#13;      In the <A
+HREF="#tables_and_fields"
+>Tables and Fields</A
+> section,
+      transaction processing considerations will be discussed for each table.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN132"
+>SQL Schema</A
+></H2
+><P
+>&#13;      The following SQL statements will create an empty copy of 
+      the Spkdb database.
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;CREATE TABLE class (
+  class_code char(2) NOT NULL default '',
+  class_name char(20) default NULL,
+  parent_required tinyint(1) default '0',
+  PRIMARY KEY  (class_code)
+) TYPE=MyISAM;
+
+CREATE TABLE dataset (
+  dataset_id int(10) unsigned NOT NULL auto_increment,
+  name varchar(20) NOT NULL default '',
+  abstract varchar(100) NOT NULL default '',
+  archive longblob,
+  user_id int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (dataset_id),
+  UNIQUE KEY user_id (user_id,name)
+) TYPE=InnoDB;
+
+CREATE TABLE end (
+  end_code char(4) NOT NULL default '',
+  end_name char(20) default NULL,
+  PRIMARY KEY  (end_code)
+) TYPE=MyISAM;
+
+CREATE TABLE history (
+  history_id int(10) unsigned NOT NULL auto_increment,
+  event_time int(10) unsigned NOT NULL default '0',
+  state_code varchar(4) NOT NULL default '',
+  job_id int(10) unsigned NOT NULL default '0',
+  host varchar(100) NOT NULL default '',
+  PRIMARY KEY  (history_id)
+  KEY `idx_history_job_id` (`job_id`)
+) TYPE=InnoDB;
+
+CREATE TABLE job (
+  job_id int(10) unsigned NOT NULL auto_increment,
+  user_id int(10) unsigned NOT NULL default '0',
+  abstract varchar(100) NOT NULL default '',
+  dataset_id int(10) unsigned NOT NULL default '0',
+  dataset_version varchar(10) NOT NULL default '',
+  model_id int(10) unsigned NOT NULL default '0',
+  model_version varchar(10) NOT NULL default '',
+  xml_source longblob,
+  checkpoint longblob,
+  state_code varchar(4) NOT NULL default '',
+  report longblob,
+  start_time int(10) unsigned NOT NULL default '0',
+  event_time int(10) unsigned NOT NULL default '0',
+  cpp_source longblob,
+  end_code varchar(4) default NULL,
+  method_code char(2) default NULL,
+  parent int(10) unsigned default '0',
+  mail tinyint(1) default '0',
+  share_with int(10) unsigned NOT NULL default '0',
+  parallel int(10) NOT NULL default '0',
+  folder_id int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (job_id)
+  KEY `idx_job_user_id` (`user_id`)
+  KEY `idx_job_share_with` (`share_with`)
+) TYPE=InnoDB;
+
+CREATE TABLE method (
+  method_code char(2) NOT NULL default '',
+  method_name char(20) default NULL,
+  class_code char(2) NOT NULL default '',
+  test_only tinyint(1) default '0',
+  PRIMARY KEY  (method_code)
+) TYPE=MyISAM;
+
+CREATE TABLE model (
+  model_id int(10) unsigned NOT NULL auto_increment,
+  name varchar(20) NOT NULL default '',
+  abstract varchar(100) NOT NULL default '',
+  archive longblob,
+  user_id int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (model_id),
+  UNIQUE KEY user_id (user_id,name)
+) TYPE=InnoDB;
+
+CREATE TABLE state (
+  state_code char(4) NOT NULL default '',
+  state_name char(20) default NULL,
+  PRIMARY KEY  (state_code)
+) TYPE=MyISAM;
+
+CREATE TABLE user (
+  user_id int(10) unsigned NOT NULL auto_increment,
+  first_name varchar(30) NOT NULL default '',
+  surname varchar(40) NOT NULL default '',
+  password varchar(32) NOT NULL default '',
+  username varchar(20) NOT NULL default '',
+  company varchar(30) NOT NULL default '',
+  country varchar(20) NOT NULL default '',
+  state varchar(20) NOT NULL default '',
+  email varchar(40) default NULL,
+  test tinyint(1) default '0',
+  dev tinyint(1) default '0',
+  team_id int(10) unsigned NOT NULL,
+  register_time timestamp default now(),
+  contact tinyint(1) NOT NULL default '1', 
+  PRIMARY KEY  (user_id),
+  UNIQUE KEY username (username)
+) TYPE=InnoDB;
+
+CREATE TABLE team (
+  team_id int(10) unsigned NOT NULL auto_increment,
+  team_name varchar(20) NOT NULL default '',
+  PRIMARY KEY  (team_id),
+  UNIQUE KEY `team_name` (team_name)
+) Type=InnoDB;
+
+CREATE TABLE folder (
+  folder_id int(10) unsigned NOT NULL default '0',
+  name varchar(40) NOT NULL default '',
+  parent int(10) unsigned NOT NULL default '0',
+  user_id int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (user_id,folder_id)
+) ENGINE=InnoDB;
+
+DELIMITER ;;
+/*!50003 DROP PROCEDURE IF EXISTS `folder_tree` */;;
+/*!50003 SET SESSION SQL_MODE=""*/;;
+/*!50003 CREATE*/ /*!50020 DEFINER=`root`@`localhost`*/ /*!50003 PROCEDURE `folder_tree`(userId INT,parentId INT,INOUT tree TEXT)
+BEGIN
+    DECLARE folderId INT;
+    DECLARE folderName TEXT;
+    DECLARE done INT DEFAULT 0;
+    DECLARE cur CURSOR FOR
+      SELECT folder_id,name FROM folder WHERE user_id=userId AND parent=parentId;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done=1;
+    
+    OPEN cur;
+    folder_loop:LOOP
+        
+        FETCH cur INTO folderId,folderName;
+        IF done=1 THEN
+            LEAVE folder_loop;
+        END IF;
+        SET tree=CONCAT(tree,'&#60;n',folderId,' name="',folderName,'"&#62;');
+        CALL folder_tree(userId,folderId,tree);
+        SET tree=CONCAT(tree,'&#60;/n',folderId,'&#62;');
+    END LOOP folder_loop;
+    CLOSE cur;
+END */;;
+/*!50003 SET SESSION SQL_MODE=@OLD_SQL_MODE*/;;
+DELIMITER ;
+
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN136"
+>Static Data</A
+></H2
+><P
+>&#13;      The following SQL statements will populate static data fields in the
+      database:
+      <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;INSERT INTO class (class_code, class_name, parent_required) VALUES ('al','Approx. Likelihood',0);
+INSERT INTO class (class_code, class_name, parent_required) VALUES ('le','Likelihood Eval.',1);
+INSERT INTO class (class_code, class_name, parent_required) VALUES ('so','Simulation Only',0);
+INSERT INTO class (class_code, class_name, parent_required) VALUES ('id','identifiability',0);
+
+INSERT INTO end (end_code, end_name) VALUES ('cerr','Compiler Error');
+INSERT INTO end (end_code, end_name) VALUES ('herr','Hard Fault');
+INSERT INTO end (end_code, end_name) VALUES ('serr','Software Error');
+INSERT INTO end (end_code, end_name) VALUES ('srun','Successful Run');
+INSERT INTO end (end_code, end_name) VALUES ('abrt','User Abort');
+INSERT INTO end (end_code, end_name) VALUES ('staf','Opt OK, Stat Failure');
+INSERT INTO end (end_code, end_name) VALUES ('othe','Unsuccessful Run');
+INSERT INTO end (end_code, end_name) VALUES ('othf','Unknown Run Failure');
+INSERT INTO end (end_code, end_name) VALUES ('acce','File Access Error');
+INSERT INTO end (end_code, end_name) VALUES ('accf','File Access Failure');
+INSERT INTO end (end_code, end_name) VALUES ('sime','Simulation Error');
+INSERT INTO end (end_code, end_name) VALUES ('simf','Simulation Failure');
+INSERT INTO end (end_code, end_name) VALUES ('opte','Optimization Error');
+INSERT INTO end (end_code, end_name) VALUES ('optf','Optimization Failure');
+INSERT INTO end (end_code, end_name) VALUES ('stae','Opt OK, Stat Error');
+INSERT INTO end (end_code, end_name) VALUES ('usre','Input Error');
+INSERT INTO end (end_code, end_name) VALUES ('usrf','Input Failure');
+INSERT INTO end (end_code, end_name) VALUES ('deve','Known Prog Error');
+INSERT INTO end (end_code, end_name) VALUES ('devf','Known Prog Failure');
+INSERT INTO end (end_code, end_name) VALUES ('pose','Post-opt Error');
+INSERT INTO end (end_code, end_name) VALUES ('posf','Post-opt Failure');
+INSERT INTO end (end_code, end_name) VALUES ('idee','Model Ident Error');
+INSERT INTO end (end_code, end_name) VALUES ('idef','Model Ident Failure');
+INSERT INTO end (end_code, end_name) VALUES ('spku','SPK Unavailable');
+INSERT INTO end (end_code, end_name) VALUES ('rese','Opt OK, Resid Error');
+INSERT INTO end (end_code, end_name) VALUES ('resf','Opt OK, Resid Fail');
+INSERT INTO end (end_code, end_name) VALUES ('optm','Opt Max Iter Error');
+
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('fo','First Order','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('eh','Expected Hessian','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('la','Laplace Approx.','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('ml','M.C. Likelihood','le',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('mc','Markov Chain M.C.','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('gr','Grid','le',1);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('an','Analytical','le',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('so','Simulation Only','so',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('ia','Individual Analysis','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('mi','Miser Likelihood','le',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('s2','Std. Two-stage','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('i2','Iter. Two-stage','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('g2','Global Two-stage','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('sm','MAP Std. Two-stage','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('im','MAP Iter. Two-stage','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('gm','MAP Global Two-stage','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('id','Identifiability','id',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('gn','Grid Nonparam.','al',0);
+INSERT INTO method (method_code, method_name, class_code, test_only) VALUES ('un','Uniform Nonparam.','al',0);
+
+INSERT INTO state (state_code, state_name) VALUES ('q2c','Queued to compile');
+INSERT INTO state (state_code, state_name) VALUES ('q2ml','Queued to M.L.');
+INSERT INTO state (state_code, state_name) VALUES ('cmp','Compiling');
+INSERT INTO state (state_code, state_name) VALUES ('q2r','Queued to run');
+INSERT INTO state (state_code, state_name) VALUES ('run','Running');
+INSERT INTO state (state_code, state_name) VALUES ('end','End');
+INSERT INTO state (state_code, state_name) VALUES ('q2ac','Queued to abort cmp');
+INSERT INTO state (state_code, state_name) VALUES ('q2ar','Queued to abort run');
+INSERT INTO state (state_code, state_name) VALUES ('acmp','Aborting compilation');
+INSERT INTO state (state_code, state_name) VALUES ('arun','Aborting run');
+      </PRE
+></TD
+></TR
+></TABLE
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="tables_and_fields"
+>Tables and Fields</A
+></H2
+><DIV
+CLASS="sect2"
+><H3
+CLASS="sect2"
+><A
+NAME="AEN142"
+>class</A
+></H3
+><P
+>&#13;	The <I
+CLASS="emphasis"
+>class</I
+> table categorizes methods into
+	classes.  No row is ever deleted from this table.
+      </P
+><P
+>&#13;	<DIV
+CLASS="table"
+><A
+NAME="AEN147"
+></A
+><P
+><B
+>Table 1. class</B
+></P
+><TABLE
+BORDER="1"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Field</TH
+><TH
+>Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>class_code</TD
+><TD
+>char(2)</TD
+><TD
+>Primary key.</TD
+></TR
+><TR
+><TD
+>class_name</TD
+><TD
+>char(20)</TD
+><TD
+>Expanded name.</TD
+></TR
+><TR
+><TD
+>parent_required</TD
+><TD
+>tinyint(1)</TD
+><TD
+>&#13;		  Whether or not methods in the class can only be used by jobs
+		  which have a parent link.
+		</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+      </P
+><H4
+CLASS="BRIDGEHEAD"
+><A
+NAME="AEN171"
+></A
+>Transaction Processing Considerations</H4
+><P
+>&#13;	This table is not updated by applications. There are no 
+	transaction processing issues.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN173"
+>dataset</A
+></H3
+><P
+>&#13;	Each row of the <I
+CLASS="emphasis"
+>dataset</I
+> table represents
+	the source code for a scientific dataset.  A text file, 
+	stored in the <I
+CLASS="emphasis"
+>archive</I
+> field, contains
+	the current and all previous versions of the dataset, in 
+	compressed RCS-compatible format.
+      </P
+><P
+>&#13;	<DIV
+CLASS="table"
+><A
+NAME="AEN179"
+></A
+><P
+><B
+>Table 2. dataset</B
+></P
+><TABLE
+BORDER="1"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Field</TH
+><TH
+>Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>dataset_id</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;		  Primary key, supplied automatically when the row is created.
+		</TD
+></TR
+><TR
+><TD
+>name</TD
+><TD
+>varchar(20)</TD
+><TD
+>The name of the  dataset.</TD
+></TR
+><TR
+><TD
+>abstract</TD
+><TD
+>varchar(100)</TD
+><TD
+>A short description of the dataset.</TD
+></TR
+><TR
+><TD
+>archive</TD
+><TD
+>longblob</TD
+><TD
+>&#13;		  A text file containing the current and all previous
+		  versions, in compressed RCS-compatible format.
+		</TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;		  The user who owns this dataset. A foreign key to the
+		  user table.
+		</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+      </P
+><H4
+CLASS="BRIDGEHEAD"
+><A
+NAME="AEN211"
+></A
+>Transaction Processing Considerations</H4
+><P
+>&#13;	The user, with the aid of the MDA, appends rows to this
+	table.  The key field, <I
+CLASS="emphasis"
+>dataset_id</I
+>,
+	is declared with the <B
+CLASS="command"
+>auto_increment</B
+>
+	modifier and the table has <B
+CLASS="command"
+>TYPE=InnoDB</B
+>,
+	hence MySQL insures that this field is unique.
+      </P
+><P
+>&#13;	The application requires each of a user's datasets to have a
+	different name. In order to avoid a potential concurrency
+	problem where two copies of the MDA attempt to add a 
+	dataset of the same name for the same user simultaneously,
+	this table must be created with a
+	<B
+CLASS="command"
+>UNIQUE KEY user_id (user_id,name)</B
+>
+	modifier. With the
+	table thus defined, the responsibility for avoiding this
+	race condition is assumed by MySQL, and applications do
+	not have to be concerned with it.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN218"
+>end</A
+></H3
+><P
+>&#13;	The <I
+CLASS="emphasis"
+>end</I
+> table provides short and long text for
+	the end condition.  No row is ever deleted from this table.
+      </P
+><P
+>&#13;	<DIV
+CLASS="table"
+><A
+NAME="AEN223"
+></A
+><P
+><B
+>Table 3. end</B
+></P
+><TABLE
+BORDER="1"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Field</TH
+><TH
+>Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>end_code</TD
+><TD
+>char(4)</TD
+><TD
+>Primary key.</TD
+></TR
+><TR
+><TD
+>end_name</TD
+><TD
+>char(20)</TD
+><TD
+>Expanded name.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+      </P
+><H4
+CLASS="BRIDGEHEAD"
+><A
+NAME="AEN243"
+></A
+>Transaction Processing Considerations</H4
+><P
+>&#13;	This table is not updated by applications. There are no 
+	transaction processing issues.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN245"
+>history</A
+></H3
+><P
+>&#13;	The <I
+CLASS="emphasis"
+>history</I
+> table records all changes of state
+	of every job.  Each time that the <I
+CLASS="emphasis"
+>state_code</I
+>
+	field of a row in the <I
+CLASS="emphasis"
+>job</I
+> table is changed,
+	a row must be added to <I
+CLASS="emphasis"
+>history</I
+>.  Rows are
+	never deleted from this table.
+      </P
+><P
+>&#13;	<DIV
+CLASS="table"
+><A
+NAME="AEN253"
+></A
+><P
+><B
+>Table 4. history</B
+></P
+><TABLE
+BORDER="1"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Field</TH
+><TH
+>Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>history_id</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;		  Primary key. A unique positive integer, supplied
+		  automatically when a row is created.
+		</TD
+></TR
+><TR
+><TD
+>event_time</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;		  The time at which the row was added to the table.
+		  This value is the number of seconds since the year
+		  1970 began, at the  prime meridian.
+		</TD
+></TR
+><TR
+><TD
+>state_code</TD
+><TD
+>varchar(4)</TD
+><TD
+>&#13;		  The state to which the given job transitioned at the
+		  given time.  A foreign key to the state table.
+		</TD
+></TR
+><TR
+><TD
+>job_id</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;		  The job that underwent a transition at the given 
+		  time. A foreign key to the job table.
+		</TD
+></TR
+><TR
+><TD
+>host</TD
+><TD
+>varchar(100)</TD
+><TD
+>&#13;		  The host name of the computer on which the job was running
+		  at the time the event occurred.
+		</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+      </P
+><H4
+CLASS="BRIDGEHEAD"
+><A
+NAME="AEN285"
+></A
+>Transaction Processing Considerations</H4
+><P
+>&#13;	Applications append rows to this table. Once in the table,
+	a row is never updated. The value of the key field,
+	<I
+CLASS="emphasis"
+>history_id</I
+>, is provided automatically
+	by MySQL. There are no transaction processing considerations.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN288"
+>folder</A
+></H3
+><P
+>&#13;        Each row in this table represents a folder that contains jobs for 
+        user.
+      </P
+><P
+>&#13;	<DIV
+CLASS="table"
+><A
+NAME="AEN292"
+></A
+><P
+><B
+>Table 5. folder</B
+></P
+><TABLE
+BORDER="1"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Field</TH
+><TH
+>Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>folder_id</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;		  A unique positive integer, folder_id for a user.
+		</TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;                  The user to whom the job belongs.  A foreign key
+		  to the user table.
+		</TD
+></TR
+><TR
+><TD
+>name</TD
+><TD
+>varchar(40)</TD
+><TD
+>&#13;		  The name of the folder.
+		</TD
+></TR
+><TR
+><TD
+>parent</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;		  The folder_id of the parent folder of this folder.
+		</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+      </P
+><H4
+CLASS="BRIDGEHEAD"
+><A
+NAME="AEN320"
+></A
+>Transaction Processing Considerations</H4
+><P
+>&#13;	There are no transaction processing considerations.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN322"
+>job</A
+></H3
+><P
+>&#13;	Each row in this table represents an Spk job. It is updated
+	each time the job makes a state transition.  Rows are never
+	deleted from this table.
+      </P
+><P
+>&#13;	<DIV
+CLASS="table"
+><A
+NAME="AEN326"
+></A
+><P
+><B
+>Table 6. job</B
+></P
+><TABLE
+BORDER="1"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Field</TH
+><TH
+>Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>job_id</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;		  Primary key. A unique positive number, supplied
+		  automatically when the row is created.
+		</TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>int (10)</TD
+><TD
+>&#13;		  The user to whom the job belongs.  A foreign key
+		  to the user table.
+		</TD
+></TR
+><TR
+><TD
+>abstract</TD
+><TD
+>varchar(100)</TD
+><TD
+>Short description of the job.</TD
+></TR
+><TR
+><TD
+>dataset_id</TD
+><TD
+>int(10)</TD
+><TD
+>&#13;		  The dataset, a version of which this job runs.
+		  A foreign key to the dataset table.
+		</TD
+></TR
+><TR
+><TD
+>dataset_version</TD
+><TD
+>varchar(10)</TD
+><TD
+>&#13;		  The rcs version code of the dataset being run.
+		</TD
+></TR
+><TR
+><TD
+>model_id</TD
+><TD
+>int(10)</TD
+><TD
+>&#13;		  The model, a version of which this job runs.
+		  A foreign key to the model table.
+		</TD
+></TR
+><TR
+><TD
+>model_version</TD
+><TD
+>varchar(10)</TD
+><TD
+>&#13;		  The rcs version code of the model being run.
+		</TD
+></TR
+><TR
+><TD
+>xml_source</TD
+><TD
+>longblob</TD
+><TD
+>&#13;		  An XML file containing source code for the model,
+		  constraints, parameters and presentation directives
+		  that is provided by the MDA when the row is
+		  created. This file is input to the Aspk Compiler,
+		  which translates it into the cpp_source field,
+		  for use by the Cspk.
+		</TD
+></TR
+><TR
+><TD
+>checkpoint</TD
+><TD
+>longblob</TD
+><TD
+>&#13;		  An XML file containing checkpoint information 
+		  that was written to a file by the job after its
+		  last iteration.  The runtime daemon copies the
+		  file to the database.
+		</TD
+></TR
+><TR
+><TD
+>state_code</TD
+><TD
+>varchar(4)</TD
+><TD
+>&#13;		  The current state of the job.  A foreign key 
+		  to the state table.
+		</TD
+></TR
+><TR
+><TD
+>report</TD
+><TD
+>longblob</TD
+><TD
+>&#13;		  The final report, expressed as XML, added to the row
+		  at the time the job makes the transition to the
+		  "End" state.  
+		</TD
+></TR
+><TR
+><TD
+>start_time</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;		  The time, to a resolution of one second, at which the 
+		  job was first submitted to Spk.  The value stored is 
+		  the number of seconds since the year 1970 began,
+		  at the prime meridian.
+		</TD
+></TR
+><TR
+><TD
+>event_time</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;		  The time, to a resolution of one second, at which the 
+		  job entered its current state.  The value stored is 
+		  the number of seconds since the year 1970 began,
+		  at the prime meridian.
+		</TD
+></TR
+><TR
+><TD
+>cpp_source</TD
+><TD
+>longblob</TD
+><TD
+>&#13;		  An archive of files, containing c++ source code
+		  and scientific data, 
+		  which is output by the Aspk Compiler for the
+		  use of the Cspk when the job enters the 
+		  "Queued to Run" state.
+		</TD
+></TR
+><TR
+><TD
+>end_code</TD
+><TD
+>varchar(4)</TD
+><TD
+>&#13;		  When the job reaches the 'end' state, the end_code is set
+		  to indicate the type of completion that occurred.  A foreign
+		  key to the end table.
+		</TD
+></TR
+><TR
+><TD
+>method_code</TD
+><TD
+>char(2)</TD
+><TD
+>&#13;		  The method to be used for the calculation. A foreign key
+		  to the method table.
+		</TD
+></TR
+><TR
+><TD
+>parent</TD
+><TD
+>int(10)</TD
+><TD
+>&#13;		  The job_id of the parent job, if this job depends on
+		  a previous one. A foreign key to the job table.
+		</TD
+></TR
+><TR
+><TD
+>mail</TD
+><TD
+>tinyInt(1)</TD
+><TD
+>&#13;		  Whether or not the user wants an end-job email notice.
+		</TD
+></TR
+><TR
+><TD
+>share_with</TD
+><TD
+>int(10)</TD
+><TD
+>&#13;		  The user_id of the user whom the job is shared with.
+		</TD
+></TR
+><TR
+><TD
+>parallel</TD
+><TD
+>int(10)</TD
+><TD
+>&#13;		  The number of sub-tasks if the job runs in parallel processing mode.  
+                  Being zero if the job runs in single process mode.
+		</TD
+></TR
+><TR
+><TD
+>folder_id</TD
+><TD
+>int(10)</TD
+><TD
+>&#13;		  The folder_id of the folder containing the job.
+		</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+      </P
+><H4
+CLASS="BRIDGEHEAD"
+><A
+NAME="AEN422"
+></A
+>Transaction Processing Considerations</H4
+><P
+>&#13;	Applications append rows to this table. This action does not
+	have any transaction processing implications, because the 
+	key field, <I
+CLASS="emphasis"
+>job_id</I
+>, is provided 
+	automatically by MySQL, as long as <I
+CLASS="emphasis"
+>job_id</I
+>
+	is declared with the <B
+CLASS="command"
+>auto_increment</B
+>
+	modifier and the table has
+	<B
+CLASS="command"
+>TYPE=InnoDB</B
+>.
+      </P
+><P
+>&#13;	On the other hand,
+	several Aspk Compilers may attempt to update the same row
+	of the table simultaneously, in the act of selecting a 
+	job to be compiled.  In order to maintain the integrity
+	of the table, the code that performs queue selection and
+	the associated update of the <I
+CLASS="emphasis"
+>state_code</I
+>
+	field must executed in transaction state.  In other words,
+	a SQL <B
+CLASS="command"
+>begin</B
+> statement or its programming
+	language equivalent, must be executed before the queue selection
+	code starts, and a <B
+CLASS="command"
+>commit</B
+> command must
+	be executed afterward.
+      </P
+><P
+>&#13;	Similarly, several Cspk process may attempt simultaneously
+	to select the highest priority job that is ready to run.
+	The situation is fully equivalent to that of selecting
+	a job to compile, as described above, and the remedy is
+	the same, as well.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN433"
+>method</A
+></H3
+><P
+>&#13;	The <I
+CLASS="emphasis"
+>method</I
+> table provides short and long text for
+	the method of calculation.  No row is ever deleted from this table.
+      </P
+><P
+>&#13;	<DIV
+CLASS="table"
+><A
+NAME="AEN438"
+></A
+><P
+><B
+>Table 7. method</B
+></P
+><TABLE
+BORDER="1"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Field</TH
+><TH
+>Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>method_code</TD
+><TD
+>char(2)</TD
+><TD
+>Primary key.</TD
+></TR
+><TR
+><TD
+>method_name</TD
+><TD
+>char(20)</TD
+><TD
+>Expanded name.</TD
+></TR
+><TR
+><TD
+>test_only</TD
+><TD
+>tiny_int(1)</TD
+><TD
+>&#13;		  Whether or not this method can only be employed by a user
+		  qualified by a true value in the test column of
+		  his or her row in the user table.
+		</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+      </P
+><H4
+CLASS="BRIDGEHEAD"
+><A
+NAME="AEN462"
+></A
+>Transaction Processing Considerations</H4
+><P
+>&#13;	This table is not updated by applications. There are no 
+	transaction processing issues.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN464"
+>model</A
+></H3
+><P
+>&#13;	Each row of the <I
+CLASS="emphasis"
+>model</I
+> table represents
+	the source code for a scientific model.  A text file, 
+	stored in the <I
+CLASS="emphasis"
+>archive</I
+> field, contains
+	the current and all previous versions of the model, in 
+	compressed RCS-compatible format.
+      </P
+><P
+>&#13;	<DIV
+CLASS="table"
+><A
+NAME="AEN470"
+></A
+><P
+><B
+>Table 8. model</B
+></P
+><TABLE
+BORDER="1"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Field</TH
+><TH
+>Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>model_id</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;		  Primary key, supplied automatically when the row is created.
+		</TD
+></TR
+><TR
+><TD
+>name</TD
+><TD
+>varchar(20)</TD
+><TD
+>The name of the  model.</TD
+></TR
+><TR
+><TD
+>abstract</TD
+><TD
+>varchar(100)</TD
+><TD
+>A short description of the model.</TD
+></TR
+><TR
+><TD
+>archive</TD
+><TD
+>longblob</TD
+><TD
+>&#13;		  A text file containing the current and all previous
+		  versions, in compressed RCS-compatible format.
+		</TD
+></TR
+><TR
+><TD
+>user_id</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;		  The user who owns this model. A foreign key to the
+		  user table.
+		</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+      </P
+><H4
+CLASS="BRIDGEHEAD"
+><A
+NAME="AEN502"
+></A
+>Transaction Processing Considerations</H4
+><P
+>&#13;	The user, with the aid of the MDA, appends rows to this
+	table.  The key field, <I
+CLASS="emphasis"
+>model_id</I
+>,
+	is declared with the <B
+CLASS="command"
+>auto_increment</B
+>
+	modifier and the table has <B
+CLASS="command"
+>TYPE=InnoDB</B
+>,
+	hence MySQL insures that this field is unique.
+      </P
+><P
+>&#13;	The application requires each of a user's models to have a
+	different name. In order to avoid a potential concurrency
+	problem where two copies of the MDA attempt to add a 
+	model of the same name for the same user simultaneously,
+	this table must be created with a
+	<B
+CLASS="command"
+>UNIQUE KEY user_id (user_id,name)</B
+>
+	modifier. With the
+	table thus defined, the responsibility for avoiding this
+	race condition is assumed by MySQL, and applications do
+	not have to be concerned with it.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN509"
+>state</A
+></H3
+><P
+>&#13;	The <I
+CLASS="emphasis"
+>state</I
+> table provides short and
+	long names for the states that a job can be in.  Rows
+	must never be deleted from this table.
+      </P
+><P
+>&#13;	<DIV
+CLASS="table"
+><A
+NAME="AEN514"
+></A
+><P
+><B
+>Table 9. state</B
+></P
+><TABLE
+BORDER="1"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Field</TH
+><TH
+>Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>state_code</TD
+><TD
+>char(3)</TD
+><TD
+>&#13;		  Primary key.  The short name of a job state.
+		</TD
+></TR
+><TR
+><TD
+>state_name</TD
+><TD
+>char(20)</TD
+><TD
+>Long name for a state.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+      </P
+><H4
+CLASS="BRIDGEHEAD"
+><A
+NAME="AEN534"
+></A
+>Transaction Processing Considerations</H4
+><P
+>&#13;	This table is not updated by applications. There are no 
+	transaction processing issues.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN536"
+>user</A
+></H3
+><P
+>&#13;	The <I
+CLASS="emphasis"
+>user</I
+> table contains information about
+	the user.  The MDA consults this table when a user logs in.
+	This table identifies jobs and models.  Rows must never be
+	deleted from this table.
+      </P
+><P
+>&#13;	<DIV
+CLASS="table"
+><A
+NAME="AEN541"
+></A
+><P
+><B
+>Table 10. user</B
+></P
+><TABLE
+BORDER="1"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Field</TH
+><TH
+>Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>user_id</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;		  Primary key.  Provided automatically when the row is created.
+		</TD
+></TR
+><TR
+><TD
+>first_name</TD
+><TD
+>varchar(30)</TD
+><TD
+>The given name of this user.</TD
+></TR
+><TR
+><TD
+>surname</TD
+><TD
+>varchar(40)</TD
+><TD
+>The family name of this user.</TD
+></TR
+><TR
+><TD
+>password</TD
+><TD
+>varchar(32)</TD
+><TD
+>An encrypted password, used when logging in.</TD
+></TR
+><TR
+><TD
+>username</TD
+><TD
+>varchar(20)</TD
+><TD
+>&#13;		  A user name used for logging in.  Must be unique.
+		</TD
+></TR
+><TR
+><TD
+>company</TD
+><TD
+>varchar(30)</TD
+><TD
+>&#13;		  The name of the company the user works for.
+		</TD
+></TR
+><TR
+><TD
+>country</TD
+><TD
+>varchar(20)</TD
+><TD
+>&#13;		  The user's country.
+		</TD
+></TR
+><TR
+><TD
+>state</TD
+><TD
+>varchar(20)</TD
+><TD
+>&#13;		  The user's country or province.
+		</TD
+></TR
+><TR
+><TD
+>email</TD
+><TD
+>varchar(40)</TD
+><TD
+>&#13;		  The user's electronic mail address.
+		</TD
+></TR
+><TR
+><TD
+>test</TD
+><TD
+>tinyint(1)</TD
+><TD
+>&#13;		  Whether or not the user is authorized to access features
+		  that are still under test.
+		</TD
+></TR
+><TR
+><TD
+>dev</TD
+><TD
+>tinyint(1)</TD
+><TD
+>&#13;		  Whether the user is one of the developers of this software.
+		</TD
+></TR
+><TR
+><TD
+>team_id</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;                  The team_id of the user, 0 if the user is not in a team.
+                </TD
+></TR
+><TR
+><TD
+>register_time</TD
+><TD
+>timestamp</TD
+><TD
+>&#13;		  The time when the user is registered.
+		</TD
+></TR
+><TR
+><TD
+>contact</TD
+><TD
+>tinyint(1)</TD
+><TD
+>&#13;		  Whether the user is in the contact list.
+		</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+      </P
+><H4
+CLASS="BRIDGEHEAD"
+><A
+NAME="AEN609"
+></A
+>Transaction Processing Considerations</H4
+><P
+>&#13;	Users are added by an administrative application.  The
+	key field, <I
+CLASS="emphasis"
+>user_id</I
+>, is automatically
+	assigned to be unique by MySQL, as long as the 
+	<B
+CLASS="command"
+>auto_increment</B
+> modifier is used
+	and the table has <B
+CLASS="command"
+>TYPE=InnoDB</B
+> when
+	the table is created.  This insures that there are no
+	concurrency issues when adding a user.
+      </P
+><P
+>&#13;	Once a user is in the database, she can use an MDA to
+	modify her record.  Because the <I
+CLASS="emphasis"
+>username</I
+>
+	field must be unique within the table, there could be
+	a race condition with two users trying to change to the
+	same username. Problems are avoided by specifying
+	<B
+CLASS="command"
+>UNIQUE KEY (username)</B
+> and 
+	<B
+CLASS="command"
+>TYPE=InnoDB</B
+>.
+      </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN618"
+>team</A
+></H3
+><P
+>&#13;	The <I
+CLASS="emphasis"
+>team</I
+> table contains information about
+	the team.  The MDA consults this table when a user logs in.
+	This table identifies users of the team.  Rows must never be
+	deleted from this table.
+      </P
+><P
+>&#13;	<DIV
+CLASS="table"
+><A
+NAME="AEN623"
+></A
+><P
+><B
+>Table 11. team</B
+></P
+><TABLE
+BORDER="1"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+>Field</TH
+><TH
+>Type</TH
+><TH
+>Description</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+>team_id</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>&#13;		  Primary key.  Provided automatically when the row is created.
+		</TD
+></TR
+><TR
+><TD
+>team_name</TD
+><TD
+>int(10) unsigned</TD
+><TD
+>The given name of this team.</TD
+></TR
+></TBODY
+></TABLE
+></DIV
+>
+      </P
+><H4
+CLASS="BRIDGEHEAD"
+><A
+NAME="AEN643"
+></A
+>Transaction Processing Considerations</H4
+><P
+>&#13;	Teams are added by an administrative application.  The
+	key field, <I
+CLASS="emphasis"
+>team_id</I
+>, is automatically
+	assigned to be unique by MySQL, as long as the 
+	<B
+CLASS="command"
+>auto_increment</B
+> modifier is used
+	and the table has <B
+CLASS="command"
+>TYPE=InnoDB</B
+> when
+	the table is created.  This insures that there are no
+	concurrency issues when adding a team.
+      </P
+><P
+>&#13;	Once a team is in the database, users can join the team. A team
+        can have many users, but a user can join only one team. 
+      </P
+></DIV
+></DIV
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,300 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Including Texinfo Documentation</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Including Texinfo Documentation">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Including Texinfo Documentation">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC97"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_96.html#SEC96" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Installing Header Files" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_98.html#SEC98" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Adding a Test Suite" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_98.html#SEC98" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Adding a Test Suite" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_93.html#SEC93" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: A Large GNU Autotools Project" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_99.html#SEC99" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Rolling Distribution Tarballs" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 12.4 Including Texinfo Documentation </H2>
+<!--docid::SEC97::-->
+<P>
+
+Automake provides a few facilities to make the maintenance of Texinfo
+documentation within projects much simpler than it used to be.  Writing
+a <TT>`Makefile.am'</TT> for Texinfo documentation is extremely
+straightforward:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>## Process this file with automake to produce Makefile.in
+
+MAINTAINERCLEANFILES    = Makefile.in
+info_TEXINFOS           = sic.texi
+
+</pre></td></tr></table></P><P>
+
+The <SAMP>`TEXINFOS'</SAMP> primary will not only create rules for generating
+<SAMP>`.info'</SAMP> files suitable for browsing with the GNU info reader,
+but also for generating <SAMP>`.dvi'</SAMP> and <SAMP>`.ps'</SAMP> documentation for
+printing.
+</P><P>
+
+You can also create other formats of documentation by adding the
+appropriate <CODE>make</CODE> rules to <TT>`Makefile.am'</TT>.  For example,
+because the more recent Texinfo distributions have begun to support
+generation of HTML documentation from the <SAMP>`.texi'</SAMP> format master
+document, I have added the appropriate rules to the <TT>`Makefile.am'</TT>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>SUFFIXES                = .html
+
+html_docs               = sic.html
+
+.texi.html:
+        $(MAKEINFO) --html $&#60;
+
+.PHONY: html
+html: version.texi $(html_docs)
+
+</pre></td></tr></table></P><P>
+
+For ease of maintenance, these <CODE>make</CODE> rules employ a suffix rule
+which describes how to generate HTML from equivalent <SAMP>`.texi'</SAMP> source
+-- this involves telling make about the <SAMP>`.html'</SAMP> suffix using the
+automake <CODE>SUFFIXES</CODE> macro.  I haven't defined <SAMP>`MAKEINFO'</SAMP>
+explicitly (though I could have done) because I know that Automake has
+already defined it for use in the <SAMP>`.info'</SAMP> generation rules.
+</P><P>
+
+The <SAMP>`html'</SAMP> target is for convenience; typing <SAMP>`make html'</SAMP> is a
+little easier than typng <SAMP>`make sic.html'</SAMP>.  I have also added a
+<CODE>.PHONY</CODE> target so that featureful <CODE>make</CODE> programs will
+know that the <SAMP>`html'</SAMP> target doesn't actually generate a file called
+literally, <TT>`html'</TT>.  As it stands, this code is not quite complete,
+since the toplevel <TT>`Makefile.am'</TT> doesn't know how to call the
+<SAMP>`html'</SAMP> rule in the <TT>`doc'</TT> subdirectory.
+</P><P>
+
+There is no need to provide a general solution here in the way Automake
+does for its <SAMP>`dvi'</SAMP> target, for example. A simple recursive call to
+<TT>`doc/Makefile'</TT> is much simpler:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>docdir                        = $(top_builddir)/doc
+
+html:
+        @echo Making $@ in $(docdir)
+        @cd $(docdir) &#38;&#38; make $@
+
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX21"></A>
+Another useful management function that Automake can perform for you
+with respect to Texinfo documentation is to automatically generate the
+version numbers for your Texinfo documents.  It will add <CODE>make</CODE>
+rules to generate a suitable <TT>`version.texi'</TT>, so long as
+<CODE>automake</CODE> sees <SAMP>`@include version.texi'</SAMP> in the body of the
+Texinfo source:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>\input texinfo   @c -*-texinfo-*-
+@c %**start of header
+@setfilename sic.info
+@settitle Dynamic Modular Interpreter Prototyping
+@setchapternewpage odd
+@c %**end of header
+@headings             double
+
+@include version.texi
+
+@dircategory Programming
+@direntry
+* sic: (sic).    The dynamic, modular, interpreter prototyping tool.
+@end direntry
+
+@ifinfo
+This file documents sic.
+
+@end ifinfo
+
+@titlepage
+@sp 10
+@title Sic
+@subtitle Edition @value{EDITION}, @value{UPDATED}
+@subtitle $Id: sic.texi,v 1.4 2000/05/23 09:07:00 bje Exp $
+@author Gary V. Vaughan
+@author @email{gvv@@techie.com}
+
+@page
+@vskip 0pt plus 1filll
+@end titlepage
+
+</pre></td></tr></table></P><P>
+
+<TT>`version.texi'</TT> sets Texinfo variables, <SAMP>`VERSION'</SAMP>,
+<SAMP>`EDITION'</SAMP> and <SAMP>`UPDATE'</SAMP>, which can be expanded elsewhere in the
+main Texinfo documentation by using <CODE>@value{EDITION}</CODE> for
+example. This makes use of another auxiliary file, <CODE>mdate-sh</CODE>
+which will be added to the scripts in the <CODE>$ac_aux_dir</CODE>
+subdirectory by Automake after adding the <TT>`version.texi'</TT> reference
+to <TT>`sic.texi'</TT>:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>$ ./bootstrap
++ aclocal -I config
++ libtoolize --force --copy
+Putting files in AC_CONFIG_AUX_DIR, config.
++ autoheader
++ automake --add-missing --copy
+doc/Makefile.am:22: installing config/mdate-sh
++ autoconf
+$ make html
+/bin/sh ./config.status --recheck
+...
+Making html in ./doc
+make[1]: Entering directory /tmp/sic/doc
+Updating version.texi
+makeinfo --html sic.texi
+make[1]: Leaving directory /tmp/sic/doc
+</pre></td></tr></table></P><P>
+
+Hopefully, it now goes without saying that I also need to add the
+<TT>`doc'</TT> subdirectory to <SAMP>`AC_OUTPUT'</SAMP> in <TT>`configure.in'</TT> and
+to <SAMP>`SUBDIRS'</SAMP> in the top-level <TT>`Makefile.am'</TT>.
+</P><P>
+
+<A NAME="Adding a Test Suite"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

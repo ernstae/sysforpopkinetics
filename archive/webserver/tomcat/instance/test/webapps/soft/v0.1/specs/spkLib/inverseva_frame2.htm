@@ -1,0 +1,90 @@
+<html><head>
+<title>Inverse of a matrix stored in a vector</title>
+<meta name="description" id="description" content="Inverse of a matrix stored in a vector">
+<meta name="keywords" id="keywords" content=" inversevalarray matrix inverse --- valarray version "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="inverseva.htm" target="_top">section</a>, <a href="inverseva_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Returns the matrix inverse of the square, symmetric and positive-definite 
+matrix, <i>a</i>, stored in a valarray object in the column order. 
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>dmatA</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">valarray</font></code> <i>a</i> contains the square, symmetric, 
+positive-definite matrix <code><span style='white-space: nowrap'><i>A</i></span></code> in the column major order.
+If the matrix did not
+have these properties, it throws an <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile and link the C++ program,
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#include&nbsp;&lt;iostream&gt;<br>
+#include&nbsp;&lt;iomanip&gt;<br>
+#include&nbsp;&quot;SpkValarray.h&quot;<br>
+#include&nbsp;&quot;inverse.h&quot;<br>
+<br>
+void&nbsp;main()<br>
+{<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+<br>
+&nbsp;&nbsp;int&nbsp;nRows&nbsp;=&nbsp;2;<br>
+&nbsp;&nbsp;int&nbsp;nCols=&nbsp;nARow;<br>
+&nbsp;&nbsp;valarray&lt;double&gt;&nbsp;a&nbsp;(nRows&nbsp;*&nbsp;nCols);<br>
+<br>
+&nbsp;&nbsp;a[0&nbsp;+&nbsp;0&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;1000000.0;<br>
+&nbsp;&nbsp;a[0&nbsp;+&nbsp;1&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1.0;<br>
+&nbsp;&nbsp;a[1&nbsp;+&nbsp;0&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1.0;<br>
+&nbsp;&nbsp;a[1&nbsp;+&nbsp;1&nbsp;*&nbsp;nARow]&nbsp;=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.0;<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;setiosflags(ios::scientific)&nbsp;&lt;&lt;&nbsp;setprecision(15);<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;a&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;DoubleMatrix(&nbsp;a,&nbsp;nRows&nbsp;).print();<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;inverse(a,&nbsp;nCols)&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;DoubleMatrix(&nbsp;inverse(a,&nbsp;nCols),&nbsp;nCols&nbsp;).print();<br>
+&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;endl;<br>
+}<br>
+<br>
+</span>
+</font></code>
+then it should output the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+A&nbsp;=<br>
+[1.000000000000000e+006,&nbsp;-1.000000000000000e+000]<br>
+[-1.000000000000000e+000,&nbsp;2.000000000000000e+000]<br>
+<br>
+inverse(A)&nbsp;=<br>
+[1.000000500000250e-006,&nbsp;5.000002500001250e-007]<br>
+[5.000002500001249e-007,&nbsp;5.000002500001249e-001]<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/inverse.cpp
+
+</body>
+</html>

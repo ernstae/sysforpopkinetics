@@ -1,0 +1,19 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.164
+----------------------------------
+USER VISIBLE CHANGES
+
+Eliminated bugs related to the statistics for covariance matrices with 
+fixed elements.
+
+
+OTHER CHANGES
+
+Eliminated segmentation faults related to the NPARAMETERS argument.
+
+
+RELATED BUG REPORTS:  529, 534, 548, 550
+
+BY:  Mitch Watrous
+
+WHEN:  March 15, 2006

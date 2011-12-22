@@ -1,0 +1,381 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>Profiling a Job</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>Profiling a Job</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;      </P
+><P
+>&#13;	The information in this document is targeted primarily towards
+	the RFPK Software Team and associates and is specific to the
+	computer systems and network installed in the RFPK Laboratory
+	of the Department of Bioengineering of the University of Washington.  RFPK is the Resource for
+	Population Kinetics.  Its work is supported, in part, by grant
+	P41 EB-001975 of the National Institutes of Health (NIH) of
+	the U.S.  Department of Health and Human Services.
+      </P
+><P
+>&#13;	<A
+HREF="#AEN39"
+>Copyright</A
+> (c) 2005, by the University of Washington.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>December 20, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN15"
+>Prerequisites</A
+></DT
+><DT
+><A
+HREF="#AEN19"
+>Build SPK and PRED Libraries for Profiling</A
+></DT
+><DT
+><A
+HREF="#AEN24"
+>Modify Makefile.SPK</A
+></DT
+><DT
+><A
+HREF="#AEN32"
+>Build the job and examine the profiling info</A
+></DT
+><DT
+><A
+HREF="#AEN39"
+>Copyright Notice</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN15"
+></A
+>Prerequisites</H2
+><P
+>&#13;    This document explains how to profile an existing job.  In particular, it assumes
+    there is at least an existing job with full source code in the '/tmp' 
+    directory on the CSPK server.  For the rest of this documentation, I assume
+    we are going to profile a job numbered 38.  Thus, its full source code 
+    must be found in cspk::/tmp/spkruntest-job-38 like so:
+    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh cspk
+su
+cd /tmp/spkruntest-job-38
+ls -al
+total 4336
+drwx------    2 root     root         4096 Dec 20 16:34 .
+drwxrwxrwt  422 root     root        12288 Dec 20 16:44 ..
+-rw-rw-rw-    1 root     root        31072 Dec 20 16:33 DataSet.h
+-r--r--r--    1 root     root         8891 Dec 20 16:33 data.xml
+-rw-rw-rw-    1 root     root        42403 Dec 20 16:33 fitDriver.cpp
+-rw-rw-rw-    1 root     root        17305 Dec 20 16:33 IndData.h
+-rw-rw-rw-    1 root     root         1157 Dec 20 16:33 Makefile.SPK
+-rw-rw-rw-    1 root     root         5002 Dec 20 16:33 NonmemPars.h
+-rw-rw-rw-    1 root     root         8570 Dec 20 16:33 Pred.h
+-rw-rw-rw-    1 root     root         2601 Dec 20 16:33 source.xml
+    </PRE
+></TD
+></TR
+></TABLE
+>
+    There may be more files (ex. "driver", the binary executable) found in the directory,
+    but the above list lists all necessary files.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN19"
+></A
+>Build SPK and PRED Libraries for Profiling</H2
+><P
+>&#13;    Both SPK and PRED libraries on the CSPK server need to be built with profiling instruments.
+    </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh cspk
+cd r2/src/apps/spk/cspk/spk
+make clean
+./configure --enable-profiling --enable-release-build
+cd spk
+make
+su
+make install
+exit
+    </PRE
+></TD
+></TR
+></TABLE
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd ../../pred
+make clean
+./configure --enable-profiling --enable-release-build
+cd pred
+make
+su
+make install
+exit
+    </PRE
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN24"
+></A
+>Modify Makefile.SPK</H2
+><P
+>&#13;     The Makefile.SPK file found in the CSPK's /tmp/spkruntest-job-38/ directory
+     contains commented lines that are meant to be activated when
+     someone wants to profile the job.
+     </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su
+cd /tmp/spkruntest-job-38/
+     </PRE
+></TD
+></TR
+></TABLE
+><P
+>&#13;     Open Makefile.SPK with your favorite editor and locate the following lines in the file.
+     </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;# C++ compiler flags to build a release version.
+#CXX_FLAGS = -O3 -Dspk_release -DNDEBUG
+# C++ compiler flags to build a debug version.
+CXX_FLAGS = -g
+ 
+# C++ compiler flags to turn on profiling
+# CXX_FLAGS += -pg -Dspk_profiling
+     </PRE
+></TD
+></TR
+></TABLE
+><P
+>Uncomment the 2nd line and 7th line.  Comment the 4th line.  
+     It should now look like this:
+     </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;# C++ compiler flags to build a release version.
+CXX_FLAGS = -O3 -Dspk_release -DNDEBUG
+# C++ compiler flags to build a debug version.
+#CXX_FLAGS = -g
+                                                                                                  
+# C++ compiler flags to turn on profiling
+CXX_FLAGS += -pg -Dspk_profiling
+     </PRE
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN32"
+></A
+>Build the job and examine the profiling info</H2
+><P
+>&#13;     Rebuild the job and run it to generate a profiling info.
+     </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;make -f Makefile.SPK -test
+./driver
+     </PRE
+></TD
+></TR
+></TABLE
+><P
+>&#13;     It should generated gmon.out file.  Now you can examine the output via "gprof":
+     </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;gprof driver | less
+     </PRE
+></TD
+></TR
+></TABLE
+><P
+>&#13;     The info contains two types of outputs: flat and hierhachical call graphs.
+     For more information, consult the man page of "gprof".
+     </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN39"
+></A
+>Copyright Notice</H2
+><P
+>&#13;      Copyright (c) 2005,  by the University of Washington.
+      This material may be distributed only subject to the terms and conditions 
+      set forth in the Open Publication License, V1.0 or later
+      (the latest version is presently available
+      <A
+HREF="http://www.opencontent.org/openpub/"
+TARGET="_top"
+>here</A
+>.
+    </P
+><P
+>&#13;    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,387 @@
+<html><head>
+<title>Floating Point Error Detection</title>
+<meta name="description" id="description" content="Floating Point Error Detection">
+<meta name="keywords" id="keywords" content=" Fperrorchecker error floating point detection exception ">
+<style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+<script type='text/javascript' language='JavaScript' src='_fperrorchecker_htm.js'>
+</script>
+</head>
+<body>
+<table><tr>
+<td>
+<a href="http://depts.washington.edu/rfpk" target="_top"><img border="0" src="_image.gif"></a>
+</td>
+<td>
+<select onchange='choose_across0(this)'>
+<option>Index-&gt;</option>
+<option>contents</option>
+<option>reference</option>
+<option>index</option>
+<option>search</option>
+<option>external</option>
+</select>
+</td>
+<td>
+<select onchange='choose_up0(this)'>
+<option>Up-&gt;</option>
+<option>main</option>
+<option>general</option>
+<option>FpErrorChecker</option>
+</select>
+</td>
+<td><a href="file.htm" target="_top">Prev</a>
+</td><td><a href="modelfunction.htm" target="_top">Next</a>
+</td><td>
+<select onchange='choose_down2(this)'>
+<option>main-&gt;</option>
+<option>Notes</option>
+<option>SpkModel</option>
+<option>individual</option>
+<option>population</option>
+<option>statistical</option>
+<option>simulation</option>
+<option>general</option>
+<option>glossary</option>
+</select>
+</td>
+<td>
+<select onchange='choose_down1(this)'>
+<option>general-&gt;</option>
+<option>ABA_x</option>
+<option>ABA_xVA</option>
+<option>addition</option>
+<option>AkronBtimesC</option>
+<option>AkronBtimesCRef</option>
+<option>AkronBtimesCVA</option>
+<option>AkronItimesC</option>
+<option>AkronItimesCVA</option>
+<option>allTrue</option>
+<option>allZero</option>
+<option>backDiv</option>
+<option>BlockAlloc</option>
+<option>blockDiagonalDerivative</option>
+<option>centdiff</option>
+<option>centdiffVA</option>
+<option>cholesky</option>
+<option>countTrues</option>
+<option>CovarianceClasses</option>
+<option>elsq</option>
+<option>elsqVA</option>
+<option>elsqFuncOb</option>
+<option>elsq_x</option>
+<option>elsq_xVA</option>
+<option>elsq_xDiag</option>
+<option>elsq_xBlockDiag</option>
+<option>DBL_EPS_EQUAL_MULT</option>
+<option>det</option>
+<option>detVA</option>
+<option>divByScalar</option>
+<option>DMclass</option>
+<option>elementwiseAnd</option>
+<option>elementwiseOr</option>
+<option>File</option>
+<option>FpErrorChecker</option>
+<option>ModelFunction</option>
+<option>ModelDerivative</option>
+<option>getCol</option>
+<option>getMulCols</option>
+<option>getMulRows</option>
+<option>getRow</option>
+<option>getSubblock</option>
+<option>identityNum</option>
+<option>identityVA</option>
+<option>IkronBtimesC</option>
+<option>IkronBtimesCVA</option>
+<option>inverse</option>
+<option>inverseVA</option>
+<option>inxToMax</option>
+<option>isDblEpsEqual</option>
+<option>isDmatEpsEqual</option>
+<option>isGreaterThanOrEqualTo</option>
+<option>isLessThanOrEqualTo</option>
+<option>isSymmetric</option>
+<option>matabs</option>
+<option>matmaxScalar</option>
+<option>matmaxMatrices</option>
+<option>matminScalar</option>
+<option>matminMatrices</option>
+<option>mulByScalar</option>
+<option>multiply</option>
+<option>norm</option>
+<option>Optimizer</option>
+<option>pi</option>
+<option>placeRows</option>
+<option>printInMatrix</option>
+<option>quasinewtonanybox</option>
+<option>replaceIth</option>
+<option>replaceJth</option>
+<option>replaceSubblockDoubleMatrix</option>
+<option>replaceSubblockValarray</option>
+<option>rvec</option>
+<option>rvecVA</option>
+<option>rvecInverse</option>
+<option>SpkError</option>
+<option>SpkException</option>
+<option>SpkValarray</option>
+<option>subtraction</option>
+<option>symmetrize</option>
+<option>symmetrizeVA</option>
+<option>System</option>
+<option>transpose</option>
+<option>transposeRef</option>
+<option>transposeVA</option>
+<option>transposeDerivative</option>
+<option>transposeDerivativeVA</option>
+<option>transposeRowBlocks</option>
+<option>transposeRowBlocksVA</option>
+<option>UTranTimesSymKronSymTimesU</option>
+<option>UTranTimesSymKronSymTimesU_x</option>
+<option>WarningsManager_constructor</option>
+<option>WarningsManager_addWarning</option>
+<option>WarningsManager_addWarningList</option>
+<option>WarningsManager_clearAllWarnings</option>
+<option>WarningsManager_anyWarnings</option>
+<option>WarningsManager_getWarningList</option>
+<option>WarningsManager_getAllWarnings</option>
+</select>
+</td>
+<td>FpErrorChecker</td>
+<td>
+<select onchange='choose_current0(this)'>
+<option>Headings-&gt;</option>
+<option>Description</option>
+<option>Constructors</option>
+<option>Public Methods</option>
+<option>Example</option>
+</select>
+</td>
+</tr></table><br>
+
+
+
+<center><b><big><big>Floating Point Error Detection</big></big></b></center>
+<table><tr><td align='left'  valign='top'>
+<b>Header: </b> </td><td align='left'  valign='top'>
+
+FpErrorChecker.h </td></tr><tr><td align='left'  valign='top'>
+
+
+<b>Public Interfaces:</b>   </td><td align='left'  valign='top'>
+  
+<code><font color="blue"><span style='white-space: nowrap'>FpErrorChecker::FpErrorChecker()</span></font></code> </td></tr><tr><td align='left'  valign='top'>
+
+</td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>FpErrorChecker::~FpErrorChecker()</span></font></code> </td></tr><tr><td align='left'  valign='top'>
+
+</td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>static&nbsp;unsigned&nbsp;int&nbsp;FpErrorChecker::check()</span></font></code> </td></tr><tr><td align='left'  valign='top'>
+
+</td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>static&nbsp;unsigned&nbsp;int&nbsp;FpErrorChecker::clear()</span></font></code> </td></tr><tr><td align='left'  valign='top'>
+
+</td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>static&nbsp;void&nbsp;FpErrorChecker::print()</span></font></code> </td></tr><tr><td align='left'  valign='top'>
+
+</td></tr>
+</table>
+See also: <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+, <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+
+<br>
+<br>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This class provides tools to detect floating point errors.
+When this class is instanciated, it clears the state of the <b>universal</b> floating point error flags and
+set the <b>universal</b> floating-point control word to be able to detect a certain set of floating point errors.
+As the object goes out of scope, the error flags are cleared and the control word is restored as before.
+
+<br>
+<br>
+<b><big><a name="Constructors" id="Constructors">Constructors</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+FpErrorChecker()<br>
+</span></font></code>is the default constructor.  It clears the state of the universal floating point error flags
+and reset the universal floating-point control word to detect the following floating point errors:
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><table><tr><td align='left'  valign='top'>
+Overflow </td><td align='left'  valign='top'>
+
+Tripping the highest bit in mantissa.
+</td></tr><tr><td align='left'  valign='top'>
+
+Invalid operation </td><td align='left'  valign='top'>
+
+Attempting an arithmetic operation on an invalid floating-point number such as NAN.
+</td></tr><tr><td align='left'  valign='top'>
+
+Denormalization loss  </td><td align='left'  valign='top'>
+
+Attempting representing a too small number in mantissa.
+</td></tr><tr><td align='left'  valign='top'>
+
+Divide by zero  </td><td align='left'  valign='top'>
+
+Divide a number by zero.
+</td></tr><tr><td align='left'  valign='top'>
+
+Inexact result  </td><td align='left'  valign='top'>
+
+Disabled (truncate to exact zero): Too small or too large to represent in a given precision.
+</td></tr><tr><td align='left'  valign='top'>
+
+Underflow </td><td align='left'  valign='top'>
+
+Disabled (truncate to exact zero): Tripping the lowest bit in mantissa.
+</td></tr><tr><td align='left'  valign='top'>
+
+
+</td></tr>
+</table>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+~FpErrorChecker()<br>
+</span></font></code>is the destructor which clears the state of the universal floating point error flags and
+restores the universal floating point control word as before.
+
+<br>
+<br>
+<b><big><a name="Public Methods" id="Public Methods">Public Methods</a></big></b>
+
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+static&nbsp;unsigned&nbsp;int&nbsp;check(unsigned&nbsp;int&nbsp;line,&nbsp;const&nbsp;char*&nbsp;filename)<br>
+</span></font></code>determines whether floating point errors have occurred since the universal error flags were cleared most
+recently.  If errors were detected, it will throw an object of <a href="spkexception.htm" target="_top"><span style='white-space: nowrap'>SpkException</span></a>
+ that
+may contain one or more <a href="spkerror.htm" target="_top"><span style='white-space: nowrap'>SpkError</span></a>
+ errors with <i>line</i> and <i>filename</i>
+as a location at which the error causing operation appeared. Otherwise, it returns the current state of
+the flags.
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The following table summarizes the correspondence between errors and Spk Error Codes (of type of <code><font color="blue">SpkError::ErrorCode</font></code>):
+<table><tr><td align='left'  valign='top'>
+
+Overflow 
+</td><td align='left'  valign='top'>
+
+SPK_FP_OVERFLOW_ERR 
+</td></tr><tr><td align='left'  valign='top'>
+
+Invalid operation 
+</td><td align='left'  valign='top'>
+
+SPK_FP_INVALID_ERR
+</td></tr><tr><td align='left'  valign='top'>
+
+Denormalization loss 
+</td><td align='left'  valign='top'>
+
+SPK_FP_DENORMAL_ERR
+</td></tr><tr><td align='left'  valign='top'>
+
+Divide by zero 
+</td><td align='left'  valign='top'>
+
+SPK_FP_ZERODIVIDE_ERR
+</td></tr><tr><td align='left'  valign='top'>
+
+(Disabled, truncate to exact zero) Inexact representation
+</td><td align='left'  valign='top'>
+
+SPK_FP_INEXACT_ERR
+</td></tr><tr><td align='left'  valign='top'>
+
+(Disabled, truncate to exact zero) Underflow 
+</td><td align='left'  valign='top'>
+
+SPK_FP_UNDERFLOW_ERR 
+</td></tr><tr><td align='left'  valign='top'>
+
+
+</td></tr>
+</table>
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+static&nbsp;unsigned&nbsp;int&nbsp;clear()<br>
+</span></font></code>clears the universal floating point error flags and returns the state before the action.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+static&nbsp;void&nbsp;print()<br>
+</span></font></code>prints out the current status of the error flags in hexadecimal notation.
+
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program named as <code><font color="blue">X:\Temp\Honda\FpErrorChecker\main.cpp</font></code>,
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;FpErrorChecker.h&quot;<br>
+&nbsp;&nbsp;#include&nbsp;&quot;SpkException.h&quot;<br>
+<br>
+&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+&nbsp;&nbsp;int&nbsp;main()<br>
+&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;a&nbsp;=&nbsp;1e-40,&nbsp;b;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;float&nbsp;&nbsp;y;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FpErrorChecker&nbsp;checkerON;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Since&nbsp;a&nbsp;is&nbsp;too&nbsp;small&nbsp;to&nbsp;be&nbsp;presented&nbsp;exactly,&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;the&nbsp;following&nbsp;assignment&nbsp;triggers&nbsp;&quot;Inexact&quot;&nbsp;and&nbsp;&quot;Underflow&quot;&nbsp;errors.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;try{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;=&nbsp;a;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;FpErrorChecker::check(__LINE__,&nbsp;__FILE__);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;catch(&nbsp;const&nbsp;SpkException&amp;&nbsp;e&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;e.print();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;-1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;count<br>
+&nbsp;&nbsp;&nbsp;&nbsp;1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;errorcode<br>
+&nbsp;&nbsp;&nbsp;&nbsp;26<br>
+&nbsp;&nbsp;&nbsp;&nbsp;linenum<br>
+&nbsp;&nbsp;&nbsp;&nbsp;15<br>
+&nbsp;&nbsp;&nbsp;&nbsp;filename<br>
+&nbsp;&nbsp;&nbsp;&nbsp;X:\Temp\Honda\FpErrorChecker\main.cpp<br>
+&nbsp;&nbsp;&nbsp;&nbsp;message<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Underflow<br>
+<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/FpErrorChecker.cpp
+
+</body>
+</html>

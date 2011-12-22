@@ -1,0 +1,14 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.80
+----------------------------------
+USER VISIBLE CHANGES
+NM-TRAN is extended to support trignometric functions:
+SIN( double ) and COS( double ).
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 237
+
+BY: Sachiko Honda
+
+WHEN: July 25, 2005

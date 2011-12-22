@@ -1,0 +1,39 @@
+<html><head>
+<title>Covariance::cov_indPar &amp; (pure virtual) doCov_indPar</title>
+<meta name="description" id="description" content="Covariance::cov_indPar &amp; (pure virtual) doCov_indPar">
+<meta name="keywords" id="keywords" content=" cov_indpar docov_indpar Evaluate Model Derivative of Covariance Individual Parameter "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="covariance_cov_indpar.htm" target="_top">section</a>, <a href="covariance_cov_indpar_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+The public interface <code><font color="blue"><span style='white-space: nowrap'>void&nbsp;cov_indPar(&nbsp;DoubleMatrix&amp;&nbsp;\ret\&nbsp;)&nbsp;const</span></font></code>
+evaluates the user defined <code><font color="blue"><span style='white-space: nowrap'>virtual&nbsp;doCov_indPar(&nbsp;DoubleMatrix&amp;&nbsp;\ret\&nbsp;)&nbsp;const</span></font></code>
+at the current evaluation points.
+
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>ret</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>is n by nIndPar matrix resulted from evaluating <code><font color="blue">doCov_indPar()</font></code>,
+where n is the product of #rows and #cols of a matrix resulted from evaluating <code><font color="blue">doCov()</font></code>
+and nIndPar is the size of the individual parameter vector.
+j-th column of matrix, <i>ret</i>, contains the derivative of the covariance with respect to  
+j-th element of the individual parameter vector, in the column-major order.
+Each column, or the derivative with respect to j-th, must be a symmetric positive definite matrix.
+
+
+<hr>Input File: ../../spk/Covariance.cpp
+
+</body>
+</html>

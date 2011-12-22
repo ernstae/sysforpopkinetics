@@ -1,0 +1,1175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+  <head>
+    <meta name="generator" content=
+    "HTML Tidy for Linux/x86 (vers 1st March 2002), see www.w3.org">
+    <meta http-equiv="Content-Type" content=
+    "text/html; charset=ISO-8859-1">
+
+    <title>entry</title>
+    <link rel="stylesheet" href="defguide.css" type="text/css">
+    <meta name="generator" content=
+    "DocBook XSL Stylesheets V1.59.0">
+    <link rel="home" href="docbook.html" title="DocBook">
+    <link rel="up" href="ref-elements.html" title=
+    "DocBook Element Reference">
+    <link rel="previous" href="emphasis.html" title="emphasis">
+    <link rel="next" href="entrytbl.html" title="entrytbl">
+  </head>
+
+  <body>
+    <div class="navheader">
+      <table border="0" cellpadding="0" cellspacing="0" width=
+      "100%" summary="Navigation table">
+        <tr>
+          <td align="left">&#160;<a title="DocBook" href=
+          "docbook.html"><img src="figures/nav-home.png" alt="Home"
+          border="0"></a>&#160;<a title="emphasis" href=
+          "emphasis.html"><img src="figures/nav-prev.png" alt=
+          "Prev" border="0"></a>&#160;<a title=
+          "DocBook Element Reference" href="ref-elements.html"><img
+          src="figures/nav-up.png" alt="Up" border="0"></a>&#160;<a
+          title="entrytbl" href="entrytbl.html"><img src=
+          "figures/nav-next.png" alt="Next" border="0"></a></td>
+
+          <td align="right"><i>DocBook: The Definitive Guide</i>
+          Version 2.0.8 <span class="alpha-version">(<a href=
+          "co01.html"><em>Alpha</em></a>)</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="refentry" lang="en">
+      <a name="entry.element"></a>
+
+      <div class="titlepage">
+        <div>
+          <h1 class="title">entry</h1>
+        </div>
+
+        <div>
+          <p class="releaseinfo">$Revision: 1.3 $</p>
+        </div>
+
+        <div>
+          <p class="pubdate">$Date: 2002/06/12 11:18:09 $</p>
+        </div>
+      </div>
+
+      <div class="refnamediv">
+        <p>entry &#8212; A cell in a table</p>
+      </div>
+
+      <div class="refsynopsisdiv">
+        <h2>Synopsis</h2>
+
+        <h3><span class="bold"><b>Mixed Content
+        Model</b></span></h3>
+<pre class="synopsis">
+entry ::=
+(#PCDATA|<a href="footnoteref.html"><tt class=
+"sgmltag-element">footnoteref</tt></a>|<a href="xref.html"><tt
+class="sgmltag-element">xref</tt></a>|<a href="abbrev.html"><tt
+class="sgmltag-element">abbrev</tt></a>|<a href="acronym.html"><tt
+class="sgmltag-element">acronym</tt></a>|<a href=
+"citation.html"><tt class="sgmltag-element">citation</tt></a>|<a
+href="citerefentry.html"><tt class=
+"sgmltag-element">citerefentry</tt></a>|
+ <a href="citetitle.html"><tt class=
+"sgmltag-element">citetitle</tt></a>|<a href="emphasis.html"><tt
+class="sgmltag-element">emphasis</tt></a>|<a href=
+"firstterm.html"><tt class="sgmltag-element">firstterm</tt></a>|<a
+href="foreignphrase.html"><tt class=
+"sgmltag-element">foreignphrase</tt></a>|<a href=
+"glossterm.html"><tt class="sgmltag-element">glossterm</tt></a>|<a
+href="footnote.html"><tt class="sgmltag-element">footnote</tt></a>|
+ <a href="phrase.html"><tt class=
+"sgmltag-element">phrase</tt></a>|<a href="quote.html"><tt class=
+"sgmltag-element">quote</tt></a>|<a href="trademark.html"><tt
+class="sgmltag-element">trademark</tt></a>|<a href=
+"wordasword.html"><tt class=
+"sgmltag-element">wordasword</tt></a>|<a href="personname.html"><tt
+class="sgmltag-element">personname</tt></a>|<a href="link.html"><tt
+class="sgmltag-element">link</tt></a>|<a href="olink.html"><tt
+class="sgmltag-element">olink</tt></a>|<a href="ulink.html"><tt
+class="sgmltag-element">ulink</tt></a>|
+ <a href="action.html"><tt class=
+"sgmltag-element">action</tt></a>|<a href="application.html"><tt
+class="sgmltag-element">application</tt></a>|<a href=
+"classname.html"><tt class="sgmltag-element">classname</tt></a>|<a
+href="methodname.html"><tt class=
+"sgmltag-element">methodname</tt></a>|<a href=
+"interfacename.html"><tt class=
+"sgmltag-element">interfacename</tt></a>|
+ <a href="exceptionname.html"><tt class=
+"sgmltag-element">exceptionname</tt></a>|<a href="ooclass.html"><tt
+class="sgmltag-element">ooclass</tt></a>|<a href=
+"oointerface.html"><tt class=
+"sgmltag-element">oointerface</tt></a>|<a href=
+"ooexception.html"><tt class=
+"sgmltag-element">ooexception</tt></a>|<a href="command.html"><tt
+class="sgmltag-element">command</tt></a>|
+ <a href="computeroutput.html"><tt class=
+"sgmltag-element">computeroutput</tt></a>|<a href=
+"database.html"><tt class="sgmltag-element">database</tt></a>|<a
+href="email.html"><tt class="sgmltag-element">email</tt></a>|<a
+href="envar.html"><tt class="sgmltag-element">envar</tt></a>|<a
+href="errorcode.html"><tt class=
+"sgmltag-element">errorcode</tt></a>|<a href="errorname.html"><tt
+class="sgmltag-element">errorname</tt></a>|
+ <a href="errortype.html"><tt class=
+"sgmltag-element">errortype</tt></a>|<a href="errortext.html"><tt
+class="sgmltag-element">errortext</tt></a>|<a href=
+"filename.html"><tt class="sgmltag-element">filename</tt></a>|<a
+href="function.html"><tt class=
+"sgmltag-element">function</tt></a>|<a href="guibutton.html"><tt
+class="sgmltag-element">guibutton</tt></a>|<a href=
+"guiicon.html"><tt class="sgmltag-element">guiicon</tt></a>|<a
+href="guilabel.html"><tt class="sgmltag-element">guilabel</tt></a>|
+ <a href="guimenu.html"><tt class=
+"sgmltag-element">guimenu</tt></a>|<a href="guimenuitem.html"><tt
+class="sgmltag-element">guimenuitem</tt></a>|<a href=
+"guisubmenu.html"><tt class=
+"sgmltag-element">guisubmenu</tt></a>|<a href="hardware.html"><tt
+class="sgmltag-element">hardware</tt></a>|<a href=
+"interface.html"><tt class="sgmltag-element">interface</tt></a>|<a
+href="keycap.html"><tt class="sgmltag-element">keycap</tt></a>|<a
+href="keycode.html"><tt class="sgmltag-element">keycode</tt></a>|
+ <a href="keycombo.html"><tt class=
+"sgmltag-element">keycombo</tt></a>|<a href="keysym.html"><tt
+class="sgmltag-element">keysym</tt></a>|<a href="literal.html"><tt
+class="sgmltag-element">literal</tt></a>|<a href=
+"constant.html"><tt class="sgmltag-element">constant</tt></a>|<a
+href="markup.html"><tt class="sgmltag-element">markup</tt></a>|<a
+href="medialabel.html"><tt class=
+"sgmltag-element">medialabel</tt></a>|<a href="menuchoice.html"><tt
+class="sgmltag-element">menuchoice</tt></a>|
+ <a href="mousebutton.html"><tt class=
+"sgmltag-element">mousebutton</tt></a>|<a href="option.html"><tt
+class="sgmltag-element">option</tt></a>|<a href="optional.html"><tt
+class="sgmltag-element">optional</tt></a>|<a href=
+"parameter.html"><tt class="sgmltag-element">parameter</tt></a>|<a
+href="prompt.html"><tt class="sgmltag-element">prompt</tt></a>|<a
+href="property.html"><tt class="sgmltag-element">property</tt></a>|
+ <a href="replaceable.html"><tt class=
+"sgmltag-element">replaceable</tt></a>|<a href=
+"returnvalue.html"><tt class=
+"sgmltag-element">returnvalue</tt></a>|<a href="sgmltag.html"><tt
+class="sgmltag-element">sgmltag</tt></a>|<a href=
+"structfield.html"><tt class=
+"sgmltag-element">structfield</tt></a>|<a href=
+"structname.html"><tt class=
+"sgmltag-element">structname</tt></a>|<a href="symbol.html"><tt
+class="sgmltag-element">symbol</tt></a>|
+ <a href="systemitem.html"><tt class=
+"sgmltag-element">systemitem</tt></a>|<a href="token.html"><tt
+class="sgmltag-element">token</tt></a>|<a href="type.html"><tt
+class="sgmltag-element">type</tt></a>|<a href="userinput.html"><tt
+class="sgmltag-element">userinput</tt></a>|<a href=
+"varname.html"><tt class="sgmltag-element">varname</tt></a>|<a
+href="nonterminal.html"><tt class=
+"sgmltag-element">nonterminal</tt></a>|<a href="anchor.html"><tt
+class="sgmltag-element">anchor</tt></a>|
+ <a href="author.html"><tt class=
+"sgmltag-element">author</tt></a>|<a href="authorinitials.html"><tt
+class="sgmltag-element">authorinitials</tt></a>|<a href=
+"corpauthor.html"><tt class=
+"sgmltag-element">corpauthor</tt></a>|<a href="modespec.html"><tt
+class="sgmltag-element">modespec</tt></a>|<a href=
+"othercredit.html"><tt class=
+"sgmltag-element">othercredit</tt></a>|
+ <a href="productname.html"><tt class=
+"sgmltag-element">productname</tt></a>|<a href=
+"productnumber.html"><tt class=
+"sgmltag-element">productnumber</tt></a>|<a href=
+"revhistory.html"><tt class=
+"sgmltag-element">revhistory</tt></a>|<a href="remark.html"><tt
+class="sgmltag-element">remark</tt></a>|<a href=
+"subscript.html"><tt class="sgmltag-element">subscript</tt></a>|
+ <a href="superscript.html"><tt class=
+"sgmltag-element">superscript</tt></a>|<a href=
+"inlinegraphic.html"><tt class=
+"sgmltag-element">inlinegraphic</tt></a>|<a href=
+"inlinemediaobject.html"><tt class=
+"sgmltag-element">inlinemediaobject</tt></a>|<a href=
+"inlineequation.html"><tt class=
+"sgmltag-element">inlineequation</tt></a>|
+ <a href="synopsis.html"><tt class=
+"sgmltag-element">synopsis</tt></a>|<a href="cmdsynopsis.html"><tt
+class="sgmltag-element">cmdsynopsis</tt></a>|<a href=
+"funcsynopsis.html"><tt class=
+"sgmltag-element">funcsynopsis</tt></a>|<a href=
+"classsynopsis.html"><tt class=
+"sgmltag-element">classsynopsis</tt></a>|<a href=
+"fieldsynopsis.html"><tt class=
+"sgmltag-element">fieldsynopsis</tt></a>|
+ <a href="constructorsynopsis.html"><tt class=
+"sgmltag-element">constructorsynopsis</tt></a>|<a href=
+"destructorsynopsis.html"><tt class=
+"sgmltag-element">destructorsynopsis</tt></a>|<a href=
+"methodsynopsis.html"><tt class=
+"sgmltag-element">methodsynopsis</tt></a>|<a href=
+"indexterm.html"><tt class="sgmltag-element">indexterm</tt></a>|
+ <a href="beginpage.html"><tt class=
+"sgmltag-element">beginpage</tt></a>|<a href="calloutlist.html"><tt
+class="sgmltag-element">calloutlist</tt></a>|<a href=
+"glosslist.html"><tt class="sgmltag-element">glosslist</tt></a>|<a
+href="itemizedlist.html"><tt class=
+"sgmltag-element">itemizedlist</tt></a>|<a href=
+"orderedlist.html"><tt class=
+"sgmltag-element">orderedlist</tt></a>|
+ <a href="segmentedlist.html"><tt class=
+"sgmltag-element">segmentedlist</tt></a>|<a href=
+"simplelist.html"><tt class=
+"sgmltag-element">simplelist</tt></a>|<a href=
+"variablelist.html"><tt class=
+"sgmltag-element">variablelist</tt></a>|<a href="caution.html"><tt
+class="sgmltag-element">caution</tt></a>|<a href=
+"important.html"><tt class="sgmltag-element">important</tt></a>|<a
+href="note.html"><tt class="sgmltag-element">note</tt></a>|<a href=
+"tip.html"><tt class="sgmltag-element">tip</tt></a>|
+ <a href="warning.html"><tt class=
+"sgmltag-element">warning</tt></a>|<a href="literallayout.html"><tt
+class="sgmltag-element">literallayout</tt></a>|<a href=
+"programlisting.html"><tt class=
+"sgmltag-element">programlisting</tt></a>|<a href=
+"programlistingco.html"><tt class=
+"sgmltag-element">programlistingco</tt></a>|<a href=
+"screen.html"><tt class="sgmltag-element">screen</tt></a>|
+ <a href="screenco.html"><tt class=
+"sgmltag-element">screenco</tt></a>|<a href="screenshot.html"><tt
+class="sgmltag-element">screenshot</tt></a>|<a href=
+"formalpara.html"><tt class=
+"sgmltag-element">formalpara</tt></a>|<a href="para.html"><tt
+class="sgmltag-element">para</tt></a>|<a href="simpara.html"><tt
+class="sgmltag-element">simpara</tt></a>|<a href="graphic.html"><tt
+class="sgmltag-element">graphic</tt></a>|<a href=
+"mediaobject.html"><tt class=
+"sgmltag-element">mediaobject</tt></a>)*
+</pre>
+
+        <h3><span class="bold"><b>Attributes</b></span></h3>
+
+        <p><a href="ref-elements.html#common.attributes" title=
+        "Common Attributes">Common attributes</a></p>
+
+        <table border="0" width="100%" cellpadding="2" style=
+        "border-collapse: collapse; border-left: 0.5pt solid;"
+        summary="Attributes">
+          <thead>
+            <tr style="border-bottom: 0.5pt solid;">
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+                <p><span class="bold"><b>Name</b></span></p>
+              </td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+                <p><span class="bold"><b>Type</b></span></p>
+              </td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; ">
+                <p><span class="bold"><b>Default</b></span></p>
+              </td>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">nameend</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">CDATA</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top"><span class=
+              "emphasis"><em>None</em></span></td>
+            </tr>
+
+            <tr>
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">valign</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">
+                <table class="simplelist" border="0" summary=
+                "Simple list">
+                  <tr>
+                    <td><i>Enumeration:</i></td>
+                  </tr>
+
+                  <tr>
+                    <td>bottom</td>
+                  </tr>
+
+                  <tr>
+                    <td>middle</td>
+                  </tr>
+
+                  <tr>
+                    <td>top</td>
+                  </tr>
+                </table>
+              </td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top"><span class=
+              "emphasis"><em>None</em></span></td>
+            </tr>
+
+            <tr>
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">char</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">CDATA</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top"><span class=
+              "emphasis"><em>None</em></span></td>
+            </tr>
+
+            <tr>
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">colsep</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">CDATA</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top"><span class=
+              "emphasis"><em>None</em></span></td>
+            </tr>
+
+            <tr>
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">charoff</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">CDATA</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top"><span class=
+              "emphasis"><em>None</em></span></td>
+            </tr>
+
+            <tr>
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">morerows</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">CDATA</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top"><span class=
+              "emphasis"><em>None</em></span></td>
+            </tr>
+
+            <tr>
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">spanname</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">CDATA</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top"><span class=
+              "emphasis"><em>None</em></span></td>
+            </tr>
+
+            <tr>
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">namest</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">CDATA</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top"><span class=
+              "emphasis"><em>None</em></span></td>
+            </tr>
+
+            <tr>
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">colname</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">CDATA</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top"><span class=
+              "emphasis"><em>None</em></span></td>
+            </tr>
+
+            <tr>
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">rowsep</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">CDATA</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top"><span class=
+              "emphasis"><em>None</em></span></td>
+            </tr>
+
+            <tr>
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">rotate</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">CDATA</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top"><span class=
+              "emphasis"><em>None</em></span></td>
+            </tr>
+
+            <tr>
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">align</td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top">
+                <table class="simplelist" border="0" summary=
+                "Simple list">
+                  <tr>
+                    <td><i>Enumeration:</i></td>
+                  </tr>
+
+                  <tr>
+                    <td>center</td>
+                  </tr>
+
+                  <tr>
+                    <td>char</td>
+                  </tr>
+
+                  <tr>
+                    <td>justify</td>
+                  </tr>
+
+                  <tr>
+                    <td>left</td>
+                  </tr>
+
+                  <tr>
+                    <td>right</td>
+                  </tr>
+                </table>
+              </td>
+
+              <td style=
+              "border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; "
+               align="left" valign="top"><span class=
+              "emphasis"><em>None</em></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="refsect1" lang="en">
+        <h2>Description</h2>
+
+        <p><a href="entry.html"><tt class=
+        "sgmltag-element">Entry</tt></a> is a cell in a table.</p>
+
+        <p>Each <a href="entry.html"><tt class=
+        "sgmltag-element">Entry</tt></a> may specify its starting
+        column. Entries that do not explicitly specify a starting
+        column begin implicitly in the column that is immediately
+        adjacent to the preceding cell. Note that <a href=
+        "entry.html"><tt class="sgmltag-element">Entry</tt></a>s
+        with the <tt class="sgmltag-attribute">MoreRows</tt>
+        attribute from preceding rows implicitly occupy cells in
+        the succeeding <a href="row.html"><tt class=
+        "sgmltag-element">Row</tt></a>s.</p>
+
+        <p><tt class="sgmltag-element">Rows</tt> are not required
+        to be full. It is legal for some entries to be completely
+        absent (at the beginning, middle, or end of a row).</p>
+
+        <div class="sidebar">
+          <p class="title"><b>Pernicious Mixed Content</b></p>
+
+          <p>The content model of the <a href="entry.html"><tt
+          class="sgmltag-element">Entry</tt></a> element exhibits a
+          nasty peculiarity that we call &#8220;pernicious mixed
+          content&#8221;.<sup>[<a name="d0e60713" href=
+          "#ftn.d0e60713">1</a>]</sup></p>
+
+          <p>Every other element in DocBook contains either block
+          elements or inline elements (including <tt>#PCDATA</tt>)
+          unambiguously. In these cases, the meaning of line breaks
+          and spaces are well understood; they are insignificant
+          between block elements and significant (to the SGML
+          parser, anyway) where inline markup can occur.</p>
+
+          <p>Table entries are different; they can contain either
+          block or inline elements, but not both at the same time.
+          In other words, one <tt class=
+          "sgmltag-element">Entry</tt> in a table might contain a
+          paragraph or a list while another contains simply
+          <tt>#PCDATA</tt> or another inline markup, but no single
+          <a href="entry.html"><tt class=
+          "sgmltag-element">Entry</tt></a> can contain both.</p>
+
+          <p>Because the content model of an <a href=
+          "entry.html"><tt class="sgmltag-element">Entry</tt></a>
+          allows both kinds of markup, each time the SGML parser
+          encounters an <a href="entry.html"><tt class=
+          "sgmltag-element">Entry</tt></a>, it has to decide what
+          variety of markup it contains. SGML parsers are forbidden
+          to use more than a single token of lookahead to reach
+          this decision. In practical terms, what this means is
+          that a line feed or space after an <tt class=
+          "sgmltag-element">Entry</tt> start tag causes the parser
+          to decide that the cell contains inline markup.
+          Subsequent discovery of a paragraph or another block
+          element causes a parsing error.</p>
+
+          <p>All of these are legal:</p>
+<pre class="screen">
+&lt;entry&gt;3.1415927&lt;/entry&gt;
+&lt;entry&gt;General &lt;emphasis&gt;#PCDATA&lt;/emphasis&gt;&lt;/entry&gt;
+&lt;entry&gt;&lt;para&gt;
+A paragraph of text
+&lt;/para&gt;&lt;/entry&gt;
+
+</pre>
+          <br>
+          <br>
+
+          <p>However, each of these is an error:</p>
+<pre class="screen">
+&lt;entry&gt;                <i class=
+"lineannotation">Error, cannot have a line break before a block element</i>
+&lt;para&gt;
+A paragraph of text.
+&lt;/para&gt;&lt;/entry&gt;
+
+&lt;entry&gt;&lt;para&gt;
+A paragraph of text.
+&lt;/para&gt;               <i class=
+"lineannotation">Error, cannot have a line break between block elements
+</i>
+&lt;para&gt;
+A paragraph of text.
+&lt;/para&gt;&lt;/entry&gt;
+
+&lt;entry&gt;&lt;para&gt;
+A paragraph of text.
+&lt;/para&gt;               <i class=
+"lineannotation">Error, cannot have a line break after a block element
+</i>
+&lt;/entry&gt;
+</pre>
+          <br>
+          <br>
+
+          <p>When designing a DTD, it is wise to avoid pernicious
+          mixed content. Unfortunately, the only way to correct the
+          pernicious mixed content problem that already exists in
+          DocBook is to require some sort of wrapper (a block
+          element, or an inline like <a href="phrase.html"><tt
+          class="sgmltag-element">Phrase</tt></a>) around
+          <tt>#PCDATA</tt> within table <a href="entry.html"><tt
+          class="sgmltag-element">Entry</tt></a>s. This is annoying
+          and inconvenient in a great many tables in which
+          <tt>#PCDATA</tt> cells predominate and, in addition,
+          differ from CALS.</p>
+        </div>
+
+        <div class="refsect2" lang="en">
+          <h3>Processing expectations</h3>
+
+          <p>This element is expected to obey the semantics of the
+          <a href="appd.html#calsdtd"><i>CALS Table Model Document
+          Type Definition</i></a>, as specified by <i><a href=
+          "http://www.oasis-open.org/html/a502.htm" target=
+          "_top">OASIS Technical Memorandum TM 9502:1995</a></i>
+          .</p>
+
+          <p>The content of <a href="entry.html"><tt class=
+          "sgmltag-element">Entry</tt></a> is formatted to fit
+          within the table cell that it occupies. Horizontal and
+          vertical spanning may allow the content of an <a href=
+          "entry.html"><tt class="sgmltag-element">Entry</tt></a>
+          to occupy several physical cells.</p>
+        </div>
+
+        <div class="refsect2" lang="en">
+          <h3>Future Changes</h3>
+
+          <p>The <tt class=
+          "sgmltag-element">InterfaceDefinition</tt> element will
+          be discarded in DocBook V4.0. It will no longer be
+          available in the content model of this element.</p>
+        </div>
+
+        <div class="refsect2" lang="en">
+          <h3>Parents</h3>
+
+          <p>These elements contain entry: <span class=
+          "simplelist"><a href="row.html"><tt class=
+          "sgmltag-element">row</tt></a></span>.</p>
+        </div>
+
+        <div class="refsect2" lang="en">
+          <h3>Children</h3>
+
+          <p>The following elements occur in entry: <span class=
+          "simplelist"><a href="abbrev.html"><tt class=
+          "sgmltag-element">abbrev</tt></a>, <a href=
+          "acronym.html"><tt class=
+          "sgmltag-element">acronym</tt></a>, <a href=
+          "action.html"><tt class=
+          "sgmltag-element">action</tt></a>, <a href=
+          "anchor.html"><tt class=
+          "sgmltag-element">anchor</tt></a>, <a href=
+          "application.html"><tt class=
+          "sgmltag-element">application</tt></a>, <a href=
+          "author.html"><tt class=
+          "sgmltag-element">author</tt></a>, <a href=
+          "authorinitials.html"><tt class=
+          "sgmltag-element">authorinitials</tt></a>, <a href=
+          "beginpage.html"><tt class=
+          "sgmltag-element">beginpage</tt></a>, <a href=
+          "calloutlist.html"><tt class=
+          "sgmltag-element">calloutlist</tt></a>, <a href=
+          "caution.html"><tt class=
+          "sgmltag-element">caution</tt></a>, <a href=
+          "citation.html"><tt class=
+          "sgmltag-element">citation</tt></a>, <a href=
+          "citerefentry.html"><tt class=
+          "sgmltag-element">citerefentry</tt></a>, <a href=
+          "citetitle.html"><tt class=
+          "sgmltag-element">citetitle</tt></a>, <a href=
+          "classname.html"><tt class=
+          "sgmltag-element">classname</tt></a>, <a href=
+          "classsynopsis.html"><tt class=
+          "sgmltag-element">classsynopsis</tt></a>, <a href=
+          "cmdsynopsis.html"><tt class=
+          "sgmltag-element">cmdsynopsis</tt></a>, <a href=
+          "command.html"><tt class=
+          "sgmltag-element">command</tt></a>, <a href=
+          "computeroutput.html"><tt class=
+          "sgmltag-element">computeroutput</tt></a>, <a href=
+          "constant.html"><tt class=
+          "sgmltag-element">constant</tt></a>, <a href=
+          "constructorsynopsis.html"><tt class=
+          "sgmltag-element">constructorsynopsis</tt></a>, <a href=
+          "corpauthor.html"><tt class=
+          "sgmltag-element">corpauthor</tt></a>, <a href=
+          "database.html"><tt class=
+          "sgmltag-element">database</tt></a>, <a href=
+          "destructorsynopsis.html"><tt class=
+          "sgmltag-element">destructorsynopsis</tt></a>, <a href=
+          "email.html"><tt class="sgmltag-element">email</tt></a>,
+          <a href="emphasis.html"><tt class=
+          "sgmltag-element">emphasis</tt></a>, <a href=
+          "envar.html"><tt class="sgmltag-element">envar</tt></a>,
+          <a href="errorcode.html"><tt class=
+          "sgmltag-element">errorcode</tt></a>, <a href=
+          "errorname.html"><tt class=
+          "sgmltag-element">errorname</tt></a>, <a href=
+          "errortext.html"><tt class=
+          "sgmltag-element">errortext</tt></a>, <a href=
+          "errortype.html"><tt class=
+          "sgmltag-element">errortype</tt></a>, <a href=
+          "exceptionname.html"><tt class=
+          "sgmltag-element">exceptionname</tt></a>, <a href=
+          "fieldsynopsis.html"><tt class=
+          "sgmltag-element">fieldsynopsis</tt></a>, <a href=
+          "filename.html"><tt class=
+          "sgmltag-element">filename</tt></a>, <a href=
+          "firstterm.html"><tt class=
+          "sgmltag-element">firstterm</tt></a>, <a href=
+          "footnote.html"><tt class=
+          "sgmltag-element">footnote</tt></a>, <a href=
+          "footnoteref.html"><tt class=
+          "sgmltag-element">footnoteref</tt></a>, <a href=
+          "foreignphrase.html"><tt class=
+          "sgmltag-element">foreignphrase</tt></a>, <a href=
+          "formalpara.html"><tt class=
+          "sgmltag-element">formalpara</tt></a>, <a href=
+          "funcsynopsis.html"><tt class=
+          "sgmltag-element">funcsynopsis</tt></a>, <a href=
+          "function.html"><tt class=
+          "sgmltag-element">function</tt></a>, <a href=
+          "glosslist.html"><tt class=
+          "sgmltag-element">glosslist</tt></a>, <a href=
+          "glossterm.html"><tt class=
+          "sgmltag-element">glossterm</tt></a>, <a href=
+          "graphic.html"><tt class=
+          "sgmltag-element">graphic</tt></a>, <a href=
+          "guibutton.html"><tt class=
+          "sgmltag-element">guibutton</tt></a>, <a href=
+          "guiicon.html"><tt class=
+          "sgmltag-element">guiicon</tt></a>, <a href=
+          "guilabel.html"><tt class=
+          "sgmltag-element">guilabel</tt></a>, <a href=
+          "guimenu.html"><tt class=
+          "sgmltag-element">guimenu</tt></a>, <a href=
+          "guimenuitem.html"><tt class=
+          "sgmltag-element">guimenuitem</tt></a>, <a href=
+          "guisubmenu.html"><tt class=
+          "sgmltag-element">guisubmenu</tt></a>, <a href=
+          "hardware.html"><tt class=
+          "sgmltag-element">hardware</tt></a>, <a href=
+          "important.html"><tt class=
+          "sgmltag-element">important</tt></a>, <a href=
+          "indexterm.html"><tt class=
+          "sgmltag-element">indexterm</tt></a>, <a href=
+          "inlineequation.html"><tt class=
+          "sgmltag-element">inlineequation</tt></a>, <a href=
+          "inlinegraphic.html"><tt class=
+          "sgmltag-element">inlinegraphic</tt></a>, <a href=
+          "inlinemediaobject.html"><tt class=
+          "sgmltag-element">inlinemediaobject</tt></a>, <a href=
+          "interface.html"><tt class=
+          "sgmltag-element">interface</tt></a>, <a href=
+          "interfacename.html"><tt class=
+          "sgmltag-element">interfacename</tt></a>, <a href=
+          "itemizedlist.html"><tt class=
+          "sgmltag-element">itemizedlist</tt></a>, <a href=
+          "keycap.html"><tt class=
+          "sgmltag-element">keycap</tt></a>, <a href=
+          "keycode.html"><tt class=
+          "sgmltag-element">keycode</tt></a>, <a href=
+          "keycombo.html"><tt class=
+          "sgmltag-element">keycombo</tt></a>, <a href=
+          "keysym.html"><tt class=
+          "sgmltag-element">keysym</tt></a>, <a href=
+          "link.html"><tt class="sgmltag-element">link</tt></a>, <a
+          href="literal.html"><tt class=
+          "sgmltag-element">literal</tt></a>, <a href=
+          "literallayout.html"><tt class=
+          "sgmltag-element">literallayout</tt></a>, <a href=
+          "markup.html"><tt class=
+          "sgmltag-element">markup</tt></a>, <a href=
+          "medialabel.html"><tt class=
+          "sgmltag-element">medialabel</tt></a>, <a href=
+          "mediaobject.html"><tt class=
+          "sgmltag-element">mediaobject</tt></a>, <a href=
+          "menuchoice.html"><tt class=
+          "sgmltag-element">menuchoice</tt></a>, <a href=
+          "methodname.html"><tt class=
+          "sgmltag-element">methodname</tt></a>, <a href=
+          "methodsynopsis.html"><tt class=
+          "sgmltag-element">methodsynopsis</tt></a>, <a href=
+          "modespec.html"><tt class=
+          "sgmltag-element">modespec</tt></a>, <a href=
+          "mousebutton.html"><tt class=
+          "sgmltag-element">mousebutton</tt></a>, <a href=
+          "nonterminal.html"><tt class=
+          "sgmltag-element">nonterminal</tt></a>, <a href=
+          "note.html"><tt class="sgmltag-element">note</tt></a>, <a
+          href="olink.html"><tt class=
+          "sgmltag-element">olink</tt></a>, <a href=
+          "ooclass.html"><tt class=
+          "sgmltag-element">ooclass</tt></a>, <a href=
+          "ooexception.html"><tt class=
+          "sgmltag-element">ooexception</tt></a>, <a href=
+          "oointerface.html"><tt class=
+          "sgmltag-element">oointerface</tt></a>, <a href=
+          "option.html"><tt class=
+          "sgmltag-element">option</tt></a>, <a href=
+          "optional.html"><tt class=
+          "sgmltag-element">optional</tt></a>, <a href=
+          "orderedlist.html"><tt class=
+          "sgmltag-element">orderedlist</tt></a>, <a href=
+          "othercredit.html"><tt class=
+          "sgmltag-element">othercredit</tt></a>, <a href=
+          "para.html"><tt class="sgmltag-element">para</tt></a>, <a
+          href="parameter.html"><tt class=
+          "sgmltag-element">parameter</tt></a>, <a href=
+          "personname.html"><tt class=
+          "sgmltag-element">personname</tt></a>, <a href=
+          "phrase.html"><tt class=
+          "sgmltag-element">phrase</tt></a>, <a href=
+          "productname.html"><tt class=
+          "sgmltag-element">productname</tt></a>, <a href=
+          "productnumber.html"><tt class=
+          "sgmltag-element">productnumber</tt></a>, <a href=
+          "programlisting.html"><tt class=
+          "sgmltag-element">programlisting</tt></a>, <a href=
+          "programlistingco.html"><tt class=
+          "sgmltag-element">programlistingco</tt></a>, <a href=
+          "prompt.html"><tt class=
+          "sgmltag-element">prompt</tt></a>, <a href=
+          "property.html"><tt class=
+          "sgmltag-element">property</tt></a>, <a href=
+          "quote.html"><tt class="sgmltag-element">quote</tt></a>,
+          <a href="remark.html"><tt class=
+          "sgmltag-element">remark</tt></a>, <a href=
+          "replaceable.html"><tt class=
+          "sgmltag-element">replaceable</tt></a>, <a href=
+          "returnvalue.html"><tt class=
+          "sgmltag-element">returnvalue</tt></a>, <a href=
+          "revhistory.html"><tt class=
+          "sgmltag-element">revhistory</tt></a>, <a href=
+          "screen.html"><tt class=
+          "sgmltag-element">screen</tt></a>, <a href=
+          "screenco.html"><tt class=
+          "sgmltag-element">screenco</tt></a>, <a href=
+          "screenshot.html"><tt class=
+          "sgmltag-element">screenshot</tt></a>, <a href=
+          "segmentedlist.html"><tt class=
+          "sgmltag-element">segmentedlist</tt></a>, <a href=
+          "sgmltag.html"><tt class=
+          "sgmltag-element">sgmltag</tt></a>, <a href=
+          "simpara.html"><tt class=
+          "sgmltag-element">simpara</tt></a>, <a href=
+          "simplelist.html"><tt class=
+          "sgmltag-element">simplelist</tt></a>, <a href=
+          "structfield.html"><tt class=
+          "sgmltag-element">structfield</tt></a>, <a href=
+          "structname.html"><tt class=
+          "sgmltag-element">structname</tt></a>, <a href=
+          "subscript.html"><tt class=
+          "sgmltag-element">subscript</tt></a>, <a href=
+          "superscript.html"><tt class=
+          "sgmltag-element">superscript</tt></a>, <a href=
+          "symbol.html"><tt class=
+          "sgmltag-element">symbol</tt></a>, <a href=
+          "synopsis.html"><tt class=
+          "sgmltag-element">synopsis</tt></a>, <a href=
+          "systemitem.html"><tt class=
+          "sgmltag-element">systemitem</tt></a>, <a href=
+          "tip.html"><tt class="sgmltag-element">tip</tt></a>, <a
+          href="token.html"><tt class=
+          "sgmltag-element">token</tt></a>, <a href=
+          "trademark.html"><tt class=
+          "sgmltag-element">trademark</tt></a>, <a href=
+          "type.html"><tt class="sgmltag-element">type</tt></a>, <a
+          href="ulink.html"><tt class=
+          "sgmltag-element">ulink</tt></a>, <a href=
+          "userinput.html"><tt class=
+          "sgmltag-element">userinput</tt></a>, <a href=
+          "variablelist.html"><tt class=
+          "sgmltag-element">variablelist</tt></a>, <a href=
+          "varname.html"><tt class=
+          "sgmltag-element">varname</tt></a>, <a href=
+          "warning.html"><tt class=
+          "sgmltag-element">warning</tt></a>, <a href=
+          "wordasword.html"><tt class=
+          "sgmltag-element">wordasword</tt></a>, <a href=
+          "xref.html"><tt class=
+          "sgmltag-element">xref</tt></a></span>.</p>
+        </div>
+      </div>
+
+      <div class="refsect1" lang="en">
+        <h2>Attributes</h2>
+
+        <div class="variablelist">
+          <dl>
+            <dt><span class="term">align</span></dt>
+
+            <dd>
+              <p><tt class="sgmltag-attribute">Align</tt> specifies
+              the horizontal alignment of text (and other elements)
+              within the <a href="entry.html"><tt class=
+              "sgmltag-element">Entry</tt></a>. If no alignment is
+              specified, it is inherited from the <a href=
+              "colspec.html"><tt class=
+              "sgmltag-element">ColSpec</tt></a> for the current
+              column, or the <a href="spanspec.html"><tt class=
+              "sgmltag-element">SpanSpec</tt></a> if this entry
+              occurs in a span. If <tt>Char</tt> is specified, see
+              also <tt class="sgmltag-attribute">Char</tt> and <tt
+              class="sgmltag-attribute">CharOff</tt>.</p>
+            </dd>
+
+            <dt><span class="term">char</span></dt>
+
+            <dd>
+              <p><tt class="sgmltag-attribute">Char</tt> specifies
+              the alignment character when the <tt class=
+              "sgmltag-attribute">Align</tt> attribute is set to
+              <tt>Char</tt>.</p>
+            </dd>
+
+            <dt><span class="term">charoff</span></dt>
+
+            <dd>
+              <p><tt class="sgmltag-attribute">CharOff</tt>
+              specifies the percentage of the column's total width
+              that should appear to the left of the first occurance
+              of the character identified in <tt class=
+              "sgmltag-attribute">Char</tt> when the <tt class=
+              "sgmltag-attribute">Align</tt> attribute is set to
+              <tt>Char</tt>. This attribute is inherited from the
+              relevant <a href="colspec.html"><tt class=
+              "sgmltag-element">ColSpec</tt></a> or <a href=
+              "spanspec.html"><tt class=
+              "sgmltag-element">SpanSpec</tt></a>.</p>
+            </dd>
+
+            <dt><span class="term">colname</span></dt>
+
+            <dd>
+              <p><tt class="sgmltag-attribute">ColName</tt>
+              identifies the column in which this entry should
+              appear; it must have been previously defined in a <a
+              href="colspec.html"><tt class=
+              "sgmltag-element">ColSpec</tt></a>. <a href=
+              "entry.html"><tt class=
+              "sgmltag-element">Entry</tt></a>s cannot be given out
+              of order, the column referenced must be to the right
+              of the last <a href="entry.html"><tt class=
+              "sgmltag-element">Entry</tt></a> or <a href=
+              "entrytbl.html"><tt class=
+              "sgmltag-element">EntryTbl</tt></a> placed in the
+              current row. It is an error to specify both a <tt
+              class="sgmltag-attribute">ColName</tt> and a <tt
+              class="sgmltag-attribute">SpanName</tt>.</p>
+            </dd>
+
+            <dt><span class="term">colsep</span></dt>
+
+            <dd>
+              <p>If <tt class="sgmltag-attribute">ColSep</tt> has
+              the value 1 (true), then a rule will be drawn to the
+              right of this <a href="entry.html"><tt class=
+              "sgmltag-element">Entry</tt></a>. A value of 0
+              (false) suppresses the rule. The rule to the right of
+              the last column in the table is controlled by the <tt
+              class="sgmltag-attribute">Frame</tt> attribute of the
+              enclosing <a href="table.html"><tt class=
+              "sgmltag-element">Table</tt></a> or <a href=
+              "informaltable.html"><tt class=
+              "sgmltag-element">InformalTable</tt></a> and the <tt
+              class="sgmltag-attribute">ColSep</tt> of an entry in
+              the last column in the table is ignored. If
+              unspecified, this attribute is inherited from the the
+              corresponding <a href="colspec.html"><tt class=
+              "sgmltag-element">ColSpec</tt></a> or <a href=
+              "spanspec.html"><tt class=
+              "sgmltag-element">SpanSpec</tt></a> and enclosing
+              elements.</p>
+            </dd>
+
+            <dt><span class="term">morerows</span></dt>
+
+            <dd>
+              <p><tt class="sgmltag-attribute">MoreRows</tt>
+              indicates how many more rows, in addition to the
+              current row, this <a href="entry.html"><tt class=
+              "sgmltag-element">Entry</tt></a> is to occupy. It
+              creates a vertical span. The default of <tt>0</tt>
+              indicates that the <a href="entry.html"><tt class=
+              "sgmltag-element">Entry</tt></a> occupies only a
+              single row.</p>
+            </dd>
+
+            <dt><span class="term">nameend</span></dt>
+
+            <dd>
+              <p><tt class="sgmltag-attribute">NameEnd</tt> is the
+              name (defined in a <a href="colspec.html"><tt class=
+              "sgmltag-element">ColSpec</tt></a>) of the rightmost
+              column of a span. On <a href="entry.html"><tt class=
+              "sgmltag-element">Entry</tt></a>, specifying both <tt
+              class="sgmltag-attribute">NameSt</tt> and <tt class=
+              "sgmltag-attribute">NameEnd</tt> defines a horizontal
+              span for the current <a href="entry.html"><tt class=
+              "sgmltag-element">Entry</tt></a>. (See also <tt
+              class="sgmltag-attribute">SpanName</tt>.)</p>
+            </dd>
+
+            <dt><span class="term">namest</span></dt>
+
+            <dd>
+              <p><tt class="sgmltag-attribute">NameSt</tt>
+              (&#8220;name start&#8221;) is the name (defined in a
+              <a href="colspec.html"><tt class=
+              "sgmltag-element">ColSpec</tt></a>) of the leftmost
+              column of a span. On <a href="entry.html"><tt class=
+              "sgmltag-element">Entry</tt></a>, specifying both <tt
+              class="sgmltag-attribute">NameSt</tt> and <tt class=
+              "sgmltag-attribute">NameEnd</tt> defines a horizontal
+              span for the current <a href="entry.html"><tt class=
+              "sgmltag-element">Entry</tt></a>. (See also <tt
+              class="sgmltag-attribute">SpanName</tt>.)</p>
+            </dd>
+
+            <dt><span class="term">rotate</span></dt>
+
+            <dd>
+              <p>If <tt class="sgmltag-attribute">Rotate</tt> has
+              the value 1 (true), the <a href="entry.html"><tt
+              class="sgmltag-element">Entry</tt></a> is to be
+              rotated 90 degrees counterclockwise in the table
+              cell. A value of 0 (false) indicates that no rotation
+              is to occur. If the stylesheet also specifies
+              rotation, the value of <tt class=
+              "sgmltag-attribute">Rotate</tt> is ignored; they are
+              not additive. Only the values 0 and 1 are legal.</p>
+            </dd>
+
+            <dt><span class="term">rowsep</span></dt>
+
+            <dd>
+              <p>If <tt class="sgmltag-attribute">RowSep</tt> has
+              the value 1 (true), then a rule will be drawn below
+              the <a href="entry.html"><tt class=
+              "sgmltag-element">Entry</tt></a>. A value of 0
+              (false) suppresses the rule. The rule below the last
+              row in the table is controlled by the <tt class=
+              "sgmltag-attribute">Frame</tt> attribute of the
+              enclosing <a href="table.html"><tt class=
+              "sgmltag-element">Table</tt></a> or <a href=
+              "informaltable.html"><tt class=
+              "sgmltag-element">InformalTable</tt></a> and the <tt
+              class="sgmltag-attribute">RowSep</tt> of the last row
+              is ignored. If unspecified, this attribute is
+              inherited from enclosing elements.</p>
+            </dd>
+
+            <dt><span class="term">spanname</span></dt>
+
+            <dd>
+              <p><tt class="sgmltag-attribute">SpanName</tt> is the
+              name (defined in a <a href="spanspec.html"><tt class=
+              "sgmltag-element">SpanSpec</tt></a>) of a span. This
+              cell will be rendered with the specified horizontal
+              span.</p>
+            </dd>
+
+            <dt><span class="term">valign</span></dt>
+
+            <dd>
+              <p><tt class="sgmltag-attribute">VAlign</tt>
+              specifies the vertical alignment of text (and other
+              elements) within the <a href="entry.html"><tt class=
+              "sgmltag-element">Entry</tt></a>. If no alignment is
+              specified, it is inherited from enclosing
+              elements.</p>
+            </dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="refsect1" lang="en">
+        <h2>See Also</h2>
+
+        <p><span class="simplelist"><a href="colspec.html"><tt
+        class="sgmltag-element">colspec</tt></a>, <a href=
+        "entrytbl.html"><tt class=
+        "sgmltag-element">entrytbl</tt></a>, <a href=
+        "informaltable.html"><tt class=
+        "sgmltag-element">informaltable</tt></a>, <a href=
+        "row.html"><tt class="sgmltag-element">row</tt></a>, <a
+        href="spanspec.html"><tt class=
+        "sgmltag-element">spanspec</tt></a>, <a href=
+        "table.html"><tt class="sgmltag-element">table</tt></a>, <a
+        href="tbody.html"><tt class=
+        "sgmltag-element">tbody</tt></a>, <a href="tfoot.html"><tt
+        class="sgmltag-element">tfoot</tt></a>, <a href=
+        "tgroup.html"><tt class="sgmltag-element">tgroup</tt></a>,
+        <a href="thead.html"><tt class=
+        "sgmltag-element">thead</tt></a></span>.</p>
+      </div>
+
+      <div class="refsect1" lang="en">
+        <h2>Examples</h2>
+
+        <p>For examples, see <span class="simplelist"><a href=
+        "entrytbl.html"><tt class=
+        "sgmltag-element">entrytbl</tt></a>, <a href=
+        "footnoteref.html"><tt class=
+        "sgmltag-element">footnoteref</tt></a>, <a href=
+        "informaltable.html"><tt class=
+        "sgmltag-element">informaltable</tt></a>, <a href=
+        "table.html"><tt class=
+        "sgmltag-element">table</tt></a></span>.</p>
+      </div>
+
+      <div class="footnotes">
+        <br>
+        <hr width="100" align="left">
+
+        <div class="footnote">
+          <p><sup>[<a name="ftn.d0e60713" href=
+          "#d0e60713">1</a>]</sup> A term coined by Terry
+          Allen.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="navfooter">
+      <table width="100%" summary="Navigation table">
+        <tr>
+          <td width="40%" align="left"><a title="emphasis" href=
+          "emphasis.html"><img src="figures/nav-prev.png" alt=
+          "Prev" border="0"></a>&#160;</td>
+
+          <td width="20%" align="center"><a title="DocBook" href=
+          "docbook.html"><img src="figures/nav-home.png" alt="Home"
+          border="0"></a></td>
+
+          <td width="40%" align="right">&#160;<a title="entrytbl"
+          href="entrytbl.html"><img src="figures/nav-next.png" alt=
+          "Next" border="0"></a></td>
+        </tr>
+
+        <tr>
+          <td width="40%" align="left">emphasis&#160;</td>
+
+          <td width="20%" align="center"><a title=
+          "DocBook Element Reference" href="ref-elements.html"><img
+          src="figures/nav-up.png" alt="Up" border="0"></a></td>
+
+          <td width="40%" align="right">&#160;entrytbl</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="copyrightfooter">
+      <p><a href="dbcpyright.html">Copyright</a> &#169; 1999, 2000,
+      2001, 2002 <a href="http://www.oreilly.com/">O'Reilly &amp;
+      Associates, Inc.</a> All rights reserved.</p>
+    </div>
+  </body>
+</html>
+

@@ -1,0 +1,246 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: First Configure Programs</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: First Configure Programs">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: First Configure Programs">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC8"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_7.html#SEC7" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Unix Diversity" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_9.html#SEC9" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Configure Development" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_9.html#SEC9" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Configure Development" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_6.html#SEC6" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: History" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_13.html#SEC13" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Invoking configure" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 2.2 The First Configure Programs </H2>
+<!--docid::SEC8::-->
+<P>
+
+By 1992, four different systems had been developed to help with source
+code portability:
+<UL>
+<LI>
+The Metaconfig program, by Larry Wall, Harlan Stenn, and
+Raphael Manfredi.
+<LI>
+The Cygnus <TT>`configure'</TT> script, by K. Richard Pixley, and the
+original GCC <TT>`configure'</TT> script, by Richard Stallman.  These
+are quite similar, and the developers communicated regularly. GCC
+is the GNU Compiler Collection, formerly the GNU C compiler.
+<LI>
+The GNU Autoconf package, by David MacKenzie.
+<LI>
+Imake, part of the X Window system.
+</UL>
+<P>
+
+These systems all split building a program into two steps: a
+configuration step, and a build step.  For all the systems, the build
+step used the standard Unix <CODE>make</CODE> program.  The <CODE>make</CODE>
+program reads a set of rules in a <TT>`Makefile'</TT>, and uses them to
+build a program.  The configuration step would generate
+<TT>`Makefile'</TT>s, and perhaps other files, which would then be used
+during the build step.
+</P><P>
+
+Metaconfig and Autoconf both use feature tests to
+determine the capabilities of the system.  They use Bourne shell scripts
+(all variants of Unix support the Bourne shell in one form or another)
+to run various tests to see what the system can support.
+</P><P>
+
+The Cygnus <TT>`configure'</TT> script and the original GCC
+<TT>`configure'</TT> script are also Bourne shell scripts.  They rely on
+little configuration files for each system variant, both header files
+and <TT>`Makefile'</TT> fragments.  In early versions, the user compiling
+the program had to tell the script which type of system the program
+should be built for; they were later enhanced with a shell script
+written by Per Bothner which determines the system type based on the
+standard Unix <CODE>uname</CODE> program and other information.
+</P><P>
+
+Imake is a portable C program.  Imake can be
+customized for a particular system, and run as part of building a
+package.  However, it is more normally distributed with a package,
+including all the configuration information needed for supported
+systems.
+</P><P>
+
+Metaconfig and Autoconf are programs used by program
+authors.  They produce a shell script which is distributed with the
+program's source code.  A user who wants to build the program runs the
+shell script in order to configure the source code for the particular
+system on which it is to be built.
+</P><P>
+
+The Cygnus and GCC <TT>`configure'</TT> scripts, and <CODE>imake</CODE>,
+do not have this clear distinction between use by the developer and use
+by the user.
+</P><P>
+
+The Cygnus and GCC <TT>`configure'</TT> scripts included features to
+support cross development, both to support building a cross-compiler
+which compiles code to be run on another system, and to support building
+a program using a cross-compiler.
+</P><P>
+
+Autoconf, Metaconfig and Imake did not
+have these features (they were later added to Autoconf); they
+only worked for building a program on the system on which it was to run.
+</P><P>
+
+The scripts generated by Metaconfig are interactive by
+default: they ask questions of the user as they go along.  This permits
+them to determine certain characteristics of the system which it is
+difficult or impossible to test, such as the behavior of setuid
+programs.
+</P><P>
+
+The Cygnus and GCC <TT>`configure'</TT> scripts, and the scripts
+generated by <CODE>autoconf</CODE>, and the <CODE>imake</CODE> program, are
+not interactive: they determine everything themselves.  When using
+Autoconf, the package developer normally writes the script to accept
+command line options for features which can not be tested for, or
+sometimes requires the user to edit a header file after the
+<TT>`configure'</TT> script has run.
+</P><P>
+
+<A NAME="Configure Development"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

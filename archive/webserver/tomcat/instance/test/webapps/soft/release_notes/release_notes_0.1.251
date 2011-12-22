@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.251
+----------------------------------
+USER VISIBLE CHANGES
+
+Made banded covariance matrices work properly.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  980
+
+BY:  Mitch Watrous
+
+WHEN:  October 2, 2008

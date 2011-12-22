@@ -1,0 +1,67 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.109
+----------------------------------
+USER VISIBLE CHANGES
+The AMT data item is inserted into the data set when it is missing
+with the default value = 0.0.
+
+
+OTHER CHANGES
+1) The definition of NonmemTranslator class is split into multiple files.
+2) The job end code 11 and 101 are replaced by 16 and 106, respectively, 
+in order to avoid a conflict with C++ compilation error set by CSPK daemon.
+3) spk_m is set properly to the i-th individual's measurement in Pred::eval().
+
+RELATED BUG REPORTS: 265, 395 408, 456
+
+BY: Sachiko Honda
+
+WHEN: October 6, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.110
+----------------------------------
+USER VISIBLE CHANGES
+When the user requests an individual analysis, yet provides
+a population data set, the SPK Compiler throws an exception
+that is to be caught properly and reported back to the user.
+
+OTHER CHANGES 
+
+RELATED BUG REPORTS: 445
+
+BY: Sachiko Honda
+
+WHEN: October 6, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.111
+----------------------------------
+USER VISIBLE CHANGES
+The user will no longer receive a Bugzilla bug report
+when there was a user input (i.e. syntax) error in
+the model definition.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 452
+
+BY: Sachiko Honda
+
+WHEN: October 6, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.112
+----------------------------------
+USER VISIBLE CHANGES
+The user no longer receives a Bugzilla report when
+an SpkException is caught.
+
+OTHER CHANGES
+The outer most catch block was printing out error messages to
+the standard error, which in turn was triggering the CSPK daemon to
+submit a bugzilla report.  Fixed so that the messages are directed
+to result.xml.
+
+RELATED BUG REPORTS: 455
+
+BY: Sachiko Honda
+
+WHEN: October 6, 2005

@@ -1,0 +1,16 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.223
+----------------------------------
+This version includes a new optimizer (QN01Box) with significant speed-up,
+and new convergence criteria.  
+
+Additionally, a localized bug fix has been placed in this version which
+fixes the miser.o  object in the GSL library.  A bug report has been 
+provided to the GSL maintainers, and we will keep this fix in place until
+they resolve the issue in the GSL library.
+
+RELATED BUG REPORTS: 
+
+BY:  Brad Bell / Andrew Ernst
+
+WHEN:  2008-02-05

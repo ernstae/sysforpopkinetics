@@ -1,0 +1,312 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<HTML
+><HEAD
+><TITLE
+>XML Representation of Model and Control Parameters</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.79"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+>XML Representation of Model and Control Parameters</A
+></H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;      All the user provided information other than the data set is captured in an instance
+      of SpkSourceML.  This document defines SpkSourceML.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.10</TD
+><TD
+ALIGN="LEFT"
+>June 30, 2008</TD
+><TD
+ALIGN="LEFT"
+>Revised by: jiaji</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added a seed attribute to monte_carlo element.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.9</TD
+><TD
+ALIGN="LEFT"
+>Apr 13, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: honda</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Added a nonmem compatable source.xml as an example.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.8</TD
+><TD
+ALIGN="LEFT"
+>Aug 24, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: honda</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Removed "simonly" option.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.7</TD
+><TD
+ALIGN="LEFT"
+>May 21, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: honda</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Changed the dafault values for the statistics computation requests
+                    from "no" to "yes" throughout.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.6</TD
+><TD
+ALIGN="LEFT"
+>April 30, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: honda</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Took out "ML" from "sourceML".</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.5</TD
+><TD
+ALIGN="LEFT"
+>April 7, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: honda</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Moved from r2/src/apps/spk/aspk/spkcompiler/doc.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.4</TD
+><TD
+ALIGN="LEFT"
+>Jaunary 6, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: alan</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Changed version of Docbook DTD from 4.1.2 to 4.2 in all .xml files</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.3</TD
+><TD
+ALIGN="LEFT"
+>January 5, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: alan</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Clean up.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.2</TD
+><TD
+ALIGN="LEFT"
+>December 12, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Seperated out the data set section.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.1</TD
+><TD
+ALIGN="LEFT"
+>December 9, 2003</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN57"
+><A
+HREF="nonmem/html/elt-spksource.html"
+TARGET="_top"
+>NONMEM</A
+></A
+></DT
+><DT
+><A
+HREF="#AEN61"
+>SAAM-II</A
+></DT
+><DT
+><A
+HREF="#AEN64"
+>Generic</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN57"
+><A
+HREF="nonmem/html/elt-spksource.html"
+TARGET="_top"
+>NONMEM</A
+></A
+></H2
+><P
+></P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN61"
+>SAAM-II</A
+></H2
+><P
+>&#13;      </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN64"
+>Generic</A
+></H2
+><P
+>&#13;      </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

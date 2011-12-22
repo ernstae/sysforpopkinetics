@@ -1,0 +1,210 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>spkrund.pl -- the SPK Run Time Daemon</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#abstract">ABSTRACT</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
+
+		<li><a href="#arguments">ARGUMENTS</a></li>
+		<li><a href="#operation">OPERATION</a></li>
+		<li><a href="#end_code_and_error_reporting">END_CODE AND ERROR REPORTING</a></li>
+	</ul>
+
+	<li><a href="#returns">RETURNS</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<p>spkrund.pl -- the SPK Run Time Daemon</p>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<p>spkrund.pl database dbhost dbuser dbpasswd mode shost sport pvm max_concurrent</p>
+<p>
+</p>
+<hr />
+<h1><a name="abstract">ABSTRACT</a></h1>
+<p>The SPK run daemon executes continuously on the CSPK server. It
+selects jobs from the run queue, forks processes to compile, link
+and run them and, finally, inserts results into the database.</p>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<p>
+</p>
+<h2><a name="arguments">ARGUMENTS</a></h2>
+<p>The program expects the following arguments:</p>
+<pre>
+    $database
+        The name of the SPK database
+    $dbhost
+        The host on which the SPK database resides
+    $dbuser
+        A database username which has read/write access to the job table
+    $dbpasswd
+        The password associated with the username
+    $mode
+        The test mode indicator being &quot;test&quot; for test mode, &quot;prod&quot; for production mode 
+    $shost
+        The host on which the job-queue server resides
+    $sport
+        The port of the job-queue server
+    $pvm
+        The using PVM indicator being &quot;on&quot; for using PVM, 'off' otherwise
+    $max_concurrent
+        Maximum number of concurrent running jobs
+    $max_ntasks
+        Maximum number of tasks for a job</pre>
+<p>
+</p>
+<h2><a name="operation">OPERATION</a></h2>
+<p>The first thing that spkrun.pl does after starting up is to call
+Proc::Daemon::Init to make it into a daemon, by shedding its
+inheirited environment and becoming a direct child of the system init
+process.</p>
+<p>It then opens the system log so that it has a place to record progress
+and error messages.</p>
+<p>It attempts to create a lock-file if one does not already exist. The
+method that is used assures that the process of query and creation is
+atomic.  If the lock-file already exists, the program writes an error
+message to the system log and terminates, because only one copy of
+spkrund.pl can be allowed to run at any given time.</p>
+<p>Next, it opens the database and connects to the job-queue server.</p>
+<p>The program designates itself to be a process group leader. This way
+it will be able to send signals to all of its descendents without
+having to know their PIDs.</p>
+<p>The ``stop'' subroutine is designated to catch the TERM signal, when it
+is received. As explained below, this will allow for an orderly
+shutdown of the daemon and its sub-processes.  It closes 
+the connection to the database and the connection to the job-queue 
+server.</p>
+<p>The last major step in the start-up sequence is to talk to the 
+job-queue server to put any running jobs back to run queue 
+that were interupted by the last termination of this daemon, and 
+to put any aborting jobs back to aborting run queue that were 
+interupted by the last termination of this daemon</p>
+<p>At this point, the program enters an endless loop from which it will
+escape only upon receipt of a signal. It queries the job-queue server to
+discover whether or not a job has been added to the run queue.  If so,
+a copy of the job's driver is started as an independent sub-process,
+working in its own directory.</p>
+<p>The program also queries the job-queue server to discover whether or not 
+a job has been added to the aborting run queue.  If so, a 'TERM' signal 
+is sent to the child process of the job to terminate the child process. 
+To avoid the ``stop'' subroutine, which is for the termination of the 
+daemon, being called, the signal mask is temporarily set.</p>
+<p>The daemon then checks to see if any child processes have terminated.
+If so, it moves them to ``end'' status and stores the results in the 
+database. The daemon sleeps a second, before continuing its loop.</p>
+<p>The normal way in which spkcmp.pl is terminated is by using the Unix
+``kill'' command to send it the TERM signal.  When TERM is received,
+execution is passed to the 'stop' subroutine, which had previously
+been designated to catch this signal.</p>
+<p>To avoid a loop, 'stop' sets the signal mask to ignore any subsequent
+TERM signals. It then sends the TERM signal to every process in its
+process group, which consists of the daemon itself and all of its
+descendents. It waits for all descendents (which are job drivers) to
+terminate.  It closes the database and the system log, then dies.</p>
+<p>NOTE: Life-Cycle of the Working Directory Name</p>
+<pre>
+  1. A working directory must be created before each run-time is 
+     forked so that the process will start up in its own unique space.
+     There it will find all of the files created for it by the SPK
+     compiler and there it will write its output.  To insure that the
+     name of the working directory is unique, a suffix of the form
+     &quot;-job-jjjj&quot; is appended to the name, where &quot;jjjj&quot; is the unique
+     job_id that was assigned by the database management system when
+     the job was created. 
+  2. Once the working directory has been created, the daemon uses the
+     tar application to expand the contents of the &quot;cpp_source&quot; field
+     of the row for this job in the job table of the database. In effect,
+     it recreates the working directory as it was on the server which
+     hosts the SPK compiler at the time that compiler finished its
+     work with the job. The source code and data needed for the run
+     are placed there.
+  3. When the process is forked into a parent process and a child
+     process, the Linux or Unix operating system assigns a process
+     identifier (pid) number to the child.  Process identifiers are
+     recycled, but only after a long time or when the system is 
+     rebooted.  The parent finds the working directories of its
+     children by maintaining a table relating pid to job_id. 
+  4. When a child process dies, the parent receives its pid as the 
+     value returned from the waitpid system call.  Using this, it
+     easily constructs the name of the working directory. After 
+     extracting results and placing them in the database, the 
+     working directory is normally removed, unless the constant 
+     $retain_working_directory has been initialized to be true, or
+     in case the run died due to an internal error. So that the
+     retained working directory can be easily identified by software
+     maintainers.</pre>
+<p>
+</p>
+<h2><a name="end_code_and_error_reporting">END_CODE AND ERROR REPORTING</a></h2>
+<p>Because the deamon is the parent of all jobs, it is informed as soon
+as a job driver terminates.  The operating system provides the daemon
+with three very useful numbers describing the deceased driver: the
+process identifier (pid), the exit status and, in the case where the
+driver is terminated with a kill signal, the signal number.</p>
+<p>The end-code will be set to ``srun'', which indicates a successful run,
+only if the exit status and the signal number are both zero and if, in
+addition, no file called ``software error'' is found in the job's
+working directory.</p>
+<p>If the signal number is SIGTERM, which indicates that the job was
+terminated by an operator, a software error of some sort is assumed
+and end_code is set to ``serr''.  It may be that the only error is that
+the optimization failed to converge in a reasonable period of time.
+Only subsequent analysis will determine what the problem was.</p>
+<p>If the signal number is SIGABRT, this indicates that the software
+itself discovered some internal inconsistency and terminated by
+raising an ``assertion''.  In this case, end_code is also set to ``serr''.</p>
+<p>If the signal number is SIGKILL, this indicates that the job is set to
+abort.</p>
+<p>If the job terminated with any signal other than SIGTERM or SIGABRT, a
+hardware error is assumed, and the end_code is set to ``herr''. Of
+course, many hardware errors are really caused by software, such as
+when the software attempts to divide a number by zero or when it
+attempts a reference via an invalid pointer.</p>
+<p>If the signal number is zero, indicating that the job did not
+terminate as the result of a signal, but the exit status is not zero,
+end_code is set to ``serr''.</p>
+<p>If the daemon finds a file called ``software error'', end_code is always
+set to ``serr'' and it is assumed that an assertion was raised.  In this
+case, the SIGABRT signal was probably also reported.</p>
+<p>The daemon analyzes the various cases described above, and generates
+an error messages which is written to the report which goes into the
+database, to be made available to the end user, as well as to the
+system log, where it is available to developers and system
+adminstrators.</p>
+<p>If the end_code is not ``abrt'', the daemon sends an end-job email notice 
+to the user on the user's request.</p>
+<p>
+</p>
+<hr />
+<h1><a name="returns">RETURNS</a></h1>
+<p>Nothing, because it has no parent (other than init) to which an exit
+code might be returned.  The program does, however, write event
+messages to the system log.</p>
+
+</body>
+
+</html>

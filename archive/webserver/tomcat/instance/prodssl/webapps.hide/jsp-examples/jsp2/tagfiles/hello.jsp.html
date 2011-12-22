@@ -1,0 +1,21 @@
+<html><body><pre>
+&lt;%@ taglib prefix="tags" tagdir="/WEB-INF/tags" %>
+&lt;html>
+  &lt;head>
+    &lt;title>JSP 2.0 Examples - Hello World Using a Tag File&lt;/title>
+  &lt;/head>
+  &lt;body>
+    &lt;h1>JSP 2.0 Examples - Hello World Using a Tag File&lt;/h1>
+    &lt;hr>
+    &lt;p>This JSP page invokes a custom tag that simply echos "Hello, World!"  
+    The custom tag is generated from a tag file in the /WEB-INF/tags
+    directory.&lt;/p>
+    &lt;p>Notice that we did not need to write a TLD for this tag.  We just
+    created /WEB-INF/tags/helloWorld.tag, imported it using the taglib
+    directive, and used it!&lt;/p>
+    &lt;br>
+    &lt;b>&lt;u>Result:&lt;/u>&lt;/b>
+    &lt;tags:helloWorld/>
+  &lt;/body>
+&lt;/html>
+</pre></body></html>

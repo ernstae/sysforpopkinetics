@@ -1,0 +1,39 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.209
+----------------------------------
+USER VISIBLE CHANGES
+
+A check box was added to the MDA job submition dialog window to allow the user to choose 
+running the job in parallel process mode.  The computation mode was added to the MDA job 
+summary report. 
+
+OTHER CHANGES
+
+All the changes for the first distributed and parallel version of the SPK web service 
+system using PVM. 
+
+RELATED BUG REPORTS:
+
+BY:  Jiaji Du
+
+WHEN:  September 10, 2007
+
+
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.210
+----------------------------------
+USER VISIBLE CHANGES
+
+Added backing up of the ODE integration, individual level optimization,
+and population level optimization when errors occur evaluating an 
+individual's model.
+
+OTHER CHANGES
+
+None.
+
+RELATED BUG REPORTS:  634, 746, 750.
+
+BY:  Mitch Watrous
+
+WHEN:  September 14, 2007.

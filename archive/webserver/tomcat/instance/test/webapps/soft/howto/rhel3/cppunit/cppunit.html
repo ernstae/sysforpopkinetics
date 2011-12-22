@@ -1,0 +1,261 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>CppUnit Installation</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>CppUnit Installation</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;The components of SPK Library are unit-tested within the CppUnit framework.
+CppUnit is the C++ port of the famous JUnit framework for unit testing. 
+Test output is in XML or text format for automatic testing and GUI based for supervised tests.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.1</TD
+><TD
+ALIGN="LEFT"
+>September 14, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>CppUnit later than 1.8.0 don't work with ours.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>March 8, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN17"
+>Download and Unpack</A
+></DT
+><DT
+><A
+HREF="#AEN22"
+>Build and Install</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN17"
+></A
+>Download and Unpack</H2
+><P
+>&#13;Copy whitechuck:/opt/download/cppunit-1.8.0.tar.gz into /tmp on your workstation
+and unpack the tarball as follows:
+       <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd /tmp
+tar xvzf cppunit-1.8.0.tar.gz
+       </PRE
+></TD
+></TR
+></TABLE
+>
+It will extract files into a new subdirectory, cppunit-1.8.0.
+    </P
+><P
+>&#13;Warning: The later versions of CppUnit have changed something that make our tests
+obsolete (ie. don't compile).
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN22"
+></A
+>Build and Install</H2
+><P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;        Change directory to /tmp/cppunit-1.8.0 by typing in:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;cd cppunit-1.8.0
+          </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+><LI
+><P
+>&#13;        First, run "configure" in the directory to correct values for various system
+        dependent variables used druing compilation.  Type and run:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;./configure
+          </PRE
+></TD
+></TR
+></TABLE
+> 
+        </P
+></LI
+><LI
+><P
+>&#13;        Now, run Make to build the libraries.
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;make
+          </PRE
+></TD
+></TR
+></TABLE
+>
+        This builds
+        </P
+></LI
+><LI
+><P
+>&#13;        Finally, install the libraries and header files into /usr/local/lib and /usr/local/include
+        (by default), respectively.  This requires you to login as root.
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;su
+make install
+          </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></LI
+></OL
+><P
+>&#13;Done.
+    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

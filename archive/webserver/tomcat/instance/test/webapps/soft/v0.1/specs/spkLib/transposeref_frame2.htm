@@ -1,0 +1,87 @@
+<html><head>
+<title>Transpose of a matrix (return result through reference)</title>
+<meta name="description" id="description" content="Transpose of a matrix (return result through reference)">
+<meta name="keywords" id="keywords" content=" matrix transpose (return result through reference) "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="transposeref.htm" target="_top">section</a>, <a href="transposeref_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Returns the transpose of a matrix <i>A</i> through <i>B</i>.
+
+<br>
+<br>
+<b><big><a name="Return Value" id="Return Value">Return Value</a></big></b>
+<br>
+Given a <code><span style='white-space: nowrap'><i>m</i></span></code> by <code><span style='white-space: nowrap'><i>n</i></span></code> matrix <i>A</i>, 
+<code><font color="blue"><span style='white-space: nowrap'>transpose(</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code> returns a <code><span style='white-space: nowrap'><i>n</i></span></code> by 
+<code><span style='white-space: nowrap'><i>m</i></span></code> matrix <i>B</i>, such that 
+<code><span style='white-space: nowrap'>(<i>b</i>(<i>i</i>,<i>j</i>)&nbsp;<i>in</i>&nbsp;<i>B</i>)&nbsp;=&nbsp;(<i>a</i>(<i>j</i>,<i>i</i>)&nbsp;<i>in</i>&nbsp;<i>A</i>)</span></code>, where 
+<code><span style='white-space: nowrap'><i>m</i>&nbsp;&gt;&nbsp;<i>i</i>&nbsp;<u>&gt;</u>&nbsp;0</span></code> and <code><span style='white-space: nowrap'><i>n</i>&nbsp;&gt;&nbsp;<i>j</i>&nbsp;<u>&gt;</u>&nbsp;0</span></code>. 
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>contains the value of a <code><span style='white-space: nowrap'><i>m</i></span></code> by <code><span style='white-space: nowrap'><i>n</i></span></code> matrix, where <code><span style='white-space: nowrap'><i>m</i></span></code> and <code><span style='white-space: nowrap'><i>n</i></span></code> are greater
+than zero.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>B</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>will contain the values of the transpose of <i>A</i>.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program,
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+#include&nbsp;&quot;transpose.h&quot;<br>
+<br>
+void&nbsp;main(){<br>
+&nbsp;&nbsp;<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;A(3,&nbsp;2);<br>
+&nbsp;&nbsp;double&nbsp;*pA&nbsp;=&nbsp;A.data();<br>
+&nbsp;&nbsp;int&nbsp;i;<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Set&nbsp;A&nbsp;to&nbsp;the&nbsp;matrix<br>
+&nbsp;&nbsp;//&nbsp;[&nbsp;1&nbsp;4&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;[&nbsp;2&nbsp;5&nbsp;]<br>
+&nbsp;&nbsp;//&nbsp;[&nbsp;3&nbsp;6&nbsp;]<br>
+&nbsp;&nbsp;for(i=0;&nbsp;i&lt;6;&nbsp;i++)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;pA[i]&nbsp;=&nbsp;i+1;<br>
+<br>
+&nbsp;&nbsp;//&nbsp;Compute<br>
+&nbsp;&nbsp;//&nbsp;[1&nbsp;2&nbsp;3]&nbsp;=&nbsp;[1&nbsp;4]^T<br>
+&nbsp;&nbsp;//&nbsp;[4&nbsp;5&nbsp;6]&nbsp;&nbsp;&nbsp;[2&nbsp;5]<br>
+&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[3&nbsp;6]<br>
+&nbsp;&nbsp;DoubleMatrix&nbsp;B(2,3);<br>
+&nbsp;&nbsp;transpose(A,B);<br>
+&nbsp;&nbsp;b.print();<br>
+}<br>
+</span>
+</font></code>
+the matrix
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;[1&nbsp;2&nbsp;3]<br>
+&nbsp;&nbsp;&nbsp;[4&nbsp;5&nbsp;6]<br>
+</span></code>will be printed.
+
+<hr>Input File: ../../spk/transpose.cpp
+
+</body>
+</html>

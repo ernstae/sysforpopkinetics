@@ -1,0 +1,1634 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on April 2, 2002 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>GNU Emacs Manual: Maintaining</TITLE>
+
+<META NAME="description" CONTENT="GNU Emacs Manual: Maintaining">
+<META NAME="keywords" CONTENT="GNU Emacs Manual: Maintaining">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC332"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC331"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC333"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_25.html#SEC316"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> W. Maintaining Programs </H1>
+<!--docid::SEC332::-->
+<P>
+
+  This chapter describes Emacs features for maintaining programs.  The
+version control features (see section <A HREF="emacs_16.html#SEC127">M.7 Version Control</A>) are also
+particularly useful for this purpose.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC333">W.1 Change Logs</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Maintaining a change history for your program.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC334">W.2 Tags Tables</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Go direct to any function in your program in one
+			  command.  Tags remembers which file it is in.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC342">W.3 Merging Files with Emerge</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">A convenient way of merging two versions of a program.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Change Log"></A>
+<HR SIZE="6">
+<A NAME="SEC333"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC334"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> W.1 Change Logs </H2>
+<!--docid::SEC333::-->
+<P>
+
+<A NAME="IDX1679"></A>
+<A NAME="IDX1680"></A>
+<A NAME="IDX1681"></A>
+  The Emacs command <KBD>C-x 4 a</KBD> adds a new entry to the change log
+file for the file you are editing
+(<CODE>add-change-log-entry-other-window</CODE>).  If that file is actually
+a backup file, it makes an entry appropriate for the file's
+parent--that is useful for making log entries for functions that
+have been deleted in the current version.
+</P><P>
+
+  A change log file contains a chronological record of when and why you
+have changed a program, consisting of a sequence of entries describing
+individual changes.  Normally it is kept in a file called
+<TT>`ChangeLog'</TT> in the same directory as the file you are editing, or
+one of its parent directories.  A single <TT>`ChangeLog'</TT> file can
+record changes for all the files in its directory and all its
+subdirectories.
+</P><P>
+
+  You should put a copyright notice and permission notice at the
+end of the change log file.  Here is an example:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>Copyright 1997, 1998 Free Software Foundation, Inc.
+Copying and distribution of this file, with or without modification, are
+permitted provided the copyright notice and this notice are preserved.
+</pre></td></tr></table></P><P>
+
+Of course, you should substitute the proper years and copyright holder.
+</P><P>
+
+  A change log entry starts with a header line that contains the
+current date, your name, and your email address (taken from the
+variable <CODE>user-mail-address</CODE>).  Aside from these header lines,
+every line in the change log starts with a space or a tab.  The bulk
+of the entry consists of <EM>items</EM>, each of which starts with a line
+starting with whitespace and a star.  Here are two entries, both dated
+in May 1993, each with two items:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>1993-05-25  Richard Stallman  &#60;rms@gnu.org&#62;
+
+        * man.el: Rename symbols `man-*' to `Man-*'.
+        (manual-entry): Make prompt string clearer.
+
+        * simple.el (blink-matching-paren-distance):
+        Change default to 12,000.
+
+1993-05-24  Richard Stallman  &#60;rms@gnu.org&#62;
+
+        * vc.el (minor-mode-map-alist): Don't use it if it's void.
+        (vc-cancel-version): Doc fix.
+</FONT></pre></td></tr></table></P><P>
+
+  One entry can describe several changes; each change should have its
+own item.  Normally there should be a blank line between items.  When
+items are related (parts of the same change, in different places), group
+them by leaving no blank line between them.  The second entry above
+contains two items grouped in this way.
+</P><P>
+
+  <KBD>C-x 4 a</KBD> visits the change log file and creates a new entry
+unless the most recent entry is for today's date and your name.  It
+also creates a new item for the current file.  For many languages, it
+can even guess the name of the function or other object that was
+changed.
+</P><P>
+
+<A NAME="IDX1682"></A>
+  When the option <CODE>add-log-keep-changes-together</CODE> is
+non-<CODE>nil</CODE>, <KBD>C-x 4 a</KBD> adds to any existing entry for the file
+rather than starting a new entry.
+</P><P>
+
+<A NAME="IDX1683"></A>
+<A NAME="IDX1684"></A>
+<A NAME="IDX1685"></A>
+  If the value of the variable <CODE>change-log-version-info-enabled</CODE>
+is non-<CODE>nil</CODE>, <KBD>C-x 4 a</KBD> adds the file's version number to the
+change log entry.  It finds the version number by searching the first
+ten percent of the file, using regular expressions from the variable
+<CODE>change-log-version-number-regexp-list</CODE>.
+</P><P>
+
+<A NAME="IDX1686"></A>
+<A NAME="IDX1687"></A>
+  The change log file is visited in Change Log mode.  In this major
+mode, each bunch of grouped items counts as one paragraph, and each
+entry is considered a page.  This facilitates editing the entries.
+<KBD>C-j</KBD> and auto-fill indent each new line like the previous line;
+this is convenient for entering the contents of an entry.
+</P><P>
+
+<A NAME="IDX1688"></A>
+  You can use the command <KBD>M-x change-log-merge</KBD> to merge other
+log files into a buffer in Change Log Mode, preserving the date
+ordering of entries.
+</P><P>
+
+<A NAME="IDX1689"></A>
+<A NAME="IDX1690"></A>
+  Versions of Emacs before 20.1 used a different format for the time of
+the change log entry:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>Fri May 25 11:23:23 1993 Richard Stallman  &#60;rms@gnu.org&#62;
+</FONT></pre></td></tr></table></P><P>
+
+The <KBD>M-x change-log-redate</KBD> command converts all the old-style
+date entries in the change log file visited in the current buffer to
+the new format, to make the file uniform in style.  This is handy when
+entries are contributed by many different people, some of whom use old
+versions of Emacs.
+</P><P>
+
+  Version control systems are another way to keep track of changes in your
+program and keep a change log.  See section <A HREF="emacs_16.html#SEC136">M.7.3.4 Features of the Log Entry Buffer</A>.
+</P><P>
+
+<A NAME="Tags"></A>
+<HR SIZE="6">
+<A NAME="SEC334"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC333"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC335"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> W.2 Tags Tables </H2>
+<!--docid::SEC334::-->
+<P>
+
+  A <EM>tags table</EM> is a description of how a multi-file program is
+broken up into files.  It lists the names of the component files and the
+names and positions of the functions (or other named subunits) in each
+file.  Grouping the related files makes it possible to search or replace
+through all the files with one command.  Recording the function names
+and positions makes possible the <KBD>M-.</KBD> command which finds the
+definition of a function by looking up which of the files it is in.
+</P><P>
+
+  Tags tables are stored in files called <EM>tags table files</EM>.  The
+conventional name for a tags table file is <TT>`TAGS'</TT>.
+</P><P>
+
+  Each entry in the tags table records the name of one tag, the name of the
+file that the tag is defined in (implicitly), and the position in that file
+of the tag's definition.
+</P><P>
+
+  Just what names from the described files are recorded in the tags table
+depends on the programming language of the described file.  They
+normally include all file names, functions and subroutines, and may
+also include global variables, data types, and anything else
+convenient.  Each name recorded is called a <EM>tag</EM>.
+</P><P>
+
+<A NAME="IDX1691"></A>
+<A NAME="IDX1692"></A>
+<A NAME="IDX1693"></A>
+<A NAME="IDX1694"></A>
+  See also the Ebrowse facility, which is tailored for C++.
+See section `Ebrowse' in <CITE>Ebrowse User's Manual</CITE>.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC335">W.2.1 Source File Tag Syntax</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Tag syntax for various types of code and text files.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC336">W.2.2 Creating Tags Tables</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Creating a tags table with <CODE>etags</CODE>.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC337">W.2.3 Etags Regexps</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Create arbitrary tags using regular expressions.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC338">W.2.4 Selecting a Tags Table</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to visit a tags table.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC339">W.2.5 Finding a Tag</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Commands to find the definition of a specific tag.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC340">W.2.6 Searching and Replacing with Tags Tables</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Using a tags table for searching and replacing.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC341">W.2.7 Tags Table Inquiries</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Listing and finding tags defined in a file.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Tag Syntax"></A>
+<HR SIZE="6">
+<A NAME="SEC335"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC334"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC336"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC334"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> W.2.1 Source File Tag Syntax </H3>
+<!--docid::SEC335::-->
+<P>
+
+  Here is how tag syntax is defined for the most popular languages:
+</P><P>
+
+<UL>
+<LI>
+In C code, any C function or typedef is a tag, and so are definitions of
+<CODE>struct</CODE>, <CODE>union</CODE> and <CODE>enum</CODE>.
+<CODE>#define</CODE> macro definitions and <CODE>enum</CODE> constants are also
+tags, unless you specify <SAMP>`--no-defines'</SAMP> when making the tags table.
+Similarly, global variables are tags, unless you specify
+<SAMP>`--no-globals'</SAMP>.  Use of <SAMP>`--no-globals'</SAMP> and <SAMP>`--no-defines'</SAMP>
+can make the tags table file much smaller.
+<P>
+
+You can tag function declarations and external variables in addition
+to function definitions by giving the <SAMP>`--declarations'</SAMP> option to
+<CODE>etags</CODE>.
+</P><P>
+
+<LI>
+In C++ code, in addition to all the tag constructs of C code, member
+functions are also recognized, and optionally member variables if you
+use the <SAMP>`--members'</SAMP> option.  Tags for variables and functions in
+classes are named <SAMP>`<VAR>class</VAR>::<VAR>variable</VAR>'</SAMP> and
+<SAMP>`<VAR>class</VAR>::<VAR>function</VAR>'</SAMP>.  <CODE>operator</CODE> definitions have
+tag names like <SAMP>`operator+'</SAMP>.
+<P>
+
+<LI>
+In Java code, tags include all the constructs recognized in C++, plus
+the <CODE>interface</CODE>, <CODE>extends</CODE> and <CODE>implements</CODE> constructs.
+Tags for variables and functions in classes are named
+<SAMP>`<VAR>class</VAR>.<VAR>variable</VAR>'</SAMP> and <SAMP>`<VAR>class</VAR>.<VAR>function</VAR>'</SAMP>.
+<P>
+
+<LI>
+In LaTeX text, the argument of any of the commands <CODE>\chapter</CODE>,
+<CODE>\section</CODE>, <CODE>\subsection</CODE>, <CODE>\subsubsection</CODE>,
+<CODE>\eqno</CODE>, <CODE>\label</CODE>, <CODE>\ref</CODE>, <CODE>\cite</CODE>, <CODE>\bibitem</CODE>,
+<CODE>\part</CODE>, <CODE>\appendix</CODE>, <CODE>\entry</CODE>, or <CODE>\index</CODE>, is a
+tag.<P>
+
+Other commands can make tags as well, if you specify them in the
+environment variable <CODE>TEXTAGS</CODE> before invoking <CODE>etags</CODE>.  The
+value of this environment variable should be a colon-separated list of
+command names.  For example,
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>TEXTAGS="def:newcommand:newenvironment"
+export TEXTAGS
+</pre></td></tr></table></P><P>
+
+specifies (using Bourne shell syntax) that the commands <SAMP>`\def'</SAMP>,
+<SAMP>`\newcommand'</SAMP> and <SAMP>`\newenvironment'</SAMP> also define tags.
+</P><P>
+
+<LI>
+In Lisp code, any function defined with <CODE>defun</CODE>, any variable
+defined with <CODE>defvar</CODE> or <CODE>defconst</CODE>, and in general the first
+argument of any expression that starts with <SAMP>`(def'</SAMP> in column zero, is
+a tag.
+<P>
+
+<LI>
+In Scheme code, tags include anything defined with <CODE>def</CODE> or with a
+construct whose name starts with <SAMP>`def'</SAMP>.  They also include variables
+set with <CODE>set!</CODE> at top level in the file.
+</UL>
+<P>
+
+  Several other languages are also supported:
+</P><P>
+
+<UL>
+
+<LI>
+In Ada code, functions, procedures, packages, tasks, and types are
+tags.  Use the <SAMP>`--packages-only'</SAMP> option to create tags for
+packages only.
+<P>
+
+In Ada, the same name can be used for different kinds of entity
+(e.g., for a procedure and for a function).  Also, for things like
+packages, procedures and functions, there is the spec (i.e. the
+interface) and the body (i.e. the implementation).  To make it
+easier to pick the definition you want, Ada tag name have suffixes
+indicating the type of entity:
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`/b'</SAMP>
+<DD>package body.
+<DT><SAMP>`/f'</SAMP>
+<DD>function.
+<DT><SAMP>`/k'</SAMP>
+<DD>task.
+<DT><SAMP>`/p'</SAMP>
+<DD>procedure.
+<DT><SAMP>`/s'</SAMP>
+<DD>package spec.
+<DT><SAMP>`/t'</SAMP>
+<DD>type.
+</DL>
+<P>
+
+  Thus, <KBD>M-x find-tag <KBD>RET</KBD> bidule/b <KBD>RET</KBD></KBD> will go
+directly to the body of the package <CODE>bidule</CODE>, while <KBD>M-x
+find-tag <KBD>RET</KBD> bidule <KBD>RET</KBD></KBD> will just search for any tag
+<CODE>bidule</CODE>.
+</P><P>
+
+<LI>
+In assembler code, labels appearing at the beginning of a line,
+followed by a colon, are tags.
+<P>
+
+<LI>
+In Bison or Yacc input files, each rule defines as a tag the nonterminal
+it constructs.  The portions of the file that contain C code are parsed
+as C code.
+<P>
+
+<LI>
+In Cobol code, tags are paragraph names; that is, any word starting in
+column 8 and followed by a period.
+<P>
+
+<LI>
+In Erlang code, the tags are the functions, records, and macros defined
+in the file.
+<P>
+
+<LI>
+In Fortran code, functions, subroutines and block data are tags.
+<P>
+
+<LI>
+In makefiles, targets are tags.
+<P>
+
+<LI>
+In Objective C code, tags include Objective C definitions for classes,
+class categories, methods, and protocols.
+<P>
+
+<LI>
+In Pascal code, the tags are the functions and procedures defined in
+the file.
+<P>
+
+<LI>
+In Perl code, the tags are the procedures defined by the <CODE>sub</CODE>,
+<CODE>my</CODE> and <CODE>local</CODE> keywords.  Use <SAMP>`--globals'</SAMP> if you want
+to tag global variables.
+<P>
+
+<LI>
+In PostScript code, the tags are the functions.
+<P>
+
+<LI>
+In Prolog code, a tag name appears at the left margin.
+<P>
+
+<LI>
+In Python code, <CODE>def</CODE> or <CODE>class</CODE> at the beginning of a line
+generate a tag.
+</UL>
+<P>
+
+  You can also generate tags based on regexp matching (see section <A HREF="emacs_26.html#SEC337">W.2.3 Etags Regexps</A>) to handle other formats and languages.
+</P><P>
+
+<A NAME="Create Tags Table"></A>
+<HR SIZE="6">
+<A NAME="SEC336"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC335"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC337"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC337"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC334"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> W.2.2 Creating Tags Tables </H3>
+<!--docid::SEC336::-->
+<P>
+
+  The <CODE>etags</CODE> program is used to create a tags table file.  It knows
+the syntax of several languages, as described in
+<A HREF="emacs_26.html#SEC335">W.2.1 Source File Tag Syntax</A>.
+Here is how to run <CODE>etags</CODE>:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>etags <VAR>inputfiles</VAR><small>...</small>
+</pre></td></tr></table></P><P>
+
+The <CODE>etags</CODE> program reads the specified files, and writes a tags
+table named <TT>`TAGS'</TT> in the current working directory.
+</P><P>
+
+  If the specified files don't exist, <CODE>etags</CODE> looks for
+compressed versions of them and uncompresses them to read them.  Under
+MS-DOS, <CODE>etags</CODE> also looks for file names like <TT>`mycode.cgz'</TT>
+if it is given <SAMP>`mycode.c'</SAMP> on the command line and <TT>`mycode.c'</TT>
+does not exist.
+</P><P>
+
+  <CODE>etags</CODE> recognizes the language used in an input file based on
+its file name and contents.  You can specify the language with the
+<SAMP>`--language=<VAR>name</VAR>'</SAMP> option, described below.
+</P><P>
+
+  If the tags table data become outdated due to changes in the files
+described in the table, the way to update the tags table is the same
+way it was made in the first place.  If the tags table fails to record
+a tag, or records it for the wrong file, then Emacs cannot possibly
+find its definition until you update the tags table.  However, if the
+position recorded in the tags table becomes a little bit wrong (due to
+other editing), the only consequence is a slight delay in finding the
+tag.  Even if the stored position is very far wrong, Emacs will still
+find the tag, after searching most of the file for it.  Even that
+delay is hardly noticeable with today's computers.
+</P><P>
+
+  So you should update a tags table when you define new tags that you want
+to have listed, or when you move tag definitions from one file to another,
+or when changes become substantial.  Normally there is no need to update
+the tags table after each edit, or even every day.
+</P><P>
+
+  One tags table can virtually include another.  Specify the included
+tags file name with the <SAMP>`--include=<VAR>file</VAR>'</SAMP> option when
+creating the file that is to include it.  The latter file then acts as
+if it covered all the source files specified in the included file, as
+well as the files it directly contains.
+</P><P>
+
+  If you specify the source files with relative file names when you run
+<CODE>etags</CODE>, the tags file will contain file names relative to the
+directory where the tags file was initially written.  This way, you can
+move an entire directory tree containing both the tags file and the
+source files, and the tags file will still refer correctly to the source
+files.
+</P><P>
+
+  If you specify absolute file names as arguments to <CODE>etags</CODE>, then
+the tags file will contain absolute file names.  This way, the tags file
+will still refer to the same files even if you move it, as long as the
+source files remain in the same place.  Absolute file names start with
+<SAMP>`/'</SAMP>, or with <SAMP>`<VAR>device</VAR>:/'</SAMP> on MS-DOS and MS-Windows.
+</P><P>
+
+  When you want to make a tags table from a great number of files, you
+may have problems listing them on the command line, because some systems
+have a limit on its length.  The simplest way to circumvent this limit
+is to tell <CODE>etags</CODE> to read the file names from its standard input,
+by typing a dash in place of the file names, like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>find . -name "*.[chCH]" -print | etags -
+</FONT></pre></td></tr></table></P><P>
+
+  Use the option <SAMP>`--language=<VAR>name</VAR>'</SAMP> to specify the language
+explicitly.  You can intermix these options with file names; each one
+applies to the file names that follow it.  Specify
+<SAMP>`--language=auto'</SAMP> to tell <CODE>etags</CODE> to resume guessing the
+language from the file names and file contents.  Specify
+<SAMP>`--language=none'</SAMP> to turn off language-specific processing
+entirely; then <CODE>etags</CODE> recognizes tags by regexp matching alone
+(see section <A HREF="emacs_26.html#SEC337">W.2.3 Etags Regexps</A>).
+</P><P>
+
+  <SAMP>`etags --help'</SAMP> prints the list of the languages <CODE>etags</CODE>
+knows, and the file name rules for guessing the language.  It also prints
+a list of all the available <CODE>etags</CODE> options, together with a short
+explanation.
+</P><P>
+
+<A NAME="Etags Regexps"></A>
+<HR SIZE="6">
+<A NAME="SEC337"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC336"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC338"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC338"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC334"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> W.2.3 Etags Regexps </H3>
+<!--docid::SEC337::-->
+<P>
+
+  The <SAMP>`--regex'</SAMP> option provides a general way of recognizing tags
+based on regexp matching.  You can freely intermix it with file names.
+Each <SAMP>`--regex'</SAMP> option adds to the preceding ones, and applies only
+to the following files.  The syntax is:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>--regex=/<VAR>tagregexp</VAR>[/<VAR>nameregexp</VAR>]/
+</FONT></pre></td></tr></table></P><P>
+
+where <VAR>tagregexp</VAR> is used to match the lines to tag.  It is always
+anchored, that is, it behaves as if preceded by <SAMP>`^'</SAMP>.  If you want
+to account for indentation, just match any initial number of blanks by
+beginning your regular expression with <SAMP>`[ \t]*'</SAMP>.  In the regular
+expressions, <SAMP>`\'</SAMP> quotes the next character, and <SAMP>`\t'</SAMP> stands
+for the tab character.  Note that <CODE>etags</CODE> does not handle the other
+C escape sequences for special characters.
+</P><P>
+
+<A NAME="IDX1695"></A>
+  The syntax of regular expressions in <CODE>etags</CODE> is the same as in
+Emacs, augmented with the <EM>interval operator</EM>, which works as in
+<CODE>grep</CODE> and <CODE>ed</CODE>.  The syntax of an interval operator is
+<SAMP>`\{<VAR>m</VAR>,<VAR>n</VAR>\}'</SAMP>, and its meaning is to match the preceding
+expression at least <VAR>m</VAR> times and up to <VAR>n</VAR> times.
+</P><P>
+
+  You should not match more characters with <VAR>tagregexp</VAR> than that
+needed to recognize what you want to tag.  If the match is such that
+more characters than needed are unavoidably matched by <VAR>tagregexp</VAR>
+(as will usually be the case), you should add a <VAR>nameregexp</VAR>, to
+pick out just the tag.  This will enable Emacs to find tags more
+accurately and to do completion on tag names more reliably.  You can
+find some examples below.
+</P><P>
+
+  The option <SAMP>`--ignore-case-regex'</SAMP> (or <SAMP>`-c'</SAMP>) works like
+<SAMP>`--regex'</SAMP>, except that matching ignores case.  This is
+appropriate for certain programming languages.
+</P><P>
+
+  The <SAMP>`-R'</SAMP> option deletes all the regexps defined with
+<SAMP>`--regex'</SAMP> options.  It applies to the file names following it, as
+you can see from the following example:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>etags --regex=/<VAR>reg1</VAR>/ voo.doo --regex=/<VAR>reg2</VAR>/ \
+    bar.ber -R --lang=lisp los.er
+</FONT></pre></td></tr></table></P><P>
+
+Here <CODE>etags</CODE> chooses the parsing language for <TT>`voo.doo'</TT> and
+<TT>`bar.ber'</TT> according to their contents.  <CODE>etags</CODE> also uses
+<VAR>reg1</VAR> to recognize additional tags in <TT>`voo.doo'</TT>, and both
+<VAR>reg1</VAR> and <VAR>reg2</VAR> to recognize additional tags in
+<TT>`bar.ber'</TT>.  <CODE>etags</CODE> uses the Lisp tags rules, and no regexp
+matching, to recognize tags in <TT>`los.er'</TT>.
+</P><P>
+
+  You can specify a regular expression for a particular language, by
+writing <SAMP>`{lang}'</SAMP> in front of it.  Then <CODE>etags</CODE> will use
+the regular expression only for files of that language.  (<SAMP>`etags
+--help'</SAMP> prints the list of languages recognized by <CODE>etags</CODE>.)  The
+following example tags the <CODE>DEFVAR</CODE> macros in the Emacs source
+files, for the C language only:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>--regex='{c}/[ \t]*DEFVAR_[A-Z_ \t(]+"\([^"]+\)"/'
+</FONT></pre></td></tr></table></P><P>
+
+This feature is particularly useful when you store a list of regular
+expressions in a file.  The following option syntax instructs
+<CODE>etags</CODE> to read two files of regular expressions.  The regular
+expressions contained in the second file are matched without regard to
+case.
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>--regex=@first-file --ignore-case-regex=@second-file
+</FONT></pre></td></tr></table></P><P>
+
+A regex file contains one regular expressions per line.  Empty lines,
+and lines beginning with space or tab are ignored.  When the first
+character in a line is <SAMP>`@'</SAMP>, <CODE>etags</CODE> assumes that the rest
+of the line is the name of a file of regular expressions; thus, one
+such file can include another file.  All the other lines are taken to
+be regular expressions.  If the first non-whitespace text on the line
+is <SAMP>`--'</SAMP>, that line is a comment.
+</P><P>
+
+  For example, one can create a file called <SAMP>`emacs.tags'</SAMP> with the
+following contents:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>        -- This is for GNU Emacs C source files
+{c}/[ \t]*DEFVAR_[A-Z_ \t(]+"\([^"]+\)"/\1/
+</FONT></pre></td></tr></table></P><P>
+
+and then use it like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>etags --regex=@emacs.tags *.[ch] */*.[ch]
+</FONT></pre></td></tr></table></P><P>
+
+  Here are some more examples.  The regexps are quoted to protect them
+from shell interpretation.
+</P><P>
+
+<UL>
+
+<LI>
+Tag Octave files:
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>etags --language=none \
+      --regex='/[ \t]*function.*=[ \t]*\([^ \t]*\)[ \t]*(/\1/' \
+      --regex='/###key \(.*\)/\1/' \
+      --regex='/[ \t]*global[ \t].*/' \
+      *.m
+</FONT></pre></td></tr></table></P><P>
+
+Note that tags are not generated for scripts, so that you have to add
+a line by yourself of the form <SAMP>`###key <VAR>scriptname</VAR>'</SAMP> if you
+want to jump to it.
+</P><P>
+
+<LI>
+Tag Tcl files:
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>etags --language=none --regex='/proc[ \t]+\([^ \t]+\)/\1/' *.tcl
+</FONT></pre></td></tr></table></P><P>
+
+<LI>
+Tag VHDL files:
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=smallexample><FONT SIZE=-1><pre>etags --language=none \
+  --regex='/[ \t]*\(ARCHITECTURE\|CONFIGURATION\) +[^ ]* +OF/' \
+  --regex='/[ \t]*\(ATTRIBUTE\|ENTITY\|FUNCTION\|PACKAGE\
+  \( BODY\)?\|PROCEDURE\|PROCESS\|TYPE\)[ \t]+\([^ \t(]+\)/\3/'
+</FONT></pre></td></tr></table></UL>
+<P>
+
+<A NAME="Select Tags Table"></A>
+<HR SIZE="6">
+<A NAME="SEC338"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC337"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC339"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC339"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC334"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> W.2.4 Selecting a Tags Table </H3>
+<!--docid::SEC338::-->
+<P>
+
+<A NAME="IDX1696"></A>
+<A NAME="IDX1697"></A>
+  Emacs has at any time one <EM>selected</EM> tags table, and all the commands
+for working with tags tables use the selected one.  To select a tags table,
+type <KBD>M-x visit-tags-table</KBD>, which reads the tags table file name as an
+argument.  The name <TT>`TAGS'</TT> in the default directory is used as the
+default file name.
+</P><P>
+
+  All this command does is store the file name in the variable
+<CODE>tags-file-name</CODE>.  Emacs does not actually read in the tags table
+contents until you try to use them.  Setting this variable yourself is just
+as good as using <CODE>visit-tags-table</CODE>.  The variable's initial value is
+<CODE>nil</CODE>; that value tells all the commands for working with tags tables
+that they must ask for a tags table file name to use.
+</P><P>
+
+  Using <CODE>visit-tags-table</CODE> when a tags table is already loaded
+gives you a choice: you can add the new tags table to the current list
+of tags tables, or start a new list.  The tags commands use all the tags
+tables in the current list.  If you start a new list, the new tags table
+is used <EM>instead</EM> of others.  If you add the new table to the
+current list, it is used <EM>as well as</EM> the others.  When the tags
+commands scan the list of tags tables, they don't always start at the
+beginning of the list; they start with the first tags table (if any)
+that describes the current file, proceed from there to the end of the
+list, and then scan from the beginning of the list until they have
+covered all the tables in the list.
+</P><P>
+
+<A NAME="IDX1698"></A>
+  You can specify a precise list of tags tables by setting the variable
+<CODE>tags-table-list</CODE> to a list of strings, like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>(setq tags-table-list
+      '("~/emacs" "/usr/local/lib/emacs/src"))
+</pre></td></tr></table></P><P>
+
+This tells the tags commands to look at the <TT>`TAGS'</TT> files in your
+<TT>`~/emacs'</TT> directory and in the <TT>`/usr/local/lib/emacs/src'</TT>
+directory.  The order depends on which file you are in and which tags
+table mentions that file, as explained above.
+</P><P>
+
+  Do not set both <CODE>tags-file-name</CODE> and <CODE>tags-table-list</CODE>.
+</P><P>
+
+<A NAME="Find Tag"></A>
+<HR SIZE="6">
+<A NAME="SEC339"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC338"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC340"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC340"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC334"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> W.2.5 Finding a Tag </H3>
+<!--docid::SEC339::-->
+<P>
+
+  The most important thing that a tags table enables you to do is to find
+the definition of a specific tag.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-. <VAR>tag</VAR> <KBD>RET</KBD></KBD>
+<DD>Find first definition of <VAR>tag</VAR> (<CODE>find-tag</CODE>).
+<DT><KBD>C-u M-.</KBD>
+<DD>Find next alternate definition of last tag specified.
+<DT><KBD>C-u - M-.</KBD>
+<DD>Go back to previous tag found.
+<DT><KBD>C-M-. <VAR>pattern</VAR> <KBD>RET</KBD></KBD>
+<DD>Find a tag whose name matches <VAR>pattern</VAR> (<CODE>find-tag-regexp</CODE>).
+<DT><KBD>C-u C-M-.</KBD>
+<DD>Find the next tag whose name matches the last pattern used.
+<DT><KBD>C-x 4 . <VAR>tag</VAR> <KBD>RET</KBD></KBD>
+<DD>Find first definition of <VAR>tag</VAR>, but display it in another window
+(<CODE>find-tag-other-window</CODE>).
+<DT><KBD>C-x 5 . <VAR>tag</VAR> <KBD>RET</KBD></KBD>
+<DD>Find first definition of <VAR>tag</VAR>, and create a new frame to select the
+buffer (<CODE>find-tag-other-frame</CODE>).
+<DT><KBD>M-*</KBD>
+<DD>Pop back to where you previously invoked <KBD>M-.</KBD> and friends.
+</DL>
+<P>
+
+<A NAME="IDX1699"></A>
+<A NAME="IDX1700"></A>
+  <KBD>M-.</KBD> (<CODE>find-tag</CODE>) is the command to find the definition of
+a specified tag.  It searches through the tags table for that tag, as a
+string, and then uses the tags table info to determine the file that the
+definition is in and the approximate character position in the file of
+the definition.  Then <CODE>find-tag</CODE> visits that file, moves point to
+the approximate character position, and searches ever-increasing
+distances away to find the tag definition.
+</P><P>
+
+  If an empty argument is given (just type <KBD>RET</KBD>), the balanced
+expression in the buffer before or around point is used as the
+<VAR>tag</VAR> argument.  See section <A HREF="emacs_24.html#SEC282">U.4.1 Expressions with Balanced Parentheses</A>.
+</P><P>
+
+  You don't need to give <KBD>M-.</KBD> the full name of the tag; a part
+will do.  This is because <KBD>M-.</KBD> finds tags in the table which
+contain <VAR>tag</VAR> as a substring.  However, it prefers an exact match
+to a substring match.  To find other tags that match the same
+substring, give <CODE>find-tag</CODE> a numeric argument, as in <KBD>C-u
+M-.</KBD>; this does not read a tag name, but continues searching the tags
+table's text for another tag containing the same substring last used.
+If you have a real <KBD>META</KBD> key, <KBD>M-0 M-.</KBD> is an easier
+alternative to <KBD>C-u M-.</KBD>.
+</P><P>
+
+<A NAME="IDX1701"></A>
+<A NAME="IDX1702"></A>
+<A NAME="IDX1703"></A>
+<A NAME="IDX1704"></A>
+  Like most commands that can switch buffers, <CODE>find-tag</CODE> has a
+variant that displays the new buffer in another window, and one that
+makes a new frame for it.  The former is <KBD>C-x 4 .</KBD>, which invokes
+the command <CODE>find-tag-other-window</CODE>.  The latter is <KBD>C-x 5 .</KBD>,
+which invokes <CODE>find-tag-other-frame</CODE>.
+</P><P>
+
+  To move back to places you've found tags recently, use <KBD>C-u -
+M-.</KBD>; more generally, <KBD>M-.</KBD> with a negative numeric argument.  This
+command can take you to another buffer.  <KBD>C-x 4 .</KBD> with a negative
+argument finds the previous tag location in another window.
+</P><P>
+
+<A NAME="IDX1705"></A>
+<A NAME="IDX1706"></A>
+<A NAME="IDX1707"></A>
+  As well as going back to places you've found tags recently, you can go
+back to places <EM>from where</EM> you found them.  Use <KBD>M-*</KBD>, which
+invokes the command <CODE>pop-tag-mark</CODE>, for this.  Typically you would
+find and study the definition of something with <KBD>M-.</KBD> and then
+return to where you were with <KBD>M-*</KBD>.
+</P><P>
+
+  Both <KBD>C-u - M-.</KBD> and <KBD>M-*</KBD> allow you to retrace your steps to
+a depth determined by the variable <CODE>find-tag-marker-ring-length</CODE>.
+</P><P>
+
+<A NAME="IDX1708"></A>
+<A NAME="IDX1709"></A>
+  The command <KBD>C-M-.</KBD> (<CODE>find-tag-regexp</CODE>) visits the tags that
+match a specified regular expression.  It is just like <KBD>M-.</KBD> except
+that it does regexp matching instead of substring matching.
+</P><P>
+
+<A NAME="Tags Search"></A>
+<HR SIZE="6">
+<A NAME="SEC340"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC339"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC341"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC341"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC334"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> W.2.6 Searching and Replacing with Tags Tables </H3>
+<!--docid::SEC340::-->
+<P>
+
+  The commands in this section visit and search all the files listed in the
+selected tags table, one by one.  For these commands, the tags table serves
+only to specify a sequence of files to search.
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-x tags-search <KBD>RET</KBD> <VAR>regexp</VAR> <KBD>RET</KBD></KBD>
+<DD>Search for <VAR>regexp</VAR> through the files in the selected tags
+table.
+<DT><KBD>M-x tags-query-replace <KBD>RET</KBD> <VAR>regexp</VAR> <KBD>RET</KBD> <VAR>replacement</VAR> <KBD>RET</KBD></KBD>
+<DD>Perform a <CODE>query-replace-regexp</CODE> on each file in the selected tags table.
+<DT><KBD>M-,</KBD>
+<DD>Restart one of the commands above, from the current location of point
+(<CODE>tags-loop-continue</CODE>).
+</DL>
+<P>
+
+<A NAME="IDX1710"></A>
+  <KBD>M-x tags-search</KBD> reads a regexp using the minibuffer, then
+searches for matches in all the files in the selected tags table, one
+file at a time.  It displays the name of the file being searched so you
+can follow its progress.  As soon as it finds an occurrence,
+<CODE>tags-search</CODE> returns.
+</P><P>
+
+<A NAME="IDX1711"></A>
+<A NAME="IDX1712"></A>
+  Having found one match, you probably want to find all the rest.  To find
+one more match, type <KBD>M-,</KBD> (<CODE>tags-loop-continue</CODE>) to resume the
+<CODE>tags-search</CODE>.  This searches the rest of the current buffer, followed
+by the remaining files of the tags table.</P><P>
+
+<A NAME="IDX1713"></A>
+  <KBD>M-x tags-query-replace</KBD> performs a single
+<CODE>query-replace-regexp</CODE> through all the files in the tags table.  It
+reads a regexp to search for and a string to replace with, just like
+ordinary <KBD>M-x query-replace-regexp</KBD>.  It searches much like <KBD>M-x
+tags-search</KBD>, but repeatedly, processing matches according to your
+input.  See section <A HREF="emacs_14.html#SEC99">K.7 Replacement Commands</A>, for more information on query replace.
+</P><P>
+
+<A NAME="IDX1714"></A>
+<A NAME="IDX1715"></A>
+  You can control the case-sensitivity of tags search commands by
+customizing the value of the variable <CODE>tags-case-fold-search</CODE>.  The
+default is to use the same setting as the value of
+<CODE>case-fold-search</CODE> (see section <A HREF="emacs_14.html#SEC98">K.6 Searching and Case</A>).
+</P><P>
+
+  It is possible to get through all the files in the tags table with a
+single invocation of <KBD>M-x tags-query-replace</KBD>.  But often it is
+useful to exit temporarily, which you can do with any input event that
+has no special query replace meaning.  You can resume the query replace
+subsequently by typing <KBD>M-,</KBD>; this command resumes the last tags
+search or replace command that you did.
+</P><P>
+
+  The commands in this section carry out much broader searches than the
+<CODE>find-tag</CODE> family.  The <CODE>find-tag</CODE> commands search only for
+definitions of tags that match your substring or regexp.  The commands
+<CODE>tags-search</CODE> and <CODE>tags-query-replace</CODE> find every occurrence
+of the regexp, as ordinary search commands and replace commands do in
+the current buffer.
+</P><P>
+
+  These commands create buffers only temporarily for the files that they
+have to search (those which are not already visited in Emacs buffers).
+Buffers in which no match is found are quickly killed; the others
+continue to exist.
+</P><P>
+
+  It may have struck you that <CODE>tags-search</CODE> is a lot like
+<CODE>grep</CODE>.  You can also run <CODE>grep</CODE> itself as an inferior of
+Emacs and have Emacs show you the matching lines one by one.  This works
+much like running a compilation; finding the source locations of the
+<CODE>grep</CODE> matches works like finding the compilation errors.
+See section <A HREF="emacs_25.html#SEC317">V.1 Running Compilations under Emacs</A>.
+</P><P>
+
+<A NAME="List Tags"></A>
+<HR SIZE="6">
+<A NAME="SEC341"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC340"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC334"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> W.2.7 Tags Table Inquiries </H3>
+<!--docid::SEC341::-->
+<P>
+
+<DL COMPACT>
+<DT><KBD>M-x list-tags <KBD>RET</KBD> <VAR>file</VAR> <KBD>RET</KBD></KBD>
+<DD>Display a list of the tags defined in the program file <VAR>file</VAR>.
+<DT><KBD>M-x tags-apropos <KBD>RET</KBD> <VAR>regexp</VAR> <KBD>RET</KBD></KBD>
+<DD>Display a list of all tags matching <VAR>regexp</VAR>.
+</DL>
+<P>
+
+<A NAME="IDX1716"></A>
+  <KBD>M-x list-tags</KBD> reads the name of one of the files described by
+the selected tags table, and displays a list of all the tags defined in
+that file.  The "file name" argument is really just a string to
+compare against the file names recorded in the tags table; it is read as
+a string rather than as a file name.  Therefore, completion and
+defaulting are not available, and you must enter the file name the same
+way it appears in the tags table.  Do not include a directory as part of
+the file name unless the file name recorded in the tags table includes a
+directory.
+</P><P>
+
+<A NAME="IDX1717"></A>
+<A NAME="IDX1718"></A>
+  <KBD>M-x tags-apropos</KBD> is like <CODE>apropos</CODE> for tags
+(see section <A HREF="emacs_10.html#SEC46">G.4 Apropos</A>).  It finds all the tags in the selected tags table
+whose entries match <VAR>regexp</VAR>, and displays them.  If the variable
+<CODE>tags-apropos-verbose</CODE> is non-<CODE>nil</CODE>, it displays the names
+of the tags files together with the tag names.
+</P><P>
+
+<A NAME="IDX1719"></A>
+<A NAME="IDX1720"></A>
+You can customize the appearance of the output with the face
+<CODE>tags-tag-face</CODE>.  You can display additional output with <KBD>M-x
+tags-apropos</KBD> by customizing the variable
+<CODE>tags-apropos-additional-actions</CODE>---see its documentation for
+details.
+</P><P>
+
+  You can also use the collection of tag names to complete a symbol
+name in the buffer.  See section <A HREF="emacs_24.html#SEC294">U.8 Completion for Symbol Names</A>.
+</P><P>
+
+<A NAME="Emerge"></A>
+<HR SIZE="6">
+<A NAME="SEC342"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC341"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC343"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H2> W.3 Merging Files with Emerge </H2>
+<!--docid::SEC342::-->
+<P>
+
+It's not unusual for programmers to get their signals crossed and modify
+the same program in two different directions.  To recover from this
+confusion, you need to merge the two versions.  Emerge makes this
+easier.  See also <A HREF="emacs_16.html#SEC164">M.9 Comparing Files</A>, for commands to compare
+in a more manual fashion, and section `Top' in <CITE>The Ediff Manual</CITE>.
+</P><P>
+
+<BLOCKQUOTE><TABLE BORDER=0 CELLSPACING=0> 
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC343">W.3.1 Overview of Emerge</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to start Emerge.  Basic concepts.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC344">W.3.2 Submodes of Emerge</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Fast mode vs. Edit mode.
+			  Skip Prefers mode and Auto Advance mode.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC345">W.3.3 State of a Difference</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">You do the merge by specifying state A or B
+			  for each difference.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC346">W.3.4 Merge Commands</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Commands for selecting a difference,
+			  changing states of differences, etc.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC347">W.3.5 Exiting Emerge</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">What to do when you've finished the merge.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC348">W.3.6 Combining the Two Versions</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">How to keep both alternatives for a difference.</TD></TR>
+<TR><TD ALIGN="left" VALIGN="TOP"><A HREF="emacs_26.html#SEC349">W.3.7 Fine Points of Emerge</A></TD><TD>&nbsp;&nbsp;</TD><TD ALIGN="left" VALIGN="TOP">Misc.</TD></TR>
+</TABLE></BLOCKQUOTE>
+<P>
+
+<A NAME="Overview of Emerge"></A>
+<HR SIZE="6">
+<A NAME="SEC343"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC344"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> W.3.1 Overview of Emerge </H3>
+<!--docid::SEC343::-->
+<P>
+
+To start Emerge, run one of these four commands:
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>M-x emerge-files</KBD>
+<DD><A NAME="IDX1721"></A>
+Merge two specified files.
+<P>
+
+<DT><KBD>M-x emerge-files-with-ancestor</KBD>
+<DD><A NAME="IDX1722"></A>
+Merge two specified files, with reference to a common ancestor.
+<P>
+
+<DT><KBD>M-x emerge-buffers</KBD>
+<DD><A NAME="IDX1723"></A>
+Merge two buffers.
+<P>
+
+<DT><KBD>M-x emerge-buffers-with-ancestor</KBD>
+<DD><A NAME="IDX1724"></A>
+Merge two buffers with reference to a common ancestor in a third
+buffer.
+</DL>
+<P>
+
+<A NAME="IDX1725"></A>
+<A NAME="IDX1726"></A>
+  The Emerge commands compare two files or buffers, and display the
+comparison in three buffers: one for each input text (the <EM>A buffer</EM>
+and the <EM>B buffer</EM>), and one (the <EM>merge buffer</EM>) where merging
+takes place.  The merge buffer shows the full merged text, not just the
+differences.  Wherever the two input texts differ, you can choose which
+one of them to include in the merge buffer.
+</P><P>
+
+  The Emerge commands that take input from existing buffers use only the
+accessible portions of those buffers, if they are narrowed
+(see section <A HREF="emacs_32.html#SEC462">AC.22 Narrowing</A>).
+</P><P>
+
+  If a common ancestor version is available, from which the two texts to
+be merged were both derived, Emerge can use it to guess which
+alternative is right.  Wherever one current version agrees with the
+ancestor, Emerge presumes that the other current version is a deliberate
+change which should be kept in the merged version.  Use the
+<SAMP>`with-ancestor'</SAMP> commands if you want to specify a common ancestor
+text.  These commands read three file or buffer names--variant A,
+variant B, and the common ancestor.
+</P><P>
+
+  After the comparison is done and the buffers are prepared, the
+interactive merging starts.  You control the merging by typing special
+<EM>merge commands</EM> in the merge buffer.  The merge buffer shows you a
+full merged text, not just differences.  For each run of differences
+between the input texts, you can choose which one of them to keep, or
+edit them both together.
+</P><P>
+
+  The merge buffer uses a special major mode, Emerge mode, with commands
+for making these choices.  But you can also edit the buffer with
+ordinary Emacs commands.
+</P><P>
+
+  At any given time, the attention of Emerge is focused on one
+particular difference, called the <EM>selected</EM> difference.  This
+difference is marked off in the three buffers like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>vvvvvvvvvvvvvvvvvvvv
+<VAR>text that differs</VAR>
+^^^^^^^^^^^^^^^^^^^^
+</pre></td></tr></table></P><P>
+
+Emerge numbers all the differences sequentially and the mode
+line always shows the number of the selected difference.
+</P><P>
+
+  Normally, the merge buffer starts out with the A version of the text.
+But when the A version of a difference agrees with the common ancestor,
+then the B version is initially preferred for that difference.
+</P><P>
+
+  Emerge leaves the merged text in the merge buffer when you exit.  At
+that point, you can save it in a file with <KBD>C-x C-w</KBD>.  If you give a
+numeric argument to <CODE>emerge-files</CODE> or
+<CODE>emerge-files-with-ancestor</CODE>, it reads the name of the output file
+using the minibuffer.  (This is the last file name those commands read.)
+Then exiting from Emerge saves the merged text in the output file.
+</P><P>
+
+  Normally, Emerge commands save the output buffer in its file when you
+exit.  If you abort Emerge with <KBD>C-]</KBD>, the Emerge command does not
+save the output buffer, but you can save it yourself if you wish.
+</P><P>
+
+<A NAME="Submodes of Emerge"></A>
+<HR SIZE="6">
+<A NAME="SEC344"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC343"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC345"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC345"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> W.3.2 Submodes of Emerge </H3>
+<!--docid::SEC344::-->
+<P>
+
+  You can choose between two modes for giving merge commands: Fast mode
+and Edit mode.  In Fast mode, basic merge commands are single
+characters, but ordinary Emacs commands are disabled.  This is
+convenient if you use only merge commands.  In Edit mode, all merge
+commands start with the prefix key <KBD>C-c C-c</KBD>, and the normal Emacs
+commands are also available.  This allows editing the merge buffer, but
+slows down Emerge operations.
+</P><P>
+
+  Use <KBD>e</KBD> to switch to Edit mode, and <KBD>C-c C-c f</KBD> to switch to
+Fast mode.  The mode line indicates Edit and Fast modes with <SAMP>`E'</SAMP>
+and <SAMP>`F'</SAMP>.
+</P><P>
+
+  Emerge has two additional submodes that affect how particular merge
+commands work: Auto Advance mode and Skip Prefers mode.
+</P><P>
+
+  If Auto Advance mode is in effect, the <KBD>a</KBD> and <KBD>b</KBD> commands
+advance to the next difference.  This lets you go through the merge
+faster as long as you simply choose one of the alternatives from the
+input.  The mode line indicates Auto Advance mode with <SAMP>`A'</SAMP>.
+</P><P>
+
+  If Skip Prefers mode is in effect, the <KBD>n</KBD> and <KBD>p</KBD> commands
+skip over differences in states prefer-A and prefer-B (see section <A HREF="emacs_26.html#SEC345">W.3.3 State of a Difference</A>).  Thus you see only differences for which neither version
+is presumed "correct."  The mode line indicates Skip Prefers mode with
+<SAMP>`S'</SAMP>.
+</P><P>
+
+<A NAME="IDX1727"></A>
+<A NAME="IDX1728"></A>
+  Use the command <KBD>s a</KBD> (<CODE>emerge-auto-advance-mode</CODE>) to set or
+clear Auto Advance mode.  Use <KBD>s s</KBD>
+(<CODE>emerge-skip-prefers-mode</CODE>) to set or clear Skip Prefers mode.
+These commands turn on the mode with a positive argument, turns it off
+with a negative or zero argument, and toggle the mode with no argument.
+</P><P>
+
+<A NAME="State of Difference"></A>
+<HR SIZE="6">
+<A NAME="SEC345"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC344"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC346"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC346"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> W.3.3 State of a Difference </H3>
+<!--docid::SEC345::-->
+<P>
+
+  In the merge buffer, a difference is marked with lines of <SAMP>`v'</SAMP> and
+<SAMP>`^'</SAMP> characters.  Each difference has one of these seven states:
+</P><P>
+
+<DL COMPACT>
+<DT>A
+<DD>The difference is showing the A version.  The <KBD>a</KBD> command always
+produces this state; the mode line indicates it with <SAMP>`A'</SAMP>.
+<P>
+
+<DT>B
+<DD>The difference is showing the B version.  The <KBD>b</KBD> command always
+produces this state; the mode line indicates it with <SAMP>`B'</SAMP>.
+<P>
+
+<DT>default-A
+<DD><DT>default-B
+<DD>The difference is showing the A or the B state by default, because you
+haven't made a choice.  All differences start in the default-A state
+(and thus the merge buffer is a copy of the A buffer), except those for
+which one alternative is "preferred" (see below).
+<P>
+
+When you select a difference, its state changes from default-A or
+default-B to plain A or B.  Thus, the selected difference never has
+state default-A or default-B, and these states are never displayed in
+the mode line.
+</P><P>
+
+The command <KBD>d a</KBD> chooses default-A as the default state, and <KBD>d
+b</KBD> chooses default-B.  This chosen default applies to all differences
+which you haven't ever selected and for which no alternative is preferred.
+If you are moving through the merge sequentially, the differences you
+haven't selected are those following the selected one.  Thus, while
+moving sequentially, you can effectively make the A version the default
+for some sections of the merge buffer and the B version the default for
+others by using <KBD>d a</KBD> and <KBD>d b</KBD> between sections.
+</P><P>
+
+<DT>prefer-A
+<DD><DT>prefer-B
+<DD>The difference is showing the A or B state because it is
+<EM>preferred</EM>.  This means that you haven't made an explicit choice,
+but one alternative seems likely to be right because the other
+alternative agrees with the common ancestor.  Thus, where the A buffer
+agrees with the common ancestor, the B version is preferred, because
+chances are it is the one that was actually changed.
+<P>
+
+These two states are displayed in the mode line as <SAMP>`A*'</SAMP> and <SAMP>`B*'</SAMP>.
+</P><P>
+
+<DT>combined
+<DD>The difference is showing a combination of the A and B states, as a
+result of the <KBD>x c</KBD> or <KBD>x C</KBD> commands.
+<P>
+
+Once a difference is in this state, the <KBD>a</KBD> and <KBD>b</KBD> commands
+don't do anything to it unless you give them a numeric argument.
+</P><P>
+
+The mode line displays this state as <SAMP>`comb'</SAMP>.
+</DL>
+<P>
+
+<A NAME="Merge Commands"></A>
+<HR SIZE="6">
+<A NAME="SEC346"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC345"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC347"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC347"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> W.3.4 Merge Commands </H3>
+<!--docid::SEC346::-->
+<P>
+
+  Here are the Merge commands for Fast mode; in Edit mode, precede them
+with <KBD>C-c C-c</KBD>:
+</P><P>
+
+<DL COMPACT>
+<DT><KBD>p</KBD>
+<DD>Select the previous difference.
+<P>
+
+<DT><KBD>n</KBD>
+<DD>Select the next difference.
+<P>
+
+<DT><KBD>a</KBD>
+<DD>Choose the A version of this difference.
+<P>
+
+<DT><KBD>b</KBD>
+<DD>Choose the B version of this difference.
+<P>
+
+<DT><KBD>C-u <VAR>n</VAR> j</KBD>
+<DD>Select difference number <VAR>n</VAR>.
+<P>
+
+<DT><KBD>.</KBD>
+<DD>Select the difference containing point.  You can use this command in the
+merge buffer or in the A or B buffer.
+<P>
+
+<DT><KBD>q</KBD>
+<DD>Quit--finish the merge.
+<P>
+
+<DT><KBD>C-]</KBD>
+<DD>Abort--exit merging and do not save the output.
+<P>
+
+<DT><KBD>f</KBD>
+<DD>Go into Fast mode.  (In Edit mode, this is actually <KBD>C-c C-c f</KBD>.)
+<P>
+
+<DT><KBD>e</KBD>
+<DD>Go into Edit mode.
+<P>
+
+<DT><KBD>l</KBD>
+<DD>Recenter (like <KBD>C-l</KBD>) all three windows.
+<P>
+
+<DT><KBD>-</KBD>
+<DD>Specify part of a prefix numeric argument.
+<P>
+
+<DT><KBD><VAR>digit</VAR></KBD>
+<DD>Also specify part of a prefix numeric argument.
+<P>
+
+<DT><KBD>d a</KBD>
+<DD>Choose the A version as the default from here down in
+the merge buffer.
+<P>
+
+<DT><KBD>d b</KBD>
+<DD>Choose the B version as the default from here down in
+the merge buffer.
+<P>
+
+<DT><KBD>c a</KBD>
+<DD>Copy the A version of this difference into the kill ring.
+<P>
+
+<DT><KBD>c b</KBD>
+<DD>Copy the B version of this difference into the kill ring.
+<P>
+
+<DT><KBD>i a</KBD>
+<DD>Insert the A version of this difference at point.
+<P>
+
+<DT><KBD>i b</KBD>
+<DD>Insert the B version of this difference at point.
+<P>
+
+<DT><KBD>m</KBD>
+<DD>Put point and mark around the difference.
+<P>
+
+<DT><KBD>^</KBD>
+<DD>Scroll all three windows down (like <KBD>M-v</KBD>).
+<P>
+
+<DT><KBD>v</KBD>
+<DD>Scroll all three windows up (like <KBD>C-v</KBD>).
+<P>
+
+<DT><KBD>&#60;</KBD>
+<DD>Scroll all three windows left (like <KBD>C-x &#60;</KBD>).
+<P>
+
+<DT><KBD>&#62;</KBD>
+<DD>Scroll all three windows right (like <KBD>C-x &#62;</KBD>).
+<P>
+
+<DT><KBD>|</KBD>
+<DD>Reset horizontal scroll on all three windows.
+<P>
+
+<DT><KBD>x 1</KBD>
+<DD>Shrink the merge window to one line.  (Use <KBD>C-u l</KBD> to restore it
+to full size.)
+<P>
+
+<DT><KBD>x c</KBD>
+<DD>Combine the two versions of this difference (see section <A HREF="emacs_26.html#SEC348">W.3.6 Combining the Two Versions</A>).
+<P>
+
+<DT><KBD>x f</KBD>
+<DD>Show the names of the files/buffers Emerge is operating on, in a Help
+window.  (Use <KBD>C-u l</KBD> to restore windows.)
+<P>
+
+<DT><KBD>x j</KBD>
+<DD>Join this difference with the following one.
+(<KBD>C-u x j</KBD> joins this difference with the previous one.)
+<P>
+
+<DT><KBD>x s</KBD>
+<DD>Split this difference into two differences.  Before you use this
+command, position point in each of the three buffers at the place where
+you want to split the difference.
+<P>
+
+<DT><KBD>x t</KBD>
+<DD>Trim identical lines off the top and bottom of the difference.
+Such lines occur when the A and B versions are
+identical but differ from the ancestor version.
+</DL>
+<P>
+
+<A NAME="Exiting Emerge"></A>
+<HR SIZE="6">
+<A NAME="SEC347"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC346"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC348"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC348"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> W.3.5 Exiting Emerge </H3>
+<!--docid::SEC347::-->
+<P>
+
+  The <KBD>q</KBD> command (<CODE>emerge-quit</CODE>) finishes the merge, storing
+the results into the output file if you specified one.  It restores the
+A and B buffers to their proper contents, or kills them if they were
+created by Emerge and you haven't changed them.  It also disables the
+Emerge commands in the merge buffer, since executing them later could
+damage the contents of the various buffers.
+</P><P>
+
+  <KBD>C-]</KBD> aborts the merge.  This means exiting without writing the
+output file.  If you didn't specify an output file, then there is no
+real difference between aborting and finishing the merge.
+</P><P>
+
+  If the Emerge command was called from another Lisp program, then its
+return value is <CODE>t</CODE> for successful completion, or <CODE>nil</CODE> if you
+abort.
+</P><P>
+
+<A NAME="Combining in Emerge"></A>
+<HR SIZE="6">
+<A NAME="SEC348"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC347"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC349"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC349"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> W.3.6 Combining the Two Versions </H3>
+<!--docid::SEC348::-->
+<P>
+
+  Sometimes you want to keep <EM>both</EM> alternatives for a particular
+difference.  To do this, use <KBD>x c</KBD>, which edits the merge buffer
+like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>#ifdef NEW
+<VAR>version from A buffer</VAR>
+#else /* not NEW */
+<VAR>version from B buffer</VAR>
+#endif /* not NEW */
+</pre></td></tr></table></P><P>
+
+<A NAME="IDX1729"></A>
+While this example shows C preprocessor conditionals delimiting the two
+alternative versions, you can specify the strings to use by setting
+the variable <CODE>emerge-combine-versions-template</CODE> to a string of your
+choice.  In the string, <SAMP>`%a'</SAMP> says where to put version A, and
+<SAMP>`%b'</SAMP> says where to put version B.  The default setting, which
+produces the results shown above, looks like this:
+</P><P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>"#ifdef NEW\n%a#else /* not NEW */\n%b#endif /* not NEW */\n"
+</pre></td></tr></table></P><P>
+
+<A NAME="Fine Points of Emerge"></A>
+<HR SIZE="6">
+<A NAME="SEC349"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC348"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC342"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H3> W.3.7 Fine Points of Emerge </H3>
+<!--docid::SEC349::-->
+<P>
+
+  During the merge, you mustn't try to edit the A and B buffers yourself.
+Emerge modifies them temporarily, but ultimately puts them back the way
+they were.
+</P><P>
+
+  You can have any number of merges going at once--just don't use any one
+buffer as input to more than one merge at once, since the temporary
+changes made in these buffers would get in each other's way.
+</P><P>
+
+  Starting Emerge can take a long time because it needs to compare the
+files fully.  Emacs can't do anything else until <CODE>diff</CODE> finishes.
+Perhaps in the future someone will change Emerge to do the comparison in
+the background when the input files are large--then you could keep on
+doing other things with Emacs until Emerge is ready to accept
+commands.
+</P><P>
+
+<A NAME="IDX1730"></A>
+  After setting up the merge, Emerge runs the hook
+<CODE>emerge-startup-hook</CODE> (see section <A HREF="emacs_33.html#SEC484">AD.2.3 Hooks</A>).
+</P><P>
+
+<A NAME="Abbrevs"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_26.html#SEC332"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_27.html#SEC350"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[Index]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="emacs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+on <I>April 2, 2002</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

@@ -1,0 +1,237 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Linking against Libtool Libraries with Automake</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Linking against Libtool Libraries with Automake">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Linking against Libtool Libraries with Automake">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC89"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_88.html#SEC88" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Creating Libtool Libraries with Automake" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_90.html#SEC90" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Using libtoolize" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_90.html#SEC90" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Using libtoolize" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_87.html#SEC87" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: Integration with Makefile.am" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_90.html#SEC90" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Using libtoolize" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H3> 11.2.2 Linking against Libtool Libraries with Automake </H3>
+<!--docid::SEC89::-->
+<P>
+
+Once you have set up your <TT>`Makefile.am'</TT> to create some Libtool
+libraries. you will want to link an executable against them.  You can do 
+this easily with <CODE>automake</CODE> by using the program's qualified
+<SAMP>`LDADD'</SAMP> macro:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>bin_PROGRAMS  = shell
+shell_SOURCES = shell.c token.l
+shell_LDADD   = libshell.la
+</pre></td></tr></table></P><P>
+
+This will choose either the static or shared archive from the
+<TT>`libshell.la'</TT> Libtool library depending on the target host and any
+Libtool mode switches metioned in the <TT>`Makefile.am'</TT>, or passed to
+<CODE>configure</CODE>.  The chosen archive will be linked with any objects 
+generated from the listed sources to make an executable.  Note that the
+executable itself is a hidden file, and that in its place
+<CODE>libtool</CODE> creates a wrapper script, See section <A HREF="autobook_79.html#SEC79">10.5 Executing Uninstalled Binaries</A>.
+</P><P>
+
+As with the Libtool libraries, you can pass additional switches for the
+<CODE>libtool</CODE> invocation in the qualified <SAMP>`LDFLAGS'</SAMP> macros to
+control how the <CODE>shell</CODE> executable is linked:
+</P><P>
+
+<DL COMPACT>
+<DT><SAMP>`-all-static'</SAMP>
+<DD>Always choose static libraries where possible, and try to create a
+completely statically linked executable.
+<P>
+
+<DT><SAMP>`-no-fast-install'</SAMP>
+<DD>If you really want to use this flag on some targets, you can pass it in
+an <SAMP>`LDFLAGS'</SAMP> macro.  This is not overridden by the
+<CODE>configure</CODE> <SAMP>`--enable-fast-install'</SAMP> switch.  Executables
+built with this flag will not need relinking to be executed from the
+build tree on platforms which might have otherwise required it.
+<P>
+
+<DT><SAMP>`-no-install'</SAMP>
+<DD>You should use this option for any executables which are used only for
+testing, or for generating other files and are consequently never
+installed.  By specifying this option, you are telling Libtool that the
+executable it links will only ever be executed from where it is built in
+the build tree.  Libtool is usually able to considerably speed up the
+link process for such executables.
+<P>
+
+<DT><SAMP>`-static'</SAMP>
+<DD>This switch is similar to <SAMP>`-all-static'</SAMP>, except that it applies to
+only the uninstalled Libtool libraries in the build tree.  Where
+possible the static archive from these libraries is used, but the
+default linking mode is used for libraries which are already installed.
+</DL>
+<P>
+
+When debugging an executable, for example, it can be useful to
+temporarily use:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>shell_LDFLAGS = -all-static
+</pre></td></tr></table></P><P>
+
+<BLOCKQUOTE>
+You can pass Libtool link options to all of the targets in a given
+directory by using the unadorned <SAMP>`LDFLAGS'</SAMP> macro:
+<P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>LDFLAGS = -static
+</pre></td></tr></table></P><P>
+
+This is best reserved for directories which have targets of the same
+type, all Libtool libraries or all executables for instance.  The
+technique still works in a mixed target type directory, and
+<CODE>libtool</CODE> will ignore switches which don't make sense for
+particular targets.  It is less maintainable, and makes it harder to
+understand what is going on if you do that though.
+</BLOCKQUOTE>
+<P>
+
+<A NAME="Using libtoolize"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

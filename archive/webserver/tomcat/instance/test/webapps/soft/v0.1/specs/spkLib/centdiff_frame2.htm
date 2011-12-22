@@ -1,0 +1,143 @@
+<html><head>
+<title>&lt;DoubleMatrix&gt; Central difference approximation for the Jacobian of f(x)</title>
+<meta name="description" id="description" content="&lt;DoubleMatrix&gt; Central difference approximation for the Jacobian of f(x)">
+<meta name="keywords" id="keywords" content=" central difference approximation Jacobian "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="centdiff.htm" target="_top">section</a>, <a href="centdiff_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Returns the central difference approximation for the Jacobian of a matrix valued
+function <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code>, where <code><span style='white-space: nowrap'><i>x</i></span></code> is a vector.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The vector <code><span style='white-space: nowrap'><i>x</i></span></code> specifies the points at which to approximate 
+the Jacobian.  <code><span style='white-space: nowrap'><i>h</i></span></code> specifies the step size for approximating 
+the partials of <code><span style='white-space: nowrap'><i>f</i></span></code>.  The i-th element of <code><span style='white-space: nowrap'><i>h</i></span></code> is used as a step size for the i-th element of
+<code><span style='white-space: nowrap'><i>x</i></span></code>. 
+
+If <code><span style='white-space: nowrap'><i>h</i>(<i>j</i>)</span></code> is 0.0, partial with respect to <code><span style='white-space: nowrap'><i>x</i>(<i>j</i>)</span></code> are not approximated and 0.0 is 
+returned in the corresponding column of the Jacobian.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If the evaluation of <code><span style='white-space: nowrap'><i>f</i>(<i>x</i>)</span></code> results in a  
+<code><span style='white-space: nowrap'><i>m</i></span></code> by <code><span style='white-space: nowrap'><i>n</i></span></code> matrix, and <code><span style='white-space: nowrap'><i>x</i></span></code> and <code><span style='white-space: nowrap'><i>h</i></span></code> are vectors of length
+<code><span style='white-space: nowrap'><i>l</i></span></code>, then the return value of <code><font color="blue">centdiff</font></code>
+is a <code><span style='white-space: nowrap'><i>m</i>&nbsp;*&nbsp;<i>n</i></span></code> by <code><span style='white-space: nowrap'><i>l</i></span></code> matrix in which the k-th column contains a derivative of f(x) with respect to
+the k-th element of <code><span style='white-space: nowrap'><i>x</i></span></code> and each derivative is <a href="rvec.htm" target="_top"><span style='white-space: nowrap'>rvec-ed</span></a>
+.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>The functions 
+<code><font color="blue">centdiff</font></code> and <code><font color="blue">fordiff</font></code> can be used to 
+approximate derivatives for an optimization or zero-finding algorithm. 
+The <code><font color="blue">centdiff</font></code> function is more accurate, 
+but it requires more function evaluations.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code><code><span style='white-space: nowrap'><i>h</i></span></code> should be chosen carefully.  <code><span style='white-space: nowrap'>(<i>EPSILON</i>*<i>x</i>/2.0)^(1/3)</span></code> 
+gives an optimal <code><span style='white-space: nowrap'><i>h</i></span></code> where the difference between the roundoff and 
+trancation errors reaches minimal.  Every element of <i>h%</i> must be
+greater than 0.0; otherwise, the program terminates.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>UnaFct</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>specifies the function class in which a <b>unary</b> function (i.e. f(x)), to be evaluated is defined 
+as an overloaded operator() that takes a single parameter.  The function is executed
+exactly in the form of a call f(x), if the <i>Fct</i> object is <code><span style='white-space: nowrap'><i>f</i></span></code> and the
+parameter is <code><span style='white-space: nowrap'><i>x</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>f</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a reference to a unary function object of type <i>UnaFct</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>l</i></span></code> dimensional parameter vector of type <i>DoubleMatrix</i>
+ specifying the function evaluation points.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>h</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>l</i></span></code> dimensional step value vector of type <i>DoubleMatrix</i>.
+All values must be positive, or the system will terminate.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link, and run the following program:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;iostream&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&lt;functional&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;centdiff.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;#include&nbsp;&quot;DoubleMatrix.h&quot;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;using&nbsp;namespace&nbsp;std;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;class&nbsp;Function&nbsp;:&nbsp;public&nbsp;std::unary_function&lt;DoubleMatrix,&nbsp;DoubleMatrix&gt;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;c1,&nbsp;c2;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;public:&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Function(const&nbsp;DoubleMatrix&amp;&nbsp;cc1,&nbsp;const&nbsp;DoubleMatrix&nbsp;cc2)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;c1(cc1),&nbsp;c2(cc2)&nbsp;{}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;~Function(){}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Function(const&nbsp;Function&amp;&nbsp;right)&nbsp;:&nbsp;c1(right.c1),&nbsp;c2(right.c2)&nbsp;{}<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Defines&nbsp;f(x)&nbsp;=&nbsp;x&nbsp;*&nbsp;c1&nbsp;+&nbsp;c2<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;const&nbsp;DoubleMatrix&nbsp;operator()(const&nbsp;DoubleMatrix&amp;&nbsp;x)&nbsp;const<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;add(mulByScalar(x,c1),c2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;void&nbsp;main()<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;int&nbsp;n=3;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;c1(n,1),&nbsp;c2(n,1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c1.fill(0.5);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c2.fill(3.0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;x(n,1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x.fill(1.0);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;h(n,1);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*dh&nbsp;=&nbsp;h.data();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for(&nbsp;int&nbsp;i=0;&nbsp;i&lt;n;&nbsp;i++&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dh[i]&nbsp;=&nbsp;0.1*i;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Function&nbsp;f(c1,&nbsp;c2);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;&quot;f_x(x)&nbsp;=&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cout&nbsp;&lt;&lt;&nbsp;centdiff&lt;Function,&nbsp;DoubleMatrix,&nbsp;DoubleMatrix&gt;(f,&nbsp;x,&nbsp;h);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+then it will display the following when it is run:
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;&nbsp;f_x(x)&nbsp;=&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;3&nbsp;by&nbsp;3<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0.0000000000000000e+000&nbsp;0.0000000000000000e+000&nbsp;0.0000000000000000e+000&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0.0000000000000000e+000&nbsp;4.9999999999999822e-001&nbsp;0.0000000000000000e+000&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;0.0000000000000000e+000&nbsp;0.0000000000000000e+000&nbsp;5.0000000000000044e-001&nbsp;]<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/centdiff.h
+
+</body>
+</html>

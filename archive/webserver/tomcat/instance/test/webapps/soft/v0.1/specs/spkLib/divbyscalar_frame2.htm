@@ -1,0 +1,101 @@
+<html><head>
+<title>Element-wise Division</title>
+<meta name="description" id="description" content="Element-wise Division">
+<meta name="keywords" id="keywords" content=" divbyscalar matrix element-wise division "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="divbyscalar.htm" target="_top">section</a>, <a href="divbyscalar_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+This function performs element-wise matrix division.  If the second argument is a scalar,
+all the elements of <i>A</i> is divided by <i>b</i>.  If it is a matrix with the same 
+dimensions as of <i>A</i>, each element of <i>A</i> is divided by the corresponding
+element of <i>B</i>.  The result is returned by value or is set to the memory location
+referred by <i>C</i> if given.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>A</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> matrix numerator.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>b</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a scalar denominator.  <i>b</i> must be non-zero.
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>B</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> matrix denominator.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>C</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>is a <code><span style='white-space: nowrap'><i>m</i>&nbsp;<i>by</i>&nbsp;<i>n</i></span></code> matrix that will contain the result if given.  If the dimensions does not match,
+the program terminates.
+
+<br>
+<br>
+<b><big><a name="Revisit" id="Revisit">Revisit</a></big></b>
+<br>
+Division by zero exception should be handled properly.
+
+<br>
+<br>
+<b><big><a name="Example" id="Example">Example</a></big></b>
+<br>
+If you compile, link and run the following program, 
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+&nbsp;&nbsp;#include&nbsp;&quot;divByScalar.h&quot;<br>
+<br>
+&nbsp;&nbsp;void&nbsp;main(){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;A(&nbsp;3,&nbsp;4&nbsp;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;scalar&nbsp;=&nbsp;2.0;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;DoubleMatrix&nbsp;C;<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;double&nbsp;*a&nbsp;=&nbsp;A.data();<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Set&nbsp;both&nbsp;A&nbsp;to&nbsp;a&nbsp;matrix<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;1&nbsp;&nbsp;4&nbsp;&nbsp;7&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;2&nbsp;&nbsp;5&nbsp;&nbsp;8&nbsp;]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;&nbsp;&nbsp;&nbsp;[&nbsp;3&nbsp;&nbsp;6&nbsp;&nbsp;9&nbsp;]<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;for(&nbsp;int&nbsp;i=0;&nbsp;i&lt;12;&nbsp;i++&nbsp;){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;a[i]&nbsp;=&nbsp;i+1;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Computer&nbsp;C&nbsp;=&nbsp;A&nbsp;/&nbsp;scalar;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C&nbsp;=&nbsp;divByScalar(&nbsp;A,&nbsp;scalar&nbsp;);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;Display&nbsp;C<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;C.print();<br>
+<br>
+&nbsp;&nbsp;}<br>
+</span>
+</font></code>
+a following matrix is displayed.
+
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+<br>
+&nbsp;&nbsp;[&nbsp;0.5&nbsp;&nbsp;2.0&nbsp;&nbsp;3.5&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;1.0&nbsp;&nbsp;2.5&nbsp;&nbsp;4.0&nbsp;]<br>
+&nbsp;&nbsp;[&nbsp;1.5&nbsp;&nbsp;3.0&nbsp;&nbsp;4.5&nbsp;]<br>
+&nbsp;&nbsp;<br>
+</span>
+</font></code>
+
+<hr>Input File: ../../spk/divByScalar.cpp
+
+</body>
+</html>

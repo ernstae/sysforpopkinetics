@@ -1,0 +1,15 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.212
+----------------------------------
+USER VISIBLE CHANGES
+
+OTHER CHANGES
+Added return values and number of tasks in spkrund.pl.
+Changed fabs to abs in explang.ypp of the SPK compiler. 
+
+RELATED BUG REPORTS: 772
+
+BY:  Jiaji Du
+
+WHEN:  October 4, 2007
+

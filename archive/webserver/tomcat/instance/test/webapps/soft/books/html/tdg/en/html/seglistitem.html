@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html>
+  <head>
+    <meta name="generator" content=
+    "HTML Tidy for Linux/x86 (vers 1st March 2002), see www.w3.org">
+    <meta http-equiv="Content-Type" content=
+    "text/html; charset=ISO-8859-1">
+
+    <title>seglistitem</title>
+    <link rel="stylesheet" href="defguide.css" type="text/css">
+    <meta name="generator" content=
+    "DocBook XSL Stylesheets V1.59.0">
+    <link rel="home" href="docbook.html" title="DocBook">
+    <link rel="up" href="ref-elements.html" title=
+    "DocBook Element Reference">
+    <link rel="previous" href="seg.html" title="seg">
+    <link rel="next" href="segmentedlist.html" title=
+    "segmentedlist">
+  </head>
+
+  <body>
+    <div class="navheader">
+      <table border="0" cellpadding="0" cellspacing="0" width=
+      "100%" summary="Navigation table">
+        <tr>
+          <td align="left">&#160;<a title="DocBook" href=
+          "docbook.html"><img src="figures/nav-home.png" alt="Home"
+          border="0"></a>&#160;<a title="seg" href="seg.html"><img
+          src="figures/nav-prev.png" alt="Prev" border="0"></a>&#160;<a title="DocBook Element Reference" href=
+          "ref-elements.html"><img src="figures/nav-up.png" alt=
+          "Up" border="0"></a>&#160;<a title="segmentedlist" href=
+          "segmentedlist.html"><img src="figures/nav-next.png" alt=
+          "Next" border="0"></a></td>
+
+          <td align="right"><i>DocBook: The Definitive Guide</i>
+          Version 2.0.8 <span class="alpha-version">(<a href=
+          "co01.html"><em>Alpha</em></a>)</span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="refentry" lang="en">
+      <a name="seglistitem.element"></a>
+
+      <div class="titlepage">
+        <div>
+          <h1 class="title">seglistitem</h1>
+        </div>
+
+        <div>
+          <p class="releaseinfo">$Revision: 1.3 $</p>
+        </div>
+
+        <div>
+          <p class="pubdate">$Date: 2002/06/12 11:18:35 $</p>
+        </div>
+      </div>
+
+      <div class="refnamediv">
+        <p>seglistitem &#8212; A list item in a segmented list</p>
+      </div>
+
+      <div class="refsynopsisdiv">
+        <h2>Synopsis</h2>
+
+        <h3><span class="bold"><b>Content Model</b></span></h3>
+<pre class="synopsis">
+seglistitem ::=
+(<a href="seg.html"><tt class="sgmltag-element">seg</tt></a>+)
+</pre>
+
+        <h3><span class="bold"><b>Attributes</b></span></h3>
+
+        <p><a href="ref-elements.html#common.attributes" title=
+        "Common Attributes">Common attributes</a></p>
+      </div>
+
+      <div class="refsect1" lang="en">
+        <h2>Description</h2>
+
+        <p>A <a href="segmentedlist.html"><tt class=
+        "sgmltag-element">SegmentedList</tt></a> consists of a set
+        of headings (<a href="segtitle.html"><tt class=
+        "sgmltag-element">SegTitle</tt></a>s) and a list of
+        parallel sets of elements. Each set of elements is stored
+        in a <a href="seglistitem.html"><tt class=
+        "sgmltag-element">SegListItem</tt></a>.</p>
+
+        <div class="refsect2" lang="en">
+          <h3>Processing expectations</h3>
+
+          <p>Segmented lists can be formatted in a number of ways.
+          Two popular formats are tabular and as a list of repeated
+          headings and elements. In a tabular presentation, each <a
+          href="seglistitem.html"><tt class=
+          "sgmltag-element">SegListItem</tt></a> is a row in the
+          table. In the list presentation, each <a href=
+          "seglistitem.html"><tt class=
+          "sgmltag-element">SegListItem</tt></a> contains a block
+          of heading/element pairs.</p>
+
+          <p>DocBook cannot detect errors caused by too many or too
+          few <a href="seg.html"><tt class=
+          "sgmltag-element">Seg</tt></a>s in a <a href=
+          "seglistitem.html"><tt class=
+          "sgmltag-element">SegListItem</tt></a>. You will have to
+          rely on external processes to find those errors.</p>
+        </div>
+
+        <div class="refsect2" lang="en">
+          <h3>Future Changes</h3>
+
+          <p>The <tt class=
+          "sgmltag-element">InterfaceDefinition</tt> element will
+          be discarded in DocBook V4.0. It will no longer be
+          available in the content model of this element.</p>
+        </div>
+
+        <div class="refsect2" lang="en">
+          <h3>Parents</h3>
+
+          <p>These elements contain seglistitem: <span class=
+          "simplelist"><a href="segmentedlist.html"><tt class=
+          "sgmltag-element">segmentedlist</tt></a></span>.</p>
+        </div>
+
+        <div class="refsect2" lang="en">
+          <h3>Children</h3>
+
+          <p>The following elements occur in seglistitem: <span
+          class="simplelist"><a href="seg.html"><tt class=
+          "sgmltag-element">seg</tt></a></span>.</p>
+        </div>
+      </div>
+
+      <div class="refsect1" lang="en">
+        <h2>Examples</h2>
+
+        <p>For examples, see <span class="simplelist"><a href=
+        "segmentedlist.html"><tt class=
+        "sgmltag-element">segmentedlist</tt></a></span>.</p>
+      </div>
+    </div>
+
+    <div class="navfooter">
+      <table width="100%" summary="Navigation table">
+        <tr>
+          <td width="40%" align="left"><a title="seg" href=
+          "seg.html"><img src="figures/nav-prev.png" alt="Prev"
+          border="0"></a>&#160;</td>
+
+          <td width="20%" align="center"><a title="DocBook" href=
+          "docbook.html"><img src="figures/nav-home.png" alt="Home"
+          border="0"></a></td>
+
+          <td width="40%" align="right">&#160;<a title=
+          "segmentedlist" href="segmentedlist.html"><img src=
+          "figures/nav-next.png" alt="Next" border="0"></a></td>
+        </tr>
+
+        <tr>
+          <td width="40%" align="left">seg&#160;</td>
+
+          <td width="20%" align="center"><a title=
+          "DocBook Element Reference" href="ref-elements.html"><img
+          src="figures/nav-up.png" alt="Up" border="0"></a></td>
+
+          <td width="40%" align="right">&#160;segmentedlist</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="copyrightfooter">
+      <p><a href="dbcpyright.html">Copyright</a> &#169; 1999, 2000,
+      2001, 2002 <a href="http://www.oreilly.com/">O'Reilly &amp;
+      Associates, Inc.</a> All rights reserved.</p>
+    </div>
+  </body>
+</html>
+

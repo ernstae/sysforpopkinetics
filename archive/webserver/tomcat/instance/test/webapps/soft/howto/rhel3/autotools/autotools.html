@@ -1,0 +1,2325 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>GNU Autotools in Sesame-Seed Shell</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>GNU Autotools in Sesame-Seed Shell</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;      </P
+><P
+>&#13;	The information in this document is targeted primarily toward
+	the RFPK Software Team and associates and is specific to the
+	computer systems and network installed in the RFPK Laboratory
+	of the Department of Bioengineering of the University of Washington.  RFPK is the Resource for
+	Population Kinetics.  Its work is supported, in part, by grant
+	P41 EB-001975 of the National Institutes of Health (NIH) of
+	the U.S.  Department of Health and Human Services.
+      </P
+><P
+>&#13;	<A
+HREF="#AEN513"
+>Copyright</A
+> (c) 2004, by the University of Washington.
+      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.4</TD
+><TD
+ALIGN="LEFT"
+>February 8, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Fixed a broken image link.  Fulfilled "distribution" section.</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.3</TD
+><TD
+ALIGN="LEFT"
+>February 8, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Changed the title</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.2</TD
+><TD
+ALIGN="LEFT"
+>February 8, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Changed the title</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.1</TD
+><TD
+ALIGN="LEFT"
+>February 1, 2005</TD
+><TD
+ALIGN="LEFT"
+>Revised by: sh</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN30"
+>Preliminary</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN39"
+>Convention</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#nutshell"
+>Autotools in Sesame-Seed-Shell</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN84"
+><TT
+CLASS="filename"
+>autoconf</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN96"
+><TT
+CLASS="filename"
+>aclocal</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN104"
+><TT
+CLASS="filename"
+>automake</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN115"
+>Libtool</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#bootstrap"
+>Boostrap</A
+></DT
+><DT
+><A
+HREF="#autoconf"
+>What is <TT
+CLASS="filename"
+>configure.ac</TT
+> for?</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN139"
+><TT
+CLASS="literal"
+>AC_INIT</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN145"
+><TT
+CLASS="literal"
+>AC_OUTPUT</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN152"
+><TT
+CLASS="literal"
+>AC_CONFIG_HEADER</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN160"
+><TT
+CLASS="literal"
+>AC_PROG_xxx</TT
+></A
+></DT
+><DT
+><A
+HREF="#AEN212"
+><TT
+CLASS="literal"
+>AC_CHECK_xxx</TT
+></A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#automake"
+>What is <TT
+CLASS="filename"
+>Makefile.am</TT
+> For? and What Can I or Cannot do?</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN255"
+>Comment (# vs. ##)</A
+></DT
+><DT
+><A
+HREF="#AEN261"
+>Arbitrary Macros and Targets</A
+></DT
+><DT
+><A
+HREF="#AEN265"
+>Arbitrary Variables</A
+></DT
+><DT
+><A
+HREF="#AEN274"
+>Sources Living in Subdirectories</A
+></DT
+><DT
+><A
+HREF="#AEN290"
+>Prefixes: Where &#38; What To Install</A
+></DT
+><DT
+><A
+HREF="#AEN315"
+>Primaries: What and How To Build</A
+></DT
+><DT
+><A
+HREF="#AEN360"
+>Essential Automake Macros</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#libtool"
+>What Does Libtool Need?</A
+></DT
+><DT
+><A
+HREF="#installation"
+><TT
+CLASS="literal"
+>make install</TT
+>: What's and Where Get Installed?</A
+></DT
+><DT
+><A
+HREF="#distribution"
+><TT
+CLASS="literal"
+>make dist</TT
+>: Making a Distribution Tarball</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN480"
+>What goes in</A
+></DT
+><DT
+><A
+HREF="#AEN492"
+>Checking the distribution</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN499"
+>Odds and Ends</A
+></DT
+><DD
+><DL
+><DT
+><A
+HREF="#AEN501"
+>Running Programs Without Installing Just-Built Libraries</A
+></DT
+></DL
+></DD
+><DT
+><A
+HREF="#AEN513"
+>Copyright Notice</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN30"
+></A
+>Preliminary</H2
+><P
+>&#13;    The primary goal of this documentation is to summarize dependencies among the tools that
+    collectively discover peculiarity of a machine on which the tools are run
+    and create Makefile(s) that build projects for that machine.
+    Such tools include 
+       <A
+HREF="http://www.gnu.org/software/autoconf/manual/autoconf-2.57/autoconf.html"
+TARGET="_top"
+>Autoconf</A
+>,
+       <A
+HREF="http://www.gnu.org/software/automake/manual/automake.html"
+TARGET="_top"
+>Automake</A
+> and
+       <A
+HREF="http://www.gnu.org/software/libtool/manual.html"
+TARGET="_top"
+>Libtool</A
+>,
+    which further make use of Autoheader, libtoolize, aclocal and so on.
+    Secondarily, this documentation lists key features of these auto-tools that would be
+    relevant to projects of sizes RFPK most likely to face.
+    </P
+><P
+>&#13;    Most of the contents of this documentation comes from 
+    <A
+HREF="http://sources.redhat.com/autobook/autobook/autobook.html"
+TARGET="_top"
+>&#13;    GNU Autoconf, Automake, and Libtool</A
+> by Gary Vaughn, Ben Ellison, Tom Traney and Ian Taylor,
+    which is published under <A
+HREF="http://www.opencontent.org/openpub/"
+TARGET="_top"
+>Open Publication License</A
+>.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN39"
+></A
+>Convention</H3
+><P
+>In this documentation, I call the collection of tools that discover peculiarity of a machine
+             <I
+CLASS="emphasis"
+>Autotools</I
+>.  When I refer to a tool that constitutes to
+              Autotools, I call it <I
+CLASS="emphasis"
+>a Tool</I
+> (note that the first letter is capitalized)
+              while a tool in general is written as "a tool".
+       </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="nutshell"
+></A
+>Autotools in Sesame-Seed-Shell</H2
+><P
+>&#13;    Autotools is a collection of tools, which is used to discover peculiarity of a machine on which
+    it runs and creates customized Makefile(s) for that machine.  Autotools includes  
+       <A
+HREF="http://www.gnu.org/software/autoconf/manual/autoconf-2.57/autoconf.html"
+TARGET="_top"
+>Autoconf</A
+>,
+       <A
+HREF="http://www.gnu.org/software/automake/manual/automake.html"
+TARGET="_top"
+>Automake</A
+> and
+       <A
+HREF="http://www.gnu.org/software/libtool/manual.html"
+TARGET="_top"
+>Libtool</A
+>,
+    which further make use of Autoheader, libtoolize, aclocal and so on.  
+    The collection evolved over years.  The first to come was Autoconf,
+    which was soon followed by Automake.  Then, when shared libraries became the norm (as opposed to
+    static libraries), Libtool was developed.
+    </P
+><P
+>&#13;    Perhaps because of the way Autotools has been evolved, there are lots of couplings among Tools,
+    which frustrate new users heck out it.  Take a back, the Tools themselves 
+    do not interact with each other directly.  The way in which their inputs and outputs
+    are used, however, is inter-mingled, for the lack of better word.  A single file serves as
+    an input to both aclocal and Autoconf.  Yet, an output of aclocal serves as another input to 
+    Autoconf.  An output of Autoconf becomes a tool to translate an output of Automake, and so on.
+    </P
+><P
+>&#13;    The minimal set of files you the developer must provide for the Autotools's cascading effect to
+    take place are the following two:
+    </P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+><TT
+CLASS="filename"
+>configure.ac</TT
+></DT
+><DD
+><P
+>&#13;               This is the primary (note, I said <I
+CLASS="emphasis"
+>primary</I
+>) input file for Autoconf.
+               You need (and probably want) only one <TT
+CLASS="filename"
+>configure.ac</TT
+> per product.
+               </P
+><P
+>&#13;               In this file, you list macros that are associated with features and tools
+               you are going to use to build your project.
+               For example, if your project is written in C++ and thus you need a C++ compiler to build it, 
+               you list a macro <TT
+CLASS="literal"
+>AC_PROG_CXX</TT
+>.
+               </P
+></DD
+><DT
+><TT
+CLASS="filename"
+>Makefile.am</TT
+></DT
+><DD
+><P
+>&#13;               This is a pseudo Makefile and is going to be the primary input file for Automake.
+               You need at least one <TT
+CLASS="filename"
+>Makefile.am</TT
+> per product
+               but, if the product is organized in multiple directories, you need one per sub-project/directory.  
+               For instance, if your product ships with a library and a set of documentations 
+               (say, their source are found in <TT
+CLASS="filename"
+>lib/</TT
+> and <TT
+CLASS="filename"
+>doc/</TT
+>
+                directories), you need a <TT
+CLASS="filename"
+>Makefile.am</TT
+> in the top directory, one in 
+               <TT
+CLASS="filename"
+>lib/</TT
+> and another in <TT
+CLASS="filename"
+>doc/</TT
+> so that
+               these <TT
+CLASS="filename"
+>Makefile.am</TT
+>'s are processed recursively.
+               </P
+><P
+>&#13;               In this file, you define a number of variables that are already declared by
+               Automake.  Such variables may include <TT
+CLASS="literal"
+>AC_CXXFLAGS</TT
+>.
+               The value set for <TT
+CLASS="literal"
+>AC_CXXFLAGS</TT
+> is translated as
+               compiler flags.
+               </P
+></DD
+></DL
+></DIV
+><P
+>&#13;    The following diagram demonstrates dependencies among the Tools and their artifacts.  
+    The blue boxes capture the Tools.  Artifacts that are going to serve as inputs to some other tools
+    or become tools themselves are color-boxed as well.  Note that, I did not include 
+    the role of Autoheader or Libtool in this diagram in order to keep the complexity kept minimal.
+       <DIV
+CLASS="mediaobject"
+><P
+><IMG
+SRC="interaction.jpg"
+ALIGN="center"
+WIDTH="60%"
+HEIGHT="60%"><DIV
+CLASS="caption"
+><P
+>Simplified Dependencies</P
+></DIV
+></P
+></DIV
+>
+    If you would like to see their full dependency graph, check 
+    <A
+HREF="http://sources.redhat.com/autobook/autobook/autobook_276.html#SEC276"
+TARGET="_top"
+>Appendix C: Generated File Dependencies</A
+>.
+    </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN84"
+></A
+><TT
+CLASS="filename"
+>autoconf</TT
+></H3
+><P
+>&#13;       The autoconf program takes two input files: 
+       <TT
+CLASS="filename"
+>configure.ac</TT
+> and <TT
+CLASS="filename"
+>aclocal.m4</TT
+>.
+       <TT
+CLASS="filename"
+>aclocal.m4</TT
+>is generated by aclocal and contains the definitions of macros
+       used in <TT
+CLASS="filename"
+>configure.ac</TT
+>.  
+       Autoconf expands these macros in <TT
+CLASS="filename"
+>configure.ac</TT
+>, perhaps using macro definitions
+       from <TT
+CLASS="filename"
+>aclocal.m4</TT
+>, to generate the <TT
+CLASS="filename"
+>configure</TT
+>.
+       [<A
+HREF="http://sources.redhat.com/autobook/autobook/autobook_280.html#SEC280"
+TARGET="_top"
+>&#13;       Click here for a diagram</A
+>]
+       </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN96"
+></A
+><TT
+CLASS="filename"
+>aclocal</TT
+></H3
+><P
+>The aclocal program creates the file <TT
+CLASS="filename"
+>aclocal.m4</TT
+>
+       by combining stock installed macros, user defined macros and the contents 
+       of <TT
+CLASS="filename"
+>acinclude.m4</TT
+> to define all of the macros 
+       required by <TT
+CLASS="filename"
+>configure.in</TT
+> in a single file. 
+       [<A
+HREF="http://sources.redhat.com/autobook/autobook/autobook_277.html#SEC277"
+TARGET="_top"
+>&#13;       Click here for a diagram</A
+>]
+       </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN104"
+></A
+><TT
+CLASS="filename"
+>automake</TT
+></H3
+><P
+>&#13;       The automake program takes two input files: <TT
+CLASS="filename"
+>configure.in</TT
+> and 
+       <TT
+CLASS="filename"
+>Makefile.am</TT
+> (<I
+CLASS="emphasis"
+>one that resides in the same directory
+       as of <TT
+CLASS="filename"
+>configure.in</TT
+></I
+>).  It generates
+       <TT
+CLASS="filename"
+>Makefile.in</TT
+>, which, in turn, becomes an input to 
+       the <TT
+CLASS="filename"
+>configure</TT
+> script generated by Autoconf.
+       [<A
+HREF="http://sources.redhat.com/autobook/autobook/autobook_279.html#SEC279"
+TARGET="_top"
+>&#13;       Click here for a diagram</A
+>]
+       </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN115"
+></A
+>Libtool</H3
+><P
+>&#13;       Libtool is a collection of scripts that handle the differences between
+       shared library generation and use on different systems.  This Tool is 
+       automatically used when you list a macro <TT
+CLASS="literal"
+>AC_PROG_LIBTOOL</TT
+>
+       in <TT
+CLASS="filename"
+>configure.ac</TT
+> and shared libraries 
+       under <TT
+CLASS="literal"
+>xxx_LTLIBRARIES</TT
+> in one of your <TT
+CLASS="filename"
+>Makefile.am</TT
+>'s.
+       A program called <TT
+CLASS="filename"
+>libtoolize</TT
+> adds the necessary infrastructure to
+       your project
+       [<A
+HREF="http://sources.redhat.com/autobook/autobook/autobook_279.html#SEC279"
+TARGET="_top"
+>&#13;       Click here for a diagram</A
+>].
+       </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="bootstrap"
+></A
+>Boostrap</H2
+><P
+>&#13;    A bootstrap can be a script which runs Tools in a proper order
+    with options that enable them to generate missing files along the way
+    when you apply Autotools to your project for the first time.
+    You probably have seen <TT
+CLASS="filename"
+>autogen.sh</TT
+>.  That script
+    does just that.  The name us, however, somewhat misleading.
+    It sounds as if it is only useful for the very first time you
+    apply Autotools.  The script rather should be called something like
+    <TT
+CLASS="filename"
+>bootstrap</TT
+>.  It can be run over and over again
+    whenever you made changes to your <TT
+CLASS="filename"
+>configure.ac</TT
+>
+    or <TT
+CLASS="filename"
+>Makefile.am</TT
+>'s.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="autoconf"
+></A
+>What is <TT
+CLASS="filename"
+>configure.ac</TT
+> for?</H2
+><P
+>&#13;       <TT
+CLASS="filename"
+>configure.ac</TT
+> is where you list macros -- to check some 
+       features and aspects of the system, to look for a C compiler, etc. --- 
+       to be executed in sequence.
+       You list both Autoconf and Automake macros in this file because
+       this file serves as the input file for both tools.
+       <TT
+CLASS="literal"
+>AC_</TT
+>'s are Autoconf macros.  <TT
+CLASS="literal"
+>AM_</TT
+>'s are Automake's.
+       The entire list of Autoconf macros are available 
+       <A
+HREF="http://www.gnu.org/software/autoconf/manual/autoconf-2.57/html_node/autoconf_194.html#SEC194"
+TARGET="_top"
+>&#13;       here</A
+>.  Here, I list only essentials.
+       </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN139"
+></A
+><TT
+CLASS="literal"
+>AC_INIT</TT
+></H3
+><P
+>&#13;          This macro performs essential initialization for the generated
+          <TT
+CLASS="filename"
+>configure</TT
+> script.  Naturally, this macro appears
+          at the top of <TT
+CLASS="filename"
+>configure.ac</TT
+>.
+          </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN145"
+></A
+><TT
+CLASS="literal"
+>AC_OUTPUT</TT
+></H3
+><P
+>&#13;          This macro must be called at the end of every <TT
+CLASS="filename"
+>configure.ac</TT
+>.
+          It creates each file listed in this macro.  For a given file, by default,
+          <TT
+CLASS="filename"
+>configure</TT
+> reads the template file whose name is the name
+          of the input file with <TT
+CLASS="literal"
+>.in</TT
+> appended.
+          </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN152"
+></A
+><TT
+CLASS="literal"
+>AC_CONFIG_HEADER</TT
+></H3
+><P
+>&#13;          When this macro presents, all the C preprocessor macros are defined in the
+          named file (ie. by convention, you usually name it <TT
+CLASS="filename"
+>config.h</TT
+>)
+          as opposed to having them defined via <TT
+CLASS="literal"
+>-D</TT
+> options in
+          DEFS <TT
+CLASS="filename"
+>Makefile</TT
+>.  If you're using Automake, however,
+          use <TT
+CLASS="literal"
+>AM_CONFIG_HEADER</TT
+> instead.
+          </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN160"
+></A
+><TT
+CLASS="literal"
+>AC_PROG_xxx</TT
+></H3
+><P
+>&#13;          AC_PROG_xxx macros look for certain programs/tools and set appropriate C preprocessor
+          macros accordingly.
+          </P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+><TT
+CLASS="literal"
+>AC_PROG_C</TT
+></DT
+><DD
+><P
+>This checks for C compiler to use and set the shell variable <TT
+CLASS="literal"
+>CC</TT
+>
+                   to the value.  If the GNU C compiler is being used, this sets the shell variable 
+                   <TT
+CLASS="literal"
+>GCC</TT
+> to <TT
+CLASS="literal"
+>yes</TT
+>.  This macro sets the shell variable
+                   <TT
+CLASS="literal"
+>CFLAGS</TT
+> if it has not already been set.  It also calls
+                   <TT
+CLASS="literal"
+>AC_SUBST</TT
+> on <TT
+CLASS="literal"
+>CC</TT
+> and <TT
+CLASS="literal"
+>CFLAGS</TT
+>.
+                   </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>AC_PROG_CXX</TT
+></DT
+><DD
+><P
+>This is like AC_PROG_C but checks for C++ compiler and sets the shell variable 
+                   <TT
+CLASS="literal"
+>CXX</TT
+> and <TT
+CLASS="literal"
+>CXXFLAGS</TT
+>.
+                   </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>AC_PROG_CPP</TT
+></DT
+><DD
+><P
+>&#13;                   This macro sets the output variable <TT
+CLASS="literal"
+>CPP</TT
+> to a command
+                   that runs the C preprocessor.
+                   </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>AC_PROG_LEX</TT
+></DT
+><DD
+><P
+>&#13;                   This looks for a lex-like program and sets the <TT
+CLASS="filename"
+>Makefile</TT
+>
+                   variable <TT
+CLASS="literal"
+>LEX</TT
+> to the result.  If you are using Automake,
+                   use <TT
+CLASS="literal"
+>AM_PROG_LEX</TT
+> to have it do additional initialization
+                   work.
+                   </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>AC_PROG_YACC</TT
+></DT
+><DD
+><P
+>&#13;                   This looks for a yacc-like program and sets the <TT
+CLASS="filename"
+>Makefile</TT
+>
+                   variable <TT
+CLASS="literal"
+>YACC</TT
+> to the result.If you are using Automake,
+                   use <TT
+CLASS="literal"
+>AM_PROG_YACC</TT
+> to have it do additional initialization
+                   work.
+                   </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>AC_PROG_LIBTOOL</TT
+></DT
+><DD
+><P
+>&#13;                   This macro is the primary way to integrate Libtool support into 
+                   <TT
+CLASS="filename"
+>configure</TT
+>.  If you are building shared libraries 
+                   (ie. as opposed to static), you must call this macro.
+                   </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN212"
+></A
+><TT
+CLASS="literal"
+>AC_CHECK_xxx</TT
+></H3
+><P
+>&#13;          AC_CHECK_xxx macros check certain aspects of the system
+          onto which your program is built and/or installed.  When a test
+          passes, Automake defines a macro beginning with <TT
+CLASS="literal"
+>HAVE_</TT
+> followed
+          by the aspect/function/file/etc. name listed in <TT
+CLASS="literal"
+>AC_CHECK_</TT
+>.
+          These macros will be defined via <TT
+CLASS="literal"
+>-D</TT
+> options unless
+          <TT
+CLASS="literal"
+>AC_CONFIG_HEADER</TT
+> is specified in <TT
+CLASS="filename"
+>configure.ac</TT
+>.
+          </P
+><P
+>&#13;          Here are a few of them.
+          </P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+>AC_CHECK_FUNCS: Checking if a named function implmented</DT
+><DD
+><P
+>&#13;                   To see if a particular function is implemented on the target system,
+                   list function names in <TT
+CLASS="literal"
+>AC_CHECK_FUNCS</TT
+>.
+                   For instance, you want to check if <TT
+CLASS="filename"
+>time</TT
+>
+                   is implemented. Add the following macro in <TT
+CLASS="filename"
+>configure.ac</TT
+>,
+                   and a macro <TT
+CLASS="literal"
+>HAVE_TIME</TT
+> will be defined when 
+                   the function is found:
+                   </P
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;AC_CHECK_FUNCS( stat, break )
+                   </PRE
+></TD
+></TR
+></TABLE
+><P
+>&#13;                   A shell command, <TT
+CLASS="literal"
+>break</TT
+>, can appear anywhere after a function
+                   name.  It tells Autoconf to stop looking for the remaining functions in the list.
+                   For further discussion, consult 
+                   <A
+HREF="http://www.gnu.org/software/autoconf/manual/autoconf-2.57/html_node/autoconf_46.html#SEC46"
+TARGET="_top"
+>&#13;                   particular function checks</A
+> or 
+                   <A
+HREF="http://www.gnu.org/software/autoconf/manual/autoconf-2.57/html_node/autoconf_47.html#SEC47"
+TARGET="_top"
+> 
+                   generic (other) function checks</A
+>.
+                   </P
+></DD
+><DT
+>AC_CHECK_LIB: Checking which library has a named function</DT
+><DD
+><P
+>&#13;                   This looks for the named function in the named libray specified by its base name.
+                   For instance, the math library, <TT
+CLASS="filename"
+>libm.a</TT
+>, would be named just
+                   <TT
+CLASS="literal"
+>m</TT
+>.  If the function is found in the library <TT
+CLASS="filename"
+>foo</TT
+>,
+                   the C processor macro <TT
+CLASS="literal"
+>HAVE_LIBFOO</TT
+> is defined.
+                   </P
+></DD
+></DL
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="automake"
+></A
+>What is <TT
+CLASS="filename"
+>Makefile.am</TT
+> For? and What Can I or Cannot do?</H2
+><P
+>&#13;       <TT
+CLASS="filename"
+>Makefile.am</TT
+> is the primary input file to Automake.  
+       Automake turns this into a GNU compliant <TT
+CLASS="filename"
+>Makefile.in</TT
+> 
+       for use with <TT
+CLASS="filename"
+>configure</TT
+>.  
+       Consider <TT
+CLASS="filename"
+>Makefile.am</TT
+> as macro
+       <TT
+CLASS="filename"
+>Makefile</TT
+>.  Thus, you write <TT
+CLASS="filename"
+>Makefile.am</TT
+>
+       according to <TT
+CLASS="filename"
+>make</TT
+> syntax.  Automake recognizes special
+       macro and target names and genrates code based on these.
+       </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN255"
+></A
+>Comment (# vs. ##)</H3
+><P
+>&#13;          Ordinary <TT
+CLASS="filename"
+>make</TT
+> comments ('<TT
+CLASS="literal"
+>#</TT
+>') 
+          are passed through to the output, but 
+          comments beginning with '<TT
+CLASS="literal"
+>##</TT
+>' are Autokame 
+          comments and are not passed through.
+          </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN261"
+></A
+>Arbitrary Macros and Targets</H3
+><P
+>&#13;          All macros and targests, including those that Automake does not recognize,
+          are passed through to the generated <TT
+CLASS="filename"
+>Makefile.in</TT
+>.
+          </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN265"
+></A
+>Arbitrary Variables</H3
+><P
+>&#13;          Automake turns every <TT
+CLASS="literal"
+>AC_SUBST</TT
+> into a 
+          <TT
+CLASS="filename"
+>Makefile</TT
+> variable.  
+          This is convenient in more ways than on: Not only does it mean that 
+          you can refer to these macros in <TT
+CLASS="filename"
+>Makfele.am</TT
+> 
+          without extra work, but, bcause Automake scans <TT
+CLASS="filename"
+>configure.in</TT
+>
+          before it reads any <TT
+CLASS="filename"
+>Makefile.am</TT
+>, 
+          it also means that special variables and overrides Automake recognizes 
+          can be defined once in <TT
+CLASS="filename"
+>configure.in</TT
+>.
+          </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN274"
+></A
+>Sources Living in Subdirectories</H3
+><P
+>&#13;          Suppose you want to build a library from source code organized in such a way::
+             <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;aspk/spkcompiler/...(common source)...
+aspk/spkcompiler/nonmem/something1.cpp
+                        something2.cpp
+                        ...(NONMEM specific source)...
+             </PRE
+></TD
+></TR
+></TABLE
+>
+          And, quite naturally you would try defining macros in <TT
+CLASS="filename"
+>Makefile.am</TT
+>
+          like this:
+             <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;lib_LIBRARIES = libspkcompiler.a
+libspkcompiler_a_SOURCES = nonmem/something1.cpp ...
+             </PRE
+></TD
+></TR
+></TABLE
+>
+          Naah, you cannot specify paths under <TT
+CLASS="literal"
+>xxx_SOURCES</TT
+>!
+          There are ways to get around but may not be a simple solution for you!  
+          If you're trying to build a library in this way, you may want to
+          consider building the library as a <I
+CLASS="emphasis"
+>convenience library</I
+> 
+          (consult 
+          <A
+HREF="http://sources.redhat.com/autobook/autobook/autobook.html"
+TARGET="_top"
+>&#13;          GNU Autoconf, Automake and Libtool</A
+> for
+          <I
+CLASS="emphasis"
+>convenience libraries</I
+>).
+          For programs, you may need to build temporary static libraries in
+          subdirectories and integrate them into the final target.  
+          </P
+><P
+>To have Automake execute recursively into subdirectories, 
+          specify in the top <TT
+CLASS="filename"
+>Makefile.am</TT
+>:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;SUBDIR = . sub1 sub2
+          </PRE
+></TD
+></TR
+></TABLE
+>
+          The target(s) are built in the order in which the subdirectories are listed:
+          1) '<TT
+CLASS="filename"
+>.</TT
+>', the current directory, 
+          2) <TT
+CLASS="filename"
+>sub1</TT
+> and then 3) <TT
+CLASS="filename"
+>sub2</TT
+>.
+          </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN290"
+></A
+>Prefixes: Where &#38; What To Install</H3
+><P
+>&#13;          Prefixes are used to decide where the built objects should be installed. 
+          These names are prefixes to the primary which indicate which standard 
+          directory should be used as the installation directory. 
+          The standard directory names are given in the GNU standards 
+          (see <A
+HREF="http://www.gnu.org/prep/standards/standards.html#Directory-Variables"
+TARGET="_top"
+>&#13;          Variables for Installation Directories</A
+>). 
+          Automake extends this list with <TT
+CLASS="literal"
+>pkglibdir</TT
+>, 
+          <TT
+CLASS="literal"
+>pkgincludedir</TT
+>, and <TT
+CLASS="literal"
+>pkgdatadir</TT
+>; 
+          these are the same as the non-pkg versions, but with <TT
+CLASS="literal"
+>@PACKAGE@</TT
+>
+          appended. For instance, <TT
+CLASS="literal"
+>pkglibdir</TT
+> is defined as 
+          <TT
+CLASS="literal"
+>$(libdir)/@PACKAGE@</TT
+>.
+          </P
+><P
+>&#13;          For each primary, there is one additional variable named by prepending
+          <TT
+CLASS="literal"
+>EXTRA_</TT
+> to the primary name. This variable is used to list objects which 
+          may or may not be built, depending on what configure decides. 
+          This variable is required because Automake must statically know the 
+          entire list of objects that may be built in order to generate 
+          a <TT
+CLASS="filename"
+>Makefile.in</TT
+> that will work in all cases. 
+          </P
+><P
+>&#13;          Automake adds to <A
+HREF="http://www.gnu.org/prep/standards/standards.html#Directory-Variables"
+TARGET="_top"
+>&#13;          the standard directories for installation</A
+>.
+          </P
+><P
+>&#13;          By default, an installable file specified in a subdirectory 
+          will have its directory name stripped before installation.
+          For instance, in this example, the header file will be installed as 
+          <TT
+CLASS="literal"
+>$(includedir)/stdio.h</TT
+>:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;include_HEADERS = inc/stdio.h
+          </PRE
+></TD
+></TR
+></TABLE
+>     
+          However, the <TT
+CLASS="literal"
+>nobase_</TT
+> prefix can be used to circumvent this path stripping. 
+          In this example, the header file will be installed as 
+          <TT
+CLASS="literal"
+>$(includedir)/sys/types.h</TT
+>:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;nobase_include_HEADERS = sys/types.h
+          </PRE
+></TD
+></TR
+></TABLE
+>     
+          <TT
+CLASS="literal"
+>nobase_</TT
+> should be specified first when used in conjunction 
+          with either <TT
+CLASS="literal"
+>dist_</TT
+> or <TT
+CLASS="literal"
+>nodist_</TT
+> . For instance:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;nobase_dist_pkgdata_DATA = images/vortex.pgm
+          </PRE
+></TD
+></TR
+></TABLE
+>
+          </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN315"
+></A
+>Primaries: What and How To Build</H3
+><P
+>&#13;          You tell Automake what and how to build by setting variables ending 
+          with appropriate <I
+CLASS="emphasis"
+>Primaries</I
+>.
+          Many actual variable names put into `Makefile.am' are constructed 
+          by adding various prefixes to a primary  
+          (Refer to <A
+HREF="http://sources.redhat.com/autobook/autobook/autobook_37.html#SEC37"
+TARGET="_top"
+>&#13;          GNU Autoconf, Automake and Libtool</A
+> for details about Primaries).
+          </P
+><P
+></P
+><DIV
+CLASS="variablelist"
+><P
+><B
+>Taste of Primaries</B
+></P
+><DL
+><DT
+><TT
+CLASS="literal"
+>HEADERS</TT
+></DT
+><DD
+><P
+>&#13;                   Macros of this type list header files.  These are separate from 
+                   <TT
+CLASS="literal"
+>DATA</TT
+> macros
+                   because this allows for extra error checking in some cases.
+                   </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>LIBRARIES</TT
+></DT
+><DD
+><P
+>&#13;                   Macros of this type list (SE. static) libraries to be built.
+                   </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>LTLIBRARIES</TT
+></DT
+><DD
+><P
+>&#13;                   Macros of this type list Libtool (ie. shared) libraries to be built.
+                   </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>PROGRAMS</TT
+></DT
+><DD
+><P
+>&#13;                   Macros of this type list programs to be built.
+                   The program(s) are built and arranged to be installed into <TT
+CLASS="literal"
+>bindir</TT
+>.
+                   For example, if you want to build a program called <TT
+CLASS="filename"
+>doit</TT
+>, you set: 
+                   <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>bin_PROGRAMS = doit</PRE
+></TD
+></TR
+></TABLE
+>
+                   <TT
+CLASS="literal"
+>make</TT
+> assumes its source is called <TT
+CLASS="filename"
+>doit.cpp</TT
+> 
+                   and compiles (if it indeed exists) to produce <TT
+CLASS="filename"
+>doit.o</TT
+>.  
+                   Then it links <TT
+CLASS="filename"
+>doit.o</TT
+>
+                   to create <TT
+CLASS="filename"
+>doit</TT
+>.  If there are more than one source code file, which
+                   most cases do, you list the souce code files under <TT
+CLASS="literal"
+>doit_SOURCES</TT
+>.
+                   </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>SOURCES</TT
+></DT
+><DD
+><P
+>&#13;                   Macros of this type list the names of the source code files to be used to 
+                   build the target (ex. a library).  I said "names"; You may not specify paths!!!
+                   Automake needs to know the <I
+CLASS="emphasis"
+>static</I
+> list of files that can be
+                   compiled into your program/library as well.  If some source is conditinally compiled, 
+                   it can be listed in <TT
+CLASS="literal"
+>EXTRA</TT
+> variable (consult
+                   <A
+HREF="http://sources.redhat.com/autobook/autobook/autobook_39.html#SEC39"
+TARGET="_top"
+>&#13;                   7.4: Programs and Libraries, "GNU Autoconf, Automake and Libtool"</A
+>)
+                   </P
+></DD
+></DL
+></DIV
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN360"
+></A
+>Essential Automake Macros</H3
+><P
+></P
+><DIV
+CLASS="variablelist"
+><DL
+><DT
+><TT
+CLASS="literal"
+>AM_INIT_AUTOMAKE</TT
+></DT
+><DD
+><P
+>&#13;                   This macro is used to do all the standard initializtaion required by Automake.
+                   Use this if you're going to use Automake.
+                   </P
+></DD
+><DT
+>AC_CONFIG_HEADER</DT
+><DD
+><P
+>&#13;                   When this macro presents, all the C preprocessor macros are defined in the
+                   named file (ie. by convension, you usually name it <TT
+CLASS="filename"
+>config.h</TT
+>)
+                   as opposed to having them defined via <TT
+CLASS="literal"
+>-D</TT
+> options in
+                   DEFS <TT
+CLASS="filename"
+>Makefile</TT
+>.  This is very much like 
+                   <TT
+CLASS="literal"
+>AC_CONFIG_HEADER</TT
+> (i.e. an Autoconf macro) but does additional
+                   initialization work for Automake
+                   </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>AM_CFLAGS</TT
+></DT
+><DD
+><P
+>&#13;                   This is the variable which the Makefile.am author can use to pass in 
+                   additional C compiler flags. In some situations, this is not used, 
+                   in preference to the per-executable (or per-library) <TT
+CLASS="literal"
+>_CFLAGS</TT
+>. 
+                   </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>AM_CXXFLAGS</TT
+></DT
+><DD
+><P
+>&#13;                   This is similar to <TT
+CLASS="literal"
+>AM_CFLAGS</TT
+> but for C++. 
+                   </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>AM_CPPFLAGS</TT
+></DT
+><DD
+><P
+>&#13;                   The contents of this variable are passed to every compilation which 
+                   invokes the C preprocessor; it is a list of arguments to the preprocessor. 
+                   For instance, -I and -D options should be listed here.
+                                        </P
+><P
+>&#13;                   Automake already provides some -I options automatically. 
+                   In particular it generates <TT
+CLASS="literal"
+>-I$(srcdir)</TT
+>, <TT
+CLASS="literal"
+>-I.</TT
+>, 
+                   and a <TT
+CLASS="literal"
+>-I</TT
+> pointing to the directory holding 
+                   <TT
+CLASS="filename"
+>config.h</TT
+> (if you've used <TT
+CLASS="literal"
+>AC_CONFIG_HEADERS</TT
+> 
+                   or <TT
+CLASS="literal"
+>AM_CONFIG_HEADER</TT
+>). You can disable the default 
+                   <TT
+CLASS="literal"
+>-I</TT
+> options using the nostdinc option.
+                   </P
+><P
+>&#13;                   <TT
+CLASS="literal"
+>AM_CPPFLAGS</TT
+> is ignored in preference to a 
+                   per-executable (or per-library) <TT
+CLASS="literal"
+>_CPPFLAGS</TT
+> variable if it is defined. 
+                   </P
+></DD
+><DT
+><TT
+CLASS="literal"
+>AM_LDFLAGS</TT
+></DT
+><DD
+><P
+>&#13;                   This is the variable which the <TT
+CLASS="filename"
+>Makefile.am</TT
+> author can use to pass 
+                   in additional linker flags. In some situations, this is not used, 
+                   in preference to the per-executable (or per-library) <TT
+CLASS="literal"
+>_LDFLAGS</TT
+>. 
+                   </P
+></DD
+></DL
+></DIV
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="libtool"
+></A
+>What Does Libtool Need?</H2
+><P
+>&#13;     You use Libtool when you intend to build a shared library.  All you have to do is
+     to state <TT
+CLASS="literal"
+>AC_PROG_LIBTOOL</TT
+> in <TT
+CLASS="filename"
+>configure.ac</TT
+>
+     for integration of the Tool and list the library name under <TT
+CLASS="literal"
+>_LDLIBRARIES</TT
+>
+     in a <TT
+CLASS="filename"
+>Makefile.am</TT
+>.  Then, Autoconf and Automake create necessary
+     scripts used by Libtool so taht these scripts may be installed/copied on to the
+     user's machine and not requiring them a (specific-version of) Libtool installation.
+     </P
+><P
+>&#13;     Libtool libraries should begin with <TT
+CLASS="literal"
+>lib</TT
+> so taht the linker 
+     can find them when passed with the <TT
+CLASS="literal"
+>-l</TT
+> option.
+     </P
+><P
+>&#13;     So, building a Libtool libraray on your machine is as simple as that but
+     distributing the source and allow users to build on their own require a bit more.
+     See <A
+HREF="#distribution"
+><I
+><I
+>make dist</I
+>: Making a Distribution Tarball</I
+></A
+> for further info.
+     </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="installation"
+></A
+><TT
+CLASS="literal"
+>make install</TT
+>: What's and Where Get Installed?</H2
+><P
+>&#13;     Files defined for Make variables (remember Automake variables *are* Make variables)
+     with certain Primaries are installed into the directories where their prefixes indicate.
+     For instance, a program listed for <TT
+CLASS="literal"
+>bin_PROGRAMS</TT
+> will be installed
+     into <TT
+CLASS="varname"
+>bindir</TT
+> 
+     (ie. GNU standard directory for program installation: ex. <TT
+CLASS="filename"
+>/usr/bin/</TT
+>).
+     A library listed under <TT
+CLASS="literal"
+>lib_LIBRARIES</TT
+> will go into <TT
+CLASS="varname"
+>libdir</TT
+>
+     (ex. <TT
+CLASS="filename"
+>/usr/lib/</TT
+>).
+     </P
+><P
+>&#13;     Here are a summary of Primaries and their directory variables that can be associated with:
+     <DIV
+CLASS="informaltable"
+><A
+NAME="AEN434"
+></A
+><P
+></P
+><TABLE
+BORDER="1"
+BGCOLOR="#E0E0E0"
+CELLSPACING="0"
+CELLPADDING="4"
+CLASS="CALSTABLE"
+><THEAD
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Primary</TH
+><TH
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>Directory Variables</TH
+></TR
+></THEAD
+><TBODY
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>PROGRAMS</TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>bindir, sbindir, libexecdir, pkglibdir</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>LIBRARIES</TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>libdir, pkglibdir</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>LTLIBRARIES</TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>libdir, pkglibdir</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>SCRIPTS</TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>bindir, sbindir, binexecdir, pkgdatadir</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>DATA</TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>datadir, sysconfdir, sharedsatedir, localstatedir, pkgdatadir</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>HEADERS</TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>includedir, oldincludedir, pkgincludedir</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>TEXINFO</TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>infodir</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>MANS</TD
+><TD
+ALIGN="LEFT"
+VALIGN="MIDDLE"
+>man, man0-9, mann</TD
+></TR
+></TBODY
+></TABLE
+><P
+></P
+></DIV
+>
+     All directory variables are GNU standard except for <TT
+CLASS="literal"
+>pkgincludedir</TT
+>,
+     <TT
+CLASS="literal"
+>pkgdatadir</TT
+> and <TT
+CLASS="literal"
+>pkglibdir</TT
+> which are additionally 
+     defined by Automake.
+     </P
+><P
+>&#13;     You can define arbitrary directory variables as such:
+     <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;foodir = xxx
+foo_PROGRAMS
+     </PRE
+></TD
+></TR
+></TABLE
+>
+     </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="distribution"
+></A
+><TT
+CLASS="literal"
+>make dist</TT
+>: Making a Distribution Tarball</H2
+><P
+>&#13;     The top level <TT
+CLASS="filename"
+>Makefile</TT
+> generated by <TT
+CLASS="filename"
+>configure</TT
+>
+     has a target named <TT
+CLASS="literal"
+>dist</TT
+>.  This bundles all necessary files and creates
+     a tar file.  The generated tar file name has a general format: 
+     <I
+CLASS="emphasis"
+>package-version</I
+><TT
+CLASS="filename"
+>.tar.gz</TT
+> and unpacks into a directory named
+     <I
+CLASS="emphasis"
+>package-version</I
+>.
+     </P
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN480"
+></A
+>What goes in</H3
+><P
+>&#13;        All the files Automake automatically distributes are shown by:
+        <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;automake --help
+        </PRE
+></TD
+></TR
+></TABLE
+>
+        My version of Automake listed the following files:
+        <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;Files which are automatically distributed, if found:
+  ABOUT-GNU           README              config.rpath        ltcf-gcj.sh
+  ABOUT-NLS           THANKS              config.sub          ltconfig
+  AUTHORS             TODO                configure           ltmain.sh
+  BACKLOG             acconfig.h          configure.ac        mdate-sh
+  COPYING             aclocal.m4          configure.in        missing
+  COPYING.DOC         ansi2knr.1          depcomp             mkinstalldirs
+  COPYING.LESSER      ansi2knr.c          elisp-comp          py-compile
+  COPYING.LIB         compile             install-sh          stamp-vti
+  ChangeLog           config.guess        libversion.in       texinfo.tex
+  INSTALL             config.h.bot        ltcf-c.sh           ylwrap
+  NEWS                config.h.top        ltcf-cxx.sh
+        </PRE
+></TD
+></TR
+></TABLE
+>
+        Automake also distributes other files about which it learns from your <TT
+CLASS="filename"
+>Makefile.am</TT
+>.
+        Files listed under <TT
+CLASS="literal"
+>_TEXINFO</TT
+> and <TT
+CLASS="literal"
+>_HEADERS</TT
+>, and
+        sources that make up the programs or libraries get distributed by default.
+        You can add additional files to a distribution; just list them in the macro <TT
+CLASS="literal"
+>EXTRA_DIST</TT
+>.
+        If a primary is not distributed by default, but in your case it should be (or should not be), you can easily
+        correct it with <TT
+CLASS="literal"
+>dist</TT
+> or <TT
+CLASS="literal"
+>nodist</TT
+> prefix:
+        <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;dist_data_DATA     = a.txt b.txt
+bin_PROGRAMS       = foo
+foo_SOURCES        = x.h x.cpp y.h y.cpp z.h z.cpp
+nodist_foo_SOURCES = z.h z.cpp
+        </PRE
+></TD
+></TR
+></TABLE
+>
+        </P
+></DIV
+><DIV
+CLASS="sect2"
+><HR><H3
+CLASS="sect2"
+><A
+NAME="AEN492"
+></A
+>Checking the distribution</H3
+><P
+>&#13;        <TT
+CLASS="literal"
+>make distcheck</TT
+> performas a <TT
+CLASS="literal"
+>make dist</TT
+> as usual,
+        then proceeds to untar the new archive into a fresh directory, build it in a fresh build
+        directory seperate from the source directory, install it into a third fresh directory and 
+        finally run <TT
+CLASS="literal"
+>make check</TT
+> in the build tree.
+        </P
+><P
+>&#13;        But, you're right.  It only checks on the same architecture, or even worse on a
+        single machine which may be completely loaded with necessary third vendor libraries/tools.
+        </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN499"
+></A
+>Odds and Ends</H2
+><DIV
+CLASS="sect2"
+><H3
+CLASS="sect2"
+><A
+NAME="AEN501"
+></A
+>Running Programs Without Installing Just-Built Libraries</H3
+><P
+>&#13;          Let's say you have a suite of tests that excersize your library components.
+          You want to execute the tests and, if all tests pass, then install the library.
+          In other words, you don't want to install the library unless all tests pass.
+          Suppose you have a header file organized in a package directory like this:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;/usr/local/include/mypackage/a.h
+          </PRE
+></TD
+></TR
+></TABLE
+>
+          and your test source contain statements, <TT
+CLASS="literal"
+>#include "mypackage/a.h"</TT
+>.  
+          To have this work without installing these headers, the source directory structure must match
+          the install directory structure.  So, if you tend to have developing source in 
+          <I
+CLASS="emphasis"
+>somewhere</I
+>, the entire path, <TT
+CLASS="filename"
+>mypackage/a.h</TT
+>,
+          must be found under <I
+CLASS="emphasis"
+>somewhere</I
+> like this:
+          <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="programlisting"
+>&#13;<I
+CLASS="emphasis"
+>(somewhere)</I
+>/mypackage/a.h
+<I
+CLASS="emphasis"
+>(somewhere)</I
+>/mypackage/b.h
+          </PRE
+></TD
+></TR
+></TABLE
+>
+          Unfortunately, there is <I
+CLASS="emphasis"
+>no way around!</I
+>
+          </P
+></DIV
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN513"
+></A
+>Copyright Notice</H2
+><P
+>&#13;      Copyright (c) 2004,  by the University of Washington.
+      This material may be distributed only subject to the terms and conditions 
+      set forth in the Open Publication License, V1.0 or later
+      (the latest version is presently available
+      <A
+HREF="http://www.opencontent.org/openpub/"
+TARGET="_top"
+>here</A
+>.
+    </P
+><P
+>&#13;    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>

@@ -1,0 +1,429 @@
+<HTML>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!-- Created on May, 24  2001 by texi2html 1.64 -->
+<!-- 
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Olaf Bachmann <obachman@mathematik.uni-kl.de>
+Send bugs and suggestions to <texi2html@mathematik.uni-kl.de>
+ 
+-->
+<HEAD>
+<TITLE>Autoconf, Automake, and Libtool: Installing Header Files</TITLE>
+
+<META NAME="description" CONTENT="Autoconf, Automake, and Libtool: Installing Header Files">
+<META NAME="keywords" CONTENT="Autoconf, Automake, and Libtool: Installing Header Files">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.64">
+<script language="Javascript">
+<!--    
+// Check the browser version.
+
+    function checkVersion() {
+      if (navigator.appVersion.charAt(0)>=3) return true;
+      if (navigator.appVersion.charAt(0)>=4) return true;
+      else return false;
+    }
+
+      if (checkVersion()) {
+             homeon = new Image();
+             homeon.src = "homeon.png";
+
+             homeoff = new Image();
+             homeoff.src = "home.png";
+
+             tocon = new Image();
+             tocon.src = "tocon.png";
+
+             tocoff = new Image();
+             tocoff.src = "toc.png";
+
+             indexon = new Image();
+             indexon.src = "indexon.png";
+
+             indexoff = new Image();
+             indexoff.src = "index.png";
+
+             helpon = new Image();
+             helpon.src = "helpon.png";
+
+             helpoff = new Image();
+             helpoff.src = "help.png";
+
+             backon = new Image();
+             backon.src = "backon.png";
+
+             backoff = new Image();
+             backoff.src = "back.png";
+
+             forwardon = new Image();
+             forwardon.src = "forwardon.png";
+
+             forwardoff = new Image();
+             forwardoff.src = "forward.png";
+
+             prevon = new Image();
+             prevon.src = "prevon.png";
+
+             prevoff = new Image();
+             prevoff.src = "prev.png";
+
+             nexton = new Image();
+             nexton.src = "nexton.png";
+
+             nextoff = new Image();
+             nextoff.src = "next.png";
+
+             upon = new Image();
+             upon.src = "upon.png";
+
+             upoff = new Image();
+             upoff.src = "up.png";
+         }
+
+     function img_act(imgName) {
+             if (checkVersion()) {
+             imgOn = eval(imgName + "on.src");
+             document [imgName].src = imgOn;
+             }
+     }
+
+     function img_inact(imgName) {
+             if (checkVersion()) {
+             imgOff = eval(imgName + "off.src");
+             document [imgName].src = imgOff;
+             }
+     }
+// -->
+</SCRIPT>
+
+</HEAD>
+
+<BODY LANG="EN" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#6688AA" VLINK="#336688" ALINK="#808080">
+
+<A NAME="SEC96"></A>
+<TABLE BORDER=0 CELLPADDING=0 CELLSPACING=10>
+<TR VALIGN="TOP">
+<TD ALIGN="MIDDLE" WIDTH=50 BGCOLOR="#e6e6e6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_95.html#SEC95" onMouseover="img_act('prev')" onMouseout="img_inact('prev')"><IMG SRC="prev.png" BORDER="0" ALT="Back: Removing --foreign" ALIGN="MIDDLE" NAME="prev"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_97.html#SEC97" onMouseover="img_act('next')" onMouseout="img_inact('next')"><IMG SRC="next.png" BORDER="0" ALT="Forward: Including Texinfo Documentation" ALIGN="MIDDLE" NAME="next"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_97.html#SEC97" onMouseover="img_act('back')" onMouseout="img_inact('back')"><IMG SRC="back.png" BORDER="0" ALT="FastBack: Including Texinfo Documentation" ALIGN="MIDDLE" NAME="back"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_93.html#SEC93" onMouseover="img_act('up')" onMouseout="img_inact('up')"><IMG SRC="up.png" BORDER="0" ALT="Up: A Large GNU Autotools Project" ALIGN="MIDDLE" NAME="up"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_99.html#SEC99" onMouseover="img_act('forward')" onMouseout="img_inact('forward')"><IMG SRC="forward.png" BORDER="0" ALT="FastForward: Rolling Distribution Tarballs" ALIGN="MIDDLE" NAME="forward"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook.html#SEC_Top" onMouseover="img_act('home')" onMouseout="img_inact('home')"><IMG SRC="home.png" BORDER="0" ALT="Top: Autoconf, Automake, and Libtool" ALIGN="MIDDLE" NAME="home"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_toc.html#SEC_Contents" onMouseover="img_act('toc')" onMouseout="img_inact('toc')"><IMG SRC="toc.png" BORDER="0" ALT="Contents: Table of Contents" ALIGN="MIDDLE" NAME="toc"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_285.html#SEC285" onMouseover="img_act('index')" onMouseout="img_inact('index')"><IMG SRC="index.png" BORDER="0" ALT="Index: Index" ALIGN="MIDDLE" NAME="index"></A></TD>
+</TR>
+<TR VALIGN="TOP" ALIGN="LEFT">
+<TD VALIGN="MIDDLE" ALIGN="LEFT"><A HREF="autobook_abt.html#SEC_About" onMouseover="img_act('help')" onMouseout="img_inact('help')"><IMG SRC="help.png" BORDER="0" ALT="About: About this document" ALIGN="MIDDLE" NAME="help"></A></TD>
+</TR>
+</TABLE>
+</TD>
+<TD ALIGN="LEFT">
+<H2> 12.3 Installing Header Files </H2>
+<!--docid::SEC96::-->
+<P>
+
+<BLOCKQUOTE>
+One of the more difficult problems with GNU Autotools driven projects is
+that each of them depends on <TT>`config.h'</TT> (or its equivalent) and the
+project specific symbols that it defines.  The purpose of this file is
+to be <CODE>#include</CODE>d from all of the project source files.  The
+preprocessor can tailor then the code in these files to the target
+environment.
+<P>
+
+It is often difficult and sometimes impossible to not introduce a
+dependency on <TT>`config.h'</TT> from one of the project's installable
+header files. It would be nice if you could simply install the generated
+<TT>`config.h'</TT>, but even if you name it carefully or install it to a
+subdirectory to avoid filename problems, the macros it defines will
+clash with those from any other GNU Autotools based project which also
+installs <EM>its</EM> <TT>`config.h'</TT>.
+</P><P>
+
+For example, if Sic installed its <TT>`config.h'</TT> as
+<TT>`/usr/include/sic/config.h'</TT>, and had <SAMP>`#include &#60;sic/config.h&#62;'</SAMP>
+in the installed <TT>`common.h'</TT>, when another GNU Autotools based project
+came to use the Sic library it might begin like this:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if HAVE_CONFIG_H
+#  include &#60;config.h&#62;
+#endif
+
+#if HAVE_SIC_H
+#  include &#60;sic.h&#62;
+#endif
+
+static const char version_number[] = VERSION;
+</pre></td></tr></table></P><P>
+
+But, <TT>`sic.h'</TT> says <SAMP>`#include &#60;sic/common.h&#62;'</SAMP>, which in turn
+says <SAMP>`#include &#60;sic/config.h&#62;'</SAMP>.  Even though the other project has
+the correct value for <SAMP>`VERSION'</SAMP> in its own <TT>`config.h'</TT>, by the
+time the preprocessor reaches the <SAMP>`version_number'</SAMP> definition, it
+has been redefined to the value in <TT>`sic/config.h'</TT>.  Imagine the
+mess you could get into if you were using several libraries which each
+installed their own <TT>`config.h'</TT> definitions.  GCC issues a
+warning when a macro is redefined to a different value which would help
+you to catch this error.  Some compilers do not issue a warning, and
+perhaps worse, other compilers will warn even if the repeated
+definitions have the same value, flooding you with hundreds of warnings
+for each source file that reads multiple <TT>`config.h'</TT> headers.
+</P><P>
+
+The Autoconf macro <CODE>AC_OUTPUT_COMMANDS</CODE><A NAME="DOCF25" HREF="autobook_fot.html#FOOT25">(25)</A> provides a way to solve this problem.  The
+idea is to generate a system specific but installable header from the
+results of the various tests performed by <CODE>configure</CODE>.  There is
+a 1-to-1 mapping between the preprocessor code that relied on the
+configure results written to <TT>`config.h'</TT>, and the new shell code
+that relies on the configure results saved in <TT>`config.cache'</TT>.
+</P><P>
+
+</BLOCKQUOTE>
+<P>
+
+The following code is a snippet from <TT>`configure.in'</TT>, in the body of
+the <CODE>AC_OUTPUT_COMMANDS</CODE> macro:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>    # Add the code to include these headers only if autoconf has
+    # shown them to be present.
+    if test x$ac_cv_header_stdlib_h = xyes; then
+      echo '#include &#60;stdlib.h&#62;' &#62;&#62; $tmpfile
+    fi
+    if test x$ac_cv_header_unistd_h = xyes; then
+      echo '#include &#60;unistd.h&#62;' &#62;&#62; $tmpfile
+    fi
+    if test x$ac_cv_header_sys_wait_h = xyes; then
+      echo '#include &#60;sys/wait.h&#62;' &#62;&#62; $tmpfile
+    fi
+    if test x$ac_cv_header_errno_h = xyes; then
+      echo '#include &#60;errno.h&#62;' &#62;&#62; $tmpfile
+    fi
+    cat &#62;&#62; $tmpfile &#60;&#60; '_EOF_'
+#ifndef errno
+/* Some sytems #define this! */
+extern int errno;
+#endif
+_EOF_
+    if test x$ac_cv_header_string_h = xyes; then
+      echo '#include &#60;string.h&#62;' &#62;&#62; $tmpfile
+    elif test x$ac_cv_header_strings_h = xyes; then
+      echo '#include &#60;strings.h&#62;' &#62;&#62; $tmpfile
+    fi
+    if test x$ac_cv_header_assert_h = xyes; then
+      cat &#62;&#62; $tmpfile &#60;&#60; '_EOF_'
+
+#include &#60;assert.h&#62;
+#define SIC_ASSERT assert
+
+_EOF_
+    else
+        echo '#define SIC_ASSERT(expr)  ((void) 0)' &#62;&#62; $tmpfile
+    fi
+
+</pre></td></tr></table></P><P>
+
+Compare this with the equivalent C pre-processor code from
+<TT>`sic/common.h'</TT>, which it replaces:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre>#if STDC_HEADERS || HAVE_STDLIB_H
+#  include &#60;stdlib.h&#62;
+#endif
+
+#if HAVE_UNISTD_H
+#  include &#60;unistd.h&#62;
+#endif
+
+#if HAVE_SYS_WAIT_H
+#  include &#60;sys/wait.h&#62;
+#endif
+
+#if HAVE_ERRNO_H
+#  include &#60;errno.h&#62;
+#endif
+#ifndef errno
+/* Some systems #define this! */
+extern int errno;
+#endif
+
+#if HAVE_STRING_H
+#  include &#60;string.h&#62;
+#else
+#  if HAVE_STRING_H
+#    include &#60;strings.h&#62;
+#  endif
+#endif
+
+#if HAVE_ASSERT_H
+#  include &#60;assert.h&#62;
+#  define SIC_ASSERT assert
+#else
+#  define SIC_ASSERT(expr) ((void) 0)
+#endif
+</pre></td></tr></table></P><P>
+
+Apart from the mechanical process of translating the preprocessor code,
+there is some plumbing needed to ensure that the <TT>`common.h'</TT> file
+generated by the new code in <TT>`configure.in'</TT> is functionally
+equivalent to the old code, and is generated in a correct and timely
+fashion.
+</P><P>
+
+Taking my lead from some of the Automake generated <CODE>make</CODE> rules
+to regenerate <TT>`Makefile'</TT> from <TT>`Makefile.in'</TT> by calling
+<TT>`config.status'</TT>, I have added some similar rules to
+<TT>`sic/Makefile.am'</TT> to regenerate <TT>`common.h'</TT> from
+<TT>`common-h.in'</TT>.
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre># Regenerate common.h with config.status whenever common-h.in changes.
+common.h: stamp-common
+        @:
+stamp-common: $(srcdir)/common-h.in $(top_builddir)/config.status
+        cd $(top_builddir) \
+          &#38;&#38; CONFIG_FILES= CONFIG_HEADERS= CONFIG_OTHER=sic/common.h \
+          $(SHELL) ./config.status
+        echo timestamp &#62; $@
+
+</pre></td></tr></table></P><P>
+
+The way that <CODE>AC_OUTPUT_COMMANDS</CODE> works, is to copy the contained
+code into <CODE>config.status</CODE> (see section <A HREF="autobook_276.html#SEC276">C. Generated File Dependencies</A>).  It is actually <CODE>config.status</CODE> that creates the
+generated files -- for example, <CODE>automake</CODE> generated<BR>
+<TT>`Makefile'</TT>s are able to regenerate themselves from corresponding
+<TT>`Makefile.in'</TT>s by calling <CODE>config.status</CODE> if they become
+out of date.  Unfortunately, this means that <CODE>config.status</CODE>
+doesn't have direct access to the cache values generated while
+<CODE>configure</CODE> was running (because it has finished its work by the
+time <CODE>config.status</CODE> is called).  It is tempting to read in the
+cache file at the top of the code inside <CODE>AC_OUTPUT_COMMANDS</CODE>, but
+that only works if you know where the cache file is saved.  Also the
+package installer can use the <SAMP>`--cache-file'</SAMP> option of
+<CODE>configure</CODE> to change the location of the file, or turn off
+caching entirely with <SAMP>`--cache-file=/dev/null'</SAMP>.
+</P><P>
+
+<CODE>AC_OUTPUT_COMMANDS</CODE> accepts a second argument which can be used
+to pass the variable settings discovered by <CODE>configure</CODE> into
+<CODE>config.status</CODE>.  It's not pretty, and is a little error prone.
+In the first argument to <CODE>AC_OUTPUT_COMMANDS</CODE>, you must be careful
+to check that <STRONG>every single</STRONG> configure variable referenced is
+correctly set somewhere in the second argument.
+</P><P>
+
+A slightly stripped down example from the sic project
+<TT>`configure.in'</TT> looks like this:
+</P><P>
+
+<TABLE width=100%><tr><td>&nbsp;</td><td class=example bgcolor=#6688aa><br><pre># ----------------------------------------------------------------------
+# Add code to config.status to create an installable host dependent
+# configuration file.
+# ----------------------------------------------------------------------
+AC_OUTPUT_COMMANDS([
+  if test -n "$CONFIG_FILES" &&#38; test -n "$CONFIG_HEADERS"; then
+    # If both these vars are non-empty, then config.status wasn't run by
+    # automake rules (which always set one or the other to empty).
+    CONFIG_OTHER=${CONFIG_OTHER-sic/common.h}
+  fi
+  case "$CONFIG_OTHER" in
+  *sic/common.h*)
+    outfile=sic/common.h
+    stampfile=sic/stamp-common
+    tmpfile=${outfile}T
+    dirname="sed s,^.*/,,g"
+
+    echo creating $outfile
+    cat &#62; $tmpfile &#60;&#60; _EOF_
+/*  -*- Mode: C -*-
+ * --------------------------------------------------------------------
+ * DO NOT EDIT THIS FILE!  It has been automatically generated
+ * from:    configure.in and `echo $outfile|$dirname`.in
+ * on host: `(hostname || uname -n) 2&#62;/dev/null | sed 1q`
+ * --------------------------------------------------------------------
+ */
+
+#ifndef SIC_COMMON_H
+#define SIC_COMMON_H 1
+
+#include &#60;stdio.h&#62;
+#include &#60;sys/types.h&#62;
+_EOF_
+
+    if test x$ac_cv_func_bzero = xno &#38;&#38; \
+       test x$ac_cv_func_memset = xyes; then
+      cat &#62;&#62; $tmpfile &#60;&#60; '_EOF_'
+#define bzero(buf, bytes) ((void) memset (buf, 0, bytes))
+_EOF_
+    fi
+    if test x$ac_cv_func_strchr = xno; then
+      echo '#define strchr index' &#62;&#62; $tmpfile
+    fi
+    if test x$ac_cv_func_strrchr = xno; then
+      echo '#define strrchr rindex' &#62;&#62; $tmpfile
+    fi
+
+    # The ugly but portable cpp stuff comes from here
+    infile=$srcdir/sic/`echo $outfile | sed 's,.*/,,g;s,\..*$,,g'`-h.in
+    sed '/^##.*$/d' $infile &#62;&#62; $tmpfile 
+
+],[
+  srcdir=$srcdir
+  ac_cv_func_bzero=$ac_cv_func_bzero
+  ac_cv_func_memset=$ac_cv_func_memset
+  ac_cv_func_strchr=$ac_cv_func_strchr
+  ac_cv_func_strrchr=$ac_cv_func_strrchr
+])
+
+</pre></td></tr></table></P><P>
+
+You will notice that the contents of <TT>`common-h.in'</TT> are copied into
+<TT>`common.h'</TT> verbatim as it is generated.  It's just an easy way of
+collecting together the code that belongs in <TT>`common.h'</TT>, but which
+doesn't rely on configuration tests, without cluttering
+<TT>`configure.in'</TT> any more than necessary.
+</P><P>
+
+I should point out that, although this method has served me well for a
+number of years now, it is inherently fragile because it relies on
+undocumented internals of both Autoconf and Automake.  There is a very
+real possibility that if you also track the latest releases of
+GNU Autotools, it may stop working.  Future releases of GNU Autotools will
+address the interface problems that force us to use code like this, for
+the lack of a better way to do things.
+</P><P>
+
+<A NAME="Including Texinfo Documentation"></A>
+</TR></TABLE>
+<BR>  
+<FONT SIZE="-1">
+This document was generated
+by <I>Gary V. Vaughan</I> on <I>May, 24  2001</I>
+using <A HREF="http://www.mathematik.uni-kl.de/~obachman/Texi2html
+"><I>texi2html</I></A>
+
+</BODY>
+</HTML>

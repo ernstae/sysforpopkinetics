@@ -1,0 +1,17 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.31
+----------------------------------
+USER VISIBLE CHANGES
+When the build of SPK-Compiler generated source code fails,
+the system reports only that fact.  It used to report extra
+information that were rather confusing.
+
+The integrators now return tracing information.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 135
+
+BY: Sachiko Honda
+
+WHEN: January 6, 2005

@@ -1,0 +1,7 @@
+<html><body><p><a href=dtd-overview.html>Overview</a> <a href=dtd-tree.html>Tree</a> <a href=dtd-index.html>Index</a> <a href=dtd-notations.html>Notations</a> <a href=dtd-entities.html>Entities</a> </p><h1>Element &lt;ind_confidence_out&gt;</h1><p>Confidence interval for the final estimate(s) of</p><p>
+individual parameter(s).  
+The first n &lt;<a href=elt-value.html>value</a>&gt;s are the lower bounds and the remaining n
+&lt;<a href=elt-value.html>value</a>&gt;s are the upper bounds, where n is the length of parameter vector.
+Thus, the lower bound for the i-th element of the parameter vector is found at (0 * n + i)-th in 
+the &lt;<a href=elt-value.html>value</a>&gt;s sequence and the upper bound for the same parameter is found at (1 * n + i)-th.
+</p><h2>Attributes</h2><dl><dt>length VALUE 0</dt><dd><p>The length of the vector containing the confidence intervals, which is twice as long as of the parameter vector.</p></dd></dl><h2>Content</h2><p>(<a href=elt-value.html>value</a>)*</p><h2>Parents</h2><p><a href=elt-ind_stat_result.html>ind_stat_result</a> </p></body></html>

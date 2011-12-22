@@ -1,0 +1,38 @@
+<html><body><p><a href=dtd-overview.html>Overview</a> <a href=dtd-tree.html>Tree</a> <a href=dtd-index.html>Index</a> <a href=dtd-notations.html>Notations</a> <a href=dtd-entities.html>Entities</a> </p><h1>Element &lt;sigma&gt;</h1><p>A minimal representation of NONMEM Omega matrix. For full (ie. "block") matrix, <a href=elt-sigma.html>sigma</a> lists the <font color='red'>lower</font> triangle elements in the <font color='red'>row-major</font> order.  For diagonal, <a href=elt-sigma.html>sigma</a> lists only the diagonal elements from the upper left corner.  For block diagonal, each <a href=elt-sigma.html>sigma</a> block is listed individually using full or diagonal specifications as appropriate.</p><p>
+
+Given a 3 by 3 matrix, A:
+<pre>
+/                   \
+|  a11   a12   a13  |
+|  a21   a22   a23  |
+|  a31   a32   a33  |
+\                   / 
+</pre>
+
+If A were <font color='red'>full</font> (ie. block) symmetric, <a href=elt-sigma.html>sigma</a> specifies as follows:
+<pre>
+    &lt;sigma&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+       &lt;value&gt;a31&lt;/value&gt;&lt;value&gt;a32&lt;/value&gt;&lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma&gt;
+</pre>
+If A were <font color='red'>diagonal</font>, <a href=elt-omega.html>omega</a> specifies as follows:
+<pre>
+    &lt;sigma&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+                         &lt;value&gt;a22&lt;/value&gt;
+                                           &lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma&gt;
+</pre>
+If A were <font color='red'>block diagonal</font> symmetric with a 2x2 full block and a 1x1 diagonal block, <a href=elt-sigma.html>sigma</a> specifies as two blocks as follows:
+<pre>
+    &lt;sigma&gt;
+       &lt;value&gt;a11&lt;/value&gt;
+       &lt;value&gt;a21&lt;/value&gt;&lt;value&gt;a22&lt;/value&gt;
+    &lt;/sigma&gt;
+    &lt;sigma&gt;
+       &lt;value&gt;a33&lt;/value&gt;
+    &lt;/sigma&gt;
+</pre>
+</p><h2>Attributes</h2><dl><dt>same_as_previous IMPLIED </dt><dd><p>"yes" to duplicate the initial and final values of the previously appeared Sigma block's values to this block's, default to "no". </p></dd><dt>struct REQUIRED </dt><dd><p>Structure of Sigma matrix, either "block" or "diagonal". "block" suggests that any elements in the symmetric matrix could be non-zero.  "diagonal" indicates all zeros except for the diagonal elements.</p></dd><dt>dimension REQUIRED </dt><dd><p>Dimension of the square Sigma matrix. For example, for a 3 by 3, say "3". </p></dd></dl><h2>Content</h2><p>(<a href=elt-in.html>in</a>)</p><h2>Parents</h2><p><a href=elt-pop_analysis.html>pop_analysis</a> </p></body></html>

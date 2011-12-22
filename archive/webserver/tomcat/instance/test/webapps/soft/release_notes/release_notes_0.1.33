@@ -1,0 +1,17 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.33
+----------------------------------
+USER VISIBLE CHANGES
+The runtime daemon has been changed so that two SPK jobs can be 
+processed simultaneously.  This makes better use of the fact that
+the new cspkserver has two processors.
+
+OTHER CHANGES
+None.
+
+RELATED BUG REPORTS:
+
+BY: Alan Westhagen			
+
+WHEN: January 14, 2005
+

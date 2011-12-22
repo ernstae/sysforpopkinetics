@@ -1,0 +1,61 @@
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.93
+----------------------------------
+USER VISIBLE CHANGES
+Added the Vegas method.
+Added abs, acos, asin, atan, atan2, cosh, max, min, mod, sinh, tan, tanh.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 237, 308
+
+BY: Sachiko Honda
+
+WHEN: September 14, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.94
+----------------------------------
+USER VISIBLE CHANGES
+Computational failure in weighted residual is no longer reported as
+a statistics failure.  It is reported as fatal.
+
+Integrated the linear interpolation feature.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS:
+
+BY: Sachiko Honda
+
+WHEN: September 14, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.95
+----------------------------------
+USER VISIBLE CHANGES
+The number of data records is recognized properly
+for the individual level estimation based on ODE
+when the data set contains rows with MDV=1.
+
+OTHER CHANGES
+
+RELATED BUG REPORTS: 374 375
+
+BY: Sachiko Honda
+
+WHEN: September 16, 2005
+----------------------------------
+RELEASE NOTES FOR VERSION 0.1.96
+----------------------------------
+USER VISIBLE CHANGES
+
+Improved error messaging for population residuals.
+
+OTHER CHANGES
+
+Fixed bugs causing population residuals and population statistics to fail.
+
+RELATED BUG REPORTS: 371
+
+BY:  Mitch Watrous
+
+WHEN:  September 20, 2005

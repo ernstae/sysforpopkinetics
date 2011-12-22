@@ -1,0 +1,58 @@
+<html><head>
+<title>Write an Attribute Name and Value to the Restart File</title>
+<meta name="description" id="description" content="Write an Attribute Name and Value to the Restart File">
+<meta name="keywords" id="keywords" content=" Write Attribute Name Value Optimizer attribute value writeattribute "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'>&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="writeattribute.htm" target="_top">section</a>, <a href="writeattribute_frame2.htm" target="_top">frame</a></div>
+
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description" id="Description">Description</a></big></b>
+<br>
+Writes to the restart file the name and value of an attribute 
+that is contained in the current element's start tag, i.e.,
+<code><font color="blue">
+
+    &lt;current_element attribute_name=&quot;########&quot;&gt;
+
+</font></code>
+where the sequence of number signs (#) represents the sequence of
+characters that constitute the attribute's value.
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>This function assumes that the current element start tag 
+except for its final angle bracket (&gt;) has been written to 
+the restart file before this function is called 
+and that its final angle bracket will be written after.
+
+<br>
+<br>
+<b><big><a name="Arguments" id="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>ValType</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The type of the value.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>pAttributeName</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This argument specifies the name of the attribute to write.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>valueIn</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>This argument will be written as the value of the attribute using the
+std::ostream insertion operator (&lt;&lt;), which converts it from type
+<i>ValueType</i> to a sequence of characters.
+
+
+<hr>Input File: ../../spk/Optimizer.cpp
+
+</body>
+</html>

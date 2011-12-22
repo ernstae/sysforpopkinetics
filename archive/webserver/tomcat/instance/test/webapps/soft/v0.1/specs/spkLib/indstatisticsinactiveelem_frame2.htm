@@ -1,0 +1,189 @@
+<html><head><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head><body>
+<div align='right'><a href="indstatisticsinactiveelem.htm" target="_top">this</a></div>
+<center><i>Copyright (C) 2002, University of Washington, Resource Facility for Population Kinetics. All Rights Reserved.
+
+</i>
+</center><code><span style='white-space: nowrap'><br>
+</span></code><b><big><a name="Description">Description</a></big></b>
+<br>
+This function computes covariance matrix, standard error vector, correlation 
+matrix, coefficient of variation and confidence interval of individual parameter 
+estimates.  The covariance matrix is actually the lower limit of the true 
+covariance matrix.  It is calculated using the Cramer-Rao inequality:
+<code><span style='white-space: nowrap'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;-1<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>Covariance</i>&nbsp;<u>&lt;</u>&nbsp;<i>A</i>&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+</span></code>where A is the Fisher information matrix.  The standard error 
+vector and the correlation matrix are calculated from the values of the 
+covariance matrix using their mathematical definitions, respectively. 
+The coefficient of variation is calculated as:
+<code><span style='white-space: nowrap'><br>
+&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<i>CV</i>&nbsp;=&nbsp;<i>SE</i>&nbsp;/&nbsp;|&nbsp;<i>b</i>&nbsp;|&nbsp;*&nbsp;100&nbsp;<br>
+<br>
+</span></code>where CV stands for the coefficient of variation, SE stands for the standard 
+error and b stands for the value of the individual parameter estimate.
+The confidence interval is calculated from the values of the standard error 
+using its mathematical definition.
+
+<br>
+<br>
+<b><big><a name="Return Value">Return Value</a></big></b>
+<br>
+Upon a successful completion, the function sets
+the given output value place holders to point to the result values.
+  
+<code><span style='white-space: nowrap'><br>
+<br>
+</span></code>If an error is detected or failure occurs during the evaluation, a SpkException 
+object is thrown.  The state at which an exception is thrown is defined in
+<a href="glossary_frame1.htm#Exception Handling Policy" target="frame1"><i><span style='white-space: nowrap'>Exception&nbsp;Handling&nbsp;Policy</span></i></a>
+.
+
+<br>
+<br>
+<b><big><a name="Arguments">Arguments</a></big></b>
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><i><span style='white-space: nowrap'>mask</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code><code><font color="blue">mask</font></code> is a vector of boolean values of length equal to the parameter
+vector, <code><font color="blue">indPar</font></code>.  <code><font color="blue">mask[i]</font></code> tells as to whether <code><font color="blue">indPar[i]</font></code>
+is active or not.  If <code><span style='white-space: nowrap'><i>mask</i>[<i>i</i>]</span></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>, the i-th element of
+the parameter vector are treated as if it does not exist and further 
+statistics computations are performed based upon the assumption.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indPar</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>indPar</i> contains the vector 
+<code><span style='white-space: nowrap'><i>b</i></span></code>, which specifies the estimates of the individual parameters.  
+The returned values <i>indParCovOut</i>, <i>indParSEOut</i>, 
+<i>indParCorOut</i>, <i>indParCVOut</i> and <i>indParCIOut</i>  
+will be evaluated at these estimates.  
+The <i>values of indPar</i> should be obtained by calling SPK function 
+<a href="fitindividual.htm" target="_top"><span style='white-space: nowrap'>fitIndividual</span></a>
+.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dataMean_indPar</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>dataMean_indPar</i> is the mean
+of data evaluated at <i>indPar</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dataVariance_indPar</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>dataVariance_indPar</i> is 
+the value of the derivative of the variance of data with respect to the
+individual parameter, evaluated at <i>indPar</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>dataVarianceInv</span></i><code><font color="blue"><span style='white-space: nowrap'><br>
+</span></font></code>The <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> <i>dataVarianceInv</i>is 
+the value of the inverse of the variance of data evaluated at <i>indPar</i>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParCovOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>indParCovOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCovOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the square of the length of the individual parameter vector 
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>popParCovOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>indParCovOut</i> will contain the covariance matrix
+of the individual parameter estimates, in column major order, that is evaluated 
+at <i>indPar</i>.  Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by 
+<i>indParCovOut</i>.  
+
+The <code><span style='white-space: nowrap'>(<i>i</i>,<i>j</i>)</span></code>-the element of the covariance matrix
+will be replaced by NaN if <code><font color="blue">mask[i]</font></code> or <code><font color="blue">mask[j]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParSEOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>indParSEOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParSEOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the individual parameter vector 
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>indParSEOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>indParSEOut</i> will contain the standard error vector
+of the individual parameter estimates, in column major order, that is evaluated 
+at <i>indPar</i>.  Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by 
+<i>indParSEOut</i>.  
+
+The <code><span style='white-space: nowrap'><i>i</i></span></code>-th element of the standard error vector
+will be replaced by NaN if <code><font color="blue">mask[i]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParCorOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>indParCorOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCorOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the square of the length of the individual parameter vector 
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>popParCorOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>indParCorOut</i> will contain the correlation matrix
+of the individual parameter estimates, in column major order, that is evaluated 
+at <i>indPar</i>.  Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by 
+<i>indParCorOut</i>.  
+
+The <code><span style='white-space: nowrap'>(<i>i</i>,&nbsp;<i>j</i>)</span></code>-th element of the correlation matrix
+will be replaced by NaN if <code><font color="blue">mask[i]</font></code> or <code><font color="blue">mask[j]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParCVOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>indParCVOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCVOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the length of the individual parameter vector 
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>indParCVOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object 
+pointed to by <i>indParCVOut</i> will contain the standard error vector
+of the individual parameter estimates, in column major order, that is evaluated 
+at <i>indPar</i>.  Otherwise, this function will not attempt to change the 
+contents of the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by 
+<i>indParCVOut</i>.  
+
+The <code><span style='white-space: nowrap'><i>i</i></span></code>-th element of the coefficient vector
+will be replaced by NaN if <code><font color="blue">mask[i]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+<code><font color="blue"><span style='white-space: nowrap'><br>
+<br>
+</span></font></code><i><span style='white-space: nowrap'>indParCIOut</span></i><code><font color="blue"><span style='white-space: nowrap'>&nbsp;<br>
+</span></font></code>If <i>indParCIOut</i> is not <code><font color="blue">NULL</font></code>, then the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCIOut</i> 
+must be declared in the function that calls this function, and its size must 
+be equal to the two times of the length of the individual parameter vector 
+<code><span style='white-space: nowrap'><i>b</i></span></code>.  If <i>indParCIOut</i> is not <code><font color="blue">NULL</font></code> and this function 
+completed successfully, then the <code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed 
+to by <i>indParCIOut</i> will contain the 95% confidence interval values 
+of the individual parameter estimates, in column major order, that is evaluated 
+at <i>indPar</i>.  There are two columns in the object.  The first column 
+contains the lower limit, and the second column contains the upper limit of 
+the confidence interval of the individual parameter estimates.  Otherwise, 
+this function will not attempt to change the contents of the 
+<code><font color="blue">SPK_VA::valarray&lt;double&gt;</font></code> object pointed to by <i>indParCIOut</i>.  
+Note that in the calculation of the confidence interval, if the degree of freedom 
+(number of data - number of parameters) is greater than 120 it is treated as infinite.
+
+The <code><span style='white-space: nowrap'>(<i>i</i>,1)</span></code> and <code><span style='white-space: nowrap'>(<i>i</i>,2)</span></code> elements of the confidence interval matrix
+will be replaced by NaN if <code><font color="blue">mask[i]</font></code> is <code><span style='white-space: nowrap'><i>false</i></span></code>.
+
+
+<hr>Input File: ../../lib/src/indStatistics.cpp
+
+</body>
+</html>

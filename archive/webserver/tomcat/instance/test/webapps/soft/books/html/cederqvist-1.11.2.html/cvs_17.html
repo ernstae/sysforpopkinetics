@@ -1,0 +1,1367 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                      "http://www.w3.org/TR/html40/loose.dtd">
+<HTML>
+<!-- Created on April, 18 2002 by texi2html 1.66 -->
+<!--
+Written by: Lionel Cons <Lionel.Cons@cern.ch> (original author)
+            Karl Berry  <karl@freefriends.org>
+            Olaf Bachmann <obachman@mathematik.uni-kl.de>
+            and many others.
+Maintained by: Many creative people <dev@texi2html.cvshome.org>
+Send bugs and suggestions to <users@texi2html.cvshome.org>
+
+-->
+<HEAD>
+<TITLE>CVS--Concurrent Versions System v1.11.2: Invoking CVS</TITLE>
+
+<META NAME="description" CONTENT="CVS--Concurrent Versions System v1.11.2: Invoking CVS">
+<META NAME="keywords" CONTENT="CVS--Concurrent Versions System v1.11.2: Invoking CVS">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META NAME="Generator" CONTENT="texi2html 1.66">
+
+</HEAD>
+
+<BODY LANG="en" BGCOLOR="#FFFFFF" TEXT="#000000" LINK="#0000FF" VLINK="#800080" ALINK="#FF0000">
+
+<A NAME="SEC155"></A>
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC154"> &lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top"> Up </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<H1> B. Quick reference to CVS commands </H1>
+<!--docid::SEC155::-->
+<P>
+
+This appendix describes how to invoke CVS, with
+references to where each command or feature is
+described in detail.  For other references run the
+<CODE>cvs --help</CODE> command, or see <A HREF="cvs_24.html#SEC188">Index</A>.
+</P>
+<P>
+
+A CVS command looks like:
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>cvs [ <VAR>global_options</VAR> ] <VAR>command</VAR> [ <VAR>command_options</VAR> ] [ <VAR>command_args</VAR> ]
+</pre></td></tr></table><P>
+
+Global options:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>--allow-root=<VAR>rootdir</VAR></CODE>
+<DD>Specify legal CVSROOT directory (server only) (not
+in CVS 1.9 and older).  See <A HREF="cvs_2.html#SEC30">2.9.3.1 Setting up the server for password authentication</A>.
+<P>
+
+</P>
+<DT><CODE>-a</CODE>
+<DD>Authenticate all communication (client only) (not in CVS
+1.9 and older).  See <A HREF="cvs_16.html#SEC117">A.4 Global options</A>.
+<P>
+
+</P>
+<DT><CODE>-b</CODE>
+<DD>Specify RCS location (CVS 1.9 and older).  See
+<A HREF="cvs_16.html#SEC117">A.4 Global options</A>.
+<P>
+
+</P>
+<DT><CODE>-d <VAR>root</VAR></CODE>
+<DD>Specify the CVSROOT.  See <A HREF="cvs_2.html#SEC9">2. The Repository</A>.
+<P>
+
+</P>
+<DT><CODE>-e <VAR>editor</VAR></CODE>
+<DD>Edit messages with <VAR>editor</VAR>.  See <A HREF="cvs_1.html#SEC6">1.3.2 Committing your changes</A>.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Do not read the `<TT>~/.cvsrc</TT>' file.  See <A HREF="cvs_16.html#SEC117">A.4 Global options</A>.
+<P>
+
+</P>
+<DT><CODE>-H</CODE>
+<DD><DT><CODE>--help</CODE>
+<DD>Print a help message.  See <A HREF="cvs_16.html#SEC117">A.4 Global options</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Do not log in `<TT>$CVSROOT/CVSROOT/history</TT>' file.  See <A HREF="cvs_16.html#SEC117">A.4 Global options</A>.
+<P>
+
+</P>
+<DT><CODE>-n</CODE>
+<DD>Do not change any files.  See <A HREF="cvs_16.html#SEC117">A.4 Global options</A>.
+<P>
+
+</P>
+<DT><CODE>-Q</CODE>
+<DD>Be really quiet.  See <A HREF="cvs_16.html#SEC117">A.4 Global options</A>.
+<P>
+
+</P>
+<DT><CODE>-q</CODE>
+<DD>Be somewhat quiet.  See <A HREF="cvs_16.html#SEC117">A.4 Global options</A>.
+<P>
+
+</P>
+<DT><CODE>-r</CODE>
+<DD>Make new working files read-only.  See <A HREF="cvs_16.html#SEC117">A.4 Global options</A>.
+<P>
+
+</P>
+<DT><CODE>-s <VAR>variable</VAR>=<VAR>value</VAR></CODE>
+<DD>Set a user variable.  See <A HREF="cvs_18.html#SEC178">C.8 Expansions in administrative files</A>.
+<P>
+
+</P>
+<DT><CODE>-T <VAR>tempdir</VAR></CODE>
+<DD>Put temporary files in <VAR>tempdir</VAR>.  See <A HREF="cvs_16.html#SEC117">A.4 Global options</A>.
+<P>
+
+</P>
+<DT><CODE>-t</CODE>
+<DD>Trace CVS execution.  See <A HREF="cvs_16.html#SEC117">A.4 Global options</A>.
+<P>
+
+</P>
+<DT><CODE>-v</CODE>
+<DD><DT><CODE>--version</CODE>
+<DD>Display version and copyright information for CVS.
+<P>
+
+</P>
+<DT><CODE>-w</CODE>
+<DD>Make new working files read-write.  See <A HREF="cvs_16.html#SEC117">A.4 Global options</A>.
+<P>
+
+</P>
+<DT><CODE>-x</CODE>
+<DD>Encrypt all communication (client only).
+See <A HREF="cvs_16.html#SEC117">A.4 Global options</A>.
+<P>
+
+</P>
+<DT><CODE>-z <VAR>gzip-level</VAR></CODE>
+<DD><A NAME="IDX275"></A>
+<A NAME="IDX276"></A>
+Set the compression level (client only).
+See <A HREF="cvs_16.html#SEC117">A.4 Global options</A>.
+</DL>
+<P>
+
+Keyword expansion modes (see section <A HREF="cvs_12.html#SEC102">12.4 Substitution modes</A>):
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>-kkv  $Id: file1,v 1.1 1993/12/09 03:21:13 joe Exp $
+-kkvl $Id: file1,v 1.1 1993/12/09 03:21:13 joe Exp harry $
+-kk   $Id$
+-kv   file1,v 1.1 1993/12/09 03:21:13 joe Exp
+-ko   <I>no expansion</I>
+-kb   <I>no expansion, file is binary</I>
+</pre></td></tr></table><P>
+
+Keywords (see section <A HREF="cvs_12.html#SEC99">12.1 Keyword List</A>):
+</P>
+<P>
+
+<TABLE><tr><td>&nbsp;</td><td class=example><pre>$Author: joe $
+$Date: 1993/12/09 03:21:13 $
+$Header: /home/files/file1,v 1.1 1993/12/09 03:21:13 joe Exp harry $
+$Id: file1,v 1.1 1993/12/09 03:21:13 joe Exp harry $
+$Locker: harry $
+$Name: snapshot_1_14 $
+$RCSfile: file1,v $
+$Revision: 1.1 $
+$Source: /home/files/file1,v $
+$State: Exp $
+$Log: file1,v $
+Revision 1.1  1993/12/09 03:30:17  joe
+Initial revision
+
+</pre></td></tr></table><P>
+
+Commands, command options, and command arguments:
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>add [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>Add a new file/directory.  See <A HREF="cvs_7.html#SEC67">7.1 Adding files to a directory</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-k <VAR>kflag</VAR></CODE>
+<DD>Set keyword expansion.
+<P>
+
+</P>
+<DT><CODE>-m <VAR>msg</VAR></CODE>
+<DD>Set file description.
+</DL>
+<P>
+
+</P>
+<DT><CODE>admin [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>Administration of history files in the repository.  See
+<A HREF="cvs_16.html#SEC119">A.6 admin--Administration</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-b[<VAR>rev</VAR>]</CODE>
+<DD>Set default branch.  See <A HREF="cvs_13.html#SEC107">13.3 Reverting to the latest vendor release</A>.
+<P>
+
+</P>
+<DT><CODE>-c<VAR>string</VAR></CODE>
+<DD>Set comment leader.
+<P>
+
+</P>
+<DT><CODE>-k<VAR>subst</VAR></CODE>
+<DD>Set keyword substitution.  See <A HREF="cvs_12.html#SEC98">12. Keyword substitution</A>.
+<P>
+
+</P>
+<DT><CODE>-l[<VAR>rev</VAR>]</CODE>
+<DD>Lock revision <VAR>rev</VAR>, or latest revision.
+<P>
+
+</P>
+<DT><CODE>-m<VAR>rev</VAR>:<VAR>msg</VAR></CODE>
+<DD>Replace the log message of revision <VAR>rev</VAR> with
+<VAR>msg</VAR>.
+<P>
+
+</P>
+<DT><CODE>-o<VAR>range</VAR></CODE>
+<DD>Delete revisions from the repository.  See
+<A HREF="cvs_16.html#SEC120">A.6.1 admin options</A>.
+<P>
+
+</P>
+<DT><CODE>-q</CODE>
+<DD>Run quietly; do not print diagnostics.
+<P>
+
+</P>
+<DT><CODE>-s<VAR>state</VAR>[:<VAR>rev</VAR>]</CODE>
+<DD>Set the state.
+<P>
+
+</P>
+<DT><CODE>-t</CODE>
+<DD>Set file description from standard input.
+<P>
+
+</P>
+<DT><CODE>-t<VAR>file</VAR></CODE>
+<DD>Set file description from <VAR>file</VAR>.
+<P>
+
+</P>
+<DT><CODE>-t-<VAR>string</VAR></CODE>
+<DD>Set file description to <VAR>string</VAR>.
+<P>
+
+</P>
+<DT><CODE>-u[<VAR>rev</VAR>]</CODE>
+<DD>Unlock revision <VAR>rev</VAR>, or latest revision.
+</DL>
+<P>
+
+</P>
+<DT><CODE>annotate [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>Show last revision where each line was modified.  See
+<A HREF="cvs_8.html#SEC79">8.4 Annotate command</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Annotate the most recent revision no later than
+<VAR>date</VAR>.  See <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-F</CODE>
+<DD>Force annotation of binary files.  (Without this option,
+binary files are skipped with a message.)
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Use head revision if tag/date not found.  See
+<A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>tag</VAR></CODE>
+<DD>Annotate revision <VAR>tag</VAR>.  See <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>checkout [<VAR>options</VAR>] <VAR>modules</VAR><small>...</small></CODE>
+<DD>Get a copy of the sources.  See <A HREF="cvs_16.html#SEC121">A.7 checkout--Check out sources for editing</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-A</CODE>
+<DD>Reset any sticky tags/date/options.  See <A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A> and <A HREF="cvs_12.html#SEC98">12. Keyword substitution</A>.
+<P>
+
+</P>
+<DT><CODE>-c</CODE>
+<DD>Output the module database.  See <A HREF="cvs_16.html#SEC122">A.7.1 checkout options</A>.
+<P>
+
+</P>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Check out revisions as of <VAR>date</VAR> (is sticky).  See
+<A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-d <VAR>dir</VAR></CODE>
+<DD>Check out into <VAR>dir</VAR>.  See <A HREF="cvs_16.html#SEC122">A.7.1 checkout options</A>.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Use head revision if tag/date not found.  See
+<A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-j <VAR>rev</VAR></CODE>
+<DD>Merge in changes.  See <A HREF="cvs_16.html#SEC122">A.7.1 checkout options</A>.
+<P>
+
+</P>
+<DT><CODE>-k <VAR>kflag</VAR></CODE>
+<DD>Use <VAR>kflag</VAR> keyword expansion.  See
+<A HREF="cvs_12.html#SEC102">12.4 Substitution modes</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-N</CODE>
+<DD>Don't &quot;shorten&quot; module paths if -d specified.  See
+<A HREF="cvs_16.html#SEC122">A.7.1 checkout options</A>.
+<P>
+
+</P>
+<DT><CODE>-n</CODE>
+<DD>Do not run module program (if any).  See <A HREF="cvs_16.html#SEC122">A.7.1 checkout options</A>.
+<P>
+
+</P>
+<DT><CODE>-P</CODE>
+<DD>Prune empty directories.  See <A HREF="cvs_7.html#SEC74">7.5 Moving and renaming directories</A>.
+<P>
+
+</P>
+<DT><CODE>-p</CODE>
+<DD>Check out files to standard output (avoids
+stickiness).  See <A HREF="cvs_16.html#SEC122">A.7.1 checkout options</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>tag</VAR></CODE>
+<DD>Checkout revision <VAR>tag</VAR> (is sticky).  See <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-s</CODE>
+<DD>Like -c, but include module status.  See <A HREF="cvs_16.html#SEC122">A.7.1 checkout options</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>commit [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>Check changes into the repository.  See <A HREF="cvs_16.html#SEC124">A.8 commit--Check files into the repository</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-F <VAR>file</VAR></CODE>
+<DD>Read log message from <VAR>file</VAR>.  See <A HREF="cvs_16.html#SEC125">A.8.1 commit options</A>.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Force the file to be committed; disables recursion.
+See <A HREF="cvs_16.html#SEC125">A.8.1 commit options</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-m <VAR>msg</VAR></CODE>
+<DD>Use <VAR>msg</VAR> as log message.  See <A HREF="cvs_16.html#SEC125">A.8.1 commit options</A>.
+<P>
+
+</P>
+<DT><CODE>-n</CODE>
+<DD>Do not run module program (if any).  See <A HREF="cvs_16.html#SEC125">A.8.1 commit options</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>rev</VAR></CODE>
+<DD>Commit to <VAR>rev</VAR>.  See <A HREF="cvs_16.html#SEC125">A.8.1 commit options</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>diff [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>Show differences between revisions.  See <A HREF="cvs_16.html#SEC129">A.9 diff--Show differences between revisions</A>.
+In addition to the options shown below, accepts a wide
+variety of options to control output style, for example
+`<SAMP>-c</SAMP>' for context diffs.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-D <VAR>date1</VAR></CODE>
+<DD>Diff revision for date against working file.  See
+<A HREF="cvs_16.html#SEC130">A.9.1 diff options</A>.
+<P>
+
+</P>
+<DT><CODE>-D <VAR>date2</VAR></CODE>
+<DD>Diff <VAR>rev1</VAR>/<VAR>date1</VAR> against <VAR>date2</VAR>.  See
+<A HREF="cvs_16.html#SEC130">A.9.1 diff options</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-N</CODE>
+<DD>Include diffs for added and removed files.  See
+<A HREF="cvs_16.html#SEC130">A.9.1 diff options</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>rev1</VAR></CODE>
+<DD>Diff revision for <VAR>rev1</VAR> against working file.  See
+<A HREF="cvs_16.html#SEC130">A.9.1 diff options</A>.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>rev2</VAR></CODE>
+<DD>Diff <VAR>rev1</VAR>/<VAR>date1</VAR> against <VAR>rev2</VAR>.  See <A HREF="cvs_16.html#SEC130">A.9.1 diff options</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>edit [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>Get ready to edit a watched file.  See <A HREF="cvs_10.html#SEC92">10.6.3 How to edit a file which is being watched</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-a <VAR>actions</VAR></CODE>
+<DD>Specify actions for temporary watch, where
+<VAR>actions</VAR> is <CODE>edit</CODE>, <CODE>unedit</CODE>,
+<CODE>commit</CODE>, <CODE>all</CODE>, or <CODE>none</CODE>.  See
+<A HREF="cvs_10.html#SEC92">10.6.3 How to edit a file which is being watched</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>editors [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>See who is editing a watched file.  See <A HREF="cvs_10.html#SEC93">10.6.4 Information about who is watching and editing</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>export [<VAR>options</VAR>] <VAR>modules</VAR><small>...</small></CODE>
+<DD>Export files from CVS.  See <A HREF="cvs_16.html#SEC134">A.10 export--Export sources from CVS, similar to checkout</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Check out revisions as of <VAR>date</VAR>.  See
+<A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-d <VAR>dir</VAR></CODE>
+<DD>Check out into <VAR>dir</VAR>.  See <A HREF="cvs_16.html#SEC135">A.10.1 export options</A>.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Use head revision if tag/date not found.  See
+<A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-k <VAR>kflag</VAR></CODE>
+<DD>Use <VAR>kflag</VAR> keyword expansion.  See
+<A HREF="cvs_12.html#SEC102">12.4 Substitution modes</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-N</CODE>
+<DD>Don't &quot;shorten&quot; module paths if -d specified.  See
+<A HREF="cvs_16.html#SEC135">A.10.1 export options</A>.
+<P>
+
+</P>
+<DT><CODE>-n</CODE>
+<DD>Do not run module program (if any).  See <A HREF="cvs_16.html#SEC135">A.10.1 export options</A>.
+<P>
+
+</P>
+<DT><CODE>-P</CODE>
+<DD>Prune empty directories.  See <A HREF="cvs_7.html#SEC74">7.5 Moving and renaming directories</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>tag</VAR></CODE>
+<DD>Checkout revision <VAR>tag</VAR>.  See <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>history [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>Show repository access history.  See <A HREF="cvs_16.html#SEC136">A.11 history--Show status of files and users</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-a</CODE>
+<DD>All users (default is self).  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-b <VAR>str</VAR></CODE>
+<DD>Back to record with <VAR>str</VAR> in module/file/repos
+field.  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-c</CODE>
+<DD>Report on committed (modified) files.  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Since <VAR>date</VAR>.  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-e</CODE>
+<DD>Report on all record types.  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Last modified (committed or modified report).  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-m <VAR>module</VAR></CODE>
+<DD>Report on <VAR>module</VAR> (repeatable).  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-n <VAR>module</VAR></CODE>
+<DD>In <VAR>module</VAR>.  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-o</CODE>
+<DD>Report on checked out modules.  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-p <VAR>repository</VAR></CODE>
+<DD>In <VAR>repository</VAR>.  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>rev</VAR></CODE>
+<DD>Since revision <VAR>rev</VAR>.  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-T</CODE>
+<DD>Produce report on all TAGs.  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-t <VAR>tag</VAR></CODE>
+<DD>Since tag record placed in history file (by anyone).
+See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-u <VAR>user</VAR></CODE>
+<DD>For user <VAR>user</VAR> (repeatable).  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-w</CODE>
+<DD>Working directory must match.  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-x <VAR>types</VAR></CODE>
+<DD>Report on <VAR>types</VAR>, one or more of
+<CODE>TOEFWUCGMAR</CODE>.  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+<P>
+
+</P>
+<DT><CODE>-z <VAR>zone</VAR></CODE>
+<DD>Output for time zone <VAR>zone</VAR>.  See <A HREF="cvs_16.html#SEC137">A.11.1 history options</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>import [<VAR>options</VAR>] <VAR>repository</VAR> <VAR>vendor-tag</VAR> <VAR>release-tags</VAR><small>...</small></CODE>
+<DD>Import files into CVS, using vendor branches.  See
+<A HREF="cvs_16.html#SEC138">A.12 import--Import sources into CVS, using vendor branches</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-b <VAR>bra</VAR></CODE>
+<DD>Import to vendor branch <VAR>bra</VAR>.  See
+<A HREF="cvs_13.html#SEC110">13.6 Multiple vendor branches</A>.
+<P>
+
+</P>
+<DT><CODE>-d</CODE>
+<DD>Use the file's modification time as the time of
+import.  See <A HREF="cvs_16.html#SEC139">A.12.1 import options</A>.
+<P>
+
+</P>
+<DT><CODE>-k <VAR>kflag</VAR></CODE>
+<DD>Set default keyword substitution mode.  See
+<A HREF="cvs_16.html#SEC139">A.12.1 import options</A>.
+<P>
+
+</P>
+<DT><CODE>-m <VAR>msg</VAR></CODE>
+<DD>Use <VAR>msg</VAR> for log message.  See
+<A HREF="cvs_16.html#SEC139">A.12.1 import options</A>.
+<P>
+
+</P>
+<DT><CODE>-I <VAR>ign</VAR></CODE>
+<DD>More files to ignore (! to reset).  See
+<A HREF="cvs_16.html#SEC139">A.12.1 import options</A>.
+<P>
+
+</P>
+<DT><CODE>-W <VAR>spec</VAR></CODE>
+<DD>More wrappers.  See <A HREF="cvs_16.html#SEC139">A.12.1 import options</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>init</CODE>
+<DD>Create a CVS repository if it doesn't exist.  See
+<A HREF="cvs_2.html#SEC23">2.6 Creating a repository</A>.
+<P>
+
+</P>
+<DT><CODE>kserver</CODE>
+<DD>Kerberos authenticated server.
+See <A HREF="cvs_2.html#SEC34">2.9.5 Direct connection with kerberos</A>.
+<P>
+
+</P>
+<DT><CODE>log [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>Print out history information for files.  See <A HREF="cvs_16.html#SEC142">A.13 log--Print out log information for files</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-b</CODE>
+<DD>Only list revisions on the default branch.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-d <VAR>dates</VAR></CODE>
+<DD>Specify dates (<VAR>d1</VAR>&lt;<VAR>d2</VAR> for range, <VAR>d</VAR> for
+latest before).  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-h</CODE>
+<DD>Only print header.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-N</CODE>
+<DD>Do not list tags.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Only print name of RCS file.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-r<VAR>revs</VAR></CODE>
+<DD>Only list revisions <VAR>revs</VAR>.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-s <VAR>states</VAR></CODE>
+<DD>Only list revisions with specified states.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-t</CODE>
+<DD>Only print header and descriptive text.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-w<VAR>logins</VAR></CODE>
+<DD>Only list revisions checked in by specified logins.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>login</CODE>
+<DD>Prompt for password for authenticating server.  See
+<A HREF="cvs_2.html#SEC31">2.9.3.2 Using the client with password authentication</A>.
+<P>
+
+</P>
+<DT><CODE>logout</CODE>
+<DD>Remove stored password for authenticating server.  See
+<A HREF="cvs_2.html#SEC31">2.9.3.2 Using the client with password authentication</A>.
+<P>
+
+</P>
+<DT><CODE>pserver</CODE>
+<DD>Password authenticated server.
+See <A HREF="cvs_2.html#SEC30">2.9.3.1 Setting up the server for password authentication</A>.
+<P>
+
+</P>
+<DT><CODE>rannotate [<VAR>options</VAR>] [<VAR>modules</VAR><small>...</small>]</CODE>
+<DD>Show last revision where each line was modified.  See
+<A HREF="cvs_8.html#SEC79">8.4 Annotate command</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Annotate the most recent revision no later than
+<VAR>date</VAR>.  See <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-F</CODE>
+<DD>Force annotation of binary files.  (Without this option,
+binary files are skipped with a message.)
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Use head revision if tag/date not found.  See
+<A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>tag</VAR></CODE>
+<DD>Annotate revision <VAR>tag</VAR>.  See <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>rdiff [<VAR>options</VAR>] <VAR>modules</VAR><small>...</small></CODE>
+<DD>Show differences between releases.  See <A HREF="cvs_16.html#SEC145">A.14 rdiff---'patch' format diffs between releases</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-c</CODE>
+<DD>Context diff output format (default).  See <A HREF="cvs_16.html#SEC146">A.14.1 rdiff options</A>.
+<P>
+
+</P>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Select revisions based on <VAR>date</VAR>.  See <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Use head revision if tag/date not found.  See
+<A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>rev</VAR></CODE>
+<DD>Select revisions based on <VAR>rev</VAR>.  See <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-s</CODE>
+<DD>Short patch - one liner per file.  See <A HREF="cvs_16.html#SEC146">A.14.1 rdiff options</A>.
+<P>
+
+</P>
+<DT><CODE>-t</CODE>
+<DD>Top two diffs - last change made to the file.  See
+<A HREF="cvs_16.html#SEC130">A.9.1 diff options</A>.
+<P>
+
+</P>
+<DT><CODE>-u</CODE>
+<DD>Unidiff output format.  See <A HREF="cvs_16.html#SEC146">A.14.1 rdiff options</A>.
+<P>
+
+</P>
+<DT><CODE>-V <VAR>vers</VAR></CODE>
+<DD>Use RCS Version <VAR>vers</VAR> for keyword expansion (obsolete).  See
+<A HREF="cvs_16.html#SEC146">A.14.1 rdiff options</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>release [<VAR>options</VAR>] <VAR>directory</VAR></CODE>
+<DD>Indicate that a directory is no longer in use.  See
+<A HREF="cvs_16.html#SEC148">A.15 release--Indicate that a Module is no longer in use</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-d</CODE>
+<DD>Delete the given directory.  See <A HREF="cvs_16.html#SEC149">A.15.1 release options</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>remove [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>Remove an entry from the repository.  See <A HREF="cvs_7.html#SEC68">7.2 Removing files</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-f</CODE>
+<DD>Delete the file before removing it.  See <A HREF="cvs_7.html#SEC68">7.2 Removing files</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>rlog [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>Print out history information for modules.  See <A HREF="cvs_16.html#SEC142">A.13 log--Print out log information for files</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-b</CODE>
+<DD>Only list revisions on the default branch.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-d <VAR>dates</VAR></CODE>
+<DD>Specify dates (<VAR>d1</VAR>&lt;<VAR>d2</VAR> for range, <VAR>d</VAR> for
+latest before).  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-h</CODE>
+<DD>Only print header.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-N</CODE>
+<DD>Do not list tags.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Only print name of RCS file.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-r<VAR>revs</VAR></CODE>
+<DD>Only list revisions <VAR>revs</VAR>.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-s <VAR>states</VAR></CODE>
+<DD>Only list revisions with specified states.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-t</CODE>
+<DD>Only print header and descriptive text.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+<P>
+
+</P>
+<DT><CODE>-w<VAR>logins</VAR></CODE>
+<DD>Only list revisions checked in by specified logins.  See <A HREF="cvs_16.html#SEC143">A.13.1 log options</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>rtag [<VAR>options</VAR>] <VAR>tag</VAR> <VAR>modules</VAR><small>...</small></CODE>
+<DD>Add a symbolic tag to a module.
+See <A HREF="cvs_4.html#SEC44">4. Revisions</A> and <A HREF="cvs_5.html#SEC54">5. Branching and merging</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-a</CODE>
+<DD>Clear tag from removed files that would not otherwise
+be tagged.  See <A HREF="cvs_4.html#SEC52">4.8 Tagging and adding and removing files</A>.
+<P>
+
+</P>
+<DT><CODE>-b</CODE>
+<DD>Create a branch named <VAR>tag</VAR>.  See <A HREF="cvs_5.html#SEC54">5. Branching and merging</A>.
+<P>
+
+</P>
+<DT><CODE>-B</CODE>
+<DD>Used in conjuntion with -F or -d, enables movement and deletion of
+branch tags.  Use with extreme caution. 
+<P>
+
+</P>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Tag revisions as of <VAR>date</VAR>.  See <A HREF="cvs_4.html#SEC50">4.6 Specifying what to tag by date or revision</A>.
+<P>
+
+</P>
+<DT><CODE>-d</CODE>
+<DD>Delete <VAR>tag</VAR>.  See <A HREF="cvs_4.html#SEC51">4.7 Deleting, moving, and renaming tags</A>.
+<P>
+
+</P>
+<DT><CODE>-F</CODE>
+<DD>Move <VAR>tag</VAR> if it already exists.  See <A HREF="cvs_4.html#SEC51">4.7 Deleting, moving, and renaming tags</A>.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Force a head revision match if tag/date not found.
+See <A HREF="cvs_4.html#SEC50">4.6 Specifying what to tag by date or revision</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-n</CODE>
+<DD>No execution of tag program.  See <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>rev</VAR></CODE>
+<DD>Tag existing tag <VAR>rev</VAR>.  See <A HREF="cvs_4.html#SEC50">4.6 Specifying what to tag by date or revision</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>server</CODE>
+<DD>Rsh server.  See <A HREF="cvs_2.html#SEC28">2.9.2 Connecting with rsh</A>.
+<P>
+
+</P>
+<DT><CODE>status [<VAR>options</VAR>] <VAR>files</VAR><small>...</small></CODE>
+<DD>Display status information in a working directory.  See
+<A HREF="cvs_10.html#SEC84">10.1 File status</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-v</CODE>
+<DD>Include tag information for file.  See <A HREF="cvs_4.html#SEC48">4.4 Tags--Symbolic revisions</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>tag [<VAR>options</VAR>] <VAR>tag</VAR> [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>Add a symbolic tag to checked out version of files.
+See <A HREF="cvs_4.html#SEC44">4. Revisions</A> and <A HREF="cvs_5.html#SEC54">5. Branching and merging</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-b</CODE>
+<DD>Create a branch named <VAR>tag</VAR>.  See <A HREF="cvs_5.html#SEC54">5. Branching and merging</A>.
+<P>
+
+</P>
+<DT><CODE>-c</CODE>
+<DD>Check that working files are unmodified.  See
+<A HREF="cvs_4.html#SEC49">4.5 Specifying what to tag from the working directory</A>.
+<P>
+
+</P>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Tag revisions as of <VAR>date</VAR>.  See <A HREF="cvs_4.html#SEC50">4.6 Specifying what to tag by date or revision</A>.
+<P>
+
+</P>
+<DT><CODE>-d</CODE>
+<DD>Delete <VAR>tag</VAR>.  See <A HREF="cvs_4.html#SEC51">4.7 Deleting, moving, and renaming tags</A>.
+<P>
+
+</P>
+<DT><CODE>-F</CODE>
+<DD>Move <VAR>tag</VAR> if it already exists.  See <A HREF="cvs_4.html#SEC51">4.7 Deleting, moving, and renaming tags</A>.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Force a head revision match if tag/date not found.
+See <A HREF="cvs_4.html#SEC50">4.6 Specifying what to tag by date or revision</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>rev</VAR></CODE>
+<DD>Tag existing tag <VAR>rev</VAR>.  See <A HREF="cvs_4.html#SEC50">4.6 Specifying what to tag by date or revision</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>unedit [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>Undo an edit command.  See <A HREF="cvs_10.html#SEC92">10.6.3 How to edit a file which is being watched</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>update [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>Bring work tree in sync with repository.  See
+<A HREF="cvs_16.html#SEC152">A.16 update--Bring work tree in sync with repository</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-A</CODE>
+<DD>Reset any sticky tags/date/options.  See <A HREF="cvs_4.html#SEC53">4.9 Sticky tags</A> and <A HREF="cvs_12.html#SEC98">12. Keyword substitution</A>.
+<P>
+
+</P>
+<DT><CODE>-C</CODE>
+<DD>Overwrite locally modified files with clean copies from
+the repository (the modified file is saved in
+`<TT>.#<VAR>file</VAR>.<VAR>revision</VAR></TT>', however).
+<P>
+
+</P>
+<DT><CODE>-D <VAR>date</VAR></CODE>
+<DD>Check out revisions as of <VAR>date</VAR> (is sticky).  See
+<A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-d</CODE>
+<DD>Create directories.  See <A HREF="cvs_16.html#SEC153">A.16.1 update options</A>.
+<P>
+
+</P>
+<DT><CODE>-f</CODE>
+<DD>Use head revision if tag/date not found.  See
+<A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-I <VAR>ign</VAR></CODE>
+<DD>More files to ignore (! to reset).  See
+<A HREF="cvs_16.html#SEC139">A.12.1 import options</A>.
+<P>
+
+</P>
+<DT><CODE>-j <VAR>rev</VAR></CODE>
+<DD>Merge in changes.  See <A HREF="cvs_16.html#SEC153">A.16.1 update options</A>.
+<P>
+
+</P>
+<DT><CODE>-k <VAR>kflag</VAR></CODE>
+<DD>Use <VAR>kflag</VAR> keyword expansion.  See
+<A HREF="cvs_12.html#SEC102">12.4 Substitution modes</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-P</CODE>
+<DD>Prune empty directories.  See <A HREF="cvs_7.html#SEC74">7.5 Moving and renaming directories</A>.
+<P>
+
+</P>
+<DT><CODE>-p</CODE>
+<DD>Check out files to standard output (avoids
+stickiness).  See <A HREF="cvs_16.html#SEC153">A.16.1 update options</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-r <VAR>tag</VAR></CODE>
+<DD>Checkout revision <VAR>tag</VAR> (is sticky).  See <A HREF="cvs_16.html#SEC118">A.5 Common command options</A>.
+<P>
+
+</P>
+<DT><CODE>-W <VAR>spec</VAR></CODE>
+<DD>More wrappers.  See <A HREF="cvs_16.html#SEC139">A.12.1 import options</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>version</CODE>
+<DD><A NAME="IDX277"></A>
+<P>
+
+Display the version of CVS being used.  If the repository
+is remote, display both the client and server versions.
+</P>
+<P>
+
+</P>
+<DT><CODE>watch [on|off|add|remove] [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD><P>
+
+on/off: turn on/off read-only checkouts of files.  See
+<A HREF="cvs_10.html#SEC90">10.6.1 Telling CVS to watch certain files</A>.
+</P>
+<P>
+
+add/remove: add or remove notification on actions.  See
+<A HREF="cvs_10.html#SEC91">10.6.2 Telling CVS to notify you</A>.
+</P>
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-a <VAR>actions</VAR></CODE>
+<DD>Specify actions for temporary watch, where
+<VAR>actions</VAR> is <CODE>edit</CODE>, <CODE>unedit</CODE>,
+<CODE>commit</CODE>, <CODE>all</CODE>, or <CODE>none</CODE>.  See
+<A HREF="cvs_10.html#SEC92">10.6.3 How to edit a file which is being watched</A>.
+<P>
+
+</P>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+</DL>
+<P>
+
+</P>
+<DT><CODE>watchers [<VAR>options</VAR>] [<VAR>files</VAR><small>...</small>]</CODE>
+<DD>See who is watching a file.  See <A HREF="cvs_10.html#SEC93">10.6.4 Information about who is watching and editing</A>.
+<P>
+
+</P>
+<DL COMPACT>
+<DT><CODE>-l</CODE>
+<DD>Local; run only in current working directory.  See <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+<P>
+
+</P>
+<DT><CODE>-R</CODE>
+<DD>Operate recursively (default).  See section <A HREF="cvs_6.html#SEC65">6. Recursive behavior</A>.
+</DL>
+<P>
+
+</DL>
+<P>
+
+<A NAME="Administrative files"></A>
+<HR SIZE="6">
+<TABLE CELLPADDING=1 CELLSPACING=1 BORDER=0>
+<TR><TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_16.html#SEC113"> &lt;&lt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_18.html#SEC156"> &gt;&gt; </A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT"> &nbsp; <TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs.html#SEC_Top">Top</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_toc.html#SEC_Contents">Contents</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_24.html#SEC188">Index</A>]</TD>
+<TD VALIGN="MIDDLE" ALIGN="LEFT">[<A HREF="cvs_abt.html#SEC_About"> ? </A>]</TD>
+</TR></TABLE>
+<BR>
+<FONT SIZE="-1">
+This document was generated
+by <I>Derek Robert Price</I> on <I>April, 18 2002</I>
+using <A HREF="http://texi2html.cvshome.org"><I>texi2html</I></A>
+</FONT>
+
+</BODY>
+</HTML>

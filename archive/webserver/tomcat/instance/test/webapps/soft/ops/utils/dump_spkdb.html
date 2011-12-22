@@ -1,0 +1,114 @@
+<?xml version="1.0" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>dump_spkdb.pl -- take a symbolic dump of the production database</title>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<link rev="made" href="mailto:root@localhost" />
+</head>
+
+<body style="background-color: white">
+
+<p><a name="__index__"></a></p>
+<!-- INDEX BEGIN -->
+
+<ul>
+
+	<li><a href="#name">NAME</a></li>
+	<li><a href="#abstract">ABSTRACT</a></li>
+	<li><a href="#synopsis">SYNOPSIS</a></li>
+	<li><a href="#description">DESCRIPTION</a></li>
+	<ul>
+
+		<li><a href="#output_file_contents">OUTPUT FILE CONTENTS</a></li>
+		<li><a href="#output_file_names">OUTPUT FILE NAMES</a></li>
+		<li><a href="#arguments">ARGUMENTS</a></li>
+		<li><a href="#dependencies">DEPENDENCIES</a></li>
+	</ul>
+
+	<li><a href="#bugs">BUGS</a></li>
+</ul>
+<!-- INDEX END -->
+
+<hr />
+<p>
+</p>
+<h1><a name="name">NAME</a></h1>
+<pre>
+
+    dump_spkdb.pl -- take a symbolic dump of the production database</pre>
+<p>
+</p>
+<hr />
+<h1><a name="abstract">ABSTRACT</a></h1>
+<pre>
+    This program takes a symbolic dump of the production database, so that
+    the a clone of the database can be constructed in the test database 
+    using load_spktest.pl.</pre>
+<pre>
+    Warning: the output of this program may contain inconsistencies if a transaction
+    was in progress at the time the program was run.  The output should not, therefore,
+    be relied upon for rebuilding the production database in case it is damaged.
+    The principal use of this program is to create test databases as clones of 
+    the production database, using the program load_spktest.pl</pre>
+<p>
+</p>
+<hr />
+<h1><a name="synopsis">SYNOPSIS</a></h1>
+<pre>
+    dump_spkdb.pl [ --[no]prefix ][ --[no]userdata ][--spktest]</pre>
+<p>
+</p>
+<hr />
+<h1><a name="description">DESCRIPTION</a></h1>
+<pre>
+    This program is designed to be run from the database server. It is not necessary
+    for the user have root privileges.  It does not alter the production database
+    in any way.  It produces its output in the current directory.</pre>
+<p>
+</p>
+<h2><a name="output_file_contents">OUTPUT FILE CONTENTS</a></h2>
+<pre>
+    The output of this program consists of three files of sql statements:
+    - schema:   'create table' statements
+    - basedata: 'insert' statements for inserting all data into the non-transactional
+                table; namely, class, end, method, and state
+    - userdata: 'insert' statements for inserting all data into the rest of the tables</pre>
+<pre>
+    The output of the userdata file can be suppressed by specifying --nouserdata on the
+    command line.</pre>
+<p>
+</p>
+<h2><a name="output_file_names">OUTPUT FILE NAMES</a></h2>
+<pre>
+    By default, or if the --prefix argument is present, the output files have a prefix
+    added to their names, which includes the name of the database, the date and time:</pre>
+<pre>
+    spkdb-yyyy-mm-dd-hhmm-ss-schema.sql
+    spkdb-yyyy-mm-dd-hhmm-ss-basedata.sql
+    spkdb-yyyy-mm-dd-hhmm-ss-userdata.sql</pre>
+<pre>
+    To omit the prefix, use the --noprefix argument.</pre>
+<p>
+</p>
+<h2><a name="arguments">ARGUMENTS</a></h2>
+<pre>
+    --noprefix          - do not prefix the output file names with database, date and time
+    --nouserdata        - do not output a userdata file
+    --spktest           - dump spktest database instead of spkdb</pre>
+<p>
+</p>
+<h2><a name="dependencies">DEPENDENCIES</a></h2>
+<pre>
+    The program depends on a MySQL utility, mysqldump, to do the hard work.</pre>
+<p>
+</p>
+<hr />
+<h1><a name="bugs">BUGS</a></h1>
+<pre>
+    As stated above, there may be inconsistencies in the output if transactions
+    are in progress at the time the dump is taken.</pre>
+
+</body>
+
+</html>

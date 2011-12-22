@@ -1,0 +1,878 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<HTML
+><HEAD
+><TITLE
+>SPK System Testing</TITLE
+><META
+NAME="GENERATOR"
+CONTENT="Modular DocBook HTML Stylesheet Version 1.76b+
+"></HEAD
+><BODY
+CLASS="article"
+BGCOLOR="#FFFFFF"
+TEXT="#000000"
+LINK="#0000FF"
+VLINK="#840084"
+ALINK="#0000FF"
+><DIV
+CLASS="ARTICLE"
+><DIV
+CLASS="TITLEPAGE"
+><H1
+CLASS="title"
+><A
+NAME="AEN1"
+></A
+>SPK System Testing</H1
+><DIV
+><TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="80%"
+CELLSPACING="10"
+CELLPADDING="0"
+ALIGN="CENTER"
+><TR
+><TD
+VALIGN="TOP"
+><B
+>Abstract</B
+></TD
+></TR
+><TR
+><TD
+VALIGN="TOP"
+><P
+>&#13;      </P
+></TD
+></TR
+></TABLE
+></DIV
+><DIV
+CLASS="revhistory"
+><TABLE
+WIDTH="100%"
+BORDER="0"
+><TR
+><TH
+ALIGN="LEFT"
+VALIGN="TOP"
+COLSPAN="3"
+><B
+>Revision History</B
+></TH
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+>Revision 1.0</TD
+><TD
+ALIGN="LEFT"
+>August 28, 2004</TD
+><TD
+ALIGN="LEFT"
+>Revised by: afw</TD
+></TR
+><TR
+><TD
+ALIGN="LEFT"
+COLSPAN="3"
+>Initial version.</TD
+></TR
+></TABLE
+></DIV
+><HR
+WIDTH="75%"
+ALIGN="CENTER"
+COLOR="#000000"
+SIZE="1"></DIV
+><DIV
+CLASS="TOC"
+><DL
+><DT
+><B
+>Table of Contents</B
+></DT
+><DT
+><A
+HREF="#AEN12"
+>Strategy</A
+></DT
+><DT
+><A
+HREF="#AEN51"
+>Testing a Candidate, Step-by-Step</A
+></DT
+><DT
+><A
+HREF="#AEN145"
+>Geography</A
+></DT
+><DT
+><A
+HREF="#AEN170"
+>Appendix A: Production Directories</A
+></DT
+><DT
+><A
+HREF="#AEN173"
+>Appendix B: Test Directories</A
+></DT
+><DT
+><A
+HREF="#AEN176"
+>Appendix C: Test Web Site</A
+></DT
+></DL
+></DIV
+><DIV
+CLASS="sect1"
+><H2
+CLASS="sect1"
+><A
+NAME="AEN12"
+></A
+>Strategy</H2
+><P
+>&#13;      SPK is a complex system, comprising many software
+      modules, a number of computers, and several technologies.
+      When any software is modified, it must be tested
+      thorougly before being put into production.  To minimize
+      the risk that modifications would destablize the system, it
+      is crucial that system-wide testing be performed on exactly the
+      same software and hardware infrastructure as is used in production.
+      It is for this reason that an SPK installation includes both 
+      production and test environments.   Both are identical
+      in terms of the following infrastructure components:
+      <P
+></P
+><UL
+><LI
+><P
+>Database server</P
+></LI
+><LI
+><P
+>Web server</P
+></LI
+><LI
+><P
+>Model design agent (MDA)</P
+></LI
+><LI
+><P
+>Application server for population kinetics (aspkserver)</P
+></LI
+><LI
+><P
+>Computational server for population kinetics (cspkserver)</P
+></LI
+></UL
+>
+    </P
+><P
+>&#13;      One of the key concepts in the 
+      <A
+HREF="../../../whitepaper/overArch/overArch.html"
+TARGET="_top"
+>architecture</A
+>
+      of SPK is that of the <I
+CLASS="emphasis"
+>job</I
+>.  With the help of the
+      MDA, a user creates or imports a model and a dataset, combines them
+      as a job, and then submits the job to be processed by the rest of the system. To test the system, it
+      is necessary to have jobs which will exercise portions of the system which
+      have been added or modified. 
+      Test sets for system testing consist, therefore, of sets of
+      jobs.  These jobs come from two sources:
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    The production database.  The utility program
+	    <I
+CLASS="emphasis"
+>take_snapshot.pl</I
+> can be used to copy a set of 
+	    previously run jobs 
+	    from <I
+CLASS="emphasis"
+>spkdb</I
+>, creating files that can be used by
+	    another utility, <I
+CLASS="emphasis"
+>load_spktest.pl</I
+> to initialize
+	    <I
+CLASS="emphasis"
+>spktest</I
+> with that set of jobs along with related jobs
+	    and data.  This is most useful for testing
+	    modifications that either fix bugs or improve existing functions.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    The MDA.  Sometimes new features cannot be tested with existing jobs,
+	    because those jobs would not have requested the features.  In this
+	    case, the tester can use the MDA to create new jobs.
+	  </P
+></LI
+></OL
+>
+    </P
+><P
+>&#13;      Sometimes a test set must be run many times, as the software is debugged.  
+      Eventually, all jobs should run successfully.  At that point, the tester
+      runs a utility called <I
+CLASS="emphasis"
+>stage_candidate.pl</I
+>, which saves
+      all the software in the test environment for subsequent deployment to the
+      production environment.
+    </P
+><P
+>&#13;      RFPK has a policy of deploying modifications to production on a scheduled
+      basis, rather than doing it every time that some software has passed a 
+      system test.  Instead, a number of deployment candidates will accumulate
+      during the period between scheduled deployments, and it will be the 
+      most recent candidate that finally moves into production.  This strategy
+      has a number of advantages:
+      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    Users learn to expect the behavior of the system to change on 
+	    a scheduled basis, rather than randomly. This improves the
+	    perception of stability.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Communication of the changes can occur in an orderly fashion.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Before deployment, a recursion test should be run, to insure that 
+	    the modifications do not "break" something that worked previously.
+	    Scheduled deployments reduce the frequency with which the recursion
+	    test must be run.
+	  </P
+></LI
+></UL
+>
+    </P
+><P
+>&#13;      Deployment is performed with the utility program <I
+CLASS="emphasis"
+>deploy_candidate.pl</I
+>.
+      It first makes a backup copy of the production system, so that it can be 
+      restored if necessary. Then it copies the latest candidate into the
+      <A
+HREF="#AEN170"
+>production directories</A
+>.
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN51"
+></A
+>Testing a Candidate, Step-by-Step</H2
+><P
+>&#13;      The following procedure should be followed whenever changes are made to any
+      of the server side SPK software.
+      <P
+></P
+><OL
+TYPE="1"
+><LI
+><P
+>&#13;	    Unit testing.  All new and modified software should first be unit-tested
+	    in your own workspace. 
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Do <I
+CLASS="emphasis"
+>not</I
+> commit changes to CVS, at this time.
+	    Changes must not be commited to the
+	    CVS repository until they have passed a full system test. 
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Obtain exclusive access to the test environment.  This must be done through coordination
+	    with other developers who might also need this environment.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Make a backup copy of the current test environment.
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh aspkserver
+backup_test_environment.pl
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    You will be able to use this copy
+	    to restore the test_environment if you cannot get your modifications
+	    to pass the system test.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Make sure that the test daemons are <I
+CLASS="emphasis"
+>not</I
+> running. 
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh aspkserver
+su
+/etc/rc.d/init.d/spkcmptestd stop
+exit
+
+ssh cspkserver
+su
+/etc/rc.d/init.d/spkruntestd stop
+exit
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Create a test set.  Let's assume that you want copies of jobs
+	    with job_id numbers 23, 45, 256, 1834 from the production database:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh dbserver
+take_snapshot.pl 23 45 256 1834
+load_spktest.pl
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    If you do not want any jobs that have previously run, use the 
+	    above commands without providing any arguments to 
+	    <I
+CLASS="emphasis"
+>take_snapshot.pl</I
+>.
+	  </P
+><P
+>&#13;	    You now have a test database.  If you need to add additional jobs
+	    to exercise new features, go to the test instance of the web site
+	    and use the MDA to create the additional jobs you need and to submit them.
+	    You can find the URL to use in this <A
+HREF="#AEN176"
+>appendix</A
+>.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Make a backup copy of your test database, in case you need to run
+	    your tests several times before your modifications work correctly.
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;dump_spktest.pl
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Using <I
+CLASS="emphasis"
+>scp</I
+> (not <I
+CLASS="emphasis"
+>cvs</I
+>), copy your 
+	    source to the target host and then build your software there. Install
+	    the object code into the correct
+	    <A
+HREF="#AEN173"
+>test directories</A
+>.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Start the daemons, so that the jobs will compile and run.  It is convenient
+	    at this point to open a window to <I
+CLASS="emphasis"
+>aspkserver</I
+>, and
+	    another to <I
+CLASS="emphasis"
+>cspkserver</I
+>.
+	  </P
+><P
+>&#13;	    In a new terminal window:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh aspkserver
+su
+/etc/rc.d/init.d/spkcmptestd start
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    In another new terminal window:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh cspkserver
+su
+/etc/rc.d/init.d/spkruntestd start
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+><P
+>&#13;	    In either of these terminal windows, you can verify that the daemon
+	    that was started there is actually running:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ps -efl | grep spk
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	    should show you either that <I
+CLASS="emphasis"
+>spktest/spkcmpd.pl</I
+> is running
+	    or that <I
+CLASS="emphasis"
+>spktest/spkrund.pl</I
+> is running.
+	  </P
+><P
+>&#13;	    In the system log, the daemons record many important events, including their own starting and
+	    stopping, but also the beginning and completion of jobs and the occurrance of errors.
+	    In each of your two windows, you can view the latest 40 messages in the system log with 
+	    the following command:
+	    <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;tail -n 40 /var/log/messages
+	    </PRE
+></TD
+></TR
+></TABLE
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Verify the output.  As soon as a job has completed, you can
+	    check the output a number of ways:
+	    <P
+></P
+><OL
+TYPE="a"
+><LI
+><P
+>&#13;		  Look at the system log, <TT
+CLASS="filename"
+>/var/log/messages</TT
+>, for
+		  any error messages.
+		</P
+></LI
+><LI
+><P
+>&#13;		  Examine the output files produced by the run.  These files are in
+		  the directory <TT
+CLASS="filename"
+>/tmp/spkruntest-job-nnnn</TT
+>, where
+		  nnnn is the job_id number of the job.
+		</P
+></LI
+><LI
+><P
+>&#13;		  Log into the test web site, and use the MDA to examine the output.
+		</P
+></LI
+><LI
+><P
+>&#13;		  Check the status of your jobs by examining the database.  In a
+		  terminal window:
+		  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;mysql -hdbserver -ureader -preader
+use spktest;
+select job_id, state_code, end_code, abstract from job;
+exit;
+		  </PRE
+></TD
+></TR
+></TABLE
+>
+		</P
+></LI
+></OL
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    Stop both test daemons when the database shows that all our your jobs have a 
+	    <I
+CLASS="emphasis"
+>end</I
+> as the value for <I
+CLASS="emphasis"
+>state_code</I
+>.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If the test fails and you want to make a few changes and try again:
+	    <P
+></P
+><OL
+TYPE="a"
+><LI
+><P
+>&#13;		  Restore your test database.  In the same directory on dbserver where you 
+		  made the backup copy of your test database
+		  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;load_spktest.pl
+		  </PRE
+></TD
+></TR
+></TABLE
+>
+		</P
+></LI
+><LI
+><P
+>&#13;		  Modify your source code.
+		</P
+></LI
+><LI
+><P
+>&#13;		  Return to step 8.
+		</P
+></LI
+></OL
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If the test fails and you do not want to make changes and 
+	    retest immediately
+	    <P
+></P
+><OL
+TYPE="a"
+><LI
+><P
+>&#13;		  Restore the test environment to the state you found it:
+		  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh aspkserver
+restore_test_environment.pl
+		  </PRE
+></TD
+></TR
+></TABLE
+>
+		</P
+></LI
+><LI
+><P
+>&#13;		  Inform the other developers that the test environment is
+		  now available.
+		</P
+></LI
+><LI
+><P
+>&#13;		  Exit this step-by-step procedure.
+		</P
+></LI
+></OL
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    If the test is successful:
+	    <P
+></P
+><OL
+TYPE="a"
+><LI
+><P
+>&#13;		  Add your candidate to the list of deployment candidates:
+		  <TABLE
+BORDER="0"
+BGCOLOR="#E0E0E0"
+WIDTH="100%"
+><TR
+><TD
+><PRE
+CLASS="screen"
+>&#13;ssh aspkserver
+su -
+deploy_candidate.pl
+		  </PRE
+></TD
+></TR
+></TABLE
+>
+		</P
+></LI
+><LI
+><P
+>&#13;		  Inform the other developers that the test environment is
+		  now available.
+		</P
+></LI
+><LI
+><P
+>&#13;		  Exit this step-by-step procedure.
+		</P
+></LI
+></OL
+>
+	  </P
+></LI
+></OL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN145"
+></A
+>Geography</H2
+><P
+>&#13;      <P
+></P
+><UL
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Database server</I
+>.  The <I
+CLASS="emphasis"
+>spkdb</I
+>
+	    database is used for production; <I
+CLASS="emphasis"
+>spktest</I
+> is
+	    used for test.  Testing must never be done on the production 
+	    database, in order to maximize stability.  The test database,
+	    on the other hand, can be wiped out at any time.  The host name
+	    for the database server is <I
+CLASS="emphasis"
+>dbserver</I
+>.
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Web server</I
+>.  There are two instances of the
+	    web application running on the same machine and using the same
+	    web server software. For production and test, the two URLs for 
+	    access from the public internet are, respectively,
+	  </P
+><P
+>&#13;	    <A
+HREF="http://spk.rfpk.washington.edu"
+TARGET="_top"
+>&#13;	      http://spk.rfpk.washington.edu
+	    </A
+>
+	  </P
+><P
+>&#13;	    <A
+HREF="http://spk.rfpk.washington.edu:8080"
+TARGET="_top"
+>&#13;	      http://spk.rfpk.washington.edu:8080
+	    </A
+>
+	  </P
+><P
+>&#13;	    For access from behind the firewall, the corresponding URLs are
+	  </P
+><P
+>&#13;	    <A
+HREF="https://192.168.2.2/info/"
+TARGET="_top"
+>&#13;	      https://192.168.2.2/info/
+	    </A
+>
+	  </P
+><P
+>&#13;	    <A
+HREF="https://192.168.2.2:8443/info/"
+TARGET="_top"
+>&#13;	      https://192.168.2.2:8443/info/
+	    </A
+>
+	  </P
+></LI
+><LI
+><P
+>&#13;	    <I
+CLASS="emphasis"
+>Aspkserver</I
+>.  The Application Server for 
+	    Population Kinetics consists of a daemon that selects jobs from
+	    the compiler queue, which is implemented in the database, and
+	    runs them through the SPK Compiler.
+	  </P
+></LI
+></UL
+>
+    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN170"
+></A
+>Appendix A: Production Directories</H2
+><P
+>&#13;    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN173"
+></A
+>Appendix B: Test Directories</H2
+><P
+>&#13;    </P
+></DIV
+><DIV
+CLASS="sect1"
+><HR><H2
+CLASS="sect1"
+><A
+NAME="AEN176"
+></A
+>Appendix C: Test Web Site</H2
+><P
+>&#13;    </P
+></DIV
+></DIV
+></BODY
+></HTML
+>
