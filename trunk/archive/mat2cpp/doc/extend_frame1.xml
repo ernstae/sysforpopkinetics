@@ -1,0 +1,195 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Extending a Vector</title>
+<meta name="description" id="description" content="Extending a Vector"/>
+<meta name="keywords" id="keywords" content=" extend "/><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="other.xml" target="_top">previous</a>
+&#xA0;&#xA0;<a href="ones.xml" target="_top">next</a>
+&#xA0;&#xA0;<a href="_contents.xml" target="_top">contents</a>
+&#xA0;&#xA0;<a href="_reference.xml" target="_top">reference</a>
+&#xA0;&#xA0;<a href="_index.xml" target="_top">index</a>
+&#xA0;&#xA0;<a href="_search.xml" target="_top">search</a>
+&#xA0;&#xA0;<a href="_external.xml" target="_top">external</a>
+&#xA0;&#xA0;This:&#xA0;&#xA0;<a href="extend.xml" target="_top">section</a>, <a href="extend_frame1.xml" target="_top">frame</a></div>
+<hr/><center><b><big><big>Extending a Vector</big></big></b></center>
+<br/>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<table><tr><td align='left'  valign='top'>
+
+<b>Matlab or Octave</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>i</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;+&#xA0;1)&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>y</span></i>
+</td></tr><tr><td align='left'  valign='top'>
+
+<b>C++</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>.resize(</span></font></code><i><span style='white-space: nowrap'>m</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;+&#xA0;1)</span></font></code>
+</td></tr><tr><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>i</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>)&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>y</span></i>
+</td></tr>
+</table>
+<br/>
+<b><big><a name="Matlab or Octave" id="Matlab or Octave">Matlab or Octave</a></big></b>
+<br/>
+Suppose that <i>x</i> is a 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>m</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mi mathvariant='italic'>n</mi>
+</mrow></math>
+
+ matrix,
+<i>i</i> is an index between one and <i>m</i>,
+and <i>y</i> is a scalar,
+the Matlab or Octave syntax
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>i</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;+&#xA0;1)&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>extends <i>x</i> to an 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>m</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">+</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+ matrix
+and sets the element with index 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>i</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">+</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+
+to have value <i>y</i>.
+
+<br/>
+<br/>
+<b><a name="Matlab or Octave.Example" id="Matlab or Octave.Example">Example</a></b>
+
+<code><font color="blue">
+<br/>
+<span style='white-space: nowrap'>&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;function&#xA0;[ok]&#xA0;=&#xA0;extend_ok()<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;m&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;2;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;3;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for&#xA0;i&#xA0;=&#xA0;1&#xA0;:&#xA0;m<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for&#xA0;j&#xA0;=&#xA0;1&#xA0;:&#xA0;n<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x(i,&#xA0;j)&#xA0;=&#xA0;i&#xA0;+&#xA0;j;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;end<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;end<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;%&#xA0;-----------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for&#xA0;i&#xA0;=&#xA0;1&#xA0;:&#xA0;m<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x(i,&#xA0;n&#xA0;+&#xA0;1)&#xA0;=&#xA0;i&#xA0;+&#xA0;(n&#xA0;+&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;end<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;%&#xA0;-----------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;[m,&#xA0;n]&#xA0;&#xA0;&#xA0;=&#xA0;size(x);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;(m&#xA0;==&#xA0;2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;(n&#xA0;==&#xA0;4);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for&#xA0;i&#xA0;=&#xA0;1&#xA0;:&#xA0;m<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for&#xA0;j&#xA0;=&#xA0;1&#xA0;:&#xA0;n<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;(x(i,&#xA0;j)&#xA0;==&#xA0;i&#xA0;+&#xA0;j);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;end<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;end<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return<br/>
+</span></font></code><br/>
+<b><big><a name="C++" id="C++">C++</a></big></b>
+<br/>
+Suppose that <i>x</i> is an 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>m</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mi mathvariant='italic'>n</mi>
+</mrow></math>
+
+ 
+ublas <code><font color="blue">matrix&lt;double&gt;</font></code>,
+<i>i</i> is a <code><font color="blue">size_t</font></code> index between zero and 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>m</mi>
+<mo stretchy="false">-</mo>
+<mn>1</mn>
+</mrow></math>
+
+,
+and <i>y</i> has type <code><font color="blue">double</font></code>,
+the C++ syntax 
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>.resize(</span></font></code><i><span style='white-space: nowrap'>m</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;+&#xA0;1)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>i</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>n</span></i><code><font color="blue"><span style='white-space: nowrap'>)&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>extends the matrix <i>x</i> to have size 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>m</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">+</mo>
+<mn>1</mn>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+
+and sets the element with index 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mo stretchy="false">(</mo>
+<mi mathvariant='italic'>i</mi>
+<mo stretchy="false">,</mo>
+<mi mathvariant='italic'>n</mi>
+<mo stretchy="false">)</mo>
+</mrow></math>
+
+
+to have value <i>y</i>.
+
+<br/>
+<br/>
+<b><a name="C++.Example" id="C++.Example">Example</a></b>
+
+<code><font color="blue">
+<br/>
+<span style='white-space: nowrap'>&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;#&#xA0;include&#xA0;&lt;mat2cpp.hpp&gt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;extend_ok(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;mat2cpp;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i,&#xA0;j,&#xA0;m(2),&#xA0;n(3);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;matrix&lt;double&gt;&#xA0;x(m,&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x(i,&#xA0;j)&#xA0;=&#xA0;double(i+j);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;-------------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x.resize(m,&#xA0;n&#xA0;+&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x(i,&#xA0;n)&#xA0;=&#xA0;double(i&#xA0;+&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;-------------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(x.size1()&#xA0;==&#xA0;m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(x.size2()&#xA0;==&#xA0;n&#xA0;+&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(x(i,&#xA0;j)&#xA0;==&#xA0;double(i+j));<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+</span></font></code>
+<hr/>Input File: omh/extend.omh
+
+</body>
+</html>

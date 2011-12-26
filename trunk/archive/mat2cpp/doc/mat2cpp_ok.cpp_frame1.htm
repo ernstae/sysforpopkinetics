@@ -1,0 +1,98 @@
+<html><head>
+<title>Run C++ Version of Examples</title>
+<meta name="description" id="description" content="Run C++ Version of Examples">
+<meta name="keywords" id="keywords" content=" "><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="mat2cpp_ok.m.htm" target="_top">previous</a>
+&nbsp;&nbsp;<a href="news.htm" target="_top">next</a>
+&nbsp;&nbsp;<a href="_contents.htm" target="_top">contents</a>
+&nbsp;&nbsp;<a href="_reference.htm" target="_top">reference</a>
+&nbsp;&nbsp;<a href="_index.htm" target="_top">index</a>
+&nbsp;&nbsp;<a href="_search.htm" target="_top">search</a>
+&nbsp;&nbsp;<a href="_external.htm" target="_top">external</a>
+&nbsp;&nbsp;This:&nbsp;&nbsp;<a href="mat2cpp_ok.cpp.htm" target="_top">section</a>, <a href="mat2cpp_ok.cpp_frame1.htm" target="_top">frame</a></div>
+<hr><center><b><big><big>Run C++ Version of Examples</big></big></b></center>
+<code><font color="blue">
+<span style='white-space: nowrap'><br>
+#&nbsp;include&nbsp;&lt;iostream&gt;<br>
+#&nbsp;include&nbsp;&lt;cstdlib&gt;<br>
+<br>
+extern&nbsp;bool&nbsp;add_ok(void);<br>
+extern&nbsp;bool&nbsp;cholesky_ok(void);<br>
+extern&nbsp;bool&nbsp;diag_prod_ok(void);<br>
+extern&nbsp;bool&nbsp;element_div_ok(void);<br>
+extern&nbsp;bool&nbsp;element_prod_ok(void);<br>
+extern&nbsp;bool&nbsp;element_unary_ok(void);<br>
+extern&nbsp;bool&nbsp;extend_ok(void);<br>
+extern&nbsp;bool&nbsp;matrix_div_ok(void);<br>
+extern&nbsp;bool&nbsp;matrix_prod_ok(void);<br>
+extern&nbsp;bool&nbsp;max_ok(void);<br>
+extern&nbsp;bool&nbsp;min_ok(void);<br>
+extern&nbsp;bool&nbsp;ones_ok(void);<br>
+extern&nbsp;bool&nbsp;rand_ok(void);<br>
+extern&nbsp;bool&nbsp;randn_ok(void);<br>
+extern&nbsp;bool&nbsp;scalar_ok(void);<br>
+extern&nbsp;bool&nbsp;scalar_div_ok(void);<br>
+extern&nbsp;bool&nbsp;scalar_prod_ok(void);<br>
+extern&nbsp;bool&nbsp;size_ok(void);<br>
+extern&nbsp;bool&nbsp;slice_ok(void);<br>
+extern&nbsp;bool&nbsp;sub_ok(void);<br>
+extern&nbsp;bool&nbsp;sum_ok(void);<br>
+extern&nbsp;bool&nbsp;transpose_ok(void);<br>
+extern&nbsp;bool&nbsp;zeros_ok(void);<br>
+<br>
+bool&nbsp;run_test(bool&nbsp;test(void),&nbsp;char&nbsp;*name)<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;=&nbsp;test();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;ok&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::cout&nbsp;&lt;&lt;&nbsp;&quot;ok:&nbsp;&nbsp;&nbsp;&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;name&nbsp;&lt;&lt;&nbsp;std::endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;std::cout&nbsp;&lt;&lt;&nbsp;&quot;error:&nbsp;&quot;&nbsp;&lt;&lt;&nbsp;name&nbsp;&lt;&lt;&nbsp;std::endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+int&nbsp;main()<br>
+{&nbsp;&nbsp;&nbsp;&nbsp;bool&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;true;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;initialize&nbsp;the&nbsp;random&nbsp;number&nbsp;generator<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unsigned&nbsp;seed&nbsp;=&nbsp;5;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::srand(seed);<br>
+<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;run&nbsp;all&nbsp;the&nbsp;tests<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(add_ok,&nbsp;&quot;add_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(cholesky_ok,&nbsp;&quot;cholesky_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(diag_prod_ok,&nbsp;&quot;diag_prod_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(element_div_ok,&nbsp;&quot;element_div_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(element_prod_ok,&nbsp;&quot;element_prod_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(element_unary_ok,&nbsp;&quot;element_unary_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(extend_ok,&nbsp;&quot;extend_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(matrix_div_ok,&nbsp;&quot;matrix_div_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(matrix_prod_ok,&nbsp;&quot;matrix_prod_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(max_ok,&nbsp;&quot;max_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(min_ok,&nbsp;&quot;min_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(ones_ok,&nbsp;&quot;ones_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(rand_ok,&nbsp;&quot;rand_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(randn_ok,&quot;randn_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(scalar_ok,&nbsp;&quot;scalar_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(scalar_div_ok,&nbsp;&quot;scalar_div_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(scalar_prod_ok,&nbsp;&quot;scalar_prod_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(size_ok,&nbsp;&quot;size_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(slice_ok,&nbsp;&quot;slice_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(sub_ok,&nbsp;&quot;sub_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(sum_ok,&nbsp;&quot;sum_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(transpose_ok,&nbsp;&quot;transpose_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ok&nbsp;&nbsp;&nbsp;=&nbsp;ok&nbsp;&amp;&nbsp;run_test(zeros_ok,&nbsp;&quot;zeros_ok&quot;);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::cout&nbsp;&lt;&lt;&nbsp;std::endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(&nbsp;ok&nbsp;)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;std::cout&nbsp;&lt;&lt;&nbsp;&quot;All&nbsp;tests&nbsp;passed&quot;&nbsp;&lt;&lt;&nbsp;std::endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else&nbsp;std::cout&nbsp;&lt;&lt;&nbsp;&quot;At&nbsp;least&nbsp;one&nbsp;test&nbsp;failed&quot;&nbsp;&lt;&lt;&nbsp;std::endl;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;ok;<br>
+}<br>
+</span>
+</font></code>
+
+<hr>Input File: cpp/mat2cpp_ok.cpp
+
+</body>
+</html>

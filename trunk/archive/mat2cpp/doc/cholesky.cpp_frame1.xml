@@ -1,0 +1,78 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Cholesky Factor a Matrix Source Code</title>
+<meta name="description" id="description" content="Cholesky Factor a Matrix Source Code"/>
+<meta name="keywords" id="keywords" content=" "/><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="cholesky.xml" target="_top">previous</a>
+&#xA0;&#xA0;<a href="matrix_div.xml" target="_top">next</a>
+&#xA0;&#xA0;<a href="_contents.xml" target="_top">contents</a>
+&#xA0;&#xA0;<a href="_reference.xml" target="_top">reference</a>
+&#xA0;&#xA0;<a href="_index.xml" target="_top">index</a>
+&#xA0;&#xA0;<a href="_search.xml" target="_top">search</a>
+&#xA0;&#xA0;<a href="_external.xml" target="_top">external</a>
+&#xA0;&#xA0;This:&#xA0;&#xA0;<a href="cholesky.cpp.xml" target="_top">section</a>, <a href="cholesky.cpp_frame1.xml" target="_top">frame</a></div>
+<hr/>
+
+
+<center><b><big><big>Cholesky Factor a Matrix Source Code</big></big></b></center>
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+#&#xA0;include&#xA0;&lt;cassert&gt;<br/>
+#&#xA0;include&#xA0;&lt;mat2cpp.hpp&gt;<br/>
+namespace&#xA0;mat2cpp&#xA0;{<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;Linkage&#xA0;for&#xA0;Fortran&#xA0;version&#xA0;of&#xA0;the&#xA0;Lapack&#xA0;routine&#xA0;dpotrf<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;extern&#xA0;&quot;C&quot;&#xA0;fortran_subroutine&#xA0;c2dpotrf_(<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fortran_integer&#xA0;&#xA0;&#xA0;*c_uplo,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fortran_integer&#xA0;&#xA0;&#xA0;*n,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fortran_double&#xA0;&#xA0;&#xA0;&#xA0;*a,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fortran_integer&#xA0;&#xA0;&#xA0;*lda,&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fortran_integer&#xA0;&#xA0;&#xA0;*info<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;matrix&lt;double&gt;&#xA0;cholesky<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(const&#xA0;matrix&lt;double&gt;&#xA0;&amp;x,&#xA0;size_t&#xA0;&amp;rank)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;x.size1()&#xA0;==&#xA0;x.size2()&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i,&#xA0;j;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;m&#xA0;=&#xA0;x.size1();&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fortran_integer&#xA0;c_uplo&#xA0;=&#xA0;fortran_integer('U');&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fortran_double&#xA0;&#xA0;*a&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;new&#xA0;fortran_double&#xA0;&#xA0;[m&#xA0;*&#xA0;m];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;m;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;a[&#xA0;i&#xA0;+&#xA0;j&#xA0;*&#xA0;m&#xA0;]&#xA0;=&#xA0;x(i,&#xA0;j);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fortran_integer&#xA0;lda&#xA0;&#xA0;=&#xA0;fortran_integer(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fortran_integer&#xA0;fm&#xA0;&#xA0;&#xA0;=&#xA0;fortran_integer(m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;fortran_integer&#xA0;info;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;c2dpotrf_&#xA0;(&amp;c_uplo,&#xA0;&amp;fm,&#xA0;a,&#xA0;&amp;lda,&#xA0;&amp;info);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;assert(&#xA0;info&#xA0;&gt;=&#xA0;0&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;info&#xA0;==&#xA0;0&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;rank&#xA0;=&#xA0;m;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;rank&#xA0;=&#xA0;size_t(info&#xA0;-&#xA0;1);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;matrix&lt;double&gt;&#xA0;z(m,&#xA0;m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;i;&#xA0;j&#xA0;&lt;&#xA0;m;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;z(i,&#xA0;j)&#xA0;=&#xA0;a[&#xA0;i&#xA0;+&#xA0;j&#xA0;*&#xA0;m&#xA0;];<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;i;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;z(i,&#xA0;j)&#xA0;=&#xA0;0.;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;delete&#xA0;[]&#xA0;a;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;z;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+<br/>
+}<br/>
+</span>
+</font></code>
+
+<hr/>Input File: lib/cholesky.cpp
+
+</body>
+</html>

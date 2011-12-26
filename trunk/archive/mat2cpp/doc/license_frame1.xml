@@ -1,0 +1,58 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>The mat2cpp Software License</title>
+<meta name="description" id="description" content="The mat2cpp Software License"/>
+<meta name="keywords" id="keywords" content=" "/><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="_contents.xml" target="_top">previous</a>
+&#xA0;&#xA0;<a href="getstarted.xml" target="_top">next</a>
+&#xA0;&#xA0;<a href="_contents.xml" target="_top">contents</a>
+&#xA0;&#xA0;<a href="_reference.xml" target="_top">reference</a>
+&#xA0;&#xA0;<a href="_index.xml" target="_top">index</a>
+&#xA0;&#xA0;<a href="_search.xml" target="_top">search</a>
+&#xA0;&#xA0;<a href="_external.xml" target="_top">external</a>
+&#xA0;&#xA0;This:&#xA0;&#xA0;<a href="license.xml" target="_top">section</a>, <a href="license_frame1.xml" target="_top">frame</a></div>
+<hr/><center><b><big><big>The mat2cpp Software License</big></big></b></center>
+<code><span style='white-space: nowrap'><br/>
+Name:&#xA0;&#xA0;&#xA0;&#xA0;mat2cpp:&#xA0;Example&#xA0;Conversion&#xA0;of&#xA0;Matlab&#xA0;or&#xA0;Octave&#xA0;to&#xA0;C++<br/>
+Owner:&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;Copyright&#xA0;(C)&#xA0;2006&#xA0;University&#xA0;of&#xA0;Washington&#xA0;<br/>
+Author:&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;(Bradley&#xA0;M.&#xA0;Bell)<br/>
+<br/>
+</span></code><a href="http://www.boost.org/LICENSE_1_0.txt" target="_top"><span style='white-space: nowrap'>http://www.boost.org/LICENSE_1_0.txt</span></a>
+
+<code><span style='white-space: nowrap'><br/>
+<br/>
+Boost&#xA0;Software&#xA0;License&#xA0;-&#xA0;Version&#xA0;1.0&#xA0;-&#xA0;August&#xA0;17th,&#xA0;2003<br/>
+<br/>
+Permission&#xA0;is&#xA0;hereby&#xA0;granted,&#xA0;free&#xA0;of&#xA0;charge,&#xA0;to&#xA0;any&#xA0;person&#xA0;or&#xA0;organization<br/>
+obtaining&#xA0;a&#xA0;copy&#xA0;of&#xA0;the&#xA0;software&#xA0;and&#xA0;accompanying&#xA0;documentation&#xA0;covered&#xA0;by<br/>
+this&#xA0;license&#xA0;(the&#xA0;&quot;Software&quot;)&#xA0;to&#xA0;use,&#xA0;reproduce,&#xA0;display,&#xA0;distribute,<br/>
+execute,&#xA0;and&#xA0;transmit&#xA0;the&#xA0;Software,&#xA0;and&#xA0;to&#xA0;prepare&#xA0;derivative&#xA0;works&#xA0;of&#xA0;the<br/>
+Software,&#xA0;and&#xA0;to&#xA0;permit&#xA0;third-parties&#xA0;to&#xA0;whom&#xA0;the&#xA0;Software&#xA0;is&#xA0;furnished&#xA0;to<br/>
+do&#xA0;so,&#xA0;all&#xA0;subject&#xA0;to&#xA0;the&#xA0;following:<br/>
+<br/>
+The&#xA0;copyright&#xA0;notices&#xA0;in&#xA0;the&#xA0;Software&#xA0;and&#xA0;this&#xA0;entire&#xA0;statement,&#xA0;including<br/>
+the&#xA0;above&#xA0;license&#xA0;grant,&#xA0;this&#xA0;restriction&#xA0;and&#xA0;the&#xA0;following&#xA0;disclaimer,<br/>
+must&#xA0;be&#xA0;included&#xA0;in&#xA0;all&#xA0;copies&#xA0;of&#xA0;the&#xA0;Software,&#xA0;in&#xA0;whole&#xA0;or&#xA0;in&#xA0;part,&#xA0;and<br/>
+all&#xA0;derivative&#xA0;works&#xA0;of&#xA0;the&#xA0;Software,&#xA0;unless&#xA0;such&#xA0;copies&#xA0;or&#xA0;derivative<br/>
+works&#xA0;are&#xA0;solely&#xA0;in&#xA0;the&#xA0;form&#xA0;of&#xA0;machine-executable&#xA0;object&#xA0;code&#xA0;generated&#xA0;by<br/>
+a&#xA0;source&#xA0;language&#xA0;processor.<br/>
+<br/>
+THE&#xA0;SOFTWARE&#xA0;IS&#xA0;PROVIDED&#xA0;&quot;AS&#xA0;IS&quot;,&#xA0;WITHOUT&#xA0;WARRANTY&#xA0;OF&#xA0;ANY&#xA0;KIND,&#xA0;EXPRESS&#xA0;OR<br/>
+IMPLIED,&#xA0;INCLUDING&#xA0;BUT&#xA0;NOT&#xA0;LIMITED&#xA0;TO&#xA0;THE&#xA0;WARRANTIES&#xA0;OF&#xA0;MERCHANTABILITY,<br/>
+FITNESS&#xA0;FOR&#xA0;A&#xA0;PARTICULAR&#xA0;PURPOSE,&#xA0;TITLE&#xA0;AND&#xA0;NON-INFRINGEMENT.&#xA0;IN&#xA0;NO&#xA0;EVENT<br/>
+SHALL&#xA0;THE&#xA0;COPYRIGHT&#xA0;HOLDERS&#xA0;OR&#xA0;ANYONE&#xA0;DISTRIBUTING&#xA0;THE&#xA0;SOFTWARE&#xA0;BE&#xA0;LIABLE<br/>
+FOR&#xA0;ANY&#xA0;DAMAGES&#xA0;OR&#xA0;OTHER&#xA0;LIABILITY,&#xA0;WHETHER&#xA0;IN&#xA0;CONTRACT,&#xA0;TORT&#xA0;OR&#xA0;OTHERWISE,<br/>
+ARISING&#xA0;FROM,&#xA0;OUT&#xA0;OF&#xA0;OR&#xA0;IN&#xA0;CONNECTION&#xA0;WITH&#xA0;THE&#xA0;SOFTWARE&#xA0;OR&#xA0;THE&#xA0;USE&#xA0;OR&#xA0;OTHER<br/>
+DEALINGS&#xA0;IN&#xA0;THE&#xA0;SOFTWARE.<br/>
+</span></code>
+<hr/>Input File: COPYING
+
+</body>
+</html>

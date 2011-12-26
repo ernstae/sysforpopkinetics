@@ -1,0 +1,120 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>The Matlab or Octave to C++ Using Ublas Include File</title>
+<meta name="description" id="description" content="The Matlab or Octave to C++ Using Ublas Include File"/>
+<meta name="keywords" id="keywords" content=" include mat2cpp.hpp "/><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="zeros.xml" target="_top">previous</a>
+&#xA0;&#xA0;<a href="mat2cpp_ok.m.xml" target="_top">next</a>
+&#xA0;&#xA0;<a href="_contents.xml" target="_top">contents</a>
+&#xA0;&#xA0;<a href="_reference.xml" target="_top">reference</a>
+&#xA0;&#xA0;<a href="_index.xml" target="_top">index</a>
+&#xA0;&#xA0;<a href="_search.xml" target="_top">search</a>
+&#xA0;&#xA0;<a href="_external.xml" target="_top">external</a>
+&#xA0;&#xA0;This:&#xA0;&#xA0;<a href="mat2cpp.hpp.xml" target="_top">section</a>, <a href="mat2cpp.hpp_frame1.xml" target="_top">frame</a></div>
+<hr/><center><b><big><big>The Matlab or Octave to C++ Using Ublas Include File</big></big></b></center>
+<br/>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<code><font color="blue"><br/>
+# include &lt;mat2cpp.hpp&gt;</font></code>
+
+<br/>
+<br/>
+<b><big><a name="Purpose" id="Purpose">Purpose</a></big></b>
+
+
+<br/>
+<br/>
+<b><big><a name="Ublas Linkage" id="Ublas Linkage">Ublas Linkage</a></big></b>
+<br/>
+The <code><font color="blue">mat2cpp.hpp</font></code> contains 
+the following include commands:
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;#&#xA0;include&#xA0;&lt;boost/numeric/ublas/matrix.hpp&gt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;#&#xA0;include&#xA0;&lt;boost/numeric/ublas/matrix_proxy.hpp&gt;<br/>
+</span>
+</font></code>
+In addition, it links the following 
+<code><font color="blue">ublas</font></code> identifiers to the <code><font color="blue">mat2cpp</font></code> namespace:
+<code><font color="blue">matrix</font></code>, <code><font color="blue">zero_matrix</font></code>, <code><font color="blue">scalar_matrix</font></code>,
+<code><font color="blue">slice</font></code>, <code><font color="blue">matrix_slice</font></code>.
+It also defines <code><font color="blue">matrix_slice_double</font></code> using
+<code><font color="blue">
+<span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;typedef&#xA0;matrix_slice&lt;&#xA0;matrix&lt;double&gt;&#xA0;&gt;&#xA0;&#xA0;matrix_slice_double;<br/>
+</span>
+</font></code>
+<br/>
+<b><big><a name="mat2cpp Functions" id="mat2cpp Functions">mat2cpp Functions</a></big></b>
+<br/>
+The <code><font color="blue">mat2cpp.hpp</font></code> include also
+defines linkage for the following 
+<code><font color="blue">mat2cpp</font></code> namespace functions:
+
+<table><tr><td align='left'  valign='top'>
+
+<code><font color="blue">abs</font></code>         </td><td align='left'  valign='top'>
+ <a href="element_unary.xml" target="_top">Matlab or Octave Elementwise Unary Functions</a> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">log</font></code>         </td><td align='left'  valign='top'>
+ <a href="element_unary.xml" target="_top">Matlab or Octave Elementwise Unary Functions</a> </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">diag_prod</font></code>   </td><td align='left'  valign='top'>
+ <a href="diag_prod.xml" target="_top">Diagonal Matrix Product with General Matrix</a>     </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">matrix_div</font></code>  </td><td align='left'  valign='top'>
+ <a href="matrix_div.xml" target="_top">Matrix Division</a>    </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">max</font></code>         </td><td align='left'  valign='top'>
+ <a href="max.xml" target="_top">Maximum Element of a Matrix</a>           </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">min</font></code>         </td><td align='left'  valign='top'>
+ <a href="min.xml" target="_top">Minimum Element of a Matrix</a>           </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">scalar</font></code>      </td><td align='left'  valign='top'>
+ <a href="scalar.xml" target="_top">Convert Matrix to Scalar</a>        </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">sum</font></code>         </td><td align='left'  valign='top'>
+ <a href="sum.xml" target="_top">Sum The Elements of a Matlab</a>           </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">rand</font></code>        </td><td align='left'  valign='top'>
+ <a href="rand.xml" target="_top">Uniform Random Matrix</a>          </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">randn</font></code>       </td><td align='left'  valign='top'>
+ <a href="randn.xml" target="_top">Normal Random Matrix</a>         </td></tr><tr><td align='left'  valign='top'>
+
+</td></tr>
+</table>
+<br/>
+<b><a name="mat2cpp Functions.Fortran Linkage" id="mat2cpp Functions.Fortran Linkage">Fortran Linkage</a></b>
+<br/>
+The <code><font color="blue">mat2cpp.hpp</font></code> include also
+defines the following types:
+<table><tr><td align='left'  valign='top'>
+
+<code><font color="blue">fortran_integer</font></code> </td><td align='left'  valign='top'>
+ 
+	the type in C++ corresponding to Fortran integer </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">fortran_double</font></code> </td><td align='left'  valign='top'>
+ 
+	the type in C++ corresponding to Fortran double precision </td></tr><tr><td align='left'  valign='top'>
+
+<code><font color="blue">fortran_subroutine</font></code> </td><td align='left'  valign='top'>
+ 
+	the return type in C++ corresponding to Fortran subroutine 
+</td></tr>
+</table>
+
+<hr/>Input File: mat2cpp.hpp
+
+</body>
+</html>
