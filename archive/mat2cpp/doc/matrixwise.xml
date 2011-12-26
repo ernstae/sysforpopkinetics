@@ -1,0 +1,19 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+
+<head>
+<title>Matrixwise Operations</title>
+<meta name="description" id="description" content="Matrixwise Operations"/>
+<meta name="keywords" id="keywords" content=" "/><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<frameset cols="15%,*">
+<frame src="matrixwise_links.xml"/>
+<frameset rows="100%,*">
+<frame src="matrixwise_frame1.xml" name="frame1" id="frame1"/>
+</frameset>
+</frameset>
+</html>

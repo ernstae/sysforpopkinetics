@@ -1,0 +1,163 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Cholesky Factor a Matrix Division</title>
+<meta name="description" id="description" content="Cholesky Factor a Matrix Division"/>
+<meta name="keywords" id="keywords" content=" cholesky matrix "/><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="diag_prod.cpp.xml" target="_top">previous</a>
+&#xA0;&#xA0;<a href="cholesky.cpp.xml" target="_top">next</a>
+&#xA0;&#xA0;<a href="_contents.xml" target="_top">contents</a>
+&#xA0;&#xA0;<a href="_reference.xml" target="_top">reference</a>
+&#xA0;&#xA0;<a href="_index.xml" target="_top">index</a>
+&#xA0;&#xA0;<a href="_search.xml" target="_top">search</a>
+&#xA0;&#xA0;<a href="_external.xml" target="_top">external</a>
+&#xA0;&#xA0;This:&#xA0;&#xA0;<a href="cholesky.xml" target="_top">section</a>, <a href="cholesky_frame1.xml" target="_top">frame</a></div>
+<hr/><center><b><big><big>Cholesky Factor a Matrix Division</big></big></b></center>
+<br/>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<table><tr><td align='left'  valign='top'>
+
+<b>Matlab or Octave</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"><span style='white-space: nowrap'>[</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'>]&#xA0;=&#xA0;chol(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr><tr><td align='left'  valign='top'>
+
+<b>C++</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;cholesky(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr>
+</table>
+<br/>
+<b><big><a name="Matlab or Octave" id="Matlab or Octave">Matlab or Octave</a></big></b>
+<br/>
+If <i>x</i> is an 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>m</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mi mathvariant='italic'>m</mi>
+</mrow></math>
+
+ matrix
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;chol(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>sets <i>z</i> to the 
+upper triangular 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>m</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mi mathvariant='italic'>m</mi>
+</mrow></math>
+
+ matrix such that
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow>
+<mi mathvariant='italic'>x</mi>
+<mo stretchy="false">=</mo>
+<msup><mi mathvariant='italic'>y</mi>
+<mrow><mstyle mathvariant='normal'><mi mathvariant='normal'>T</mi>
+</mstyle></mrow>
+</msup>
+<mo stretchy="false">*</mo>
+<mi mathvariant='italic'>y</mi>
+</mrow></math>
+
+If <i>r</i> is not zero, then the matrix <i>x</i>
+is singular and <i>r</i> is the rank of the largest non-singular
+principal minor.
+
+<br/>
+<br/>
+<b><a name="Matlab or Octave.Example" id="Matlab or Octave.Example">Example</a></b>
+
+<code><font color="blue">
+<br/>
+<span style='white-space: nowrap'>&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;function&#xA0;[ok]&#xA0;=&#xA0;cholesky_ok()<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;m&#xA0;&#xA0;&#xA0;=&#xA0;3;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;a&#xA0;&#xA0;&#xA0;=&#xA0;rand(m,&#xA0;m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x&#xA0;&#xA0;&#xA0;=&#xA0;a'&#xA0;*&#xA0;a;&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;%&#xA0;-------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;[y,&#xA0;r]&#xA0;&#xA0;=&#xA0;chol(x);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;%&#xA0;-------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;[m,&#xA0;n]&#xA0;=&#xA0;size(y);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;(m&#xA0;==&#xA0;3);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;(n&#xA0;==&#xA0;3);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;all&#xA0;(&#xA0;all(&#xA0;abs(y'&#xA0;*&#xA0;y&#xA0;-&#xA0;x)&#xA0;&lt;&#xA0;1e-10&#xA0;)&#xA0;);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for&#xA0;i&#xA0;=&#xA0;1&#xA0;:&#xA0;m<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for&#xA0;j&#xA0;=&#xA0;1&#xA0;:&#xA0;(i-1)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;(y(i,j)&#xA0;==&#xA0;0);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;end<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;end<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;(r&#xA0;==&#xA0;0);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;<br/>
+</span></font></code><br/>
+<b><big><a name="C++" id="C++">C++</a></big></b>
+<br/>
+The corresponding C++ syntax is
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>z</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;cholesky(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>rank</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+</span></font></code>where <i>x</i> and <i>y</i> are 
+ublas <code><font color="blue">matrix&lt;double&gt;</font></code> objects. 
+The size of <i>x</i> and <i>y</i> are 
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="inline"><mrow>
+<mi mathvariant='italic'>m</mi>
+<mo stretchy="false">&#x000D7;</mo>
+<mi mathvariant='italic'>m</mi>
+</mrow></math>
+
+,
+The return value of the <code><font color="blue">size_t</font></code> argument <i>rank</i> is the rank
+of the largest principal minor of <i>x</i>.
+
+<br/>
+<br/>
+<b><a name="C++.Example" id="C++.Example">Example</a></b>
+
+<code><font color="blue">
+<br/>
+<span style='white-space: nowrap'>&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;#&#xA0;include&#xA0;&lt;boost/numeric/ublas/matrix.hpp&gt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;#&#xA0;include&#xA0;&lt;mat2cpp.hpp&gt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;cholesky_ok(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;mat2cpp;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i,&#xA0;j,&#xA0;m(3);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;matrix&lt;double&gt;&#xA0;a&#xA0;=&#xA0;rand(m,&#xA0;m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;matrix&lt;double&gt;&#xA0;x&#xA0;=&#xA0;prod(trans(a),&#xA0;a);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;---------------------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;rank;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;matrix&lt;double&gt;&#xA0;y&#xA0;=&#xA0;cholesky(x,&#xA0;rank);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;---------------------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(rank&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;==&#xA0;m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(y.size1()&#xA0;==&#xA0;m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(y.size2()&#xA0;==&#xA0;m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;matrix&lt;double&gt;&#xA0;check&#xA0;=&#xA0;prod(trans(y),&#xA0;y);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;m;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;std::fabs(&#xA0;check(i,&#xA0;j)&#xA0;-&#xA0;x(i,j)&#xA0;)&#xA0;&lt;&#xA0;1e-10;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;i;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(y(i,&#xA0;j)&#xA0;==&#xA0;0.);&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+</span></font></code><br/>
+<b><a name="C++.Source" id="C++.Source">Source</a></b>
+<br/>
+The file <a href="cholesky.cpp.xml" target="_top"><span style='white-space: nowrap'>cholesky.cpp</span></a>
+ contains the 
+C++ source code for these functions.
+
+
+<hr/>Input File: omh/cholesky.omh
+
+</body>
+</html>

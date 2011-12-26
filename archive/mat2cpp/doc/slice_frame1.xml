@@ -1,0 +1,159 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Matrix Slices</title>
+<meta name="description" id="description" content="Matrix Slices"/>
+<meta name="keywords" id="keywords" content=" slice sub-matrix "/><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="size.xml" target="_top">previous</a>
+&#xA0;&#xA0;<a href="zeros.xml" target="_top">next</a>
+&#xA0;&#xA0;<a href="_contents.xml" target="_top">contents</a>
+&#xA0;&#xA0;<a href="_reference.xml" target="_top">reference</a>
+&#xA0;&#xA0;<a href="_index.xml" target="_top">index</a>
+&#xA0;&#xA0;<a href="_search.xml" target="_top">search</a>
+&#xA0;&#xA0;<a href="_external.xml" target="_top">external</a>
+&#xA0;&#xA0;This:&#xA0;&#xA0;<a href="slice.xml" target="_top">section</a>, <a href="slice_frame1.xml" target="_top">frame</a></div>
+<hr/><center><b><big><big>Matrix Slices</big></big></b></center>
+<br/>
+<b><big><a name="Syntax" id="Syntax">Syntax</a></big></b>
+
+<table><tr><td align='left'  valign='top'>
+
+<b>Matlab or Octave</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>r_start</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;:&#xA0;</span></font></code><i><span style='white-space: nowrap'>r_stride</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;:&#xA0;</span></font></code><i><span style='white-space: nowrap'>r_limit</span></i>
+</td></tr><tr><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>c</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>c_start</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;:&#xA0;</span></font></code><i><span style='white-space: nowrap'>c_stride</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;:&#xA0;</span></font></code><i><span style='white-space: nowrap'>c_limit</span></i>
+</td></tr><tr><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+
+<code><font color="blue"></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>c</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+
+</td></tr><tr><td align='left'  valign='top'>
+
+<b>C++</b> </td><td align='left'  valign='top'>
+ 
+<code><font color="blue"><span style='white-space: nowrap'>slice&#xA0;</span></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;slice(</span></font></code><i><span style='white-space: nowrap'>r_start</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>r_stride</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>r_len</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr><tr><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>slice&#xA0;</span></font></code><i><span style='white-space: nowrap'>c</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;slice(</span></font></code><i><span style='white-space: nowrap'>c_start</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>c_stride</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>c_len</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr><tr><td align='left'  valign='top'>
+ </td><td align='left'  valign='top'>
+
+<code><font color="blue"><span style='white-space: nowrap'>matrix_slice_double&#xA0;(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>c</span></i><code><font color="blue"><span style='white-space: nowrap'>)</span></font></code>
+</td></tr>
+</table>
+<br/>
+<b><big><a name="Matlab or Octave" id="Matlab or Octave">Matlab or Octave</a></big></b>
+<br/>
+If <i>x</i>, <i>y</i> are matrices,
+<i>r</i>, <i>c</i> are vectors,
+and the other values below are integer scalars,
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>r_start</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;:&#xA0;</span></font></code><i><span style='white-space: nowrap'>r_stride</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;:&#xA0;</span></font></code><i><span style='white-space: nowrap'>r_limit</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>c</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>c_start</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;:&#xA0;</span></font></code><i><span style='white-space: nowrap'>c_stride</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;:&#xA0;</span></font></code><i><span style='white-space: nowrap'>c_limit</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>(</span></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>c</span></i><code><font color="blue"><span style='white-space: nowrap'>)&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>Sets <i>r</i> to the vector of integers starting at
+<i>r_start</i>, incrementing by <i>r_stride</i> and all of which
+are less than or equal <i>r_limit</i>.
+It sets <i>c</i> in a similar fashion and then sets
+the corresponding sub-set of rows and columns of <i>x</i> to the 
+matrix in <i>y</i>.
+
+<br/>
+<br/>
+<b><a name="Matlab or Octave.Example" id="Matlab or Octave.Example">Example</a></b>
+
+<code><font color="blue">
+<br/>
+<span style='white-space: nowrap'>&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;function&#xA0;[ok]&#xA0;=&#xA0;slice_ok()<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;m&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;3;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;n&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;4;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;(1&#xA0;:&#xA0;m)'&#xA0;*&#xA0;(1&#xA0;:&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;y&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;zeros(2,&#xA0;2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;%&#xA0;--------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;r&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;1&#xA0;:&#xA0;2&#xA0;:&#xA0;3;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;c&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;1&#xA0;:&#xA0;2&#xA0;:&#xA0;3;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x(r,&#xA0;c)&#xA0;=&#xA0;y;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;%&#xA0;--------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;[p,&#xA0;q]&#xA0;&#xA0;=&#xA0;size(x);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;(m&#xA0;==&#xA0;p);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;(n&#xA0;==&#xA0;q);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for&#xA0;i&#xA0;=&#xA0;1&#xA0;:&#xA0;m<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for&#xA0;j&#xA0;=&#xA0;1&#xA0;:&#xA0;n<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if&#xA0;any(i&#xA0;==&#xA0;r)&#xA0;&amp;&#xA0;any(&#xA0;j&#xA0;==&#xA0;c)&#xA0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;x(i,&#xA0;j)&#xA0;==&#xA0;0;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;=&#xA0;ok&#xA0;&amp;&#xA0;x(i,&#xA0;j)&#xA0;==&#xA0;i&#xA0;*&#xA0;j;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;end<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;end<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;end<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return<br/>
+</span></font></code><br/>
+<b><big><a name="C++" id="C++">C++</a></big></b>
+<br/>
+The corresponding C++ syntax is
+<code><font color="blue"><span style='white-space: nowrap'><br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;slice&#xA0;</span></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;slice(</span></font></code><i><span style='white-space: nowrap'>r_start</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>r_stride</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>r_len</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;slice&#xA0;</span></font></code><i><span style='white-space: nowrap'>c</span></i><code><font color="blue"><span style='white-space: nowrap'>&#xA0;=&#xA0;slice(</span></font></code><i><span style='white-space: nowrap'>c_start</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>c_stride</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>c_len</span></i><code><font color="blue"><span style='white-space: nowrap'>)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;matrix_slice_double&#xA0;(</span></font></code><i><span style='white-space: nowrap'>x</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>r</span></i><code><font color="blue"><span style='white-space: nowrap'>,&#xA0;</span></font></code><i><span style='white-space: nowrap'>c</span></i><code><font color="blue"><span style='white-space: nowrap'>)&#xA0;=&#xA0;</span></font></code><i><span style='white-space: nowrap'>y</span></i><code><font color="blue"><span style='white-space: nowrap'><br/>
+</span></font></code>where <i>x</i> is a ublas <code><font color="blue">matrix&lt;double&gt;</font></code> object,
+<i>r</i>, <i>c</i> are 
+<code><font color="blue">mat2cpp</font></code> <code><font color="blue">matrix_slice_double</font></code> objects,
+and the other values are <code><font color="blue">size_t</font></code> scalars.
+
+
+<br/>
+<br/>
+<b><a name="C++.Example" id="C++.Example">Example</a></b>
+
+<code><font color="blue">
+<br/>
+<span style='white-space: nowrap'>&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;#&#xA0;include&#xA0;&lt;mat2cpp.hpp&gt;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;slice_ok(void)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;&#xA0;&#xA0;ok&#xA0;&#xA0;=&#xA0;true;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;using&#xA0;namespace&#xA0;mat2cpp;<br/>
+<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;size_t&#xA0;i,&#xA0;j,&#xA0;k,&#xA0;m(3),&#xA0;n(4);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;matrix&lt;double&gt;&#xA0;x(m,&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;x(i,&#xA0;j)&#xA0;=&#xA0;i&#xA0;*&#xA0;j;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;zero_matrix&lt;double&gt;&#xA0;y(2,&#xA0;2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;-------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;slice&#xA0;r&#xA0;=&#xA0;slice(0,&#xA0;2,&#xA0;2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;slice&#xA0;c&#xA0;=&#xA0;slice(0,&#xA0;2,&#xA0;2);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;matrix_slice_double&#xA0;(x,&#xA0;r,&#xA0;c)&#xA0;=&#xA0;y;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;//&#xA0;-------------------------<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(x.size1()&#xA0;==&#xA0;m);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(x.size2()&#xA0;==&#xA0;n);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(i&#xA0;=&#xA0;0;&#xA0;i&#xA0;&lt;&#xA0;m;&#xA0;i++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;for(j&#xA0;=&#xA0;0;&#xA0;j&#xA0;&lt;&#xA0;n;&#xA0;j++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;{&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;row_match&#xA0;=&#xA0;false;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(k&#xA0;=&#xA0;0;&#xA0;k&#xA0;&lt;&#xA0;r.size();&#xA0;k++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;row_match&#xA0;|=&#xA0;(i&#xA0;==&#xA0;r.start()&#xA0;+&#xA0;r.stride()&#xA0;*&#xA0;k);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;bool&#xA0;col_match&#xA0;=&#xA0;false;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;for(k&#xA0;=&#xA0;0;&#xA0;k&#xA0;&lt;&#xA0;c.size();&#xA0;k++)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;col_match&#xA0;|=&#xA0;(j&#xA0;==&#xA0;c.start()&#xA0;+&#xA0;c.stride()&#xA0;*&#xA0;k);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;if(&#xA0;row_match&#xA0;&amp;&#xA0;col_match&#xA0;)<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;ok&#xA0;&amp;=&#xA0;(x(i,j)&#xA0;==&#xA0;0.);<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;else&#xA0;ok&#xA0;&amp;=&#xA0;(x(i,j)&#xA0;==&#xA0;double(i&#xA0;*&#xA0;j));<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;return&#xA0;ok;<br/>
+&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;}<br/>
+</span></font></code>
+<hr/>Input File: omh/slice.omh
+
+</body>
+</html>

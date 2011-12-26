@@ -1,0 +1,30 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Other Operations</title>
+<meta name="description" id="description" content="Other Operations"/>
+<meta name="keywords" id="keywords" content=" "/><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="sum.cpp.xml" target="_top">previous</a>
+&#xA0;&#xA0;<a href="extend.xml" target="_top">next</a>
+&#xA0;&#xA0;<a href="_contents.xml" target="_top">contents</a>
+&#xA0;&#xA0;<a href="_reference.xml" target="_top">reference</a>
+&#xA0;&#xA0;<a href="_index.xml" target="_top">index</a>
+&#xA0;&#xA0;<a href="_search.xml" target="_top">search</a>
+&#xA0;&#xA0;<a href="_external.xml" target="_top">external</a>
+&#xA0;&#xA0;This:&#xA0;&#xA0;<a href="other.xml" target="_top">section</a>, <a href="other_frame1.xml" target="_top">frame</a></div>
+<hr/><center><b><big><big>Other Operations</big></big></b></center>
+<br/>
+<b><big><a name="Contents" id="Contents">Contents</a></big></b>
+<br/>
+<table>
+<tr><td><a href="extend.xml" target="_top">extend</a></td><td>Extending&#xA0;a&#xA0;Vector</td></tr><tr><td><a href="ones.xml" target="_top">ones</a></td><td>Matrix&#xA0;of&#xA0;Ones</td></tr><tr><td><a href="rand.xml" target="_top">rand</a></td><td>Uniform&#xA0;Random&#xA0;Matrix</td></tr><tr><td><a href="randn.xml" target="_top">randn</a></td><td>Normal&#xA0;Random&#xA0;Matrix</td></tr><tr><td><a href="size.xml" target="_top">size</a></td><td>Matrix&#xA0;Size</td></tr><tr><td><a href="slice.xml" target="_top">slice</a></td><td>Matrix&#xA0;Slices</td></tr><tr><td><a href="zeros.xml" target="_top">zeros</a></td><td>Matrix&#xA0;of&#xA0;Zeros</td></tr></table>
+<hr/>Input File: omh/other.omh
+
+</body>
+</html>

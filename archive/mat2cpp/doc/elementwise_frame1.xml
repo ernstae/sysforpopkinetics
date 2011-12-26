@@ -1,0 +1,30 @@
+<?xml version='1.0'?>
+<?xml-stylesheet type='text/xsl' href='pmathml.xsl'?>
+<html xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+<title>Elementwise Operations</title>
+<meta name="description" id="description" content="Elementwise Operations"/>
+<meta name="keywords" id="keywords" content=" "/><style type='text/css'>
+BODY { color : black }
+BODY { background-color : white }
+</style>
+</head>
+<body>
+<div align='right'><a href="operation.xml" target="_top">previous</a>
+&#xA0;&#xA0;<a href="add.xml" target="_top">next</a>
+&#xA0;&#xA0;<a href="_contents.xml" target="_top">contents</a>
+&#xA0;&#xA0;<a href="_reference.xml" target="_top">reference</a>
+&#xA0;&#xA0;<a href="_index.xml" target="_top">index</a>
+&#xA0;&#xA0;<a href="_search.xml" target="_top">search</a>
+&#xA0;&#xA0;<a href="_external.xml" target="_top">external</a>
+&#xA0;&#xA0;This:&#xA0;&#xA0;<a href="elementwise.xml" target="_top">section</a>, <a href="elementwise_frame1.xml" target="_top">frame</a></div>
+<hr/><center><b><big><big>Elementwise Operations</big></big></b></center>
+<br/>
+<b><big><a name="Contents" id="Contents">Contents</a></big></b>
+<br/>
+<table>
+<tr><td><a href="add.xml" target="_top">add</a></td><td>Elementwise&#xA0;Addition</td></tr><tr><td><a href="element_div.xml" target="_top">element_div</a></td><td>Elementwise&#xA0;Division</td></tr><tr><td><a href="element_prod.xml" target="_top">element_prod</a></td><td>Elementwise&#xA0;Product</td></tr><tr><td><a href="element_unary.xml" target="_top">element_unary</a></td><td>Matlab&#xA0;or&#xA0;Octave&#xA0;Elementwise&#xA0;Unary&#xA0;Functions</td></tr><tr><td><a href="scalar_div.xml" target="_top">scalar_div</a></td><td>Scalar&#xA0;Division</td></tr><tr><td><a href="scalar_prod.xml" target="_top">scalar_prod</a></td><td>Scalar&#xA0;Product</td></tr><tr><td><a href="sub.xml" target="_top">sub</a></td><td>Elementwise&#xA0;Subtraction</td></tr></table>
+<hr/>Input File: omh/elementwise.omh
+
+</body>
+</html>
