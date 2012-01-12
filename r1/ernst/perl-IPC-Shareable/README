@@ -1,0 +1,32 @@
+This code was fixed because it would not install properly.
+
+http://www.perlmonks.org/?node_id=879713
+
+Changing line 455
+
+    $#{@{$self->{_data}}} = $n - 1;
+[download]
+into
+
+    $#{$self->{_data}} = $n - 1;
+[download]
+fixes the issue for me.
+
+(modify blib/lib/IPC/Sharable.pm in the build directory before running the tests with make test)
+
+This problem was reported two years ago. It looks like this module isn't being maintained.
+
+Some background for those interested:
+
+There was a bug in Perl such that
+
+$#{ @array }
+[download]
+was interpreted as
+
+$#{ \@array }
+[download]
+instead of
+$#{ scalar(@array) }
+[download]
+IPC::Shareable's test relies on this bug, but it was fixed in Perl 5.10. Note the lack of 5.10.x and 5.12.x passing results.
