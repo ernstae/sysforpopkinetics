@@ -24,6 +24,7 @@ Author: Brad Bell (brad@apl.washington.edu)
 # include <cstring>
 # include "SpkException.h"
 # include <iostream>
+# include <stdio.h>
 
 void QN01BoxErrorHandler(
 	int       line ,

@@ -36,6 +36,7 @@
 ********************************************************************************/
 
 #include <cstdlib>
+#include <stdio.h>
 
 #include "SpkValarray.h"
 #include "multiply.h"
@@ -44,8 +45,8 @@
 #include "intToOrdinalString.h"
 
 extern "C"{
-  #include <atlas/clapack.h>
-  #include <atlas/cblas.h>
+  #include <clapack.h>
+  #include <cblas.h>
 }
 
 using SPK_VA::valarray;

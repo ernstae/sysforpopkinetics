@@ -200,6 +200,7 @@ $end
  * Include files
  *------------------------------------------------------------------------*/
 #include <cassert>
+#include <stdio.h>
 #include "backDiv.h"
 #include "DoubleMatrix.h"
 #include "intToOrdinalString.h"
@@ -208,8 +209,8 @@ $end
  * Function definition
  *------------------------------------------------------------------------*/
 extern "C"{
-#include <atlas/clapack.h>
-#include <atlas/cblas.h>
+#include <clapack.h>
+#include <cblas.h>
 }
 #include <algorithm>
 using namespace std;

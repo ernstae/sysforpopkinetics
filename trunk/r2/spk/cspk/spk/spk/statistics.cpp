@@ -239,6 +239,7 @@ $end
 */
 
 #include <cmath>
+#include <stdio.h>
 #include "inverse.h"
 #include "statistics.h"
 #include "SpkException.h"

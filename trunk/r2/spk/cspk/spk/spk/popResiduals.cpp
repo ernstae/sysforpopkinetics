@@ -403,6 +403,7 @@ $end
 // Standard library header files.
 #include <cmath>
 #include <iostream>
+#include <stdio.h>
 
 using SPK_VA::valarray;
 using namespace std;

@@ -178,10 +178,11 @@ $end
 
 #include <cassert>
 #include <cmath>
+#include <stdio.h>
 
 extern "C"{
-#include <atlas/clapack.h>
-#include <atlas/cblas.h>
+#include <clapack.h>
+#include <cblas.h>
 };
 /*------------------------------------------------------------------------
  *     RFPK Header Files
