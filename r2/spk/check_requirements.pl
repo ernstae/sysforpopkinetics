@@ -39,6 +39,11 @@ my @programs_ubuntu = qw (
    libxml-simple-perl
    libcompress-zlib-perl
    libstring-crc32-perl
+   libmime-lite-perl
+   libdbd-mysql-perl
+   libdbi-perl
+   libtimedate-perl
+   libnet-dns-perl
 );
 
 my @programs_fedora = qw ( gcc-c++
@@ -131,6 +136,7 @@ sub get_os() {
 	    $contents = $_;
 	    $os_ver = "unknown";  # by default, we don't know.
 	    $os_ver = "Fedora" if (/^Fedora/);
+	    $os_ver = "Fedora" if (/^Scientific Linux/);
 	    $os_ver = "RedHat" if (/^RedHat/);
 	    $os_ver = "Ubuntu" if (/^Ubuntu/);
 	    return($os_ver);
@@ -173,15 +179,22 @@ if ( ($#not_avail) > 0 ) {
 	if ( get_os() eq 'Fedora' ) {
 	    print "Installing missing packages via YUM\n";
 	    @args = ("yum", "install", "-y");
-	    foreach $item ( @not_avail ) {
-		push(@args, $item);
-	    }
-	    system(@args) == 0 or die "Could not run yum for update";
+	}
+	elsif ( get_os() eq 'Ubuntu' ) {
+	    print "installing missing packages via apt\n";
+	    @args = ("apt-get", "install", "-y");
 	}
 	else {
 	    print get_os();
+	    exit 1;
 	}
 	
+	foreach $item ( @not_avail ) {
+	    push (@args, $item);
+	    
+	    system(@args) == 0 or die "Could not run yum for update";
+	}
+
     }
 }
 else {
