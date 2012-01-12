@@ -19,6 +19,11 @@ mkdir -p ${RELEASE_DIR}/contrib
 # spk libraries
 rsync -rvl --exclude .svn aspk cspk db *.pl LICENSE INSTALL README ${RELEASE_DIR}
 
+echo "Getting CPPAD from COIN"
+CPPAD_URL="http://www.coin-or.org/download/source/CppAD"
+CPPAD_TARBALL="cppad-20120111.gpl.tgz"
+(cd ${RELEASE_DIR}/contrib; wget ${CPPAD_URL}/${CPPAD_TARBALL}; tar xvfz ${CPPAD_TARBALL}; rm -rf ${CPPAD_TARBALL}; mv cppad* cppad )
+
 echo "Getting QN01Box from r1"
 cp -a ../../r1/Optimizer/QN01Box ${RELEASE_DIR}/contrib/QN01Box
 
