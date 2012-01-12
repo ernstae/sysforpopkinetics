@@ -219,6 +219,7 @@ $codep
     #include "mapObj.h"
     #include "mapObjDiff.h"
     #include "identity.h"
+    #include <stdio.h>
 
     using namespace std;
 
@@ -364,6 +365,7 @@ $end
 #pragma warning( disable : 4786 )
 
 #include <iostream>
+#include <stdio.h>
 #include "mapObj.h"
 #include "mapObjDiff.h"
 #include "centdiff.h"

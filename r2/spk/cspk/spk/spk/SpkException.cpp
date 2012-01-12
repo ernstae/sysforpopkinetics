@@ -385,6 +385,7 @@ $end
 #include <string>
 #include <sstream>
 #include <cassert>
+#include <stdio.h>
 
 #include <xercesc/util/XMLString.hpp>
 #include <xercesc/util/PlatformUtils.hpp>
@@ -705,10 +706,11 @@ std::istream& operator>>(std::istream& str, SpkException& e)
   s.str() >> e;
   return str;
 }
+
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMImplementationLS.hpp>
-#include <xercesc/dom/DOMWriter.hpp>
 #include <xercesc/framework/StdOutFormatTarget.hpp>
+
 const string& operator>>( const string& str, SpkException& e)
 {
   

@@ -545,6 +545,7 @@
 #pragma warning( disable : 4786 )
 #include <vector>
 #include <ctime>
+#include <stdio.h>
 #include "SpkValarray.h"
 #include "SpkModel.h"
 #include "simulate.h"

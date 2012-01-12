@@ -606,6 +606,7 @@
 //
 #pragma warning( disable : 4786 )
 #include <map>
+#include <typeinfo>
 
 #include <iostream>
 #include <exception>

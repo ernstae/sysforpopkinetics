@@ -164,13 +164,14 @@ $end
  * Include files
  *------------------------------------------------------------------------*/
 extern "C"{
-#include <atlas/cblas.h>
-#include <atlas/clapack.h>
+#include <cblas.h>
+#include <clapack.h>
 };
 
 #include <iostream>
 #include <cassert>
 #include <cmath>
+#include <stdio.h>
 
 #include "det.h"
 #include "transpose.h"
