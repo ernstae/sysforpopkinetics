@@ -27,7 +27,10 @@ CPPAD_TARBALL="cppad-20120111.gpl.tgz"
 echo "Getting QN01Box from r1"
 cp -a ../../r1/Optimizer/QN01Box ${RELEASE_DIR}/contrib/QN01Box
 
-cp -a ../../r1/brad/non_par ${RELEASE_DIR}/contrib/non_par
+echo "Getting non_par from Brad Bell"
+NON_PAR_URL="https://svn.apl.washington.edu/packages/non_par"
+NON_PAR_TARBALL="non_par-20110525.tar.gz"
+(cd ${RELEASE_DIR}/contrib; wget --no-check-certificate ${NON_PAR_URL}/${NON_PAR_TARBALL}; tar xvfz ${NON_PAR_TARBALL}; rm -rf ${NON_PAR_TARBALL}; mv non_par* non_par )
 
 echo "Getting mat2cpp from the archive"
 
