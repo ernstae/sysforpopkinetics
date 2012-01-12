@@ -25,7 +25,6 @@ fi
 dnl The postfix directiory corresponding to this installation --
 AC_MSG_CHECKING( [POSTFIX_DIR] )
 AC_SUBST(POSTFIX_DIR)
-AM_CONDITIONAL(non_par_POSTFIX_DIR, test "$POSTFIX_DIR" != "" )
 if test "$POSTFIX_DIR" != "" ; then
         AC_MSG_RESULT( [POSTFIX_DIR=$POSTFIX_DIR] )
 else
