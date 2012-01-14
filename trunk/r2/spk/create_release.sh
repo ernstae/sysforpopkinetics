@@ -33,7 +33,6 @@ NON_PAR_TARBALL="non_par-20110525.tar.gz"
 (cd ${RELEASE_DIR}/contrib; wget --no-check-certificate ${NON_PAR_URL}/${NON_PAR_TARBALL}; tar xvfz ${NON_PAR_TARBALL}; rm -rf ${NON_PAR_TARBALL}; mv non_par* non_par )
 
 echo "Getting mat2cpp from the archive"
-(cd ${RELEASE_DIR}/contrib; cp -a ../../../../archive/mat2cpp . )
 MAT2CPP_URL="https://svn.apl.washington.edu/packages/mat2cpp"
 MAT2CPP_TARBALL="mat2cpp-20110812.tar.gz"
 (cd ${RELEASE_DIR}/contrib; wget --no-check-certificate ${MAT2CPP_URL}/${MAT2CPP_TARBALL}; tar xvfz ${MAT2CPP_TARBALL}; rm -rf ${MAT2CPP_TARBALL}; mv mat2cpp* mat2cpp )
