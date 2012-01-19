@@ -33,7 +33,7 @@ author: Jiaji Du
 
 <!-- COMPILE BUILDING -->
   <target name="compile" depends="init" description="Compile job queue server">
-    <javac srcdir="uw" destdir="classes" compiler="javac1.4" deprecation="${build.compiler.deprecation}" debug="${build.compiler.debug}">
+    <javac srcdir="src/jobqs/uw" destdir="classes" compiler="javac1.4" deprecation="${build.compiler.deprecation}" debug="${build.compiler.debug}">
       <classpath>
         <pathelement location="classes" />
       </classpath>
