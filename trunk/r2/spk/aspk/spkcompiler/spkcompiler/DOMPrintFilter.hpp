@@ -85,7 +85,7 @@
 #ifndef DOMPrintFilter_HEADER_GUARD_
 #define DOMPrintFilter_HEADER_GUARD_
 
-#include <xercesc/dom/DOMWriterFilter.hpp>
+#include <xercesc/dom/DOM.hpp>
 
 XERCES_CPP_NAMESPACE_USE
 
