@@ -12,6 +12,7 @@
 #include <cassert>
 #include <fstream>
 #include <cmath>
+#include <cstring>
 
 #include "SpkCompilerError.h"
 

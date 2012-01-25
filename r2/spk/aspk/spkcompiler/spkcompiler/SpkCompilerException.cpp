@@ -10,6 +10,7 @@
 #include <string>
 #include <sstream>
 #include <cassert>
+#include <stdio.h>
 
 #include "SpkCompilerException.h"
 

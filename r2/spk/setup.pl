@@ -335,7 +335,7 @@ $GCC_FLAGS="-j" . &get_num_procs();
 		   'config' => './configure --prefix=/usr/local BOOST_DIR=/usr',
 		   'make' => 'make'},
     '04 non_par' => { 'loc' => 'contrib/non_par',
-		   'config' => 'libtoolize -i; ./configure --prefix=/usr/local POSTFIX_DIR=spktest BOOST_DIR=/usr MAT2CPP_PREFIX=/usr/local QN01BOX_PREFIX=/usr/local COMPILE_FLAGS="-O2 -Wall"',
+		   'config' => './configure --prefix=/usr/local POSTFIX_DIR=spktest BOOST_DIR=/usr MAT2CPP_PREFIX=/usr/local CPPAD_PREFIX=/usr QN01BOX_PREFIX=/usr/local COMPILE_FLAGS="-O2 -Wall"',
 		   'make' => 'make',
 		   'test_loc' => 'cpp',
 		   'test_run' => './all_ok' },
