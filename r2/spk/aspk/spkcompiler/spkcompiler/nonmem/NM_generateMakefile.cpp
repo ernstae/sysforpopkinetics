@@ -82,7 +82,7 @@ void NonmemTranslator::generateMakefile() const
   oMakefile << endl;                                        
 
   oMakefile << "LIBS      = -lspkpred -lspk -lnon_par -lmat2cpp -lQN01Box";
-  oMakefile << " -lgsl -llapack -llapack_atlas -lcblas -latlas -lm -lxerces-c -lcln -lginac -lpvm3" << (myIsIdent? " -lbad -lbap -lbav -lba0 -lgslcblas" : "" ) << endl;
+  oMakefile << " -lgsl -llapack  -lcblas -latlas -lm -lxerces-c -lcln -lginac -lpvm3" << (myIsIdent? " -lbad -lbap -lbav -lba0 -lgslcblas" : "" ) << endl;
   oMakefile << endl;
 
   oMakefile << "COMMON_INCLUDE = \\" << endl;
