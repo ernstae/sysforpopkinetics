@@ -56,8 +56,8 @@
 #include "isSymmetric.h"
 
 extern "C"{
-#include <atlas/clapack.h>
-#include <atlas/cblas.h>
+#include <clapack.h>
+#include <cblas.h>
 }
 
 using namespace std;
