@@ -22,7 +22,7 @@ rsync -rvl --exclude .svn aspk cspk db *.pl LICENSE INSTALL README ${RELEASE_DIR
 echo "Getting CPPAD from COIN"
 CPPAD_URL="http://www.coin-or.org/download/source/CppAD"
 CPPAD_TARBALL="cppad-20120101.3.gpl.tgz"
-(cd ${RELEASE_DIR}/contrib; wget ${CPPAD_URL}/${CPPAD_TARBALL}; tar xvfz ${CPPAD_TARBALL}; rm -rf ${CPPAD_TARBALL}; mv cppad* cppad )
+(cd ${RELEASE_DIR}/contrib; wget -t 3 ${CPPAD_URL}/${CPPAD_TARBALL}; tar xvfz ${CPPAD_TARBALL}; rm -rf ${CPPAD_TARBALL}; mv cppad* cppad )
 
 echo "Getting QN01Box from r1"
 cp -a ../../r1/Optimizer/QN01Box ${RELEASE_DIR}/contrib/QN01Box
@@ -30,12 +30,12 @@ cp -a ../../r1/Optimizer/QN01Box ${RELEASE_DIR}/contrib/QN01Box
 echo "Getting non_par from Brad Bell"
 NON_PAR_URL="https://svn.apl.washington.edu/packages/non_par"
 NON_PAR_TARBALL="non_par-20110525.tar.gz"
-(cd ${RELEASE_DIR}/contrib; wget --no-check-certificate ${NON_PAR_URL}/${NON_PAR_TARBALL}; tar xvfz ${NON_PAR_TARBALL}; rm -rf ${NON_PAR_TARBALL}; mv non_par* non_par )
+(cd ${RELEASE_DIR}/contrib; wget -t 3 --no-check-certificate ${NON_PAR_URL}/${NON_PAR_TARBALL}; tar xvfz ${NON_PAR_TARBALL}; rm -rf ${NON_PAR_TARBALL}; mv non_par* non_par )
 
 echo "Getting mat2cpp from the archive"
 MAT2CPP_URL="http://moby.ihme.washington.edu/bradbell/mat2cpp"
 MAT2CPP_TARBALL="mat2cpp-20120318.tar.gz"
-(cd ${RELEASE_DIR}/contrib; wget --no-check-certificate ${MAT2CPP_URL}/${MAT2CPP_TARBALL}; tar xvfz ${MAT2CPP_TARBALL}; rm -rf ${MAT2CPP_TARBALL}; mv mat2cpp* mat2cpp )
+(cd ${RELEASE_DIR}/contrib; wget -t 3 --no-check-certificate ${MAT2CPP_URL}/${MAT2CPP_TARBALL}; tar xvfz ${MAT2CPP_TARBALL}; rm -rf ${MAT2CPP_TARBALL}; mv mat2cpp* mat2cpp )
 
 echo "Patching for dgesv bug in mat2cpp"
 sed -i "s|F77_FUNC_(dgesv, DGESV)|F77_FUNC_(dgesv_, DGESV)|" $RELEASE_DIR/contrib/mat2cpp/lib/matrix_div.cpp
@@ -43,7 +43,7 @@ sed -i "s|F77_FUNC_(dgesv, DGESV)|F77_FUNC_(dgesv_, DGESV)|" $RELEASE_DIR/contri
 echo "Getting OMHelp from the web"
 OMHELP_URL="http://www.seanet.com/~bradbell"
 OMHELP_TARBALL="OMhelp.unix.tar.gz"
-(cd ${RELEASE_DIR}/contrib; wget ${OMHELP_URL}/${OMHELP_TARBALL}; tar xvfz ${OMHELP_TARBALL}; rm -rf ${OMHELP_TARBALL}; mv omhelp* omhelp )
+(cd ${RELEASE_DIR}/contrib; wget -t 3 ${OMHELP_URL}/${OMHELP_TARBALL}; tar xvfz ${OMHELP_TARBALL}; rm -rf ${OMHELP_TARBALL}; mv omhelp* omhelp )
 
 
 # fix webdir.mk problems
@@ -60,7 +60,7 @@ done
 
 # mda
 mkdir -p ${RELEASE_DIR}/java-components/contrib
-(cd ${RELEASE_DIR}/java-components/contrib; wget http://www.hansbergsten.com/jspbook3.zip; unzip jspbook3.zip; )
+(cd ${RELEASE_DIR}/java-components/contrib; wget -t 3 http://www.hansbergsten.com/jspbook3.zip; unzip jspbook3.zip; )
 
 mkdir -p ${RELEASE_DIR}/java-components/mda
 rsync -rvl --exclude .svn mda/build.xml ${RELEASE_DIR}/java-components/mda/
