@@ -2,6 +2,7 @@
 #include <pvm3.h>
 #include <spk/spkpvm.h>
 #include <fstream>
+#include <stdlib.h>
 
 using namespace std;
 
