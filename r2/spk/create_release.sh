@@ -37,6 +37,9 @@ MAT2CPP_URL="http://moby.ihme.washington.edu/bradbell/mat2cpp"
 MAT2CPP_TARBALL="mat2cpp-20120318.tar.gz"
 (cd ${RELEASE_DIR}/contrib; wget --no-check-certificate ${MAT2CPP_URL}/${MAT2CPP_TARBALL}; tar xvfz ${MAT2CPP_TARBALL}; rm -rf ${MAT2CPP_TARBALL}; mv mat2cpp* mat2cpp )
 
+echo "Patching for dgesv bug in mat2cpp"
+sed -i "s|F77_FUNC_(dgesv, DGESV)|F77_FUNC_(dgesv_, DGESV)|" $RELEASE_DIR/contrib/mat2cpp/lib/matrix_div.cpp
+
 echo "Getting OMHelp from the web"
 OMHELP_URL="http://www.seanet.com/~bradbell"
 OMHELP_TARBALL="OMhelp.unix.tar.gz"

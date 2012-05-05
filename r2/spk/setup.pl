@@ -327,7 +327,7 @@ $GCC_FLAGS="-j" . &get_num_procs();
 		  'config' => './configure --prefix=/usr/local',
 		  'make' => 'make' },
     '02 QN01Box' => { 'loc' => 'contrib/QN01Box',
-		   'config' => 'libtoolize -i; ./configure --prefix=/usr/local POSTFIX_DIR=spktest CPPAD_PREFIX_DIR=/usr COMPILE_FLAGS="-DNDEBUG -O2 -Wall"',
+		   'config' => 'autoreconf; ./configure --prefix=/usr/local POSTFIX_DIR=spktest CPPAD_PREFIX_DIR=/usr COMPILE_FLAGS="-DNDEBUG -O2 -Wall"',
 		   'make' => 'make',
 		   'test_loc' => 'Test',
 		   'test_run' => './RunTest' },
