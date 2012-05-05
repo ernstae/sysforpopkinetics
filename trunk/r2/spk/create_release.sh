@@ -44,7 +44,7 @@ MAT2CPP_TARBALL="mat2cpp-20120318.tar.gz"
 (cd ${RELEASE_DIR}/contrib; wget -t 3 --no-check-certificate ${MAT2CPP_URL}/${MAT2CPP_TARBALL}; tar xvfz ${MAT2CPP_TARBALL}; rm -rf ${MAT2CPP_TARBALL}; mv mat2cpp* mat2cpp )
 
 echo "Patching for dgesv bug in mat2cpp"
-(cd ${RELEASE_DIR}/contrib/mat2cpp; patch --dry-run -p1 -i ../../../../../r1/ernst/patches/mat2cpp.fortran.patch )
+(cd ${RELEASE_DIR}/contrib/mat2cpp; patch -p1 -i ../../../../../r1/ernst/patches/mat2cpp.fortran.patch )
 
 echo "Getting OMHelp from the web"
 OMHELP_URL="http://www.seanet.com/~bradbell"
