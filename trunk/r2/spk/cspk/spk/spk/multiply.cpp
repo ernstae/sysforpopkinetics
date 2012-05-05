@@ -167,7 +167,7 @@ $end
 #include <cassert>
 #include "SpkValarray.h"
 extern "C"{
-#include <atlas/cblas.h>
+#include <cblas.h>
 };
 
 namespace{
