@@ -1,0 +1,92 @@
+Only in mat2cpp-20110812.ernst: config.h
+Only in mat2cpp-20110812.ernst: config.log
+Only in mat2cpp-20110812.ernst: config.status
+Only in mat2cpp-20110812.ernst/cpp: add_ok.o
+Only in mat2cpp-20110812.ernst/cpp: cholesky_ok.o
+Only in mat2cpp-20110812.ernst/cpp: .deps
+Only in mat2cpp-20110812.ernst/cpp: diag_prod_ok.o
+Only in mat2cpp-20110812.ernst/cpp: element_div_ok.o
+Only in mat2cpp-20110812.ernst/cpp: element_prod_ok.o
+Only in mat2cpp-20110812.ernst/cpp: element_unary_ok.o
+Only in mat2cpp-20110812.ernst/cpp: extend_ok.o
+Only in mat2cpp-20110812.ernst/cpp: getstarted
+Only in mat2cpp-20110812.ernst/cpp: getstarted.o
+Only in mat2cpp-20110812.ernst/cpp: getstarted.out
+Only in mat2cpp-20110812.ernst/cpp: Makefile
+Only in mat2cpp-20110812.ernst/cpp: mat2cpp_ok
+Only in mat2cpp-20110812.ernst/cpp: mat2cpp_ok.o
+Only in mat2cpp-20110812.ernst/cpp: matrix_div_ok.o
+Only in mat2cpp-20110812.ernst/cpp: matrix_prod_ok.o
+Only in mat2cpp-20110812.ernst/cpp: max_ok.o
+Only in mat2cpp-20110812.ernst/cpp: min_ok.o
+Only in mat2cpp-20110812.ernst/cpp: ones_ok.o
+Only in mat2cpp-20110812.ernst/cpp: randn_ok.o
+Only in mat2cpp-20110812.ernst/cpp: rand_ok.o
+Only in mat2cpp-20110812.ernst/cpp: scalar_div_ok.o
+Only in mat2cpp-20110812.ernst/cpp: scalar_ok.o
+Only in mat2cpp-20110812.ernst/cpp: scalar_prod_ok.o
+Only in mat2cpp-20110812.ernst/cpp: size_ok.o
+Only in mat2cpp-20110812.ernst/cpp: slice_ok.o
+Only in mat2cpp-20110812.ernst/cpp: sub_ok.o
+Only in mat2cpp-20110812.ernst/cpp: sum_ok.o
+Only in mat2cpp-20110812.ernst/cpp: transpose_ok.o
+Only in mat2cpp-20110812.ernst/cpp: zeros_ok.o
+Only in mat2cpp-20110812.ernst/lib: c2dpotrf.o
+diff -crB mat2cpp-20110812/lib/cholesky.cpp mat2cpp-20110812.ernst/lib/cholesky.cpp
+*** mat2cpp-20110812/lib/cholesky.cpp	2011-08-03 13:54:16.000000000 -0700
+--- mat2cpp-20110812.ernst/lib/cholesky.cpp	2012-01-17 15:15:49.976233646 -0800
+***************
+*** 32,38 ****
+  # include <mat2cpp.hpp>
+  # include <config.h>
+  
+! # define C2DPOTRF_F77 F77_FUNC_(c2dpotrf, C2DPOTRF)
+  
+  namespace mat2cpp {
+  	// Linkage for Fortran version of the Lapack routine dpotrf
+--- 32,39 ----
+  # include <mat2cpp.hpp>
+  # include <config.h>
+  
+! #define C2DPOTRF c2dpotrf
+! #define C2DPOTRF_F77 c2dpotrf_
+  
+  namespace mat2cpp {
+  	// Linkage for Fortran version of the Lapack routine dpotrf
+Only in mat2cpp-20110812.ernst/lib: cholesky.o
+Only in mat2cpp-20110812.ernst/lib: .deps
+Only in mat2cpp-20110812.ernst/lib: diag_prod.o
+Only in mat2cpp-20110812.ernst/lib: element_unary.o
+Only in mat2cpp-20110812.ernst/lib: libmat2cpp.a
+Only in mat2cpp-20110812.ernst/lib: Makefile
+diff -crB mat2cpp-20110812/lib/matrix_div.cpp mat2cpp-20110812.ernst/lib/matrix_div.cpp
+*** mat2cpp-20110812/lib/matrix_div.cpp	2011-08-03 13:54:16.000000000 -0700
+--- mat2cpp-20110812.ernst/lib/matrix_div.cpp	2012-01-17 15:15:18.681242371 -0800
+***************
+*** 29,35 ****
+  # include <mat2cpp.hpp>
+  # include <config.h>
+  
+! # define DGESV_F77 F77_FUNC_(dgesv, DGESV)
+  
+  namespace mat2cpp {
+  	// Linkage for Fortran version of the Lapack routine dgesv
+--- 29,37 ----
+  # include <mat2cpp.hpp>
+  # include <config.h>
+  
+! //# define DGESV_F77 F77_FUNC_(dgesv, DGESV)
+! #define DGESV_F77 dgesv_
+! #define DGESV dgesv_
+  
+  namespace mat2cpp {
+  	// Linkage for Fortran version of the Lapack routine dgesv
+Only in mat2cpp-20110812.ernst/lib: matrix_div.o
+Only in mat2cpp-20110812.ernst/lib: max.o
+Only in mat2cpp-20110812.ernst/lib: min.o
+Only in mat2cpp-20110812.ernst/lib: randn.o
+Only in mat2cpp-20110812.ernst/lib: rand.o
+Only in mat2cpp-20110812.ernst/lib: scalar.o
+Only in mat2cpp-20110812.ernst/lib: sum.o
+Only in mat2cpp-20110812.ernst: Makefile
+Only in mat2cpp-20110812.ernst: stamp-h1
