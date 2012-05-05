@@ -35,7 +35,6 @@ AM_LDFLAGS  = \
 	-lspk \
 	-lQN01Box \
 	-llapack \
-	-llapack_atlas \
 	-lcblas \
 	-latlas \
 	-ldl \

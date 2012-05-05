@@ -19,7 +19,6 @@ LDADD = \
 	-lspk \
 	-lQN01Box \
 	-lgsl \
-	-llapack_atlas \
 	-lcblas \
 	-latlas \
 	-lpthread \

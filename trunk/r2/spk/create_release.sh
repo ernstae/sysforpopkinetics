@@ -56,7 +56,6 @@ OMHELP_TARBALL="OMhelp.unix.tar.gz"
 echo "Patching spkcompiler Makefile.am"
 sed -i "/^include/s/.*webdir.mk/WEBDIR=./g" ${RELEASE_DIR}/aspk/spkcompiler/doc/Makefile.am
 sed -i "/^include/s/.*webdir.mk/WEBDIR=./g" ${RELEASE_DIR}/cspk/spk/doc/Makefile.am
-sed -i "/^include/s/.*webdir.mk/WEBDIR=./g" ${RELEASE_DIR}/cspk/daemon/doc/Makefile.am
 
 for file in cspk/spk cspk/spkpred aspk/spkcompiler contrib/non_par contrib/QN01Box;
 do
