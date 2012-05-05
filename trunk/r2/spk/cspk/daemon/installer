@@ -8,7 +8,6 @@ then
     exit 1
 fi
 
-source ../../../doc/webdir.sh
 
 SERVICE_ROOT=spkrun
 SERVICE_HOST=cspkserver
@@ -24,8 +23,6 @@ echo "Note: installation of ${SERVICE_ROOT}d.pl must be completed by the deploym
 
 D=${SERVICE_ROOT}d
 
-scp $D.pl.html $WEBHOST:/$WEBDIR/man/$D.pl.html
-
 SERVICE_ROOT=trace
 
 scp ${SERVICE_ROOT}d     ${SERVICE_HOST}:/etc/rc.d/init.d
@@ -38,4 +35,4 @@ echo "Note: installation of ${SERVICE_ROOT}d.pl must be completed by the deploym
 
 D=${SERVICE_ROOT}d
 
-scp $D.pl.html $WEBHOST:/$WEBDIR/man/$D.pl.html
+
