@@ -399,4 +399,4 @@ int main( int argc, const char* argv[] )
     fclose( stderr );
     return exit_value;
 }
-//g++ indDriverTest.cpp -o indDriver -L/usr/local/lib -L/usr/local/lib/spktest -I/usr/local/include/spktest -L/usr/lib/atlas -I/usr/share/pvm3/include -L/usr/share/pvm3/lib/LINUX -lspk -lpvm3 -lxerces-c -latlas -lginac -lQN01Box -lgsl -llapack -llapack_atlas -lcblas
+
