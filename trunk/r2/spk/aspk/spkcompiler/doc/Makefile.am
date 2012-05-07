@@ -31,5 +31,6 @@ all  :
 	doxygen spkcompiler.cfg
 
 install:
+	mkdir -p $(WEB)/html
 	scp *.html $(WEB)
 	scp html/* $(WEB)/html
