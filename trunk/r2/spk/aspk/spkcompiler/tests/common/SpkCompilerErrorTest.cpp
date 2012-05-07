@@ -33,6 +33,8 @@
 #include <fstream>
 #include <sstream>
 #include <new>
+#include <stdio.h>
+#include <cstring>
 
 #include <cppunit/TestSuite.h>
 #include <cppunit/TestCaller.h>

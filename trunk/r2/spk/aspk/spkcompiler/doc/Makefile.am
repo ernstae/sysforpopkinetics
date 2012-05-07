@@ -1,4 +1,4 @@
-include ../../../../doc/webdir.mk
+WEBDIR=.
 T = spkcompiler
 WEB = $(WEBDIR)/v0.1/specs/$T
 
