@@ -691,9 +691,9 @@ void pop_subprobTest::testReportML()
   in.close();
   std::string allStr = all.str();
   const char* str = allStr.c_str();
-  char* c1 = strstr( str, "<?xml" );
-  char* c2 = strstr( c1+5,  "<?xml" );
-  char* c3 = strstr( c2+5,  "<?xml" );
+  const char* c1 = strstr( str, "<?xml" );
+  const char* c2 = strstr( c1+5,  "<?xml" );
+  const char* c3 = strstr( c2+5,  "<?xml" );
 
   FILE * xml1 = fopen( "xml1.xml", "w" );
   fprintf( xml1, "%s\n", c1 );

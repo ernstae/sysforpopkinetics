@@ -2,6 +2,7 @@
 #include <valarray>
 #include <fstream>
 #include <string>
+#include <cstring>
 
 #include "lex_explangTest.h"
 

@@ -11,6 +11,8 @@
 #include <sstream>
 #include <cassert>
 #include <stdio.h>
+#include <stdlib.h>
+#include <cstring>
 
 #include "SpkCompilerException.h"
 

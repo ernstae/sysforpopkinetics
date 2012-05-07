@@ -2,6 +2,7 @@
 #define CLIENT_H
 
 #include <string>
+#include <cstring>
 /**
  * @file client.h
  * Define "client" namespace. 
