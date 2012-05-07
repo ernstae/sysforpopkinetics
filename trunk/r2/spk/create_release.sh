@@ -40,7 +40,7 @@ fi
 
 echo "Getting mat2cpp from the archive"
 MAT2CPP_URL="http://moby.ihme.washington.edu/bradbell/mat2cpp"
-MAT2CPP_TARBALL="mat2cpp-20120318.tar.gz"
+MAT2CPP_TARBALL="mat2cpp-20120506.tar.gz"
 (cd ${RELEASE_DIR}/contrib; wget -t 3 --no-check-certificate ${MAT2CPP_URL}/${MAT2CPP_TARBALL}; tar xvfz ${MAT2CPP_TARBALL}; rm -rf ${MAT2CPP_TARBALL}; mv mat2cpp* mat2cpp )
 
 echo "Patching for dgesv bug in mat2cpp"
