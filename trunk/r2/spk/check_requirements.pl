@@ -44,6 +44,7 @@ my @programs_ubuntu = qw (
    libdbi-perl
    libtimedate-perl
    libnet-dns-perl
+   rcs
 );
 
 my @programs_fedora = qw ( gcc-c++
@@ -114,6 +115,7 @@ my @programs_fedora = qw ( gcc-c++
                     java-1.6.0-openjdk-plugin
                     ant
                     flex
+                    rcs
 		    );
 
 
