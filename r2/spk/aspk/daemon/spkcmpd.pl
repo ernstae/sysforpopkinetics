@@ -179,7 +179,7 @@ my $bugzilla_url = "http://192.168.1.101:8081/";
 
 my $service_root = "spkcmp";
 my $bugzilla_product = "SPK";
-my $submit_to_bugzilla = 1;
+my $submit_to_bugzilla = 0;
 my $retain_working_dir = 0;
 
 my $dbh;
