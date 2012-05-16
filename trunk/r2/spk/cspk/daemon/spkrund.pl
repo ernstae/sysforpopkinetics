@@ -254,7 +254,7 @@ my $concurrent = 0;
 
 my $service_root = "spkrun";
 my $bugzilla_product = "SPK";
-my $submit_to_bugzilla = 1;
+my $submit_to_bugzilla = 0;
 my $retain_working_dir = 1;
 
 my $dbh;
@@ -656,7 +656,7 @@ sub reaper {
        $submit_to_bugzilla = !$bugzilla_production_only;
     }
     else {
-       $submit_to_bugzilla = 1;
+       $submit_to_bugzilla = 0;
     }
     my $err_msg = "";
     my $err_rpt = "";

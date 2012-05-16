@@ -58,6 +58,7 @@ sed -i "/^include/s/.*webdir.mk/WEBDIR=./g" ${RELEASE_DIR}/aspk/spkcompiler/doc/
 sed -i "/^include/s/.*webdir.mk/WEBDIR=./g" ${RELEASE_DIR}/cspk/spk/doc/Makefile.am
 sed -i "/^include/s/.*webdir.mk/WEBDIR=./g" ${RELEASE_DIR}/aspk/daemon/installer
 
+
 for file in cspk/spk cspk/spkpred aspk/spkcompiler contrib/non_par contrib/QN01Box;
 do
 echo "Performing Autotools within ${file}"
