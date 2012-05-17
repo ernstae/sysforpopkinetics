@@ -196,7 +196,8 @@ sub check_perl_modules() {
 
 =cut
 	
-my %perl_modules = ( 	"MIME::Lite" => 0,
+my %perl_modules = ( 	"YAML" => 0,
+			"MIME::Lite" => 0,
 			"IPC::Shareable" => 0,
 			"Proc::Daemon" => 0,
 			"XML::Simple" => 0,
@@ -240,11 +241,11 @@ while ( ( $package, $status ) = each ( %perl_modules )) {
 	chop($answer);
 	
 	if ( $answer =~ /yes/i ) {
-	    use CPAN;
-	    
+	   use CPAN;
+ 
 	    while ( ( $package, $status ) = each ( %perl_modules ) ) {
 		if ( $status == 0 ) {
-		    CPAN::install $package;
+		    CPAN::Shell->notest("install",$package);
 		}
 	    }
 	}
@@ -276,6 +277,7 @@ while ( $ret != 0 ) {
     $ret =  show_license();
 }
 
+system("rpm -ivh ftp://mirror.cs.princeton.edu/pub/mirrors/fedora-epel/6/i386/epel-release-6-6.noarch.rpm");
 
 $ret = 1;
 while ( $ret != 0 ) {
