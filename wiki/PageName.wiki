@@ -1,0 +1,19 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+Add your content here.
+
+
+= Capabilities =
+
+Nonlinear mixed effects models defined
+with algebraic and differential equations
+Likelihood approximations for MLE
+– First Order
+– Expected Hessian
+– Laplace
+– Monte Carlo (or Grid) Likelihood at the
+estimate
+Standard Two Stage and Simulation
+capabilities are also available
