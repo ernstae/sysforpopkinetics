@@ -139,6 +139,7 @@ sub get_os() {
 	    $os_ver = "unknown";  # by default, we don't know.
 	    $os_ver = "Fedora" if (/^Fedora/);
 	    $os_ver = "Fedora" if (/^Scientific Linux/);
+	    $os_ver = "Fedora" if (/^CentOS/);
 	    $os_ver = "RedHat" if (/^RedHat/);
 	    $os_ver = "Ubuntu" if (/^Ubuntu/);
 	    return($os_ver);
