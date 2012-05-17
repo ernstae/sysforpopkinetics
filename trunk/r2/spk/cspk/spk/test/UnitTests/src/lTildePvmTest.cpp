@@ -462,7 +462,7 @@ void lTildePvmTest::setUp()
   using namespace std;
 
   // Build indDriver
-  if(system("g++ indOptPvmDriver.cpp -o indDriver -I../../../ -L../../../spk -L/usr/local/lib/spktest -L/usr/lib/atlas -I/usr/share/pvm3/include -L/usr/share/pvm3/lib/LINUX -L/usr/share/pvm3/lib/LINUX64 -lpvm3 -lspk -lxerces-c -latlas -lginac -lQN01Box -lgsl -llapack -lcblas") != 0)
+  if(system("g++ indOptPvmDriver.cpp -o indDriver -I../../../ -L../../../spk -L/usr/local/lib/spktest -L/usr/lib/atlas -I/usr/share/pvm3/include -L/usr/share/pvm3/lib/LINUX -L/usr/share/pvm3/lib/LINUXX86_64 -lpvm3 -lspk -lxerces-c -latlas -lginac -lQN01Box -lgsl -llapack -lcblas") != 0)
   {
     cout << "indDriver failed to build" << endl;
     abort();
