@@ -95,6 +95,7 @@ my @programs_fedora = qw ( gcc-c++
 		    perl-Net-DNS
 		    perl-Digest-HMAC
 		    perl-libwww-perl
+                    perl-YAML
 		    bison
                     docbook-utils
                     doxygen
@@ -192,12 +193,9 @@ if ( ($#not_avail) > 0 ) {
 	    exit 1;
 	}
 	
-	foreach $item ( @not_avail ) {
-	    push (@args, $item);
-	    
-	    system(@args) == 0 or die "Could not run yum for update";
-	}
+	push (@args, @not_avail);
 
+	system (@args) == 0 or die "Could not run yum for update";
     }
 }
 else {
