@@ -1,8 +1,17 @@
 #summary One-sentence summary of this page.
 
-= Introduction =
+= Introduction to SPK =
 
-Add your content here.
+Funding from NIH/NCRR and NIH/NIBIB
+Research resource
+– R&D, Collaboration, Service, Training,
+Dissemination
+Various incarnations:
+– A standalone executable
+– A portable software library in C++
+– A web service with open source
+distribution
+
 
 
 = Capabilities =
