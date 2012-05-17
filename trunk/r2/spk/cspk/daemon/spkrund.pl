@@ -237,7 +237,7 @@ my $max_ntasks = shift;
 
 my $hostname = hostname();
 my $from = 'rfpksoft@u.washington.edu';
-my $alert = 'ernst@u.washington.edu,jjdu@u.washington.edu';
+my $alert = 'root@localhost';
 
 my $bugzilla_production_only = 1;
 my $bugzilla_url = "http://bugzilla.rfpk.washington.edu/";
@@ -313,22 +313,6 @@ sub death {
     # log the reason for termination
     syslog($level, $msg);
 
-    # send an e-mail indicating failure
-    # added by:  andrew 05/19/2006
-    my $mail_from = 'rfpk@spk.washington.edu';
-    my $mail_subject = "spkrund shut down: $mode";
-    my $mail_body = "$msg\n\n$level\n\n$mode";
-
-    if ($mode =~ m/prod/i) {
-        $msg = MIME::Lite->new(
-            From     => $mail_from,
-            To       => $alert,
-            Subject  => $mail_subject,
-            Data     => $mail_body
-        );
-        $msg->send; # send via default
-    }
-
     # close the connection to the database
     if ($database_open) {
 	&disconnect($dbh);
@@ -392,7 +376,7 @@ sub fork_driver {
 #    my $working_dir = "$tmp_dir/$unique_name";
     my $working_dir = "/usr/local/spk/share/working/spk$mode/spkjob-$job_id";
     if (-d $working_dir) {
-	File::Path::rmtree($working_dir, 0, 0);
+	File::Path::remove_tree($working_dir, 0, 0);
     }
     mkdir($working_dir, 0700) 
 	or death("emerg", "couldn't create working directory: $working_dir");
@@ -412,7 +396,7 @@ sub fork_driver {
     unless (system(@args) == 0)  {
 	death("emerg", "couldn't expand $archive_name");
     }
-    File::Path::rmtree($archive_name);
+    File::Path::remove_tree($archive_name);
 
     # Create checkpoint.xml if checkpoint field in job table is not NULL and checkpoint.xml
     # does not already exist
@@ -451,7 +435,7 @@ sub fork_driver {
 #	  my $old_working_dir = $working_dir;
 #	  $working_dir = "$tmp_dir/$prefix_working_dir" . "-pid-" . $$;
 #	  if (-d $working_dir) {
-#	      File::Path::rmtree($working_dir, 0, 0);
+#	      File::Path::remove_tree($working_dir, 0, 0);
 #	  }
 #	  rename $old_working_dir, $working_dir
 #	      or do {
@@ -617,7 +601,7 @@ sub reaper {
 #    $unique_name = $prefix_working_dir . "-job-" . $job_id;
 #    $working_dir = "$tmp_dir/$unique_name";
 #    if (-d $working_dir) {
-#	File::Path::rmtree($working_dir, 0, 0);
+#	File::Path::remove_tree($working_dir, 0, 0);
 #    }
 #    rename $old_working_dir, $working_dir
 #	or death('emerg', "couldn't rename working directory");
@@ -931,7 +915,7 @@ sub reaper {
 
     # Remove working directory if not needed
     if ($remove_working_dir && !$retain_working_dir) {
-	File::Path::rmtree($working_dir);
+	File::Path::remove_tree($working_dir);
     }
 
     print $sh "set-end-$job_id\n";
@@ -1066,7 +1050,7 @@ sub abort_job {
 
         # Remove working directory if it is not needed
         if (!$retain_working_dir) {
-            File::Path::rmtree($working_dir);
+            File::Path::remove_tree($working_dir);
         }
     }
 
