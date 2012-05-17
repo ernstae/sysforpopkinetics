@@ -171,7 +171,6 @@ sub check_perl_modules() {
 	
 	my %perl_modules = ( 	"MIME::Lite" => 0,
 				"Daemon" => 0,
-                                "IPC::Shareable" => 0,
 				"DBD::MySQL" => 0,
 				"XML::Simple" => 0,
 				"HTML::Parser" => 0,
@@ -198,7 +197,6 @@ sub check_perl_modules() {
 	
 my %perl_modules = ( 	"YAML" => 0,
 			"MIME::Lite" => 0,
-			"IPC::Shareable" => 0,
 			"Proc::Daemon" => 0,
 			"XML::Simple" => 0,
 			"HTML::Parser" => 0,
