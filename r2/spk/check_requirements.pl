@@ -117,6 +117,7 @@ my @programs_fedora = qw ( gcc-c++
                     ant
                     flex
                     rcs
+                    make
 		    );
 
 

@@ -30,7 +30,7 @@ AM_LDFLAGS  = \
 	-L/usr/lib/atlas \
 	-L$(INST_BASE)/lib/spktest \
 	-L/usr/share/pvm3/lib/LINUX \
-	-L/usr/share/pvm3/lib/LINUX64 \
+	-L/usr/share/pvm3/lib/LINUXX86_64 \
 	$(top_builddir)/spkpred/libspkpred.a \
 	-lspk \
 	-lQN01Box \
