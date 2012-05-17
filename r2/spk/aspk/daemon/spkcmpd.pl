@@ -306,7 +306,7 @@ sub fork_compiler {
 #    my $working_dir = "$tmp_dir/$unique_name";
     my $working_dir = "/usr/local/spk/share/working/spk$mode/spkjob-$job_id";
     if (-d $working_dir) {
-	File::Path::rmtree($working_dir, 0, 0);
+	File::Path::remove_tree($working_dir, 0, 0);
     }
     mkdir($working_dir, 0777) 
 	or death("emerg", "couldn't create working directory: $working_dir");
@@ -348,7 +348,7 @@ sub fork_compiler {
     }
 
     # Remove the archive file, leaving just the extracted dataset.
-    File::Path::rmtree("data.xml,v", 0, 0);
+    File::Path::remove_tree("data.xml,v", 0, 0);
 
     # Change the dataset file permission
     chmod 0666, 'data.xml';
@@ -379,7 +379,7 @@ sub fork_compiler {
 #	  my $old_working_dir = $working_dir;
 #	  $working_dir = "$tmp_dir/$prefix_working_dir" . "-pid-" . $$;
 #	  if (-d $working_dir) {
-#	      File::Path::rmtree($working_dir, 0, 0);
+#	      File::Path::remove_tree($working_dir, 0, 0);
 #	  }
 #	  rename $old_working_dir, $working_dir
 #	      or do {
@@ -480,7 +480,7 @@ sub reaper {
 #    $unique_name = $prefix_working_dir . "-job-" . $job_id;
 #    $working_dir = "$tmp_dir/$unique_name";
 #    if (-d $working_dir) {
-#	File::Path::rmtree($working_dir, 0, 0);
+#	File::Path::remove_tree($working_dir, 0, 0);
 #    }
 #    rename $old_working_dir, $working_dir
 #	or death('emerg', "couldn't rename working directory");
@@ -534,7 +534,7 @@ sub reaper {
         }
 
 	#remove the (now redundant) tar file from the working directory
-	File::Path::rmtree("cpp_source.tar");
+	File::Path::remove_tree("cpp_source.tar");
 
 	$remove_working_dir = 1;
     }
@@ -673,7 +673,7 @@ sub reaper {
     }
     # Remove working directory if not needed
     if ($remove_working_dir && !$retain_working_dir) {
-	File::Path::rmtree($working_dir);
+	File::Path::remove_tree($working_dir);
       }
 }
 sub start {
@@ -774,7 +774,7 @@ sub abort_job {
     if ( -e $working_dir ) {
         # Remove working directory if it is not needed
         if (!$retain_working_dir) {
-            File::Path::rmtree($working_dir);
+            File::Path::remove_tree($working_dir);
         }
     }
 
