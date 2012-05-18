@@ -37,7 +37,24 @@ my @variables = (
 my @config_files = ( 	'cspk/daemon/spkrund.pl',
 	      		'aspk/daemon/spkcmpd.pl' );
 
+my @directories = qw (
+                        /usr/local/spk/share/working/spkprod
+                        /usr/local/spk/share/working/spktest
+                        /usr/local/bin/spktest
+                      );
+
 my $license_file = "LICENSE";
+
+sub make_directories () {
+    use File::Path qw(make_path remove_tree);
+    my $x = 0;
+    for ( $x = 0; $x < $#directories; $x++ ) {
+	make_path( @directories, { verbose => 1, mode => 0775, });
+    }
+
+    symlink("/usr/local/bin/spktest", "/usr/local/bin/spkprod");
+    
+}
 
 # display_config() shows the menu of configuration options that can be changed
 # by the end user upon installing the SPK system.
@@ -277,6 +294,8 @@ while ( $ret != 0 ) {
 
 system("rpm -ivh ftp://mirror.cs.princeton.edu/pub/mirrors/fedora-epel/6/i386/epel-release-6-6.noarch.rpm");
 
+make_directories();
+
 $ret = 1;
 while ( $ret != 0 ) {
   $ret = system("./check_requirements.pl");
@@ -441,7 +460,6 @@ foreach $key ( sort ( keys (%packages)) ) {
 
 
 sub get_num_procs {
-
     my $count = 0;
 
     $procs = open(FH, "/proc/cpuinfo");
