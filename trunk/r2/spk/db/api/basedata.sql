@@ -1,8 +1,3 @@
--- MySQL dump 10.13  Distrib 5.1.61, for redhat-linux-gnu (x86_64)
---
--- Host: localhost    Database: spkdb
--- ------------------------------------------------------
--- Server version	5.1.61
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -15,48 +10,11 @@
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
---
--- Table structure for table `class`
---
-
-DROP TABLE IF EXISTS `class`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `class` (
-  `class_code` char(2) NOT NULL DEFAULT '',
-  `class_name` char(20) DEFAULT NULL,
-  `parent_required` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`class_code`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `class`
---
-
 LOCK TABLES `class` WRITE;
 /*!40000 ALTER TABLE `class` DISABLE KEYS */;
 INSERT INTO `class` VALUES ('al','Approx. Likelihood',0),('le','Likelihood Eval.',1),('so','Simulation Only',0),('id','identifiability',0);
 /*!40000 ALTER TABLE `class` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `end`
---
-
-DROP TABLE IF EXISTS `end`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `end` (
-  `end_code` char(4) NOT NULL DEFAULT '',
-  `end_name` char(20) DEFAULT NULL,
-  PRIMARY KEY (`end_code`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `end`
---
 
 LOCK TABLES `end` WRITE;
 /*!40000 ALTER TABLE `end` DISABLE KEYS */;
@@ -64,49 +22,11 @@ INSERT INTO `end` VALUES ('cerr','Compiler Error'),('herr','Hard Fault'),('serr'
 /*!40000 ALTER TABLE `end` ENABLE KEYS */;
 UNLOCK TABLES;
 
---
--- Table structure for table `method`
---
-
-DROP TABLE IF EXISTS `method`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `method` (
-  `method_code` char(2) NOT NULL DEFAULT '',
-  `method_name` char(20) DEFAULT NULL,
-  `class_code` char(2) NOT NULL DEFAULT '',
-  `test_only` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`method_code`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `method`
---
-
 LOCK TABLES `method` WRITE;
 /*!40000 ALTER TABLE `method` DISABLE KEYS */;
 INSERT INTO `method` VALUES ('fo','First Order','al',0),('eh','Expected Hessian','al',0),('la','Laplace Approx.','al',0),('ml','M.C. Likelihood','le',0),('mc','Markov Chain M.C.','al',0),('gr','Grid Likelihood','le',0),('ad','Adapt Likelihood','le',0),('so','Simulation Only','so',0),('ia','Individual Analysis','al',0),('mi','Miser Likelihood','le',0),('vl','Vegas Likelihood','le',0),('s2','Std. Two-stage','al',0),('i2','Iter. Two-stage','al',0),('g2','Global Two-stage','al',0),('sm','MAP Std. Two-stage','al',0),('im','MAP Iter. Two-stage','al',0),('gm','MAP Global Two-stage','al',0),('an','Analytic Likelihood','le',1),('id','identifiability','id',0),('gn','Grid Nonparam.','al',0),('un','Uniform Nonparam.','al',0);
 /*!40000 ALTER TABLE `method` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `state`
---
-
-DROP TABLE IF EXISTS `state`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `state` (
-  `state_code` char(4) NOT NULL DEFAULT '',
-  `state_name` char(20) DEFAULT NULL,
-  PRIMARY KEY (`state_code`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `state`
---
 
 LOCK TABLES `state` WRITE;
 /*!40000 ALTER TABLE `state` DISABLE KEYS */;
@@ -123,4 +43,3 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-05-18  0:40:37
