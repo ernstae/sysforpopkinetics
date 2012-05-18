@@ -294,7 +294,12 @@ while ( $ret != 0 ) {
     $ret =  show_license();
 }
 
+# We need to make sure EPEL is installed for dependencies.
+print "Installing EPEL\n";
 system("rpm -ivh ftp://mirror.cs.princeton.edu/pub/mirrors/fedora-epel/6/i386/epel-release-6-6.noarch.rpm");
+
+# We need to install the xerces-c 2.8 install and set up yum so that it won't update it.
+system("yum localinstall contrib/xerces-c*/*.rpm -y");
 
 make_directories();
 
