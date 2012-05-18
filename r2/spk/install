@@ -9,16 +9,17 @@ sed -i "s/^\(127.0.0.1\)\(.*\)$/\1\2 aspkserver cspkserver cspk aspk dbserver jo
 echo "Running Configuration for SPK"
 ./setup.pl
 
-echo "Restarting MySQL"
-/etc/init.d/mysql restart
-
-echo "Creating database layout"
-mysqladmin create spkdb
-
-echo "Loading data"
-cat db/api/schema.sql | mysql spkdb
-cat db/api/basedata.sql | mysql spkdb
-cat db/api/permissions.sql | mysql spkdb
-
+if [[ $? == 0 ]]; then
+    echo "Restarting MySQL"
+    /etc/init.d/mysql restart
+    
+    echo "Creating database layout"
+    mysqladmin create spkdb
+    
+    echo "Loading data"
+    cat db/api/schema.sql | mysql spkdb
+    cat db/api/basedata.sql | mysql spkdb
+    cat db/api/permissions.sql | mysql spkdb
+fi
 
 

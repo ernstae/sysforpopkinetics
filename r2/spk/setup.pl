@@ -334,8 +334,7 @@ compile_packages();
 # run configure and make as necessary.
 
 
-
-
+exit(0);
 
 
 
