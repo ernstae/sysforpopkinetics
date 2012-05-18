@@ -53,7 +53,9 @@ sub make_directories () {
     }
 
     symlink("/usr/local/bin/spktest", "/usr/local/bin/spkprod");
-    
+    symlink("/usr/lib64/atlas", "/usr/lib/atlas");
+    symlink("/usr/include/cppad", "/usr/include/CppAD");
+  
 }
 
 # display_config() shows the menu of configuration options that can be changed
@@ -317,7 +319,6 @@ check_perl_modules();
 
 # check to see if we can update via yum.
 check_os_dependencies();
-
 
 # call the script to build all the autoconf files.
 compile_packages();
