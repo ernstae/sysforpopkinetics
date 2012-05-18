@@ -12,4 +12,13 @@ echo "Running Configuration for SPK"
 echo "Restarting MySQL"
 /etc/init.d/mysql restart
 
+echo "Creating database layout"
+mysql create spkdb
+
+echo "Loading data"
+mysql spkdb <db/api/schema.sql
+mysql spkdb <db/api/basedata.sql
+mysql spkdb <db/api/permissions.sql
+
+
 
