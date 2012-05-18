@@ -176,7 +176,9 @@ rsync -rvl --exclude .svn -R jobqs/uw ${RELEASE_DIR}/java-components/jobqs/src
 mkdir -p ${RELEASE_DIR}/java-components/jobqs/test
 rsync -rvl --exclude .svn jobqs/TestJobqs.java ${RELEASE_DIR}/java-components/jobqs/test
 
-
+# Get the xerces-c and xerces-c-devel libraries in version 2.8 for RHEL6
+mkdir -p ${RELEASE_DIR}/contrib/xerces-c
+rsync -rvl --exclude .svn ../../r1/ernst/xerces-c-2.8/xerces-c-*x86_64.rpm ${RELEASE_DIR}/contrib/xerces-c
 
 cat <<EOF >${RELEASE_DIR}/java-components/Build.sh
 #!/bin/bash
