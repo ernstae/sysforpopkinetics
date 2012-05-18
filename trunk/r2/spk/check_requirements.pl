@@ -167,10 +167,7 @@ print "=" x 60 . "\n\n";
 foreach $prog ( @programs ) {
     if ( system($rpmcmd .  $prog) != 0 ) {
 	push(@not_avail,$prog);
-	print " >> missing <<\n";
-    }
-    else {
-	print " OK!\n";
+	print " $prog >> missing <<\n";
     }
 }
 
