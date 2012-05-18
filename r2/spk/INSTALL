@@ -5,7 +5,9 @@ installer script, which requires a working version of Perl.
 
 As root,
 
-   ./setup.pl
+   ./install
+
+You could also run sudo ./install as your unprivileged user.
 
 Expect this to take approximately 30 to 90 minutes, depending on
 the speed of your computer.
