@@ -17,7 +17,7 @@ rm -rf ${RELEASE_NAME}*
 mkdir -p ${RELEASE_DIR}/contrib
 
 # spk libraries
-rsync -rvl --exclude .svn aspk cspk db *.pl LICENSE INSTALL README ${RELEASE_DIR}
+rsync -rvl --exclude .svn aspk cspk db *.pl LICENSE INSTALL README install ${RELEASE_DIR}
 
 echo "Getting CPPAD from COIN"
 CPPAD_URL="http://www.coin-or.org/download/source/CppAD"
@@ -57,6 +57,7 @@ echo "Patching spkcompiler Makefile.am"
 sed -i "/^include/s/.*webdir.mk/WEBDIR=./g" ${RELEASE_DIR}/aspk/spkcompiler/doc/Makefile.am
 sed -i "/^include/s/.*webdir.mk/WEBDIR=./g" ${RELEASE_DIR}/cspk/spk/doc/Makefile.am
 sed -i "/^include/s/.*webdir.mk/WEBDIR=./g" ${RELEASE_DIR}/aspk/daemon/installer
+sed -i "/^include/s/.*webdir.mk/WEBDIR=./g" ${RELEASE_DIR}/cspk/daemon/installer
 
 
 for file in cspk/spk cspk/spkpred aspk/spkcompiler contrib/non_par contrib/QN01Box;
