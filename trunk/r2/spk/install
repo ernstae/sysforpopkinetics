@@ -1,0 +1,7 @@
+#!/bin/bash
+
+yum install perl perl-CPAN perl-YAML -y
+
+echo "Running Configuration for SPK"
+./setup.pl
+
