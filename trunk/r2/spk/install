@@ -5,3 +5,9 @@ yum install perl perl-CPAN perl-YAML -y
 echo "Running Configuration for SPK"
 ./setup.pl
 
+echo "Restarting MySQL"
+/etc/init.d/mysql restart
+
+echo "Updating /etc/hosts"
+sed -i "s/^\(127.0.0.1\)\(.*\)$/\1\2 aspkserver cspkserver cspk aspk dbserver jobqserver webserver/" /etc/hosts
+
