@@ -1,0 +1,26 @@
+# Introduction to SPK #
+
+Funding from NIH/NCRR and NIH/NIBIB
+Research resource
+– R&D, Collaboration, Service, Training,
+Dissemination
+Various incarnations:
+– A standalone executable
+– A portable software library in C++
+– A web service with open source
+distribution
+
+
+
+# Capabilities #
+
+Nonlinear mixed effects models defined
+with algebraic and differential equations
+Likelihood approximations for MLE
+– First Order
+– Expected Hessian
+– Laplace
+– Monte Carlo (or Grid) Likelihood at the
+estimate
+Standard Two Stage and Simulation
+capabilities are also available

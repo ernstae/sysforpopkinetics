@@ -1,0 +1,1 @@
+SPK (System for Population Kinetics) is a Web service that solves, simulates and fits nonlinear mixed effects models to population kinetic data. All that is needed to run SPK from your computer is a Web browser.
