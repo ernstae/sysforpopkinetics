@@ -1,4 +1,6 @@
 # sysforpopkinetics
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fernstae%2Fsysforpopkinetics.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fernstae%2Fsysforpopkinetics?ref=badge_shield)
+
 SPK (System for Population Kinetics) is a Web service that solves, simulates and fits nonlinear mixed effects models to population kinetic data. Once installed, All that is needed to run SPK from your computer is a Web browser.
 
 The System for Population Kinetics (SPK) was software being developed by the RFPK Laboratory, in the Bioengineering Department of the University of Washington, under grant P41 EB-001975 from the National Institutes of Health (NIH) of the U.S. Department of Health and Human Services. 
@@ -12,3 +14,7 @@ One of the reasons for distributing SPK under an open source license is to encou
 
 
 
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fernstae%2Fsysforpopkinetics.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fernstae%2Fsysforpopkinetics?ref=badge_large)
